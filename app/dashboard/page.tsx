@@ -107,14 +107,23 @@ export default function InboxPage() {
   useEffect(() => {
     if (!selectedConversation) return
 
-    const unsubscribe = subscribeToMessages(selectedConversation.id, (newMessage) => {
-      // Only add if it's not already in the list (avoid duplicates from optimistic updates)
+    const unsubscribe = subscribeToMessages(selectedConversation.id, (message, eventType) => {
       setMessages((prev) => {
-        if (prev.some((m) => m.id === newMessage.id)) {
-          // Update existing message (e.g., status change)
-          return prev.map((m) => (m.id === newMessage.id ? newMessage : m))
+        if (eventType === 'UPDATE') {
+          // Update existing message (e.g., status change: sent -> delivered -> read)
+          return prev.map((m) => (m.id === message.id ? message : m))
         }
-        return [...prev, newMessage]
+
+        // INSERT event - only add if not already in list (avoid duplicates from optimistic updates)
+        if (prev.some((m) => m.id === message.id || m.twilio_message_sid === message.twilio_message_sid)) {
+          // Replace optimistic message with real one
+          return prev.map((m) =>
+            m.id === message.id || m.twilio_message_sid === message.twilio_message_sid
+              ? message
+              : m
+          )
+        }
+        return [...prev, message]
       })
     })
 

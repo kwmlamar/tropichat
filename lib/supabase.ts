@@ -31,7 +31,20 @@ export const getSupabase = () => {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase environment variables are not set. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+    // Only throw in development - in production, return a mock client that fails gracefully
+    if (process.env.NODE_ENV === 'development') {
+      throw new Error('Supabase environment variables are not set. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+    }
+    // In production, create a client with empty strings to prevent crashes
+    // The actual API calls will fail gracefully
+    console.warn('Supabase environment variables not set - some features may not work')
+    supabaseInstance = createClient('https://placeholder.supabase.co', 'placeholder-key', {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+    return supabaseInstance
   }
 
   supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
@@ -292,43 +305,38 @@ export async function sendMessage(
   const contactData = conversation?.contact as unknown as { phone_number: string } | null
   const toNumber = contactData?.phone_number || ''
 
-  const { data: customer } = await client
-    .from('customers')
-    .select('phone_number')
-    .eq('id', customerId)
-    .single()
-
-  const message: Partial<Message> = {
-    conversation_id: conversationId,
-    customer_id: customerId,
-    direction: 'outbound',
-    from_number: customer?.phone_number || '',
-    to_number: toNumber,
-    body,
-    status: 'queued',
-    is_automated: false,
-    sent_at: new Date().toISOString(),
+  if (!toNumber) {
+    return { data: null, error: 'Contact phone number not found' }
   }
 
-  const { data, error } = await client
-    .from('messages')
-    .insert(message)
-    .select()
-    .single()
+  // Send message via backend API (which sends via Twilio)
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'
 
-  // Update conversation
-  if (data) {
-    await client
-      .from('conversations')
-      .update({
-        last_message_at: data.sent_at,
-        last_message_preview: body.substring(0, 100),
-        updated_at: new Date().toISOString(),
+  try {
+    const response = await fetch(`${backendUrl}/api/messages/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        customer_id: customerId,
+        conversation_id: conversationId,
+        to_number: toNumber,
+        body: body
       })
-      .eq('id', conversationId)
-  }
+    })
 
-  return { data, error: error?.message || null }
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
+      return { data: null, error: result.error || 'Failed to send message' }
+    }
+
+    return { data: result.message, error: null }
+  } catch (err) {
+    console.error('Error sending message:', err)
+    return { data: null, error: 'Failed to connect to messaging server' }
+  }
 }
 
 // ==================== CONTACT FUNCTIONS ====================
@@ -586,7 +594,7 @@ export async function getAnalytics(startDate: string, endDate: string) {
 
 export function subscribeToMessages(
   conversationId: string,
-  callback: (message: Message) => void
+  callback: (message: Message, eventType: 'INSERT' | 'UPDATE') => void
 ) {
   const client = getSupabase()
 
@@ -601,7 +609,19 @@ export function subscribeToMessages(
         filter: `conversation_id=eq.${conversationId}`,
       },
       (payload) => {
-        callback(payload.new as Message)
+        callback(payload.new as Message, 'INSERT')
+      }
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `conversation_id=eq.${conversationId}`,
+      },
+      (payload) => {
+        callback(payload.new as Message, 'UPDATE')
       }
     )
     .subscribe()
