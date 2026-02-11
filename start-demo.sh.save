@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo "🚀 Starting TropiChat Demo Environment..."
+echo ""
+echo "This will open 2 terminal windows:"
+echo "  1. Frontend (Next.js) on port 3000"
+echo "  2. Backend (Webhook Server) on port 3002"
+echo ""
+
+# Open new terminal for frontend
+osascript -e 'tell app "Terminal"
+    do script "cd ~/TropiTech\\ Solutions/tropichat && echo \"Starting Frontend...\" && npm run dev"
+end tell'
+
+# Wait a bit then open terminal for backend
+sleep 2
+osascript -e 'tell app "Terminal"
+    do script "cd ~/TropiTech\\ Solutions/tropichat/backend && echo \"Starting Backend...\" && PORT=3002 node webhook-server.js"
+end tell'
+
+echo "✅ Both servers starting in new terminal windows!"
+echo ""
+echo "Frontend: http://localhost:3000"
+echo "Backend:  http://localhost:3002"
+
+
+

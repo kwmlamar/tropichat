@@ -107,7 +107,11 @@ export default function InboxPage() {
   useEffect(() => {
     if (!selectedConversation) return
 
+    console.log('🔴 Setting up realtime subscription for conversation:', selectedConversation.id)
+
+
     const unsubscribe = subscribeToMessages(selectedConversation.id, (message, eventType) => {
+      console.log('🔴 Realtime message received!', eventType, message)
       setMessages((prev) => {
         if (eventType === 'UPDATE') {
           // Update existing message (e.g., status change: sent -> delivered -> read)

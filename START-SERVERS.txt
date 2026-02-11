@@ -1,0 +1,14 @@
+==============================================
+TROPICHAT - HOW TO START FOR DEMO
+==============================================
+
+TERMINAL 1 - Frontend:
+cd ~/TropiTech\ Solutions/tropichat
+npm run dev
+
+TERMINAL 2 - Backend:
+cd ~/TropiTech\ Solutions/tropichat/backend
+PORT=3002 node webhook-server.js
+
+Then open browser: http://localhost:3000
+==============================================

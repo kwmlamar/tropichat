@@ -209,7 +209,7 @@ export function MessageThread({
                       key={message.id}
                       className={cn(
                         "flex",
-                        message.direction === "outbound" ? "justify-end" : "justify-start"
+                        message.direction === "outbound" ? "justify-end " : "justify-start"
                       )}
                     >
                       <div
@@ -294,7 +294,7 @@ export function MessageThread({
               className="min-h-[44px] max-h-32 resize-none pr-16"
               rows={1}
             />
-            <div className="absolute right-2 bottom-2 text-xs text-gray-400">
+            <div className="absolute right-3 bottom-3 text-xs text-gray-400 pointer-events-none">
               {messageText.length}/1000
             </div>
           </div>
