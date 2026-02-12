@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { MessageSquare, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
+import Image from "next/image"
+import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -36,17 +37,21 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#25D366] to-emerald-600 p-12 flex-col justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-white/20 p-3">
-            <MessageSquare className="h-8 w-8 text-white" />
-          </div>
-          <span className="text-2xl font-bold text-white">TropiChat</span>
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#3A9B9F] to-teal-700 p-12 flex-col justify-between">
+        <div className="flex items-center">
+          <Image
+            src="/tropichat-full-logo2.png"
+            alt="TropiChat"
+            width={220}
+            height={60}
+            unoptimized
+            className="h-14 w-auto object-contain"
+          />
         </div>
 
         <div className="space-y-6">
           <h1 className="text-4xl font-bold text-white leading-tight">
-            Manage your WhatsApp business conversations with ease
+            Manage all your customer conversations in one place
           </h1>
           <p className="text-lg text-white/80">
             Organize customers, automate replies, and never miss a message again.
@@ -62,11 +67,15 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 justify-center mb-8">
-            <div className="rounded-xl bg-[#25D366] p-2">
-              <MessageSquare className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900">TropiChat</span>
+          <div className="lg:hidden flex items-center justify-center mb-8">
+            <Image
+              src="/tropichat-full-logo2.png"
+              alt="TropiChat"
+              width={220}
+              height={60}
+              unoptimized
+              className="h-14 w-auto object-contain"
+            />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -97,7 +106,7 @@ export default function LoginPage() {
                   <Label htmlFor="password">Password</Label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-[#25D366] hover:underline"
+                    className="text-sm text-[#3A9B9F] hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -130,7 +139,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#25D366] hover:bg-[#20BD5B] text-white py-6 h-auto text-base font-semibold"
+                className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white py-6 h-auto text-base font-semibold"
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
@@ -147,7 +156,7 @@ export default function LoginPage() {
               Don't have an account?{" "}
               <Link
                 href="/signup"
-                className="text-[#25D366] font-medium hover:underline"
+                className="text-[#3A9B9F] font-medium hover:underline"
               >
                 Sign up for free
               </Link>

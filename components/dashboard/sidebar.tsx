@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  MessageSquare,
   Inbox,
   Users,
   FileText,
@@ -62,13 +62,15 @@ export function Sidebar({ customer }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-4 py-6 border-b border-gray-100">
-        <div className="rounded-xl bg-[#25D366] p-2">
-          <MessageSquare className="h-5 w-5 text-white" />
-        </div>
-        <span className="text-xl font-bold text-gray-900">
-          Tropi<span className="text-[#25D366]">Chat</span>
-        </span>
+      <div className="flex items-center justify-center px-4 py-4 border-b border-gray-100">
+        <Image
+          src="/tropichat-full-logo2.png"
+          alt="TropiChat"
+          width={160}
+          height={44}
+          unoptimized
+          className="h-11 w-auto object-contain shrink-0 -translate-x-5"
+        />
       </div>
 
       {/* Navigation */}
@@ -85,11 +87,11 @@ export function Sidebar({ customer }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 active
-                  ? "bg-[#25D366]/10 text-[#25D366]"
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               )}
             >
-              <Icon className={cn("h-5 w-5", active ? "text-[#25D366]" : "text-gray-400")} />
+              <Icon className={cn("h-5 w-5", active ? "text-[#3A9B9F]" : "text-gray-400")} />
               {item.label}
               {item.label === "Inbox" && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -104,9 +106,9 @@ export function Sidebar({ customer }: SidebarProps) {
       {/* Plan Badge */}
       {customer && customer.plan !== "professional" && (
         <div className="mx-3 mb-4">
-          <div className="rounded-xl bg-gradient-to-r from-[#25D366]/10 to-emerald-100 p-4">
+          <div className="rounded-xl bg-gradient-to-r from-[#3A9B9F]/10 to-teal-100 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Crown className="h-4 w-4 text-[#25D366]" />
+              <Crown className="h-4 w-4 text-[#3A9B9F]" />
               <span className="text-sm font-semibold text-gray-900">Upgrade to Pro</span>
             </div>
             <p className="text-xs text-gray-600 mb-3">
@@ -114,7 +116,7 @@ export function Sidebar({ customer }: SidebarProps) {
             </p>
             <Link
               href="/dashboard/settings?tab=billing"
-              className="block w-full text-center text-xs font-medium text-white bg-[#25D366] hover:bg-[#20BD5B] rounded-lg py-2 transition-colors"
+              className="block w-full text-center text-xs font-medium text-white bg-[#3A9B9F] hover:bg-[#2F8488] rounded-lg py-2 transition-colors"
             >
               View Plans
             </Link>
@@ -168,11 +170,15 @@ export function Sidebar({ customer }: SidebarProps) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="rounded-lg bg-[#25D366] p-1.5">
-              <MessageSquare className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-gray-900">TropiChat</span>
+          <div className="flex-1 flex items-center justify-center min-w-0">
+            <Image
+              src="/tropichat-full-logo2.png"
+              alt="TropiChat"
+              width={140}
+              height={38}
+              unoptimized
+              className="h-9 w-auto object-contain shrink-0 -translate-x-5"
+            />
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

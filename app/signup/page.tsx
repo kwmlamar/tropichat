@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { MessageSquare, Mail, Lock, Eye, EyeOff, Loader2, Building2, Check } from "lucide-react"
+import Image from "next/image"
+import { Mail, Lock, Eye, EyeOff, Loader2, Building2, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,7 +12,7 @@ import { signUp } from "@/lib/supabase"
 import { toast } from "sonner"
 
 const features = [
-  "Organize all your WhatsApp conversations",
+  "Unified inbox for WhatsApp, Instagram & Facebook",
   "Tag and categorize customers",
   "Quick replies and message templates",
   "Team collaboration tools",
@@ -57,12 +58,16 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#25D366] to-emerald-600 p-12 flex-col justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl bg-white/20 p-3">
-            <MessageSquare className="h-8 w-8 text-white" />
-          </div>
-          <span className="text-2xl font-bold text-white">TropiChat</span>
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#3A9B9F] to-teal-700 p-12 flex-col justify-between">
+        <div className="flex items-center">
+          <Image
+            src="/tropichat-full-logo2.png"
+            alt="TropiChat"
+            width={220}
+            height={60}
+            unoptimized
+            className="h-14 w-auto object-contain"
+          />
         </div>
 
         <div className="space-y-8">
@@ -96,11 +101,15 @@ export default function SignupPage() {
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 justify-center mb-8">
-            <div className="rounded-xl bg-[#25D366] p-2">
-              <MessageSquare className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900">TropiChat</span>
+          <div className="lg:hidden flex items-center justify-center mb-8">
+            <Image
+              src="/tropichat-full-logo2.png"
+              alt="TropiChat"
+              width={220}
+              height={60}
+              unoptimized
+              className="h-14 w-auto object-contain"
+            />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -189,7 +198,7 @@ export default function SignupPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#25D366] hover:bg-[#20BD5B] text-white py-6 h-auto text-base font-semibold"
+                className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white py-6 h-auto text-base font-semibold"
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
@@ -203,11 +212,11 @@ export default function SignupPage() {
 
               <p className="text-xs text-center text-gray-500">
                 By signing up, you agree to our{" "}
-                <Link href="/terms" className="text-[#25D366] hover:underline">
+                <Link href="/terms" className="text-[#3A9B9F] hover:underline">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy" className="text-[#25D366] hover:underline">
+                <Link href="/privacy" className="text-[#3A9B9F] hover:underline">
                   Privacy Policy
                 </Link>
               </p>
@@ -217,7 +226,7 @@ export default function SignupPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-[#25D366] font-medium hover:underline"
+                className="text-[#3A9B9F] font-medium hover:underline"
               >
                 Sign in
               </Link>

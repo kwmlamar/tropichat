@@ -12,12 +12,12 @@ const plans = [
     period: "month",
     priceContext: "Less than $1/day",
     features: [
+      "All channels: WhatsApp, Instagram, Facebook",
       "Up to 500 customers",
-      "Unlimited labels",
-      "Unlimited quick replies",
+      "Unified inbox across all platforms",
+      "Unlimited labels & quick replies",
       "Customer profiles & history",
       "Mobile & desktop access",
-      "Email support",
     ],
     cta: "Start Free Trial",
     popular: false,
@@ -33,9 +33,9 @@ const plans = [
       "Unlimited customers",
       "Up to 5 team members",
       "Team assignments & internal notes",
-      "Analytics & reporting",
+      "Cross-channel analytics & reporting",
       "Priority support (< 2 hours)",
-      "WhatsApp & phone support",
+      "WhatsApp, email & phone support",
     ],
     cta: "Start Free Trial",
     popular: true,
@@ -52,7 +52,7 @@ export function PricingSection() {
     <section className="relative bg-gradient-to-b from-white via-gray-50/50 to-gray-50 py-20 md:py-28 overflow-hidden">
       {/* Subtle background elements */}
       <div className="absolute inset-0 -z-10">
-        <div className="animate-float absolute right-1/4 top-20 h-[400px] w-[400px] rounded-full bg-[#25D366]/5 blur-3xl" />
+        <div className="animate-float absolute right-1/4 top-20 h-[400px] w-[400px] rounded-full bg-[#3A9B9F]/5 blur-3xl" />
         <div className="animate-float-delayed absolute left-1/4 bottom-40 h-[350px] w-[350px] rounded-full bg-blue-100/10 blur-3xl" />
       </div>
       <div className="container mx-auto px-4">
@@ -82,11 +82,11 @@ export function PricingSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className={`relative overflow-hidden rounded-2xl bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-2xl ${
-                plan.popular ? "border-2 border-[#25D366] scale-105" : "border border-gray-200"
+                plan.popular ? "border-2 border-[#3A9B9F] scale-105" : "border border-gray-200"
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-[#25D366] px-4 py-2 text-xs font-bold text-white rounded-bl-xl">
+                <div className="absolute top-0 right-0 bg-[#3A9B9F] px-4 py-2 text-xs font-bold text-white rounded-bl-xl">
                   🔥 MOST POPULAR
                 </div>
               )}
@@ -107,7 +107,7 @@ export function PricingSection() {
               <ul className="mb-8 space-y-4">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Check className="h-5 w-5 flex-shrink-0 text-[#25D366] mt-0.5" />
+                    <Check className="h-5 w-5 flex-shrink-0 text-[#3A9B9F] mt-0.5" />
                     <span className={feature.includes("Everything") ? "font-semibold text-gray-900" : "text-gray-600"}>
                       {feature}
                     </span>
@@ -119,8 +119,8 @@ export function PricingSection() {
                 onClick={scrollToWaitlist}
                 className={`w-full h-12 text-base font-semibold transition-all duration-300 btn-press ${
                   plan.popular
-                    ? "bg-[#25D366] text-white hover:bg-[#20BD5B] shadow-lg hover:shadow-xl hover:shadow-[#25D366]/25 hover-shine overflow-hidden"
-                    : "bg-white text-gray-900 border-2 border-gray-300 hover:border-[#25D366] hover:text-[#25D366] hover:bg-[#25D366]/5"
+                    ? "bg-[#3A9B9F] text-white hover:bg-[#2F8488] shadow-lg hover:shadow-xl hover:shadow-[#3A9B9F]/25 hover-shine overflow-hidden"
+                    : "bg-white text-gray-900 border-2 border-gray-300 hover:border-[#3A9B9F] hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/5"
                 }`}
               >
                 {plan.cta}
@@ -144,19 +144,19 @@ export function PricingSection() {
           className="mb-16 flex flex-wrap justify-center gap-6 text-sm text-gray-600"
         >
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#25D366]" />
+            <Check className="h-4 w-4 text-[#3A9B9F]" />
             14-day free trial
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#25D366]" />
+            <Check className="h-4 w-4 text-[#3A9B9F]" />
             No credit card required
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#25D366]" />
+            <Check className="h-4 w-4 text-[#3A9B9F]" />
             Cancel anytime
           </div>
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-[#25D366]" />
+            <Check className="h-4 w-4 text-[#3A9B9F]" />
             Free onboarding
           </div>
         </motion.div>
@@ -167,7 +167,7 @@ export function PricingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="mx-auto max-w-4xl rounded-2xl bg-green-50 p-8 md:p-12"
+          className="mx-auto max-w-4xl rounded-2xl bg-teal-50 p-8 md:p-12"
         >
           <h3 className="mb-8 text-center text-2xl font-bold text-gray-900 md:text-3xl">
             💰 Quick Math: What's TropiChat Worth to You?
@@ -179,7 +179,7 @@ export function PricingSection() {
                 If you save just 1 hour per day...
               </div>
               <div className="text-lg text-gray-900">
-                30 hrs/month × $25/hr = <strong className="text-[#25D366]">$750 value</strong>
+                30 hrs/month × $25/hr = <strong className="text-[#3A9B9F]">$750 value</strong>
               </div>
             </div>
 
@@ -188,7 +188,7 @@ export function PricingSection() {
                 If you capture 3 extra sales per month...
               </div>
               <div className="text-lg text-gray-900">
-                At $100 average = <strong className="text-[#25D366]">$300 extra revenue</strong>
+                At $100 average = <strong className="text-[#3A9B9F]">$300 extra revenue</strong>
               </div>
             </div>
 
@@ -200,7 +200,7 @@ export function PricingSection() {
             </div>
           </div>
 
-          <div className="rounded-xl bg-[#25D366] p-6 text-center text-white">
+          <div className="rounded-xl bg-[#3A9B9F] p-6 text-center text-white">
             <div className="mb-2 text-lg font-semibold">Return on Investment</div>
             <div className="text-4xl font-bold">1,678%</div>
             <div className="mt-2 text-sm opacity-90">
@@ -225,7 +225,7 @@ export function PricingSection() {
             <details className="group rounded-xl bg-white p-6 shadow-sm">
               <summary className="cursor-pointer font-semibold text-gray-900 list-none flex justify-between items-center">
                 What happens after the free trial?
-                <span className="text-[#25D366] group-open:rotate-180 transition-transform">▼</span>
+                <span className="text-[#3A9B9F] group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p className="mt-4 text-gray-600 leading-relaxed">
                 After 14 days, you'll be asked to choose a plan. No surprise charges. If you don't select a plan, your account stays active in read-only mode (you can still access your data, just can't add new stuff).
@@ -235,7 +235,7 @@ export function PricingSection() {
             <details className="group rounded-xl bg-white p-6 shadow-sm">
               <summary className="cursor-pointer font-semibold text-gray-900 list-none flex justify-between items-center">
                 Can I change plans later?
-                <span className="text-[#25D366] group-open:rotate-180 transition-transform">▼</span>
+                <span className="text-[#3A9B9F] group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p className="mt-4 text-gray-600 leading-relaxed">
                 Absolutely. Upgrade or downgrade anytime. If you upgrade mid-month, we'll prorate the difference. If you downgrade, the change happens at your next billing cycle.
@@ -245,7 +245,7 @@ export function PricingSection() {
             <details className="group rounded-xl bg-white p-6 shadow-sm">
               <summary className="cursor-pointer font-semibold text-gray-900 list-none flex justify-between items-center">
                 Is there a setup fee?
-                <span className="text-[#25D366] group-open:rotate-180 transition-transform">▼</span>
+                <span className="text-[#3A9B9F] group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p className="mt-4 text-gray-600 leading-relaxed">
                 Nope. Zero setup fees. Zero hidden costs. Just the monthly price you see. We even include free onboarding to help you get started.
@@ -255,7 +255,7 @@ export function PricingSection() {
             <details className="group rounded-xl bg-white p-6 shadow-sm">
               <summary className="cursor-pointer font-semibold text-gray-900 list-none flex justify-between items-center">
                 Do you accept Caribbean payment methods?
-                <span className="text-[#25D366] group-open:rotate-180 transition-transform">▼</span>
+                <span className="text-[#3A9B9F] group-open:rotate-180 transition-transform">▼</span>
               </summary>
               <p className="mt-4 text-gray-600 leading-relaxed">
                 Yes! We accept all major credit cards, debit cards, and wire transfers. We understand Caribbean banking and make it easy for you.

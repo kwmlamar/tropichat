@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -30,12 +32,6 @@ export function SiteHeader() {
     setIsMobileMenuOpen(false)
   }
 
-  const scrollToWaitlist = () => {
-    const waitlistSection = document.getElementById("waitlist")
-    waitlistSection?.scrollIntoView({ behavior: "smooth" })
-    setIsMobileMenuOpen(false)
-  }
-
   return (
     <>
       <header
@@ -46,19 +42,17 @@ export function SiteHeader() {
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between md:h-18">
+          <div className="flex h-20 items-center justify-between md:h-24">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2.5 group">
-              <div className="relative">
-                <div className="rounded-xl bg-[#25D366] p-2 transition-transform duration-300 group-hover:scale-105">
-                  <MessageSquare className="h-5 w-5 text-white" />
-                </div>
-                {/* Subtle glow on hover */}
-                <div className="absolute inset-0 rounded-xl bg-[#25D366] opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-30" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">
-                Tropi<span className="text-[#25D366]">Chat</span>
-              </span>
+            <a href="/" className="flex items-center group">
+              <Image
+                src="/tropichat-full-logo2.png"
+                alt="TropiChat"
+                width={320}
+                height={88}
+                unoptimized
+                className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 md:h-20"
+              />
             </a>
 
             {/* Desktop Navigation */}
@@ -71,7 +65,7 @@ export function SiteHeader() {
                 >
                   {link.label}
                   {/* Hover underline */}
-                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-[#25D366] scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-[#3A9B9F] scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                 </button>
               ))}
             </nav>
@@ -80,15 +74,16 @@ export function SiteHeader() {
             <div className="hidden md:flex items-center gap-3">
               <Button
                 variant="ghost"
+                asChild
                 className="text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               >
-                Log In
+                <Link href="/login">Log In</Link>
               </Button>
               <Button
-                onClick={scrollToWaitlist}
-                className="bg-[#25D366] text-white hover:bg-[#20BD5B] text-sm font-semibold px-5 shadow-sm hover:shadow-md transition-all duration-300"
+                asChild
+                className="bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-sm font-semibold px-5 shadow-sm hover:shadow-md transition-all duration-300"
               >
-                Start Free Trial
+                <Link href="/signup">Start Free Trial</Link>
               </Button>
             </div>
 
@@ -116,7 +111,7 @@ export function SiteHeader() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-40 md:hidden"
+            className="fixed inset-x-0 top-20 z-40 md:hidden"
           >
             <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
               <div className="container mx-auto px-4 py-4">
@@ -131,14 +126,20 @@ export function SiteHeader() {
                     </button>
                   ))}
                   <hr className="my-2 border-gray-200" />
-                  <button className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-                    Log In
-                  </button>
-                  <Button
-                    onClick={scrollToWaitlist}
-                    className="mt-2 w-full bg-[#25D366] text-white hover:bg-[#20BD5B] text-base font-semibold py-3 h-auto shadow-sm"
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                   >
-                    Start Free Trial
+                    Log In
+                  </Link>
+                  <Button
+                    asChild
+                    className="mt-2 w-full bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-base font-semibold py-3 h-auto shadow-sm"
+                  >
+                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      Start Free Trial
+                    </Link>
                   </Button>
                 </nav>
               </div>
@@ -148,7 +149,7 @@ export function SiteHeader() {
       </AnimatePresence>
 
       {/* Spacer to prevent content from hiding behind fixed header */}
-      <div className="h-16 md:h-18" />
+      <div className="h-20 md:h-24" />
     </>
   )
 }

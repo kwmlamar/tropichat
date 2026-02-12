@@ -244,7 +244,7 @@ export default function SettingsPage() {
               <Button
                 onClick={handleSaveProfile}
                 disabled={saving}
-                className="bg-[#25D366]"
+                className="bg-[#3A9B9F]"
               >
                 {saving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -313,7 +313,7 @@ export default function SettingsPage() {
               <Button
                 onClick={handleSaveBusinessHours}
                 disabled={saving}
-                className="bg-[#25D366] mt-6"
+                className="bg-[#3A9B9F] mt-6"
               >
                 {saving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -365,7 +365,7 @@ export default function SettingsPage() {
               <Button
                 onClick={handleSaveAutoReply}
                 disabled={saving}
-                className="bg-[#25D366]"
+                className="bg-[#3A9B9F]"
               >
                 {saving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -393,7 +393,7 @@ export default function SettingsPage() {
                   Invite team members to help manage your conversations.
                   Upgrade to Professional to unlock this feature.
                 </p>
-                <Button className="mt-4 bg-[#25D366]">
+                <Button className="mt-4 bg-[#3A9B9F]">
                   Upgrade to Professional
                 </Button>
               </div>
@@ -422,7 +422,7 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-600 mb-3">
                       You're on the free trial. Upgrade to unlock more features.
                     </p>
-                    <Button className="bg-[#25D366]">
+                    <Button className="bg-[#3A9B9F]">
                       Upgrade to Professional
                     </Button>
                   </div>
@@ -453,7 +453,7 @@ export default function SettingsPage() {
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
                       <div
-                        className="bg-[#25D366] h-2 rounded-full"
+                        className="bg-[#3A9B9F] h-2 rounded-full"
                         style={{ width: "25%" }}
                       />
                     </div>

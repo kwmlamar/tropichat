@@ -136,7 +136,7 @@ export default function ContactsPage() {
               Export ({selectedContacts.length})
             </Button>
           )}
-          <Button className="bg-[#25D366] hover:bg-[#20BD5B]">
+          <Button className="bg-[#3A9B9F] hover:bg-[#2F8488]">
             <Plus className="h-4 w-4 mr-2" />
             Add Contact
           </Button>
@@ -384,7 +384,7 @@ export default function ContactsPage() {
                 Cancel
               </Button>
               <Button
-                className="bg-[#25D366]"
+                className="bg-[#3A9B9F]"
                 onClick={async () => {
                   const { error } = await updateContact(editingContact.id, {
                     name: editingContact.name,

@@ -103,7 +103,7 @@ export function ConversationList({
             className={cn(
               "px-3 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap transition-colors",
               currentFilter === filter.value
-                ? "bg-[#25D366]/10 text-[#25D366]"
+                ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
                 : "text-gray-600 hover:bg-gray-100"
             )}
           >
@@ -135,7 +135,7 @@ export function ConversationList({
                 className={cn(
                   "w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors",
                   selectedId === conversation.id
-                    ? "bg-[#25D366]/10"
+                    ? "bg-[#3A9B9F]/10"
                     : "hover:bg-gray-50"
                 )}
               >

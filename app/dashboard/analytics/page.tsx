@@ -25,14 +25,14 @@ function SimpleBarChart({ data, height = 200 }: { data: { label: string; value: 
       {data.map((item, i) => (
         <div key={i} className="flex-1 flex flex-col items-center gap-2">
           <div
-            className="w-full bg-[#25D366]/20 rounded-t-md transition-all hover:bg-[#25D366]/30"
+            className="w-full bg-[#3A9B9F]/20 rounded-t-md transition-all hover:bg-[#3A9B9F]/30"
             style={{
               height: `${(item.value / maxValue) * 100}%`,
               minHeight: item.value > 0 ? 4 : 0,
             }}
           >
             <div
-              className="w-full bg-[#25D366] rounded-t-md"
+              className="w-full bg-[#3A9B9F] rounded-t-md"
               style={{ height: "100%" }}
             />
           </div>
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
               onClick={() => setDateRange(option.value)}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 dateRange === option.value
-                  ? "bg-[#25D366]/10 text-[#25D366]"
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -354,8 +354,8 @@ export default function AnalyticsPage() {
               Average Response Time
             </h3>
             <div className="flex items-center gap-4">
-              <div className="rounded-full bg-[#25D366]/10 p-4">
-                <Clock className="h-8 w-8 text-[#25D366]" />
+              <div className="rounded-full bg-[#3A9B9F]/10 p-4">
+                <Clock className="h-8 w-8 text-[#3A9B9F]" />
               </div>
               <div>
                 <p className="text-3xl font-bold text-gray-900">2.5 min</p>
@@ -382,7 +382,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center gap-2">
                     <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[#25D366] rounded-full"
+                        className="h-full bg-[#3A9B9F] rounded-full"
                         style={{ width: `${(item.messages / 50) * 100}%` }}
                       />
                     </div>

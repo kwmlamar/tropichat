@@ -1,4 +1,5 @@
-import { MessageSquare, Mail, Twitter, Instagram, Linkedin } from "lucide-react"
+import Image from "next/image"
+import { Mail, Twitter, Instagram, Linkedin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -7,15 +8,19 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
           {/* Brand */}
           <div>
-            <div className="mb-4 flex items-center gap-2">
-              <div className="rounded-lg bg-[#25D366] p-2">
-                <MessageSquare className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">TropiChat</span>
+            <div className="mb-4 flex items-center">
+              <Image
+                src="/tropichat-full-logo2.png"
+                alt="TropiChat"
+                width={320}
+                height={88}
+                unoptimized
+                className="h-20 w-auto object-contain"
+              />
             </div>
             <p className="mb-4 text-sm text-gray-400">
-              Helping Caribbean small businesses turn WhatsApp chaos into
-              organized success.
+              Helping Caribbean small businesses turn messaging chaos into
+              organized success — across WhatsApp, Instagram & Facebook.
             </p>
             <p className="flex items-center gap-1 text-sm text-gray-400">
               Built by{" "}
@@ -35,7 +40,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="transition-colors hover:text-[#25D366]"
+                  className="transition-colors hover:text-[#3A9B9F]"
                 >
                   Privacy Policy
                 </a>
@@ -43,7 +48,7 @@ export function Footer() {
               <li>
                 <a
                   href="#"
-                  className="transition-colors hover:text-[#25D366]"
+                  className="transition-colors hover:text-[#3A9B9F]"
                 >
                   Terms of Service
                 </a>
@@ -59,7 +64,7 @@ export function Footer() {
             <div className="space-y-2 text-sm">
               <a
                 href="mailto:support@tropichat.com"
-                className="flex items-center gap-2 transition-colors hover:text-[#25D366]"
+                className="flex items-center gap-2 transition-colors hover:text-[#3A9B9F]"
               >
                 <Mail className="h-4 w-4" />
                 support@tropichat.com
@@ -68,21 +73,21 @@ export function Footer() {
             <div className="mt-4 flex gap-4">
               <a
                 href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#25D366] hover:bg-[#25D366]/10 hover:scale-110"
+                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#25D366] hover:bg-[#25D366]/10 hover:scale-110"
+                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#25D366] hover:bg-[#25D366]/10 hover:scale-110"
+                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />

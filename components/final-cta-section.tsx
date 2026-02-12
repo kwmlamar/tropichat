@@ -39,7 +39,7 @@ export function FinalCTASection() {
           </h2>
 
           <p className="mb-8 text-lg text-blue-100 md:text-xl">
-            Join businesses that are already using TropiChat to unify their customer communications across WhatsApp, Email, and Phone.
+            Join businesses that are already using TropiChat to unify their customer conversations across WhatsApp, Instagram, and Facebook Messenger.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

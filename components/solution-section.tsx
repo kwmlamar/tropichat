@@ -7,10 +7,10 @@ import { Card, CardContent } from "@/components/ui/card"
 const features = [
   {
     icon: Tags,
-    title: "Find Any Customer in 3 Seconds Flat",
-    outcome: "Never scroll through hundreds of messages again.",
+    title: "One Inbox for WhatsApp, Instagram & Facebook",
+    outcome: "Never switch between apps to find a conversation again.",
     description:
-      "Tag customers as VIP, New, Payment Pending, or anything you want. Click someone's name → see all conversations, orders, and notes instantly. Like magic, but it's just good organization.",
+      "All your messages from WhatsApp, Instagram DMs, and Facebook Messenger land in one unified inbox. Tag customers as VIP, New, Payment Pending — click someone's name and see every conversation across all platforms instantly.",
     gradient: "from-blue-500 to-cyan-500",
     bgColor: "bg-blue-50",
     badge: "Most Popular",
@@ -20,7 +20,7 @@ const features = [
     title: "Remember Every Customer Like They're Your Only Customer",
     outcome: "Provide VIP-level service even when you have 500 customers.",
     description:
-      "TropiChat automatically builds a profile for every person: order history, preferences, last contact, payment status. You look like a pro, every single time.",
+      "TropiChat automatically builds a profile for every person — across all channels. Order history, preferences, last contact, payment status. Whether they messaged on WhatsApp or Instagram, you see the full picture.",
     gradient: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-50",
   },
@@ -29,7 +29,7 @@ const features = [
     title: "Stop Typing the Same Thing 50 Times a Day",
     outcome: "Reply in 10 seconds instead of 2 minutes.",
     description:
-      "Save your common responses (pricing, hours, menu, delivery info). Hit a button, message sent. Works for text, images, even voice notes.",
+      "Save your common responses (pricing, hours, menu, delivery info). Hit a button, message sent — on any platform. Works across WhatsApp, Instagram, and Facebook Messenger.",
     gradient: "from-yellow-500 to-orange-500",
     bgColor: "bg-yellow-50",
   },
@@ -38,9 +38,9 @@ const features = [
     title: "Your Team Stays on the Same Page (Finally)",
     outcome: "No more 'I thought you handled that' awkwardness.",
     description:
-      "Assign conversations, leave internal notes, see who's handling what. Your helper can see you already replied. You can see they took the order.",
-    gradient: "from-green-500 to-emerald-500",
-    bgColor: "bg-green-50",
+      "Assign conversations from any channel, leave internal notes, see who's handling what. Your helper can see you already replied on Instagram. You can see they handled the WhatsApp order.",
+    gradient: "from-teal-500 to-cyan-500",
+    bgColor: "bg-teal-50",
     badge: "New",
   },
 ]
@@ -77,15 +77,15 @@ export function SolutionSection() {
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
             What If You Could Handle 3x More Customers—
             <br />
-            <span className="bg-gradient-to-r from-[#25D366] to-emerald-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#3A9B9F] to-teal-700 bg-clip-text text-transparent">
               Without the Chaos?
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            TropiChat takes the WhatsApp you already use and adds the one thing it's missing: organization.
+            TropiChat brings WhatsApp, Instagram, and Facebook Messenger into one unified inbox with the one thing they're all missing: organization.
             <br />
             <strong className="text-gray-900">
-              No app switching. No complicated setup. Just your WhatsApp, supercharged.
+              No app switching. No complicated setup. All your platforms, one dashboard.
             </strong>
           </p>
         </motion.div>
@@ -100,12 +100,12 @@ export function SolutionSection() {
         >
           {features.map((feature, index) => (
             <motion.div key={index} variants={item}>
-              <Card className="group h-full overflow-hidden border-2 border-gray-100 transition-all duration-300 hover:border-[#25D366] hover:shadow-2xl hover:shadow-[#25D366]/10 hover:-translate-y-1">
+              <Card className="group h-full overflow-hidden border-2 border-gray-100 transition-all duration-300 hover:border-[#3A9B9F] hover:shadow-2xl hover:shadow-[#3A9B9F]/10 hover:-translate-y-1">
                 <CardContent className="p-8">
                   {/* Badge */}
                   {feature.badge && (
-                    <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-                      <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-800">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
                       {feature.badge}
                     </div>
                   )}
@@ -127,7 +127,7 @@ export function SolutionSection() {
                   </h3>
 
                   {/* Outcome */}
-                  <p className="mb-3 text-base font-semibold text-[#25D366]">
+                  <p className="mb-3 text-base font-semibold text-[#3A9B9F]">
                     The outcome: {feature.outcome}
                   </p>
 
@@ -137,7 +137,7 @@ export function SolutionSection() {
                   </p>
 
                   {/* Hover indicator */}
-                  <div className="mt-6 flex items-center text-sm font-medium text-[#25D366] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <div className="mt-6 flex items-center text-sm font-medium text-[#3A9B9F] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     Learn more
                     <svg
                       className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
@@ -170,24 +170,24 @@ export function SolutionSection() {
           <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
             Real Results From Caribbean Businesses
           </h3>
-          <div className="grid gap-8 md:grid-cols-4 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 p-8">
+          <div className="grid gap-8 md:grid-cols-4 rounded-2xl bg-gradient-to-r from-teal-50 to-cyan-50 p-8">
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#25D366]">3x</div>
+              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">3x</div>
               <div className="text-sm font-medium text-gray-900">Faster Response Time</div>
               <div className="text-xs text-gray-600">(2 min → 40 sec avg)</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#25D366]">$2,400</div>
+              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">$2,400</div>
               <div className="text-sm font-medium text-gray-900">Extra Revenue/Month</div>
               <div className="text-xs text-gray-600">(From not missing leads)</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#25D366]">12 hrs</div>
+              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">12 hrs</div>
               <div className="text-sm font-medium text-gray-900">Saved Every Week</div>
               <div className="text-xs text-gray-600">(Time you get back)</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#25D366]">0</div>
+              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">0</div>
               <div className="text-sm font-medium text-gray-900">Missed Opportunities</div>
               <div className="text-xs text-gray-600">(Smart reminders work)</div>
             </div>

@@ -7,18 +7,18 @@ const steps = [
   {
     number: "01",
     icon: Plug,
-    title: "Connect Your WhatsApp Business Account",
+    title: "Connect WhatsApp, Instagram & Facebook",
     description:
-      "Simple one-click connection. Your messages stay secure and private.",
+      "Simple one-click connection for each platform. Link your WhatsApp Business, Instagram, and Facebook Messenger accounts in minutes. Your messages stay secure and private.",
     color: "text-blue-600",
     bgColor: "bg-blue-50",
   },
   {
     number: "02",
     icon: Sparkles,
-    title: "Let TropiChat Organize Your Customers Automatically",
+    title: "Let TropiChat Organize Everything Automatically",
     description:
-      "Our smart system categorizes contacts, tags conversations, and builds your customer database.",
+      "Our smart system pulls messages from all your platforms into one inbox, categorizes contacts, tags conversations, and builds your customer database — across every channel.",
     color: "text-purple-600",
     bgColor: "bg-purple-50",
   },
@@ -27,9 +27,9 @@ const steps = [
     icon: Rocket,
     title: "Respond Faster, Track Better, Sell More",
     description:
-      "Watch your business grow as you never miss a customer and close more deals.",
-    color: "text-[#25D366]",
-    bgColor: "bg-green-50",
+      "Manage all your customer conversations from one dashboard. Never miss a message on any platform and close more deals.",
+    color: "text-[#3A9B9F]",
+    bgColor: "bg-teal-50",
   },
 ]
 
@@ -53,7 +53,7 @@ export function HowItWorksSection() {
         >
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
             Get Organized in{" "}
-            <span className="text-[#25D366]">3 Simple Steps</span>
+            <span className="text-[#3A9B9F]">3 Simple Steps</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
             No complicated setup. No technical skills needed. Just connect and
@@ -121,7 +121,7 @@ export function HowItWorksSection() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="mt-16 text-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-6 py-3 text-sm font-medium text-green-800">
+          <div className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-6 py-3 text-sm font-medium text-teal-800">
             <svg
               className="h-5 w-5"
               fill="none"

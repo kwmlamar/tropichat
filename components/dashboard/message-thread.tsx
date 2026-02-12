@@ -185,7 +185,7 @@ export function MessageThread({
               <div className="text-center mb-4">
                 <button
                   onClick={onLoadMore}
-                  className="text-sm text-[#25D366] hover:underline"
+                  className="text-sm text-[#3A9B9F] hover:underline"
                 >
                   Load earlier messages
                 </button>
@@ -216,7 +216,7 @@ export function MessageThread({
                         className={cn(
                           "max-w-[70%] rounded-2xl px-4 py-2",
                           message.direction === "outbound"
-                            ? "bg-[#25D366] text-white rounded-br-md"
+                            ? "bg-[#3A9B9F] text-white rounded-br-md"
                             : "bg-gray-100 text-gray-900 rounded-bl-md"
                         )}
                       >
@@ -302,7 +302,7 @@ export function MessageThread({
           <Button
             onClick={handleSend}
             disabled={!messageText.trim() || isSending}
-            className="bg-[#25D366] hover:bg-[#20BD5B] h-11 w-11 p-0"
+            className="bg-[#3A9B9F] hover:bg-[#2F8488] h-11 w-11 p-0"
           >
             <Send className="h-5 w-5" />
           </Button>

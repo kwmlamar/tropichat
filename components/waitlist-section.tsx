@@ -80,7 +80,7 @@ export function WaitlistSection() {
     return (
       <section
         id="waitlist"
-        className="bg-gradient-to-br from-[#25D366] to-emerald-600 py-20 md:py-28"
+        className="bg-gradient-to-br from-[#3A9B9F] to-teal-700 py-20 md:py-28"
       >
         <div className="container mx-auto px-4">
           <motion.div
@@ -90,17 +90,17 @@ export function WaitlistSection() {
             className="mx-auto max-w-2xl text-center"
           >
             <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-white">
-              <CheckCircle2 className="h-10 w-10 text-[#25D366]" />
+              <CheckCircle2 className="h-10 w-10 text-[#3A9B9F]" />
             </div>
             <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
               You're on the list! 🎉
             </h2>
-            <p className="mb-8 text-lg text-green-50">
+            <p className="mb-8 text-lg text-teal-50">
               We'll send you an email as soon as TropiChat is ready to launch.
               Keep an eye on your inbox!
             </p>
             <div className="rounded-2xl bg-white/10 p-6 backdrop-blur-sm">
-              <p className="text-green-50">
+              <p className="text-teal-50">
                 <Gift className="mb-2 inline-block h-5 w-5" /> As one of our
                 first 100 signups, you'll get{" "}
                 <span className="font-bold text-white">
@@ -118,7 +118,7 @@ export function WaitlistSection() {
   return (
     <section
       id="waitlist"
-      className="relative overflow-hidden bg-gradient-to-br from-[#25D366] to-emerald-600 py-20 md:py-28"
+      className="relative overflow-hidden bg-gradient-to-br from-[#3A9B9F] to-teal-700 py-20 md:py-28"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -143,7 +143,7 @@ export function WaitlistSection() {
             <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
               Be Among the First to Try TropiChat
             </h2>
-            <p className="text-lg text-green-50">
+            <p className="text-lg text-teal-50">
               Join our waitlist and get exclusive early access when we launch
             </p>
           </motion.div>
@@ -241,7 +241,7 @@ export function WaitlistSection() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-[#25D366] text-lg font-semibold text-white hover:bg-[#20BD5B] py-6 h-auto shadow-lg hover:shadow-xl hover:shadow-[#25D366]/25 transition-all duration-300 btn-press hover-shine overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-[#3A9B9F] text-lg font-semibold text-white hover:bg-[#2F8488] py-6 h-auto shadow-lg hover:shadow-xl hover:shadow-[#3A9B9F]/25 transition-all duration-300 btn-press hover-shine overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">

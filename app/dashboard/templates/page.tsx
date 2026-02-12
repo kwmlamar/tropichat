@@ -202,7 +202,7 @@ export default function TemplatesPage() {
         </div>
 
         <Button
-          className="bg-[#25D366] hover:bg-[#20BD5B]"
+          className="bg-[#3A9B9F] hover:bg-[#2F8488]"
           onClick={handleCreateTemplate}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -228,7 +228,7 @@ export default function TemplatesPage() {
               onClick={() => setStatusFilter(filter.value)}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 statusFilter === filter.value
-                  ? "bg-[#25D366]/10 text-[#25D366]"
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -269,7 +269,7 @@ export default function TemplatesPage() {
                 : "Create your first template to get started"}
             </p>
             <Button
-              className="bg-[#25D366] hover:bg-[#20BD5B]"
+              className="bg-[#3A9B9F] hover:bg-[#2F8488]"
               onClick={handleCreateTemplate}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -399,7 +399,7 @@ export default function TemplatesPage() {
             {editingTemplate.body && (
               <div>
                 <Label>Preview</Label>
-                <div className="mt-1 bg-[#25D366]/10 rounded-lg p-4">
+                <div className="mt-1 bg-[#3A9B9F]/10 rounded-lg p-4">
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">
                     {editingTemplate.body}
                   </p>
@@ -418,7 +418,7 @@ export default function TemplatesPage() {
                 Cancel
               </Button>
               <Button
-                className="bg-[#25D366]"
+                className="bg-[#3A9B9F]"
                 onClick={handleSaveTemplate}
                 disabled={isSaving}
               >

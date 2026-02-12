@@ -226,7 +226,7 @@ export function ContactDetails({
               />
               <button
                 onClick={handleAddTag}
-                className="p-1 text-[#25D366] hover:bg-green-50 rounded"
+                className="p-1 text-[#3A9B9F] hover:bg-green-50 rounded"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -247,7 +247,7 @@ export function ContactDetails({
                   setEditedNotes(contact.notes || "")
                   setIsEditingNotes(true)
                 }}
-                className="text-xs text-[#25D366] hover:underline"
+                className="text-xs text-[#3A9B9F] hover:underline"
               >
                 Edit
               </button>
@@ -262,7 +262,7 @@ export function ContactDetails({
                 className="min-h-[100px]"
               />
               <div className="flex gap-2">
-                <Button size="sm" onClick={handleSaveNotes} className="bg-[#25D366]">
+                <Button size="sm" onClick={handleSaveNotes} className="bg-[#3A9B9F]">
                   Save
                 </Button>
                 <Button

@@ -8,28 +8,28 @@ const problems = [
     icon: SearchX,
     title: "\"Wait, Did I Reply to Ms. Johnson About the Birthday Cake?\"",
     description:
-      "It's Thursday afternoon and you're scrolling through 300 messages trying to find that customer who ordered the cake for Saturday. Time wasted: 20 minutes. Customer impression: unprofessional.",
-    stat: "You waste 2+ hours daily searching for messages",
+      "It's Thursday afternoon and you're checking WhatsApp, then Instagram DMs, then Facebook messages — trying to find that customer who ordered the cake for Saturday. Three apps. Three inboxes. Zero organization.",
+    stat: "You waste 2+ hours daily juggling multiple inboxes",
   },
   {
     icon: MessageSquareX,
     title: "You Ghost Customers By Accident (And They Go to Your Competition)",
     description:
-      "Someone asks for a quote Monday morning. By Monday evening, 50 new messages bury it. By Tuesday, they've bought from the shop down the road. Sale lost: $150. And you never even knew.",
+      "Someone asks for a quote on WhatsApp Monday morning. Another messages you on Instagram. A third reaches out on Facebook. By Tuesday, messages are buried across three apps and they've bought from the shop down the road.",
     stat: "You lose 15-20% of sales due to missed messages",
   },
   {
     icon: Users,
     title: "Your Team Has No Clue What's Going On",
     description:
-      "Your helper answers a customer, but they don't know this person already placed an order yesterday. No way to see conversation history. No way to coordinate. Result: confused customers, frustrated team.",
+      "Your helper replies on WhatsApp, but doesn't know the same customer sent a follow-up on Instagram. No shared view across platforms. No way to coordinate. Result: confused customers, frustrated team.",
     stat: "Team chaos costs you $500+/month in mistakes",
   },
   {
     icon: CircleHelp,
     title: "You Can't Remember Who Owes What or Who's a Good Customer",
     description:
-      "Is this person a regular who orders weekly, or someone who ghosted you last time? Did they pay yet? When did they last order? Your memory isn't a business system.",
+      "This person messaged you on Facebook last week, then WhatsApp yesterday. Are they a regular? Did they pay? You're checking three different apps trying to piece together one customer's history.",
     stat: "Zero visibility = zero growth strategy",
   },
 ]
@@ -68,12 +68,12 @@ export function ProblemSection() {
           className="mb-16 text-center"
         >
           <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
-            If Your WhatsApp Looks Like This,
+            If Your Messages Look Like This,
             <br />
             <span className="text-gray-600">You're Not Alone</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            Every Caribbean business owner knows this stress. And it's costing you money every single day.
+            WhatsApp, Instagram, Facebook — every Caribbean business owner knows the stress of juggling multiple inboxes. And it's costing you money every single day.
           </p>
         </motion.div>
 
@@ -124,7 +124,7 @@ export function ProblemSection() {
           className="mt-16 text-center"
         >
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Sound familiar? You're losing $2,000+ every month to WhatsApp chaos.
+            Sound familiar? You're losing $2,000+ every month to messaging chaos.
           </h3>
           <p className="text-lg text-gray-600">
             There's a better way. And it takes 5 minutes to set up. ⬇️

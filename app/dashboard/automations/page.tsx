@@ -222,7 +222,7 @@ export default function AutomationsPage() {
         </div>
 
         <Button
-          className="bg-[#25D366] hover:bg-[#20BD5B]"
+          className="bg-[#3A9B9F] hover:bg-[#2F8488]"
           onClick={handleCreateAutomation}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -260,7 +260,7 @@ export default function AutomationsPage() {
               Create automations to save time on repetitive tasks
             </p>
             <Button
-              className="bg-[#25D366] hover:bg-[#20BD5B]"
+              className="bg-[#3A9B9F] hover:bg-[#2F8488]"
               onClick={handleCreateAutomation}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -281,7 +281,7 @@ export default function AutomationsPage() {
                 <div
                   className={`rounded-lg p-2.5 ${
                     automation.is_enabled
-                      ? "bg-[#25D366]/10 text-[#25D366]"
+                      ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
                       : "bg-gray-100 text-gray-400"
                   }`}
                 >
@@ -490,7 +490,7 @@ export default function AutomationsPage() {
                 Cancel
               </Button>
               <Button
-                className="bg-[#25D366]"
+                className="bg-[#3A9B9F]"
                 onClick={handleSaveAutomation}
                 disabled={isSaving}
               >
