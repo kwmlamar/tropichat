@@ -1,8 +1,9 @@
 "use client"
 
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, Sparkles, PlayCircle, Instagram } from "lucide-react"
+import { MessageSquare, Sparkles, PlayCircle } from "lucide-react"
 
 export function HeroSection() {
   const scrollToWaitlist = () => {
@@ -11,7 +12,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/80 via-white to-white py-20 md:py-32">
+    <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/80 via-white to-white pt-20 pb-12 md:pt-28 md:pb-16">
       {/* Background decoration - Multiple floating gradient orbs */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         {/* Primary green orb - top center */}
@@ -25,7 +26,8 @@ export function HeroSection() {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+        {/* Top section: text left, content centered on mobile */}
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center mb-12 lg:mb-16">
           {/* Left side - Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -41,7 +43,7 @@ export function HeroSection() {
               className="mb-6 inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2 text-sm font-medium text-teal-800"
             >
               <Sparkles className="h-4 w-4" />
-              🇧🇸 Built in the Bahamas • Trusted by 240+ Caribbean businesses
+              🇧🇸 Built in the Bahamas • Now in Early Access
             </motion.div>
 
             {/* Headline */}
@@ -85,80 +87,54 @@ export function HeroSection() {
             </p>
           </motion.div>
 
-          {/* Right side - Hero Image/Mockup */}
+          {/* Right side - Dashboard preview (visible on desktop only, inline) */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="relative"
+            className="relative hidden lg:block"
           >
-            <div className="relative mx-auto aspect-[4/3] max-w-2xl overflow-hidden rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-2xl">
-              {/* Placeholder for dashboard mockup */}
-              <div className="flex h-full items-center justify-center p-8">
-                <div className="w-full space-y-4">
-                  {/* Mock chat interface - multi-platform */}
-                  <div className="rounded-lg bg-white p-4 shadow-md">
-                    <div className="mb-2 flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-[#3A9B9F] flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">WA</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="h-3 w-32 rounded bg-gray-200" />
-                        <div className="mt-1 h-2 w-20 rounded bg-gray-100" />
-                      </div>
-                      <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                        VIP
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rounded-lg bg-white p-4 shadow-md">
-                    <div className="mb-2 flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#F77737] flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">IG</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="h-3 w-40 rounded bg-gray-200" />
-                        <div className="mt-1 h-2 w-24 rounded bg-gray-100" />
-                      </div>
-                      <div className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                        New
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rounded-lg bg-white p-4 shadow-md">
-                    <div className="mb-2 flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-[#0084FF] flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">FB</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="h-3 w-36 rounded bg-gray-200" />
-                        <div className="mt-1 h-2 w-28 rounded bg-gray-100" />
-                      </div>
-                      <div className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800">
-                        Follow-up
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Platform icon overlays */}
-              <div className="absolute -right-4 -top-4 flex gap-2">
-                <div className="rounded-full bg-[#3A9B9F] p-3 shadow-lg">
-                  <MessageSquare className="h-6 w-6 text-white" />
-                </div>
-                <div className="rounded-full bg-[#E1306C] p-3 shadow-lg">
-                  <Instagram className="h-6 w-6 text-white" />
-                </div>
-                <div className="rounded-full bg-[#0084FF] p-3 shadow-lg">
-                  <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.908 1.438 5.503 3.688 7.2V22l3.405-1.869c.909.252 1.871.388 2.907.388 5.523 0 10-4.145 10-9.243S17.523 2 12 2z" />
-                  </svg>
-                </div>
+            <div className="relative">
+              {/* Glow effect behind the image */}
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#3A9B9F]/20 via-transparent to-[#FF8B66]/20 blur-2xl" />
+              <div className="relative overflow-hidden rounded-2xl border border-gray-200/60 shadow-2xl">
+                <Image
+                  src="/landing-page-photo.png"
+                  alt="TropiChat dashboard — unified inbox for WhatsApp, Instagram, and Facebook"
+                  width={1408}
+                  height={768}
+                  unoptimized
+                  className="w-full h-auto"
+                  priority
+                />
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Full-width dashboard image (mobile & tablet — stacked below text) */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.7 }}
+          className="relative lg:hidden"
+        >
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-[#3A9B9F]/20 via-transparent to-[#FF8B66]/20 blur-2xl" />
+            <div className="relative overflow-hidden rounded-xl border border-gray-200/60 shadow-2xl sm:rounded-2xl">
+              <Image
+                src="/landing-page-photo.png"
+                alt="TropiChat dashboard — unified inbox for WhatsApp, Instagram, and Facebook"
+                width={1408}
+                height={768}
+                unoptimized
+                className="w-full h-auto"
+                priority
+              />
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

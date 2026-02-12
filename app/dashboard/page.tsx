@@ -290,7 +290,7 @@ export default function InboxPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] lg:h-screen">
+    <div className="flex h-full">
       {/* Conversation List - 25% */}
       <div className="w-full md:w-80 lg:w-96 flex-shrink-0">
         <ConversationList
@@ -305,20 +305,22 @@ export default function InboxPage() {
       </div>
 
       {/* Message Thread - 50% (hidden on mobile when no conversation) */}
-      <div className={`hidden md:flex flex-1 ${!selectedConversation ? "bg-gray-50" : ""}`}>
-        <MessageThread
-          conversation={selectedConversation}
-          messages={messages}
-          loading={loadingMessages}
-          onSendMessage={handleSendMessage}
-          onStatusChange={handleStatusChange}
-          onLoadMore={handleLoadMore}
-          hasMore={hasMoreMessages}
-        />
+      <div className={`hidden md:flex flex-1 min-w-0 ${!selectedConversation ? "bg-gray-50" : ""}`}>
+        <div className="flex flex-col w-full h-full">
+          <MessageThread
+            conversation={selectedConversation}
+            messages={messages}
+            loading={loadingMessages}
+            onSendMessage={handleSendMessage}
+            onStatusChange={handleStatusChange}
+            onLoadMore={handleLoadMore}
+            hasMore={hasMoreMessages}
+          />
+        </div>
       </div>
 
       {/* Contact Details - 25% (hidden on smaller screens) */}
-      <div className="hidden lg:block w-80 flex-shrink-0">
+      <div className="hidden lg:block w-80 flex-shrink-0 border-l border-gray-200">
         <ContactDetails
           conversation={selectedConversation}
           onUpdateContact={handleUpdateContact}

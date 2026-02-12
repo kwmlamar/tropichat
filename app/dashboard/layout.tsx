@@ -53,7 +53,7 @@ export default function DashboardLayout({
         <div className="h-14 lg:h-0" />
 
         {/* Page content */}
-        <main className="min-h-[calc(100vh-3.5rem)] lg:min-h-screen">
+        <main className="h-[calc(100vh-3.5rem)] lg:h-screen">
           {children}
         </main>
       </div>

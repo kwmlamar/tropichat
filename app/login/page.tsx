@@ -59,7 +59,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex items-center gap-4 text-sm text-white/60">
-          <span>Trusted by 240+ Caribbean businesses</span>
+          <span>🇧🇸 Built in the Bahamas • Now in Early Access</span>
         </div>
       </div>
 

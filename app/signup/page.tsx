@@ -76,7 +76,7 @@ export default function SignupPage() {
               Start your free trial today
             </h1>
             <p className="text-lg text-white/80 mt-4">
-              Join 240+ Caribbean businesses already using TropiChat
+              Be one of the first 10 Caribbean businesses on TropiChat
             </p>
           </div>
 
