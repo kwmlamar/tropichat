@@ -3,7 +3,7 @@ import { Mail, Twitter, Instagram, Linkedin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-[#213138] text-gray-300">
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
           {/* Brand */}
@@ -97,7 +97,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+        <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400">
           <p>
             &copy; {new Date().getFullYear()} TropiChat. All rights reserved.
           </p>

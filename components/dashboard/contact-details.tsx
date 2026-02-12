@@ -135,7 +135,7 @@ export function ContactDetails({
               />
               <button
                 onClick={handleSaveName}
-                className="p-1 text-green-600 hover:bg-green-50 rounded"
+                className="p-1 text-[#3A9B9F] hover:bg-teal-50 rounded"
               >
                 <Check className="h-4 w-4" />
               </button>
@@ -226,7 +226,7 @@ export function ContactDetails({
               />
               <button
                 onClick={handleAddTag}
-                className="p-1 text-[#3A9B9F] hover:bg-green-50 rounded"
+                className="p-1 text-[#3A9B9F] hover:bg-teal-50 rounded"
               >
                 <Plus className="h-4 w-4" />
               </button>

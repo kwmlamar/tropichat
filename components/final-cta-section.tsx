@@ -12,13 +12,13 @@ export function FinalCTASection() {
   return (
     <section
       id="get-started"
-      className="relative overflow-hidden py-24 md:py-32 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800"
+      className="relative overflow-hidden py-24 md:py-32 bg-gradient-to-br from-[#213138] via-[#213138] to-[#1a2a2b]"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-1/4 top-0 h-96 w-96 rounded-full bg-white opacity-5 blur-3xl" />
-        <div className="absolute -left-1/4 bottom-0 h-96 w-96 rounded-full bg-white opacity-5 blur-3xl" />
-        <div className="absolute inset-0 bg-grid-pattern-dark opacity-10" />
+        <div className="absolute -right-1/4 top-0 h-96 w-96 rounded-full bg-[#3A9B9F] opacity-10 blur-3xl" />
+        <div className="absolute -left-1/4 bottom-0 h-96 w-96 rounded-full bg-[#FF8B66] opacity-10 blur-3xl" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       </div>
 
       <div className="container mx-auto px-4">
@@ -38,7 +38,7 @@ export function FinalCTASection() {
             Start Managing All Your Customer Conversations in One Place
           </h2>
 
-          <p className="mb-8 text-lg text-blue-100 md:text-xl">
+          <p className="mb-8 text-lg text-gray-300 md:text-xl">
             Join businesses that are already using TropiChat to unify their customer conversations across WhatsApp, Instagram, and Facebook Messenger.
           </p>
 
@@ -46,7 +46,7 @@ export function FinalCTASection() {
             <Button
               onClick={handleGetStarted}
               size="lg"
-              className="group bg-white text-blue-600 hover:bg-gray-100 text-base px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
+              className="group bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-base px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
@@ -61,7 +61,7 @@ export function FinalCTASection() {
             </Button>
           </div>
 
-          <p className="mt-8 text-sm text-blue-200">
+          <p className="mt-8 text-sm text-gray-400">
             No credit card required • Get started in minutes • Cancel anytime
           </p>
         </motion.div>
