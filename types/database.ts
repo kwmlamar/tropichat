@@ -10,6 +10,7 @@ export type TemplateCategory = 'marketing' | 'utility' | 'authentication'
 export type TemplateApprovalStatus = 'pending' | 'approved' | 'rejected'
 export type TriggerType = 'keyword' | 'new_conversation' | 'business_hours' | 'after_hours' | 'all_messages'
 export type ActionType = 'send_message' | 'send_template' | 'add_tag' | 'assign_to' | 'mark_resolved'
+export type NotificationType = 'new_message' | 'mention' | 'assignment' | 'system'
 
 // Business hours type
 export interface BusinessHours {
@@ -145,6 +146,19 @@ export interface AutomationRule {
   last_triggered_at: string | null
   created_at: string
   updated_at: string
+}
+
+// Notification table
+export interface Notification {
+  id: string
+  customer_id: string
+  type: NotificationType
+  title: string
+  message: string
+  read: boolean
+  link: string | null
+  metadata: Record<string, unknown> | null
+  created_at: string
 }
 
 // Team Member table (for future use)

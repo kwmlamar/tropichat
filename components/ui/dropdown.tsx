@@ -29,7 +29,7 @@ export function Dropdown({
       {isOpen && (
         <div
           className={cn(
-            "absolute z-50 mt-2 min-w-[180px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5",
+            "absolute z-[9999] mt-2 min-w-[180px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5",
             "animate-in fade-in-0 zoom-in-95 duration-100",
             align === "right" ? "right-0" : "left-0"
           )}

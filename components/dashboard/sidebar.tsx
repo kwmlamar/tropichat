@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
@@ -21,8 +21,9 @@ import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
-import { signOut } from "@/lib/supabase"
+import { signOut, getUnreadConversationCount, subscribeToConversations } from "@/lib/supabase"
 import { toast } from "sonner"
+import { NotificationBell } from "./notification-bell"
 import type { Customer } from "@/types/database"
 
 interface SidebarProps {
@@ -42,6 +43,29 @@ export function Sidebar({ customer }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  // Fetch unread conversation count
+  const fetchUnreadCount = useCallback(async () => {
+    const { count } = await getUnreadConversationCount()
+    setUnreadCount(count)
+  }, [])
+
+  useEffect(() => {
+    fetchUnreadCount()
+  }, [fetchUnreadCount])
+
+  // Subscribe to conversation changes to update count in real-time
+  useEffect(() => {
+    if (!customer?.id) return
+
+    const unsubscribe = subscribeToConversations(customer.id, () => {
+      // Refetch count whenever any conversation changes
+      fetchUnreadCount()
+    })
+
+    return unsubscribe
+  }, [customer?.id, fetchUnreadCount])
 
   const handleSignOut = async () => {
     const { error } = await signOut()
@@ -61,16 +85,23 @@ export function Sidebar({ customer }: SidebarProps) {
 
   const SidebarContent = () => (
     <>
-      {/* Logo */}
-      <div className="flex items-center justify-center px-4 py-4 border-b border-white/10">
+      {/* Workspace Header */}
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
         <Image
-          src="/tropichat-full-logo2.png"
+          src="/tropichat-logo-transparent.png"
           alt="TropiChat"
-          width={160}
+          width={44}
           height={44}
           unoptimized
-          className="h-11 w-auto object-contain shrink-0 -translate-x-5"
+          className="h-11 w-11 shrink-0 object-contain"
         />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-white truncate">
+            {customer?.business_name || "TropiChat"}
+          </p>
+          <p className="text-xs text-gray-400">Workspace</p>
+        </div>
+        {customer?.id && <NotificationBell customerId={customer.id} />}
       </div>
 
       {/* Navigation */}
@@ -93,9 +124,9 @@ export function Sidebar({ customer }: SidebarProps) {
             >
               <Icon className={cn("h-5 w-5", active ? "text-[#3A9B9F]" : "text-gray-400")} />
               {item.label}
-              {item.label === "Inbox" && (
+              {item.label === "Inbox" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
-                  3
+                  {unreadCount > 99 ? "99+" : unreadCount}
                 </Badge>
               )}
             </Link>
@@ -125,24 +156,22 @@ export function Sidebar({ customer }: SidebarProps) {
       )}
 
       {/* User Profile */}
-      <div className="border-t border-white/10 p-3">
+      <div className="border-t border-white/10 p-3 min-w-0">
         <Dropdown
-          align="left"
+          align="right"
           trigger={
-            <button className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-white/10 transition-colors">
+            <button className="flex w-full min-w-0 items-center gap-3 rounded-lg p-2 hover:bg-white/10 transition-colors overflow-hidden">
               <Avatar
                 fallback={customer?.business_name || "User"}
                 size="sm"
+                className="shrink-0"
               />
-              <div className="flex-1 text-left min-w-0">
+              <div className="flex-1 min-w-0 text-left overflow-hidden">
                 <p className="text-sm font-medium text-white truncate">
-                  {customer?.business_name || "Loading..."}
-                </p>
-                <p className="text-xs text-gray-400 truncate">
-                  {customer?.contact_email || ""}
+                  {customer?.contact_email || "Loading..."}
                 </p>
               </div>
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
             </button>
           }
         >
@@ -170,15 +199,18 @@ export function Sidebar({ customer }: SidebarProps) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#213138] border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex-1 flex items-center justify-center min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
             <Image
-              src="/tropichat-full-logo2.png"
+              src="/tropichat-logo-transparent.png"
               alt="TropiChat"
-              width={140}
-              height={38}
+              width={40}
+              height={40}
               unoptimized
-              className="h-9 w-auto object-contain shrink-0 -translate-x-5"
+              className="h-10 w-10 shrink-0 object-contain"
             />
+            <p className="text-sm font-semibold text-white truncate">
+              {customer?.business_name || "TropiChat"}
+            </p>
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -196,14 +228,14 @@ export function Sidebar({ customer }: SidebarProps) {
             className="fixed inset-0 bg-black/50"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed left-0 top-14 bottom-0 w-72 bg-[#213138] flex flex-col overflow-y-auto">
+          <div className="fixed left-0 top-14 bottom-0 w-72 bg-[#213138] flex flex-col overflow-y-auto overflow-x-hidden">
             <SidebarContent />
           </div>
         </div>
       )}
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-white/10 lg:bg-[#213138]">
+      <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:border-r lg:border-white/10 lg:bg-[#213138]">
         <SidebarContent />
       </div>
     </>

@@ -6,7 +6,8 @@ import type {
   Message,
   MessageTemplate,
   AutomationRule,
-  ConversationWithContact
+  ConversationWithContact,
+  Notification
 } from '@/types/database'
 
 // Waitlist type for landing page
@@ -581,6 +582,120 @@ export async function getAnalytics(startDate: string, endDate: string) {
       conversations: conversations || [],
     },
     error: null,
+  }
+}
+
+// ==================== UNREAD CONVERSATIONS ====================
+
+export async function getUnreadConversationCount(): Promise<{ count: number; error: string | null }> {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) {
+    return { count: 0, error: 'Not authenticated' }
+  }
+
+  const { count, error } = await client
+    .from('conversations')
+    .select('*', { count: 'exact', head: true })
+    .eq('customer_id', user.id)
+    .gt('unread_count', 0)
+
+  return { count: count || 0, error: error?.message || null }
+}
+
+// ==================== NOTIFICATION FUNCTIONS ====================
+
+export async function getNotifications(
+  limit = 20,
+  offset = 0
+): Promise<{ data: Notification[]; error: string | null }> {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) {
+    return { data: [], error: 'Not authenticated' }
+  }
+
+  const { data, error } = await client
+    .from('notifications')
+    .select('*')
+    .eq('customer_id', user.id)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
+
+  return { data: data || [], error: error?.message || null }
+}
+
+export async function getUnreadNotificationCount(): Promise<{ count: number; error: string | null }> {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) {
+    return { count: 0, error: 'Not authenticated' }
+  }
+
+  const { count, error } = await client
+    .from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('customer_id', user.id)
+    .eq('read', false)
+
+  return { count: count || 0, error: error?.message || null }
+}
+
+export async function markNotificationAsRead(notificationId: string) {
+  const client = getSupabase()
+
+  const { error } = await client
+    .from('notifications')
+    .update({ read: true })
+    .eq('id', notificationId)
+
+  return { error: error?.message || null }
+}
+
+export async function markAllNotificationsAsRead() {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const { error } = await client
+    .from('notifications')
+    .update({ read: true })
+    .eq('customer_id', user.id)
+    .eq('read', false)
+
+  return { error: error?.message || null }
+}
+
+export function subscribeToNotifications(
+  customerId: string,
+  callback: (notification: Notification) => void
+) {
+  const client = getSupabase()
+
+  const channel = client
+    .channel(`notifications:${customerId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `customer_id=eq.${customerId}`,
+      },
+      (payload) => {
+        callback(payload.new as Notification)
+      }
+    )
+    .subscribe()
+
+  return () => {
+    client.removeChannel(channel)
   }
 }
 

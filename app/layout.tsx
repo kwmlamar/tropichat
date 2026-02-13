@@ -18,7 +18,11 @@ export const metadata: Metadata = {
   keywords: ["WhatsApp Business", "Caribbean", "Small Business", "Customer Management", "CRM", "Business Tools", "WhatsApp CRM", "Bahamas", "Jamaica", "Trinidad", "Barbados", "Caribbean business tools"],
   authors: [{ name: "TropiTech Solutions" }],
   icons: {
-    icon: "/tropichat-logo-transparent.png",
+    icon: [
+      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "32x32" },
+      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: "/tropichat-logo-transparent.png",
   },
   openGraph: {
     title: "TropiChat - Run Your Business Like a Pro, Right From WhatsApp",
