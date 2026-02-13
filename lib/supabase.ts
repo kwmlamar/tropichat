@@ -31,20 +31,14 @@ export const getSupabase = () => {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // Only throw in development - in production, return a mock client that fails gracefully
-    if (process.env.NODE_ENV === 'development') {
-      throw new Error('Supabase environment variables are not set. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+    const msg = 'Supabase environment variables are not set. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. In production, add these to your hosting platform (Vercel, Netlify, etc.) environment variables.'
+    if (typeof window !== 'undefined') {
+      console.error(msg)
+      // Don't use placeholder URL - it causes "Load failed" and CORS errors.
+      // Throw so callers can handle missing config instead of failing silently.
+      throw new Error(msg)
     }
-    // In production, create a client with empty strings to prevent crashes
-    // The actual API calls will fail gracefully
-    console.warn('Supabase environment variables not set - some features may not work')
-    supabaseInstance = createClient('https://placeholder.supabase.co', 'placeholder-key', {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-      },
-    })
-    return supabaseInstance
+    throw new Error(msg)
   }
 
   supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
