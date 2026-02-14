@@ -32,9 +32,10 @@ function waitForFB(timeout = 10000): Promise<FacebookSDK> {
 }
 
 /**
- * Triggers the Facebook Login popup — public_profile is granted by default.
- * Passing an empty scope avoids the "needs at least one supported permission" error
- * since public_profile is implicit and not counted as a requested permission in v22.0.
+ * Triggers the Facebook Login popup.
+ * No scope option is passed — the SDK defaults to public_profile automatically.
+ * Passing { scope: "" } or { scope: "public_profile" } both cause issues in v22.0,
+ * so we omit it entirely.
  */
 function facebookLogin(fb: FacebookSDK): Promise<FacebookLoginStatusResponse> {
   return new Promise((resolve) => {
@@ -45,10 +46,11 @@ function facebookLogin(fb: FacebookSDK): Promise<FacebookLoginStatusResponse> {
         if (response.authResponse) {
           console.log("[FB Login] UserID:", response.authResponse.userID)
           console.log("[FB Login] Access token (first 20 chars):", response.authResponse.accessToken?.slice(0, 20) + "...")
+        } else {
+          console.log("[FB Login] No authResponse — user may have cancelled or popup was blocked")
         }
         resolve(response)
-      },
-      { scope: "" }
+      }
     )
   })
 }
