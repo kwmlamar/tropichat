@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import FacebookSDKProvider from "@/components/FacebookSDKProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -53,6 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${plusJakarta.variable} font-sans antialiased`}>
+        <FacebookSDKProvider />
         {children}
         <Toaster position="top-center" richColors />
       </body>

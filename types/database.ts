@@ -38,6 +38,8 @@ export interface Customer {
   phone_number: string | null
   whatsapp_phone_id: string | null
   whatsapp_business_id: string | null
+  facebook_id: string | null
+  avatar_url: string | null
   created_at: string
   updated_at: string
 }

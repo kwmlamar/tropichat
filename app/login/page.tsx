@@ -9,7 +9,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signIn } from "@/lib/supabase"
+import { handleFacebookLogin } from "@/lib/facebook-auth"
 import { toast } from "sonner"
+
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  )
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,6 +26,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,6 +42,27 @@ export default function LoginPage() {
 
     toast.success("Welcome back!")
     router.push("/dashboard")
+  }
+
+  const onFacebookLogin = async () => {
+    setIsFacebookLoading(true)
+
+    try {
+      const result = await handleFacebookLogin()
+
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+
+      toast.success(result.isNewUser ? "Account created! Welcome to TropiChat!" : "Welcome back!")
+      router.push("/dashboard")
+    } catch (err) {
+      toast.error("Something went wrong with Facebook login. Please try again.")
+      console.error("Facebook login error:", err)
+    } finally {
+      setIsFacebookLoading(false)
+    }
   }
 
   return (
@@ -82,6 +113,36 @@ export default function LoginPage() {
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
               <p className="text-gray-500 mt-2">Sign in to your account</p>
+            </div>
+
+            {/* Facebook Login Button */}
+            <Button
+              type="button"
+              onClick={onFacebookLogin}
+              disabled={isFacebookLoading || isLoading}
+              className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-6 h-auto text-base font-semibold mb-6"
+            >
+              {isFacebookLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Connecting...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <FacebookIcon className="h-5 w-5" />
+                  Continue with Facebook
+                </span>
+              )}
+            </Button>
+
+            {/* Divider */}
+            <div className="relative mb-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-gray-400">or sign in with email</span>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -138,7 +199,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isFacebookLoading}
                 className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white py-6 h-auto text-base font-semibold"
               >
                 {isLoading ? (

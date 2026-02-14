@@ -111,23 +111,36 @@ export default function InboxPage() {
 
 
     const unsubscribe = subscribeToMessages(selectedConversation.id, (message, eventType) => {
-      console.log('🔴 Realtime message received!', eventType, message)
       setMessages((prev) => {
         if (eventType === 'UPDATE') {
           // Update existing message (e.g., status change: sent -> delivered -> read)
           return prev.map((m) => (m.id === message.id ? message : m))
         }
 
-        // INSERT event - only add if not already in list (avoid duplicates from optimistic updates)
-        if (prev.some((m) => m.id === message.id || m.twilio_message_sid === message.twilio_message_sid)) {
-          // Replace optimistic message with real one
-          return prev.map((m) =>
-            m.id === message.id || m.twilio_message_sid === message.twilio_message_sid
-              ? message
-              : m
-          )
+        // INSERT event - handle race with optimistic update + API response
+        const existingIdx = prev.findIndex(
+          (m) => m.id === message.id || (m.twilio_message_sid && m.twilio_message_sid === message.twilio_message_sid)
+        )
+        if (existingIdx >= 0) {
+          return prev.map((m, i) => (i === existingIdx ? message : m))
         }
-        return [...prev, message]
+        // Replace optimistic message (status "sending") if this is the real outbound confirmation
+        const optimisticIdx = prev.findIndex(
+          (m) =>
+            m.direction === 'outbound' &&
+            m.status === 'sending' &&
+            m.body === message.body &&
+            Math.abs(new Date(m.sent_at).getTime() - new Date(message.sent_at).getTime()) < 30000
+        )
+        if (optimisticIdx >= 0) {
+          return prev.map((m, i) => (i === optimisticIdx ? message : m))
+        }
+        // Dedupe by id as a safety net (race with API response)
+        const merged = [...prev, message]
+        const byId = new Map(merged.map((m) => [m.id, m]))
+        return Array.from(byId.values()).sort(
+          (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
+        )
       })
     })
 
@@ -215,10 +228,14 @@ export default function InboxPage() {
         )
       )
     } else if (data) {
-      // Replace temp message with real one
-      setMessages((prev) =>
-        prev.map((m) => (m.id === tempMessage.id ? data : m))
-      )
+      // Replace temp message with real one; dedupe in case Realtime already added it
+      setMessages((prev) => {
+        const updated = prev.map((m) => (m.id === tempMessage.id ? data : m))
+        const byId = new Map(updated.map((m) => [m.id, m]))
+        return Array.from(byId.values()).sort(
+          (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
+        )
+      })
     }
   }
 
