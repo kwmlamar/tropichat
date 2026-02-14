@@ -141,6 +141,25 @@ export async function getUser() {
   return { user, error: error?.message || null }
 }
 
+export type OAuthProvider = 'facebook' | 'google'
+
+export async function signInWithOAuth(provider: OAuthProvider) {
+  const client = getSupabase()
+
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    return { data: null, error: error.message }
+  }
+
+  return { data, error: null }
+}
+
 export async function resetPassword(email: string) {
   const client = getSupabase()
   const { error } = await client.auth.resetPasswordForEmail(email, {
