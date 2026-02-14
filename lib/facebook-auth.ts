@@ -33,9 +33,9 @@ function waitForFB(timeout = 10000): Promise<FacebookSDK> {
 
 /**
  * Triggers the Facebook Login popup.
- * No scope option is passed — the SDK defaults to public_profile automatically.
- * Passing { scope: "" } or { scope: "public_profile" } both cause issues in v22.0,
- * so we omit it entirely.
+ * We request 'email' scope because Facebook requires at least one explicit
+ * permission — public_profile alone doesn't count. We don't actually read
+ * the email from the profile response; the userID is our identifier.
  */
 function facebookLogin(fb: FacebookSDK): Promise<FacebookLoginStatusResponse> {
   return new Promise((resolve) => {
@@ -50,7 +50,8 @@ function facebookLogin(fb: FacebookSDK): Promise<FacebookLoginStatusResponse> {
           console.log("[FB Login] No authResponse — user may have cancelled or popup was blocked")
         }
         resolve(response)
-      }
+      },
+      { scope: "email" }
     )
   })
 }
