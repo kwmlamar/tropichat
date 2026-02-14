@@ -5,19 +5,23 @@ export type FacebookAuthResult =
   | { success: false; error: string }
 
 /**
- * Waits for the Facebook SDK to be loaded and initialized.
+ * Waits for the Facebook SDK to be loaded AND initialized (FB.init() called).
+ * Checks window.__fbInitialized which is set by FacebookSDKProvider after init().
  */
 function waitForFB(timeout = 10000): Promise<FacebookSDK> {
   return new Promise((resolve, reject) => {
-    if (window.FB) {
+    if (window.__fbInitialized && window.FB) {
+      console.log("[FB Auth] SDK already initialized")
       resolve(window.FB)
       return
     }
 
+    console.log("[FB Auth] Waiting for SDK to initialize...")
     const start = Date.now()
     const interval = setInterval(() => {
-      if (window.FB) {
+      if (window.__fbInitialized && window.FB) {
         clearInterval(interval)
+        console.log("[FB Auth] SDK ready")
         resolve(window.FB)
       } else if (Date.now() - start > timeout) {
         clearInterval(interval)
