@@ -1,0 +1,6 @@
+{"location":"app/dashboard/layout.tsx:useEffect","message":"Dashboard layout mount, registering onAuthStateChange","data":{},"timestamp":1771300635343,"hypothesisId":"H1"}
+{"location":"app/dashboard/layout.tsx:fallback","message":"Fallback getSession running","data":{},"timestamp":1771300637845,"runId":"post-fix"}
+{"location":"app/dashboard/layout.tsx:fallbackDone","message":"Fallback getSession done","data":{"hasSession":false},"timestamp":1771300640849,"runId":"post-fix"}
+{"location":"app/dashboard/layout.tsx:useEffect","message":"Dashboard layout mount, registering onAuthStateChange","data":{},"timestamp":1771347224091,"hypothesisId":"H1"}
+{"location":"app/dashboard/layout.tsx:useEffect","message":"Dashboard layout mount, registering onAuthStateChange","data":{},"timestamp":1771347224099,"hypothesisId":"H1"}
+{"location":"app/dashboard/layout.tsx:fallback","message":"Fallback getSession running","data":{},"timestamp":1771347226600,"runId":"post-fix"}

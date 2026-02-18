@@ -1,68 +1,85 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
-import { ConversationList } from "@/components/dashboard/conversation-list"
-import { MessageThread } from "@/components/dashboard/message-thread"
-import { ContactDetails } from "@/components/dashboard/contact-details"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { UnifiedConversationList } from "@/components/dashboard/unified-conversation-list"
+import { UnifiedMessageThread } from "@/components/dashboard/unified-message-thread"
+import { UnifiedContactDetails } from "@/components/dashboard/unified-contact-details"
 import {
-  getConversations,
-  getMessages,
-  sendMessage,
-  updateConversation,
-  updateContact,
-  getUser,
-  subscribeToMessages,
-  subscribeToConversations,
-} from "@/lib/supabase"
+  getUnifiedConversations,
+  getUnifiedMessages,
+  sendUnifiedMessage,
+  updateUnifiedConversation,
+  subscribeToUnifiedMessages,
+  subscribeToUnifiedConversations,
+  getConnectedAccounts,
+} from "@/lib/unified-inbox"
 import { useDebounce } from "@/lib/hooks"
 import { generateId } from "@/lib/utils"
 import { toast } from "sonner"
 import type {
-  ConversationWithContact,
-  Message,
-  ConversationStatus,
-  Contact,
-} from "@/types/database"
+  ConversationWithAccount,
+  UnifiedMessage,
+  UnifiedConversation,
+  ChannelType,
+} from "@/types/unified-inbox"
 
 export default function InboxPage() {
   // State
-  const [conversations, setConversations] = useState<ConversationWithContact[]>([])
-  const [selectedConversation, setSelectedConversation] = useState<ConversationWithContact | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [conversations, setConversations] = useState<ConversationWithAccount[]>([])
+  const [selectedConversation, setSelectedConversation] = useState<ConversationWithAccount | null>(null)
+  const [messages, setMessages] = useState<UnifiedMessage[]>([])
   const [loadingConversations, setLoadingConversations] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const [channelFilter, setChannelFilter] = useState<ChannelType | "all">("all")
   const [hasMoreMessages, setHasMoreMessages] = useState(true)
-  const [userId, setUserId] = useState<string | null>(null)
+  const [accountIds, setAccountIds] = useState<string[]>([])
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
-  // Fetch user ID
+  // Track mount status for async safety
+  const mountedRef = useRef(true)
   useEffect(() => {
-    async function fetchUser() {
-      const { user } = await getUser()
-      if (user) {
-        setUserId(user.id)
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
+
+  // Fetch connected account IDs for realtime subscriptions
+  useEffect(() => {
+    let ignore = false
+    async function fetchAccounts() {
+      try {
+        const { data } = await getConnectedAccounts()
+        if (!ignore) setAccountIds(data.map((a) => a.id))
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return
+        console.error("Failed to fetch accounts:", err)
       }
     }
-    fetchUser()
+    fetchAccounts()
+    return () => { ignore = true }
   }, [])
 
   // Fetch conversations
   const fetchConversations = useCallback(async () => {
+    if (!mountedRef.current) return
     setLoadingConversations(true)
-    const { data, error } = await getConversations(statusFilter, debouncedSearch)
+    try {
+      const { data, error } = await getUnifiedConversations(channelFilter, debouncedSearch)
+      if (!mountedRef.current) return
 
-    if (error) {
-      toast.error("Failed to load conversations")
-      console.error(error)
-    } else {
-      setConversations(data)
+      if (error) {
+        toast.error("Failed to load conversations")
+        console.error(error)
+      } else {
+        setConversations(data)
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return
+      console.error("Failed to fetch conversations:", err)
     }
-
-    setLoadingConversations(false)
-  }, [statusFilter, debouncedSearch])
+    if (mountedRef.current) setLoadingConversations(false)
+  }, [channelFilter, debouncedSearch])
 
   useEffect(() => {
     fetchConversations()
@@ -75,125 +92,139 @@ export default function InboxPage() {
       return
     }
 
+    let ignore = false
+
     async function fetchMessages() {
       setLoadingMessages(true)
-      const { data, error } = await getMessages(selectedConversation!.id)
+      try {
+        const { data, error } = await getUnifiedMessages(selectedConversation!.id)
+        if (ignore) return
 
-      if (error) {
-        toast.error("Failed to load messages")
-        console.error(error)
-      } else {
-        setMessages(data)
-        setHasMoreMessages(data.length === 50)
-      }
+        if (error) {
+          toast.error("Failed to load messages")
+          console.error(error)
+        } else {
+          setMessages(data)
+          setHasMoreMessages(data.length === 50)
+        }
+        setLoadingMessages(false)
 
-      setLoadingMessages(false)
-
-      // Mark conversation as read
-      if (selectedConversation!.unread_count > 0) {
-        await updateConversation(selectedConversation!.id, { unread_count: 0 })
-        setConversations((prev) =>
-          prev.map((conv) =>
-            conv.id === selectedConversation!.id ? { ...conv, unread_count: 0 } : conv
-          )
-        )
+        // Mark conversation as read
+        if (selectedConversation!.unread_count > 0) {
+          await updateUnifiedConversation(selectedConversation!.id, { unread_count: 0 })
+          if (!ignore) {
+            setConversations((prev) =>
+              prev.map((conv) =>
+                conv.id === selectedConversation!.id ? { ...conv, unread_count: 0 } : conv
+              )
+            )
+          }
+        }
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return
+        console.error("Failed to fetch messages:", err)
+        if (!ignore) setLoadingMessages(false)
       }
     }
 
     fetchMessages()
+    return () => { ignore = true }
   }, [selectedConversation?.id])
 
-  // Real-time subscription for messages
+  // Real-time subscription for messages in the selected conversation
   useEffect(() => {
     if (!selectedConversation) return
 
-    console.log('🔴 Setting up realtime subscription for conversation:', selectedConversation.id)
+    const unsubscribe = subscribeToUnifiedMessages(
+      selectedConversation.id,
+      (message, eventType) => {
+        setMessages((prev) => {
+          if (eventType === "UPDATE") {
+            return prev.map((m) => (m.id === message.id ? message : m))
+          }
 
+          // INSERT — handle race with optimistic update
+          const existingIdx = prev.findIndex(
+            (m) =>
+              m.id === message.id ||
+              (m.channel_message_id && m.channel_message_id === message.channel_message_id)
+          )
+          if (existingIdx >= 0) {
+            return prev.map((m, i) => (i === existingIdx ? message : m))
+          }
 
-    const unsubscribe = subscribeToMessages(selectedConversation.id, (message, eventType) => {
-      setMessages((prev) => {
-        if (eventType === 'UPDATE') {
-          // Update existing message (e.g., status change: sent -> delivered -> read)
-          return prev.map((m) => (m.id === message.id ? message : m))
-        }
+          // Replace optimistic message
+          const optimisticIdx = prev.findIndex(
+            (m) =>
+              m.sender_type === "business" &&
+              m.status === "sending" &&
+              m.content === message.content &&
+              Math.abs(new Date(m.sent_at).getTime() - new Date(message.sent_at).getTime()) < 30000
+          )
+          if (optimisticIdx >= 0) {
+            return prev.map((m, i) => (i === optimisticIdx ? message : m))
+          }
 
-        // INSERT event - handle race with optimistic update + API response
-        const existingIdx = prev.findIndex(
-          (m) => m.id === message.id || (m.twilio_message_sid && m.twilio_message_sid === message.twilio_message_sid)
-        )
-        if (existingIdx >= 0) {
-          return prev.map((m, i) => (i === existingIdx ? message : m))
-        }
-        // Replace optimistic message (status "sending") if this is the real outbound confirmation
-        const optimisticIdx = prev.findIndex(
-          (m) =>
-            m.direction === 'outbound' &&
-            m.status === 'sending' &&
-            m.body === message.body &&
-            Math.abs(new Date(m.sent_at).getTime() - new Date(message.sent_at).getTime()) < 30000
-        )
-        if (optimisticIdx >= 0) {
-          return prev.map((m, i) => (i === optimisticIdx ? message : m))
-        }
-        // Dedupe by id as a safety net (race with API response)
-        const merged = [...prev, message]
-        const byId = new Map(merged.map((m) => [m.id, m]))
-        return Array.from(byId.values()).sort(
-          (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
-        )
-      })
-    })
+          // Dedupe & sort
+          const merged = [...prev, message]
+          const byId = new Map(merged.map((m) => [m.id, m]))
+          return Array.from(byId.values()).sort(
+            (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
+          )
+        })
+      }
+    )
 
     return unsubscribe
   }, [selectedConversation?.id])
 
-  // Real-time subscription for conversations
+  // Real-time subscription for conversation list updates
   useEffect(() => {
-    if (!userId) return
+    if (accountIds.length === 0) return
 
-    const unsubscribe = subscribeToConversations(userId, (updatedConv) => {
-      setConversations((prev) => {
-        const index = prev.findIndex((c) => c.id === updatedConv.id)
-        if (index === -1) {
-          // New conversation - refetch to get contact data
-          fetchConversations()
+    const unsubscribe = subscribeToUnifiedConversations(
+      accountIds,
+      (updatedConv: UnifiedConversation) => {
+        setConversations((prev) => {
+          const index = prev.findIndex((c) => c.id === updatedConv.id)
+          if (index === -1) {
+            // New conversation — refetch to get full data with joins
+            fetchConversations()
+            return prev
+          }
           return prev
-        }
-        // Update existing conversation
-        return prev.map((c) =>
-          c.id === updatedConv.id ? { ...c, ...updatedConv } : c
-        )
-      })
-    })
+            .map((c) => (c.id === updatedConv.id ? { ...c, ...updatedConv } : c))
+            .sort(
+              (a, b) =>
+                new Date(b.last_message_at || b.created_at).getTime() -
+                new Date(a.last_message_at || a.created_at).getTime()
+            )
+        })
+      }
+    )
 
     return unsubscribe
-  }, [userId, fetchConversations])
+  }, [accountIds, fetchConversations])
 
-  // Handle sending a message
+  // Send message handler
   const handleSendMessage = async (messageText: string) => {
-    if (!selectedConversation || !userId) return
+    if (!selectedConversation) return
 
-    // Optimistic update - add message to UI immediately
-    const tempMessage: Message = {
+    // Optimistic update
+    const tempMessage: UnifiedMessage = {
       id: generateId(),
       conversation_id: selectedConversation.id,
-      customer_id: userId,
-      twilio_message_sid: null,
-      whatsapp_message_id: null,
-      direction: "outbound",
-      from_number: "",
-      to_number: selectedConversation.contact?.phone_number || "",
-      body: messageText,
-      media_url: null,
-      media_type: null,
-      status: "sending",
-      template_name: null,
-      is_automated: false,
-      sent_by: userId,
+      channel_message_id: null,
+      sender_type: "business",
+      content: messageText,
+      message_type: "text",
       sent_at: new Date().toISOString(),
       delivered_at: null,
       read_at: null,
+      failed_at: null,
+      status: "sending",
       error_message: null,
+      metadata: {},
       created_at: new Date().toISOString(),
     }
 
@@ -212,23 +243,18 @@ export default function InboxPage() {
       )
     )
 
-    // Send the actual message
-    const { data, error } = await sendMessage(
-      selectedConversation.id,
-      messageText,
-      userId
-    )
+    // Send via API
+    const { data, error } = await sendUnifiedMessage(selectedConversation.id, messageText)
 
     if (error) {
       toast.error("Failed to send message")
-      // Update message status to failed
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === tempMessage.id ? { ...m, status: "failed" } : m
+          m.id === tempMessage.id ? { ...m, status: "failed" as const } : m
         )
       )
     } else if (data) {
-      // Replace temp message with real one; dedupe in case Realtime already added it
+      // Replace temp with real message, dedupe
       setMessages((prev) => {
         const updated = prev.map((m) => (m.id === tempMessage.id ? data : m))
         const byId = new Map(updated.map((m) => [m.id, m]))
@@ -239,65 +265,31 @@ export default function InboxPage() {
     }
   }
 
-  // Handle status change
-  const handleStatusChange = async (status: ConversationStatus) => {
+  // Archive handler
+  const handleArchive = async () => {
     if (!selectedConversation) return
-
-    const { error } = await updateConversation(selectedConversation.id, { status })
-
+    const { error } = await updateUnifiedConversation(selectedConversation.id, {
+      is_archived: !selectedConversation.is_archived,
+    })
     if (error) {
-      toast.error("Failed to update status")
+      toast.error("Failed to archive conversation")
     } else {
-      // Update local state
-      setSelectedConversation((prev) => (prev ? { ...prev, status } : null))
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === selectedConversation.id ? { ...conv, status } : conv
-        )
+      toast.success(
+        selectedConversation.is_archived ? "Conversation unarchived" : "Conversation archived"
       )
-      toast.success(`Conversation marked as ${status}`)
+      setSelectedConversation(null)
+      fetchConversations()
     }
   }
 
-  // Handle contact update
-  const handleUpdateContact = async (updates: Partial<Contact>) => {
-    if (!selectedConversation?.contact) return
-
-    const { error } = await updateContact(selectedConversation.contact.id, updates)
-
-    if (error) {
-      toast.error("Failed to update contact")
-    } else {
-      // Update local state
-      setSelectedConversation((prev) =>
-        prev
-          ? {
-              ...prev,
-              contact: { ...prev.contact!, ...updates },
-            }
-          : null
-      )
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === selectedConversation.id
-            ? { ...conv, contact: { ...conv.contact!, ...updates } }
-            : conv
-        )
-      )
-      toast.success("Contact updated")
-    }
-  }
-
-  // Handle loading more messages
+  // Load more messages
   const handleLoadMore = async () => {
     if (!selectedConversation || messages.length === 0) return
-
-    const { data, error } = await getMessages(
+    const { data, error } = await getUnifiedMessages(
       selectedConversation.id,
       50,
       messages[0].sent_at
     )
-
     if (error) {
       toast.error("Failed to load more messages")
     } else {
@@ -308,39 +300,42 @@ export default function InboxPage() {
 
   return (
     <div className="flex h-full">
-      {/* Conversation List - 25% */}
+      {/* Conversation List */}
       <div className="w-full md:w-80 lg:w-96 flex-shrink-0">
-        <ConversationList
+        <UnifiedConversationList
           conversations={conversations}
           selectedId={selectedConversation?.id || null}
           onSelect={setSelectedConversation}
           loading={loadingConversations}
           onSearch={setSearchQuery}
-          onFilterChange={setStatusFilter}
-          currentFilter={statusFilter}
+          onChannelFilter={setChannelFilter}
+          currentChannelFilter={channelFilter}
         />
       </div>
 
-      {/* Message Thread - 50% (hidden on mobile when no conversation) */}
-      <div className={`hidden md:flex flex-1 min-w-0 ${!selectedConversation ? "bg-gray-50" : ""}`}>
+      {/* Message Thread */}
+      <div
+        className={`hidden md:flex flex-1 min-w-0 ${!selectedConversation ? "bg-gray-50" : ""}`}
+      >
         <div className="flex flex-col w-full h-full">
-          <MessageThread
+          <UnifiedMessageThread
             conversation={selectedConversation}
             messages={messages}
             loading={loadingMessages}
             onSendMessage={handleSendMessage}
-            onStatusChange={handleStatusChange}
+            onArchive={handleArchive}
             onLoadMore={handleLoadMore}
             hasMore={hasMoreMessages}
           />
         </div>
       </div>
 
-      {/* Contact Details - 25% (hidden on smaller screens) */}
+      {/* Contact Details */}
       <div className="hidden lg:block w-80 flex-shrink-0 border-l border-gray-200">
-        <ContactDetails
+        <UnifiedContactDetails
           conversation={selectedConversation}
-          onUpdateContact={handleUpdateContact}
+          messageCount={messages.length}
+          onArchive={handleArchive}
         />
       </div>
     </div>
