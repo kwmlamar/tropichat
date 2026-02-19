@@ -200,6 +200,12 @@ export default function InboxPage() {
                 new Date(a.last_message_at || a.created_at).getTime()
             )
         })
+
+        // Also update selectedConversation if it's the one that changed
+        setSelectedConversation((prev) => {
+          if (!prev || prev.id !== updatedConv.id) return prev
+          return { ...prev, ...updatedConv }
+        })
       }
     )
 
@@ -209,6 +215,8 @@ export default function InboxPage() {
   // Send message handler
   const handleSendMessage = async (messageText: string) => {
     if (!selectedConversation) return
+
+    const isHumanAgent = selectedConversation.human_agent_enabled
 
     // Optimistic update
     const tempMessage: UnifiedMessage = {
@@ -224,7 +232,7 @@ export default function InboxPage() {
       failed_at: null,
       status: "sending",
       error_message: null,
-      metadata: {},
+      metadata: isHumanAgent ? { human_agent_tag: true } : {},
       created_at: new Date().toISOString(),
     }
 
@@ -243,8 +251,14 @@ export default function InboxPage() {
       )
     )
 
-    // Send via API
-    const { data, error } = await sendUnifiedMessage(selectedConversation.id, messageText)
+    // Send via API (pass human_agent_tag flag)
+    const { data, error } = await sendUnifiedMessage(
+      selectedConversation.id,
+      messageText,
+      "text",
+      undefined,
+      isHumanAgent
+    )
 
     if (error) {
       toast.error("Failed to send message")
@@ -254,6 +268,11 @@ export default function InboxPage() {
         )
       )
     } else if (data) {
+      // Show success toast for human agent messages
+      if (isHumanAgent) {
+        toast.success("Sent with Human Agent tag (7-day window)")
+      }
+
       // Replace temp with real message, dedupe
       setMessages((prev) => {
         const updated = prev.map((m) => (m.id === tempMessage.id ? data : m))
@@ -262,6 +281,36 @@ export default function InboxPage() {
           (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
         )
       })
+    }
+  }
+
+  // Human Agent toggle handler
+  const handleToggleHumanAgent = async (enabled: boolean, reason?: string) => {
+    if (!selectedConversation) return
+
+    const updates: Record<string, unknown> = {
+      human_agent_enabled: enabled,
+      human_agent_reason: enabled ? (reason || null) : null,
+      human_agent_marked_at: enabled ? new Date().toISOString() : null,
+    }
+
+    const { error } = await updateUnifiedConversation(selectedConversation.id, updates as never)
+
+    if (error) {
+      toast.error("Failed to update Human Agent mode")
+    } else {
+      // Update local state
+      const updatedConv = { ...selectedConversation, ...updates } as ConversationWithAccount
+      setSelectedConversation(updatedConv)
+      setConversations((prev) =>
+        prev.map((c) => (c.id === selectedConversation.id ? { ...c, ...updates } as ConversationWithAccount : c))
+      )
+
+      if (enabled) {
+        toast.success("Human Agent mode enabled — 7 days to respond")
+      } else {
+        toast.success("Human Agent mode disabled")
+      }
     }
   }
 
@@ -326,6 +375,7 @@ export default function InboxPage() {
             onArchive={handleArchive}
             onLoadMore={handleLoadMore}
             hasMore={hasMoreMessages}
+            onToggleHumanAgent={handleToggleHumanAgent}
           />
         </div>
       </div>

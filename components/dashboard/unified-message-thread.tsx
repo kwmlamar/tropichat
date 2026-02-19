@@ -12,9 +12,13 @@ import {
   FileText,
   Image as ImageIcon,
   Archive,
+  UserCog,
+  Shield,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { Avatar } from "@/components/ui/avatar"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { SkeletonMessage } from "@/components/ui/skeleton"
@@ -30,6 +34,17 @@ interface UnifiedMessageThreadProps {
   onArchive?: () => void
   onLoadMore?: () => void
   hasMore?: boolean
+  onToggleHumanAgent?: (enabled: boolean, reason?: string) => void
+}
+
+/** Calculate days remaining from a marked-at timestamp (7-day window) */
+function getDaysRemaining(markedAt: string | null): number | null {
+  if (!markedAt) return null
+  const marked = new Date(markedAt)
+  const deadline = new Date(marked.getTime() + 7 * 24 * 60 * 60 * 1000)
+  const now = new Date()
+  const remaining = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+  return Math.max(0, remaining)
 }
 
 export function UnifiedMessageThread({
@@ -40,9 +55,12 @@ export function UnifiedMessageThread({
   onArchive,
   onLoadMore,
   hasMore,
+  onToggleHumanAgent,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
+  const [showHumanAgentPanel, setShowHumanAgentPanel] = useState(false)
+  const [humanAgentReason, setHumanAgentReason] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -50,6 +68,12 @@ export function UnifiedMessageThread({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  // Sync reason state when conversation changes
+  useEffect(() => {
+    setHumanAgentReason(conversation?.human_agent_reason || "")
+    setShowHumanAgentPanel(false)
+  }, [conversation?.id])
 
   const handleSend = async () => {
     if (!messageText.trim() || isSending) return
@@ -65,6 +89,17 @@ export function UnifiedMessageThread({
       e.preventDefault()
       handleSend()
     }
+  }
+
+  const handleEnableHumanAgent = () => {
+    onToggleHumanAgent?.(true, humanAgentReason || undefined)
+    setShowHumanAgentPanel(false)
+  }
+
+  const handleDisableHumanAgent = () => {
+    onToggleHumanAgent?.(false)
+    setHumanAgentReason("")
+    setShowHumanAgentPanel(false)
   }
 
   const getStatusIcon = (status: MessageDeliveryStatus) => {
@@ -114,6 +149,9 @@ export function UnifiedMessageThread({
     )
   }
 
+  const isHumanAgentEnabled = conversation.human_agent_enabled
+  const daysRemaining = getDaysRemaining(conversation.human_agent_marked_at)
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
@@ -130,9 +168,17 @@ export function UnifiedMessageThread({
             </div>
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">
-              {conversation.customer_name || conversation.customer_id}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="font-semibold text-gray-900">
+                {conversation.customer_name || conversation.customer_id}
+              </h2>
+              {isHumanAgentEnabled && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  <Shield className="h-3 w-3" />
+                  Human Agent
+                </span>
+              )}
+            </div>
             <div className="text-xs text-gray-500 flex items-center gap-1.5">
               <ChannelIcon channel={conversation.channel_type} size="sm" />
               <span>{getChannelLabel(conversation.channel_type)}</span>
@@ -147,6 +193,20 @@ export function UnifiedMessageThread({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Human Agent Toggle Button */}
+          <button
+            onClick={() => setShowHumanAgentPanel(!showHumanAgentPanel)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isHumanAgentEnabled
+                ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                : "hover:bg-gray-100 text-gray-500"
+            )}
+            title={isHumanAgentEnabled ? "Human Agent mode active" : "Enable Human Agent mode (7-day window)"}
+          >
+            <UserCog className="h-5 w-5" />
+          </button>
+
           <Dropdown
             align="right"
             trigger={
@@ -168,6 +228,75 @@ export function UnifiedMessageThread({
           </Dropdown>
         </div>
       </div>
+
+      {/* Human Agent Banner - shown when enabled */}
+      {isHumanAgentEnabled && (
+        <div className="px-6 py-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="rounded-full bg-amber-100 p-1.5">
+              <Shield className="h-4 w-4 text-amber-700" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-amber-900">
+                Human Agent Mode — {daysRemaining !== null ? `${daysRemaining} day${daysRemaining !== 1 ? "s" : ""} remaining` : "7-day window"}
+              </p>
+              {conversation.human_agent_reason && (
+                <p className="text-xs text-amber-700 mt-0.5">
+                  Reason: {conversation.human_agent_reason}
+                </p>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={handleDisableHumanAgent}
+            className="text-amber-700 hover:text-amber-900 p-1 rounded-lg hover:bg-amber-100 transition-colors"
+            title="Disable Human Agent mode"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Human Agent Setup Panel - shown when toggling */}
+      {showHumanAgentPanel && !isHumanAgentEnabled && (
+        <div className="px-6 py-4 bg-amber-50 border-b border-amber-200">
+          <div className="flex items-start gap-3">
+            <div className="rounded-full bg-amber-100 p-2 mt-0.5">
+              <UserCog className="h-5 w-5 text-amber-700" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-amber-900">Enable Human Agent Response</h3>
+              <p className="text-xs text-amber-700 mt-1">
+                Extends your response window from 24 hours to 7 days. Use this for complex inquiries that need more time to resolve.
+              </p>
+              <div className="mt-3">
+                <Input
+                  placeholder="Reason (optional) — e.g., Need to coordinate with caterer"
+                  value={humanAgentReason}
+                  onChange={(e) => setHumanAgentReason(e.target.value)}
+                  className="bg-white border-amber-300 text-sm placeholder:text-amber-400"
+                />
+              </div>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  onClick={handleEnableHumanAgent}
+                  className="bg-amber-600 hover:bg-amber-700 text-white text-sm h-8 px-4"
+                >
+                  <Shield className="h-3.5 w-3.5 mr-1.5" />
+                  Enable Human Agent Mode
+                </Button>
+                <Button
+                  onClick={() => setShowHumanAgentPanel(false)}
+                  variant="outline"
+                  className="text-sm h-8 px-4 border-amber-300 text-amber-700"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -206,6 +335,7 @@ export function UnifiedMessageThread({
                     const isOutbound = message.sender_type === "business"
                     const mediaUrl = message.metadata?.media_url as string | undefined
                     const mediaMime = message.metadata?.media_mime_type as string | undefined
+                    const hasHumanAgentTag = message.metadata?.human_agent_tag === true
 
                     return (
                       <div
@@ -219,10 +349,20 @@ export function UnifiedMessageThread({
                           className={cn(
                             "max-w-[70%] rounded-2xl px-4 py-2",
                             isOutbound
-                              ? "bg-[#3A9B9F] text-white rounded-br-md"
+                              ? hasHumanAgentTag
+                                ? "bg-amber-600 text-white rounded-br-md"
+                                : "bg-[#3A9B9F] text-white rounded-br-md"
                               : "bg-gray-100 text-gray-900 rounded-bl-md"
                           )}
                         >
+                          {/* Human Agent tag indicator on message */}
+                          {hasHumanAgentTag && isOutbound && (
+                            <div className="flex items-center gap-1 mb-1 text-xs text-amber-200">
+                              <Shield className="h-3 w-3" />
+                              <span>Human Agent</span>
+                            </div>
+                          )}
+
                           {/* Media preview */}
                           {mediaUrl && (
                             <div className="mb-2">
@@ -285,7 +425,11 @@ export function UnifiedMessageThread({
                           <div
                             className={cn(
                               "flex items-center gap-1 mt-1 text-xs",
-                              isOutbound ? "text-white/70 justify-end" : "text-gray-500"
+                              isOutbound
+                                ? hasHumanAgentTag
+                                  ? "text-amber-200 justify-end"
+                                  : "text-white/70 justify-end"
+                                : "text-gray-500"
                             )}
                           >
                             <span>{formatMessageTime(message.sent_at)}</span>
@@ -306,6 +450,14 @@ export function UnifiedMessageThread({
 
       {/* Message Input */}
       <div className="border-t border-gray-200 p-4">
+        {/* Human agent indicator above input */}
+        {isHumanAgentEnabled && (
+          <div className="flex items-center gap-1.5 mb-2 text-xs text-amber-700">
+            <Shield className="h-3 w-3" />
+            <span>Messages will be sent with Human Agent tag (7-day window)</span>
+          </div>
+        )}
+
         <div className="flex items-end gap-3">
           <div className="flex gap-1">
             <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
@@ -320,7 +472,10 @@ export function UnifiedMessageThread({
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="min-h-[44px] max-h-32 resize-none pr-16"
+              className={cn(
+                "min-h-[44px] max-h-32 resize-none pr-16",
+                isHumanAgentEnabled && "border-amber-300 focus:border-amber-400 focus:ring-amber-400/20"
+              )}
               rows={1}
             />
             <div className="absolute right-3 bottom-3 text-xs text-gray-400 pointer-events-none">
@@ -331,7 +486,12 @@ export function UnifiedMessageThread({
           <Button
             onClick={handleSend}
             disabled={!messageText.trim() || isSending}
-            className="bg-[#3A9B9F] hover:bg-[#2F8488] h-11 w-11 p-0"
+            className={cn(
+              "h-11 w-11 p-0",
+              isHumanAgentEnabled
+                ? "bg-amber-600 hover:bg-amber-700"
+                : "bg-[#3A9B9F] hover:bg-[#2F8488]"
+            )}
           >
             <Send className="h-5 w-5" />
           </Button>

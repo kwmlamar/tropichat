@@ -4,6 +4,7 @@
  * POST /api/messages/send
  *
  * Sends a message through any connected channel (WhatsApp, Instagram, Messenger).
+ * Supports human_agent tag for extended 7-day response window.
  * Requires authentication via Supabase session.
  */
 
@@ -17,6 +18,7 @@ interface SendRequestBody {
   content: string
   message_type?: MessageContentType
   media_url?: string
+  human_agent_tag?: boolean
 }
 
 export async function POST(request: NextRequest) {
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { conversation_id, content, message_type = 'text', media_url } = body
+  const { conversation_id, content, message_type = 'text', media_url, human_agent_tag } = body
   if (!conversation_id || !content) {
     return NextResponse.json({ error: 'conversation_id and content are required' }, { status: 400 })
   }
@@ -58,6 +60,7 @@ export async function POST(request: NextRequest) {
       channel_conversation_id,
       customer_id,
       connected_account_id,
+      human_agent_enabled,
       connected_account:connected_accounts(
         id, channel_type, channel_account_id, access_token
       )
@@ -80,6 +83,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Connected account not found' }, { status: 404 })
   }
 
+  // Determine if we should use human_agent tag
+  // Use it if explicitly passed OR if the conversation has human_agent_enabled
+  const useHumanAgentTag = human_agent_tag || conversation.human_agent_enabled
+
   try {
     // Send via Meta API
     const result = await sendMessage({
@@ -90,6 +97,7 @@ export async function POST(request: NextRequest) {
       content,
       messageType: message_type,
       mediaUrl: media_url,
+      humanAgentTag: useHumanAgentTag,
     })
 
     // Extract the platform message ID
@@ -97,6 +105,11 @@ export async function POST(request: NextRequest) {
       result.messages?.[0]?.id ??  // WhatsApp
       result.message_id ??         // Instagram / Messenger
       null
+
+    // Build metadata
+    const metadata: Record<string, unknown> = {}
+    if (media_url) metadata.media_url = media_url
+    if (useHumanAgentTag) metadata.human_agent_tag = true
 
     // Store the message in our database
     const { data: message, error: insertError } = await supabase
@@ -109,7 +122,7 @@ export async function POST(request: NextRequest) {
         message_type,
         status: 'sent',
         sent_at: new Date().toISOString(),
-        metadata: media_url ? { media_url } : {},
+        metadata,
       })
       .select()
       .single()
@@ -122,10 +135,15 @@ export async function POST(request: NextRequest) {
         message: null,
         warning: 'Message sent but failed to store locally',
         channel_message_id: channelMessageId,
+        human_agent_tag: useHumanAgentTag,
       })
     }
 
-    return NextResponse.json({ success: true, message })
+    return NextResponse.json({
+      success: true,
+      message,
+      human_agent_tag: useHumanAgentTag,
+    })
   } catch (error) {
     console.error('[Send] Failed to send message:', error)
     const errorMessage = error instanceof Error ? error.message : 'Failed to send message'

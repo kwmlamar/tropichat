@@ -61,14 +61,17 @@ export interface UnifiedSendOptions {
   content: string
   messageType?: MessageContentType
   mediaUrl?: string
+  /** When true, sends with HUMAN_AGENT tag for 7-day response window */
+  humanAgentTag?: boolean
 }
 
 /**
  * Send a message through any channel with a single function call.
  * Routes to the correct platform API based on channelType.
+ * When humanAgentTag is true, includes MESSAGE_TAG + HUMAN_AGENT for extended response window.
  */
 export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSendResponse> {
-  const { channelType, accountId, accessToken, recipientId, content, messageType = 'text', mediaUrl } = options
+  const { channelType, accountId, accessToken, recipientId, content, messageType = 'text', mediaUrl, humanAgentTag } = options
 
   // Media message
   if (messageType !== 'text' && mediaUrl) {
@@ -93,6 +96,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
           recipientId,
           type: mediaType,
           mediaUrl,
+          humanAgentTag,
         })
       case 'messenger':
         return sendMessengerMedia({
@@ -101,6 +105,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
           recipientPsid: recipientId,
           type: mediaType,
           mediaUrl,
+          humanAgentTag,
         })
     }
   }
@@ -113,6 +118,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
         accessToken,
         to: recipientId,
         body: content,
+        humanAgentTag,
       })
     case 'instagram':
       return sendInstagramText({
@@ -120,6 +126,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
         accessToken,
         recipientId,
         text: content,
+        humanAgentTag,
       })
     case 'messenger':
       return sendMessengerText({
@@ -127,6 +134,8 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
         accessToken,
         recipientPsid: recipientId,
         text: content,
+        messagingType: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
+        tag: humanAgentTag ? 'HUMAN_AGENT' : undefined,
       })
   }
 }

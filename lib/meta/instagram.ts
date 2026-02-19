@@ -23,20 +23,25 @@ export interface InstagramSendTextOptions {
   accessToken: string
   recipientId: string
   text: string
+  /** When true, sends with HUMAN_AGENT tag for 7-day response window */
+  humanAgentTag?: boolean
 }
 
 export async function sendInstagramText(options: InstagramSendTextOptions): Promise<MetaSendResponse> {
-  const { igUserId, accessToken, recipientId, text } = options
+  const { igUserId, accessToken, recipientId, text, humanAgentTag } = options
+
+  const body: MetaSendRequest = {
+    recipient: { id: recipientId },
+    messaging_type: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
+    message: { text },
+  }
+  if (humanAgentTag) body.tag = 'HUMAN_AGENT'
 
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
     path: `${igUserId}/messages`,
     accessToken,
-    body: {
-      recipient: { id: recipientId },
-      messaging_type: 'RESPONSE',
-      message: { text },
-    } as MetaSendRequest,
+    body: body as MetaSendRequest,
   })
 }
 
@@ -46,25 +51,30 @@ export interface InstagramSendMediaOptions {
   recipientId: string
   type: 'image' | 'video' | 'audio' | 'file'
   mediaUrl: string
+  /** When true, sends with HUMAN_AGENT tag for 7-day response window */
+  humanAgentTag?: boolean
 }
 
 export async function sendInstagramMedia(options: InstagramSendMediaOptions): Promise<MetaSendResponse> {
-  const { igUserId, accessToken, recipientId, type, mediaUrl } = options
+  const { igUserId, accessToken, recipientId, type, mediaUrl, humanAgentTag } = options
+
+  const body: MetaSendRequest = {
+    recipient: { id: recipientId },
+    messaging_type: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
+    message: {
+      attachment: {
+        type,
+        payload: { url: mediaUrl },
+      },
+    },
+  }
+  if (humanAgentTag) body.tag = 'HUMAN_AGENT'
 
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
     path: `${igUserId}/messages`,
     accessToken,
-    body: {
-      recipient: { id: recipientId },
-      messaging_type: 'RESPONSE',
-      message: {
-        attachment: {
-          type,
-          payload: { url: mediaUrl },
-        },
-      },
-    } as MetaSendRequest,
+    body: body as MetaSendRequest,
   })
 }
 

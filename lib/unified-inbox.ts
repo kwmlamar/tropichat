@@ -123,7 +123,7 @@ export async function getUnifiedConversation(id: string): Promise<{
 
 export async function updateUnifiedConversation(
   id: string,
-  updates: Partial<Pick<UnifiedConversation, 'is_archived' | 'unread_count' | 'customer_name' | 'metadata'>>
+  updates: Partial<Pick<UnifiedConversation, 'is_archived' | 'unread_count' | 'customer_name' | 'metadata' | 'human_agent_enabled' | 'human_agent_reason' | 'human_agent_marked_at'>>
 ) {
   const client = getSupabase()
   const { error } = await client
@@ -199,7 +199,8 @@ export async function sendUnifiedMessage(
   conversationId: string,
   content: string,
   messageType: 'text' | 'image' | 'video' | 'file' = 'text',
-  mediaUrl?: string
+  mediaUrl?: string,
+  humanAgentTag?: boolean
 ): Promise<{ data: UnifiedMessage | null; error: string | null }> {
   const client = getSupabase()
   const {
@@ -222,6 +223,7 @@ export async function sendUnifiedMessage(
         content,
         message_type: messageType,
         media_url: mediaUrl,
+        human_agent_tag: humanAgentTag || undefined,
       }),
     })
 

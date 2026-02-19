@@ -24,22 +24,32 @@ export interface WhatsAppSendTextOptions {
   to: string
   body: string
   previewUrl?: boolean
+  /** When true, sends with HUMAN_AGENT tag for 7-day response window */
+  humanAgentTag?: boolean
 }
 
 export async function sendWhatsAppText(options: WhatsAppSendTextOptions): Promise<MetaSendResponse> {
-  const { phoneNumberId, accessToken, to, body, previewUrl } = options
+  const { phoneNumberId, accessToken, to, body, previewUrl, humanAgentTag } = options
+
+  const requestBody: Record<string, unknown> = {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to,
+    type: 'text',
+    text: { body, preview_url: previewUrl ?? false },
+  }
+
+  // Add human_agent tag for extended 7-day response window
+  if (humanAgentTag) {
+    requestBody.messaging_type = 'MESSAGE_TAG'
+    requestBody.tag = 'HUMAN_AGENT'
+  }
 
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
     path: `${phoneNumberId}/messages`,
     accessToken,
-    body: {
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
-      to,
-      type: 'text',
-      text: { body, preview_url: previewUrl ?? false },
-    } as WhatsAppSendRequest,
+    body: requestBody as unknown as WhatsAppSendRequest,
   })
 }
 

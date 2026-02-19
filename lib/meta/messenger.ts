@@ -51,25 +51,30 @@ export interface MessengerSendMediaOptions {
   recipientPsid: string
   type: 'image' | 'video' | 'audio' | 'file'
   mediaUrl: string
+  /** When true, sends with HUMAN_AGENT tag for 7-day response window */
+  humanAgentTag?: boolean
 }
 
 export async function sendMessengerMedia(options: MessengerSendMediaOptions): Promise<MetaSendResponse> {
-  const { pageId, accessToken, recipientPsid, type, mediaUrl } = options
+  const { pageId, accessToken, recipientPsid, type, mediaUrl, humanAgentTag } = options
+
+  const body: MetaSendRequest = {
+    recipient: { id: recipientPsid },
+    messaging_type: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
+    message: {
+      attachment: {
+        type,
+        payload: { url: mediaUrl },
+      },
+    },
+  }
+  if (humanAgentTag) body.tag = 'HUMAN_AGENT'
 
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
     path: `${pageId}/messages`,
     accessToken,
-    body: {
-      recipient: { id: recipientPsid },
-      messaging_type: 'RESPONSE',
-      message: {
-        attachment: {
-          type,
-          payload: { url: mediaUrl },
-        },
-      },
-    } as MetaSendRequest,
+    body: body as MetaSendRequest,
   })
 }
 

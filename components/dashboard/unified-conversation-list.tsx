@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Inbox } from "lucide-react"
+import { Search, Inbox, Shield } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -160,14 +160,23 @@ export function UnifiedConversationList({
                     {conversation.last_message_preview || "No messages yet"}
                   </p>
 
-                  {/* Unread badge */}
-                  {conversation.unread_count > 0 && (
-                    <div className="mt-1.5">
+                  {/* Badges row */}
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    {/* Human Agent badge */}
+                    {conversation.human_agent_enabled && (
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
+                        <Shield className="h-2.5 w-2.5" />
+                        7-day
+                      </span>
+                    )}
+
+                    {/* Unread badge */}
+                    {conversation.unread_count > 0 && (
                       <Badge variant="success" size="sm">
                         {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
                       </Badge>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </button>
             ))}

@@ -49,6 +49,10 @@ export interface UnifiedConversation {
   unread_count: number
   is_archived: boolean
   metadata: Record<string, unknown>
+  // Human Agent fields (extended 7-day response window)
+  human_agent_enabled: boolean
+  human_agent_reason: string | null
+  human_agent_marked_at: string | null
   created_at: string
   updated_at: string
   // Joined relations
@@ -113,6 +117,8 @@ export interface MessageMetadata {
   reacted_message_id?: string
   // Reply context
   reply_to_message_id?: string
+  // Human Agent tag (sent with extended 7-day window)
+  human_agent_tag?: boolean
   // Platform-specific raw payload (for debugging)
   raw_payload?: Record<string, unknown>
   [key: string]: unknown
