@@ -155,6 +155,7 @@ export async function signInWithOAuth(provider: OAuthProvider) {
     provider,
     options: {
       redirectTo: `${window.location.origin}/auth/callback`,
+      scopes: provider === 'facebook' ? 'public_profile' : undefined,
     },
   })
 

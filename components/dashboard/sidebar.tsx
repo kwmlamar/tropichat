@@ -86,7 +86,7 @@ export function Sidebar({ customer }: SidebarProps) {
   const SidebarContent = () => (
     <>
       {/* Workspace Header */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10">
+      <div className="flex shrink-0 items-center gap-3 px-4 py-4 border-b border-white/10">
         <Image
           src="/tropichat-logo-transparent.png"
           alt="TropiChat"
@@ -104,8 +104,8 @@ export function Sidebar({ customer }: SidebarProps) {
         {customer?.id && <NotificationBell customerId={customer.id} />}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      {/* Navigation - scrollable so footer stays visible */}
+      <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.href)
@@ -134,9 +134,9 @@ export function Sidebar({ customer }: SidebarProps) {
         })}
       </nav>
 
-      {/* Plan Badge */}
+      {/* Plan Badge + User - footer stays at bottom */}
       {customer && customer.plan !== "professional" && (
-        <div className="mx-3 mb-4">
+        <div className="mx-3 mb-4 flex-shrink-0">
           <div className="rounded-xl bg-white/10 border border-white/10 p-4">
             <div className="flex items-center gap-2 mb-2">
               <Crown className="h-4 w-4 text-[#FF8B66]" />
@@ -156,9 +156,10 @@ export function Sidebar({ customer }: SidebarProps) {
       )}
 
       {/* User Profile */}
-      <div className="border-t border-white/10 p-3 min-w-0">
+      <div className="flex-shrink-0 border-t border-white/10 p-3 min-w-0">
         <Dropdown
           align="right"
+          side="top"
           trigger={
             <button className="flex w-full min-w-0 items-center gap-3 rounded-lg p-2 hover:bg-white/10 transition-colors overflow-hidden">
               <Avatar
@@ -235,7 +236,7 @@ export function Sidebar({ customer }: SidebarProps) {
       )}
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:border-r lg:border-white/10 lg:bg-[#213138]">
+      <div className="hidden lg:flex lg:flex-col lg:min-h-0 lg:w-64 lg:fixed lg:inset-y-0 lg:z-50 lg:border-r lg:border-white/10 lg:bg-[#213138]">
         <SidebarContent />
       </div>
     </>

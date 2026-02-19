@@ -36,15 +36,24 @@ export async function DELETE(
     .eq('is_active', true)
     .single()
 
-  if (!connection || !connection.account_id) {
+  if (!connection) {
     return NextResponse.json(
-      { error: 'WhatsApp not connected' },
+      { error: 'WhatsApp not connected. Please connect via Settings > Integrations.' },
+      { status: 400 }
+    )
+  }
+
+  // Resolve WABA ID — use DB value, fall back to env var
+  const wabaId = connection.account_id || process.env.WHATSAPP_BUSINESS_ACCOUNT_ID
+  if (!wabaId) {
+    return NextResponse.json(
+      { error: 'No WhatsApp Business Account found. Reconnect your Meta account.' },
       { status: 400 }
     )
   }
 
   try {
-    const url = `${META_GRAPH}/${connection.account_id}/message_templates?name=${encodeURIComponent(name)}`
+    const url = `${META_GRAPH}/${wabaId}/message_templates?name=${encodeURIComponent(name)}`
     const res = await fetch(url, {
       method: 'DELETE',
       headers: {

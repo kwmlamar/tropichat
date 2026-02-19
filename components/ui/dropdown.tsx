@@ -9,6 +9,8 @@ interface DropdownProps {
   trigger: React.ReactNode
   children: React.ReactNode
   align?: "left" | "right"
+  /** "top" = open above trigger (e.g. for footer); "bottom" = open below (default) */
+  side?: "top" | "bottom"
   className?: string
 }
 
@@ -16,6 +18,7 @@ export function Dropdown({
   trigger,
   children,
   align = "left",
+  side = "bottom",
   className,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -29,9 +32,10 @@ export function Dropdown({
       {isOpen && (
         <div
           className={cn(
-            "absolute z-[9999] mt-2 min-w-[180px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5",
+            "absolute z-[9999] min-w-[180px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5",
             "animate-in fade-in-0 zoom-in-95 duration-100",
-            align === "right" ? "right-0" : "left-0"
+            align === "right" ? "right-0" : "left-0",
+            side === "top" ? "bottom-full mb-2" : "mt-2 top-full"
           )}
         >
           {children}

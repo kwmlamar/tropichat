@@ -245,33 +245,52 @@ export async function POST(request: Request) {
   // Validate template name: lowercase, underscores only
   const cleanName = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
 
+  // Extract {{n}} variables and generate example values for Meta
+  const varMatches = templateBody.match(/\{\{(\d+)\}\}/g) || []
+  const uniqueVars = [...new Set(varMatches)]
+  const exampleValues = uniqueVars.map((_, i) => `sample_value_${i + 1}`)
+
+  // Build BODY component — Meta requires example values when body has variables
+  const bodyComponent: Record<string, unknown> = {
+    type: 'BODY',
+    text: templateBody,
+  }
+  if (uniqueVars.length > 0) {
+    bodyComponent.example = {
+      body_text: [exampleValues],
+    }
+  }
+
   try {
     const url = `${META_GRAPH}/${connection.account_id}/message_templates`
+    const requestBody = {
+      name: cleanName,
+      category: category.toUpperCase(), // MARKETING, UTILITY, AUTHENTICATION
+      language,
+      allow_category_change: true,
+      components: [bodyComponent],
+    }
+
+    console.log('[meta/templates] Creating template:', JSON.stringify(requestBody))
+
     const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${connection.access_token}`,
       },
-      body: JSON.stringify({
-        name: cleanName,
-        category: category.toUpperCase(), // MARKETING, UTILITY, AUTHENTICATION
-        language,
-        components: [
-          {
-            type: 'BODY',
-            text: templateBody,
-          },
-        ],
-      }),
+      body: JSON.stringify(requestBody),
     })
 
     const data = await res.json()
 
     if (data.error) {
-      console.error('Meta template create error:', data.error)
+      console.error('Meta template create error:', JSON.stringify(data.error, null, 2))
+      const errorMsg = data.error.error_user_msg
+        || data.error.message
+        || 'Failed to create template'
       return NextResponse.json(
-        { error: data.error.message || 'Failed to create template' },
+        { error: errorMsg, details: data.error },
         { status: 502 }
       )
     }
