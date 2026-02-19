@@ -8,7 +8,7 @@ const earlyAdopterPerks = [
   {
     icon: Crown,
     text: "$29/month pricing locked in forever",
-    detail: "Regular price $49",
+    detail: "Regular price $39 — save $10/month forever",
   },
   {
     icon: Clock,

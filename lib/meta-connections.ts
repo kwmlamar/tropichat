@@ -181,3 +181,105 @@ export async function deleteMetaTemplate(name: string): Promise<{
     return { error: 'Failed to connect to server' }
   }
 }
+
+// ==================== WHATSAPP BUSINESS PROFILE ====================
+
+export interface BusinessProfile {
+  id?: string
+  connected_account_id: string
+  business_name: string
+  business_description: string
+  business_category: string
+  website_url: string
+  business_address: string
+  business_hours: string
+  contact_phone: string
+  contact_email: string
+  profile_picture_url: string
+  updated_at?: string
+}
+
+export async function fetchBusinessProfile(): Promise<{
+  data: BusinessProfile | null
+  error: string | null
+}> {
+  const token = await getAccessToken()
+  if (!token) return { data: null, error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/business-profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      return { data: null, error: data.error || 'Failed to fetch profile' }
+    }
+
+    return { data: data.profile, error: null }
+  } catch {
+    return { data: null, error: 'Failed to connect to server' }
+  }
+}
+
+export async function updateBusinessProfile(profile: Partial<BusinessProfile>): Promise<{
+  data: BusinessProfile | null
+  error: string | null
+}> {
+  const token = await getAccessToken()
+  if (!token) return { data: null, error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/business-profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profile),
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      return { data: null, error: data.error || 'Failed to update profile' }
+    }
+
+    return { data: data.profile, error: null }
+  } catch {
+    return { data: null, error: 'Failed to connect to server' }
+  }
+}
+
+// ==================== FACEBOOK PAGES ====================
+
+export interface FacebookPage {
+  id: string
+  name: string
+  category: string
+  profile_picture_url: string | null
+  follower_count: number
+  is_connected: boolean
+}
+
+export async function fetchFacebookPages(): Promise<{
+  data: FacebookPage[]
+  error: string | null
+}> {
+  const token = await getAccessToken()
+  if (!token) return { data: [], error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/pages', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      return { data: [], error: data.error || 'Failed to fetch pages' }
+    }
+
+    return { data: data.pages || [], error: null }
+  } catch {
+    return { data: [], error: 'Failed to connect to server' }
+  }
+}

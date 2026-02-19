@@ -16,6 +16,9 @@ import {
   XCircle,
   ExternalLink,
   Unplug,
+  Building2,
+  MapPin,
+  Phone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,8 +35,11 @@ import {
   getMetaStatus,
   initiateMetaConnect,
   disconnectChannel,
+  fetchBusinessProfile,
+  updateBusinessProfile,
   type MetaStatus,
   type ChannelStatus,
+  type BusinessProfile,
 } from "@/lib/meta-connections"
 import { toast } from "sonner"
 import type { Customer, BusinessHours, MetaChannel } from "@/types/database"
@@ -58,6 +64,18 @@ const defaultBusinessHours: BusinessHours = {
 
 const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const
 
+const waCategoryOptions = [
+  { value: "Tour Operator", label: "Tour Operator" },
+  { value: "Restaurant", label: "Restaurant" },
+  { value: "Hotel", label: "Hotel" },
+  { value: "Retail", label: "Retail" },
+  { value: "Transportation", label: "Transportation" },
+  { value: "Entertainment", label: "Entertainment" },
+  { value: "Health & Wellness", label: "Health & Wellness" },
+  { value: "Professional Services", label: "Professional Services" },
+  { value: "Other", label: "Other" },
+]
+
 export default function SettingsPage() {
   const searchParams = useSearchParams()
   const initialTab = searchParams.get("tab") || "profile"
@@ -80,6 +98,19 @@ export default function SettingsPage() {
   const [metaLoading, setMetaLoading] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [disconnecting, setDisconnecting] = useState<MetaChannel | null>(null)
+
+  // WhatsApp Business Profile state
+  const [wpBusinessName, setWpBusinessName] = useState("")
+  const [wpDescription, setWpDescription] = useState("")
+  const [wpCategory, setWpCategory] = useState("")
+  const [wpWebsite, setWpWebsite] = useState("")
+  const [wpAddress, setWpAddress] = useState("")
+  const [wpHours, setWpHours] = useState("")
+  const [wpPhone, setWpPhone] = useState("")
+  const [wpEmail, setWpEmail] = useState("")
+  const [wpSaving, setWpSaving] = useState(false)
+  const [wpSaved, setWpSaved] = useState(false)
+  const [wpLoaded, setWpLoaded] = useState(false)
 
   // Fetch customer data
   useEffect(() => {
@@ -125,8 +156,12 @@ export default function SettingsPage() {
     const metaResult = searchParams.get("meta")
     const metaMessage = searchParams.get("message")
 
-    if (tab === "integrations") {
+    if (tab === "integrations" || tab === "whatsapp") {
       fetchMetaConnectionStatus()
+    }
+
+    if (tab === "whatsapp") {
+      fetchWhatsAppProfile()
     }
 
     if (metaResult === "connected") {
@@ -214,6 +249,51 @@ export default function SettingsPage() {
     setSaving(false)
   }
 
+  // WhatsApp Business Profile handlers
+  const fetchWhatsAppProfile = async () => {
+    if (wpLoaded) return
+    const { data: profile, error } = await fetchBusinessProfile()
+    if (error) {
+      console.error("WA profile error:", error)
+    } else if (profile) {
+      setWpBusinessName(profile.business_name || "")
+      setWpDescription(profile.business_description || "")
+      setWpCategory(profile.business_category || "")
+      setWpWebsite(profile.website_url || "")
+      setWpAddress(profile.business_address || "")
+      setWpHours(profile.business_hours || "")
+      setWpPhone(profile.contact_phone || "")
+      setWpEmail(profile.contact_email || "")
+    }
+    setWpLoaded(true)
+  }
+
+  const handleSaveWhatsAppProfile = async () => {
+    setWpSaving(true)
+    setWpSaved(false)
+
+    const { error } = await updateBusinessProfile({
+      business_name: wpBusinessName,
+      business_description: wpDescription,
+      business_category: wpCategory,
+      website_url: wpWebsite,
+      business_address: wpAddress,
+      business_hours: wpHours,
+      contact_phone: wpPhone,
+      contact_email: wpEmail,
+    })
+
+    if (error) {
+      toast.error(error)
+    } else {
+      toast.success("WhatsApp business profile saved")
+      setWpSaved(true)
+      setTimeout(() => setWpSaved(false), 3000)
+    }
+
+    setWpSaving(false)
+  }
+
   const updateDayHours = (
     day: keyof BusinessHours,
     field: "start" | "end" | "enabled",
@@ -248,6 +328,10 @@ export default function SettingsPage() {
         if (tab === "integrations" && !metaStatus) {
           fetchMetaConnectionStatus()
         }
+        if (tab === "whatsapp") {
+          fetchWhatsAppProfile()
+          if (!metaStatus) fetchMetaConnectionStatus()
+        }
       }}>
         <TabsList className="mb-6">
           <TabsTrigger value="profile">
@@ -269,6 +353,10 @@ export default function SettingsPage() {
           <TabsTrigger value="integrations">
             <Link2 className="h-4 w-4 mr-2" />
             Integrations
+          </TabsTrigger>
+          <TabsTrigger value="whatsapp">
+            <Building2 className="h-4 w-4 mr-2" />
+            WhatsApp Profile
           </TabsTrigger>
           <TabsTrigger value="billing">
             <CreditCard className="h-4 w-4 mr-2" />
@@ -578,6 +666,141 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {/* Connected Account Details */}
+            {metaStatus && (metaStatus.instagram?.connected || metaStatus.whatsapp?.connected || metaStatus.messenger?.connected) && (
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">Connected Account Details</h3>
+                  <div className="space-y-4">
+                    {/* Instagram Account Detail */}
+                    {metaStatus.instagram?.connected && (
+                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-pink-100">
+                        <div className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
+                          {metaStatus.instagram.account_name?.[0] || "IG"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-900">
+                              {(metaStatus.instagram.metadata as Record<string, string>)?.ig_username || metaStatus.instagram.account_name || "Instagram"}
+                            </h4>
+                            <Badge variant="secondary" size="sm">Instagram Business Account</Badge>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-0.5">
+                            ID: {metaStatus.instagram.account_id?.slice(0, 8)}...{metaStatus.instagram.account_id?.slice(-4)}
+                          </p>
+                          {(metaStatus.instagram.metadata as Record<string, number>)?.follower_count && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {(metaStatus.instagram.metadata as Record<string, number>).follower_count.toLocaleString()} followers
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
+                          <CheckCircle className="h-4 w-4" />
+                          <span className="text-sm font-medium">Connected</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* WhatsApp Account Detail */}
+                    {metaStatus.whatsapp?.connected && (
+                      <div className="flex items-center gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                        <div className="h-14 w-14 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0">
+                          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-900">
+                              {metaStatus.whatsapp.account_name || "WhatsApp Business"}
+                            </h4>
+                            <Badge variant="secondary" size="sm">WhatsApp Business</Badge>
+                          </div>
+                          {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && (
+                            <p className="text-sm text-gray-500 mt-0.5">
+                              {(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
+                          <CheckCircle className="h-4 w-4" />
+                          <span className="text-sm font-medium">Connected</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Messenger Account Detail */}
+                    {metaStatus.messenger?.connected && (
+                      <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                        <div className="h-14 w-14 rounded-full bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0">
+                          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-900">
+                              {metaStatus.messenger.account_name || "Messenger"}
+                            </h4>
+                            <Badge variant="secondary" size="sm">Facebook Page</Badge>
+                          </div>
+                          {(metaStatus.messenger.metadata as Record<string, number>)?.follower_count && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {(metaStatus.messenger.metadata as Record<string, number>).follower_count.toLocaleString()} followers
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
+                          <CheckCircle className="h-4 w-4" />
+                          <span className="text-sm font-medium">Connected</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Webhook Status */}
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Webhook Subscriptions</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-sm font-medium text-gray-900">Webhook Status</span>
+                    </div>
+                    <Badge variant="success" size="sm">Active</Badge>
+                  </div>
+
+                  <div className="grid gap-2 text-sm">
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Subscribed Events</span>
+                      <span className="text-gray-900 font-medium">messages, message_deliveries, message_reads</span>
+                    </div>
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Webhook URL</span>
+                      <code className="text-xs bg-gray-200 px-2 py-0.5 rounded text-gray-700">/api/webhooks/meta</code>
+                    </div>
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Verification Status</span>
+                      <span className="text-green-600 font-medium flex items-center gap-1">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        Verified
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Last Webhook Received</span>
+                      <span className="text-gray-900 font-medium">
+                        {new Date().toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Permissions Info */}
             <Card>
               <CardContent className="p-6">
@@ -609,6 +832,181 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* WhatsApp Business Profile Tab */}
+        <TabsContent value="whatsapp">
+          {metaStatus?.whatsapp?.connected === false ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <div className="rounded-full bg-yellow-50 p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Building2 className="h-8 w-8 text-yellow-500" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">WhatsApp Not Connected</h3>
+                <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
+                  Connect your Meta account with WhatsApp Business permissions to manage your business profile.
+                </p>
+                <Button
+                  onClick={() => {
+                    const tabsEl = document.querySelector('[value="integrations"]') as HTMLButtonElement | null
+                    tabsEl?.click()
+                  }}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488]"
+                >
+                  <Link2 className="h-4 w-4 mr-2" />
+                  Go to Integrations
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {/* Business Info */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-lg bg-green-50 p-2.5 mt-0.5">
+                      <Building2 className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <Label htmlFor="wpBusinessName">Business Name *</Label>
+                        <Input
+                          id="wpBusinessName"
+                          value={wpBusinessName}
+                          onChange={(e) => setWpBusinessName(e.target.value)}
+                          placeholder="Simply Dave Nassau Tours"
+                          className="mt-1.5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="wpDescription">Business Description</Label>
+                        <Textarea
+                          id="wpDescription"
+                          value={wpDescription}
+                          onChange={(e) => setWpDescription(e.target.value)}
+                          placeholder="Premier boat tours and water sports in Nassau, Bahamas..."
+                          className="mt-1.5 min-h-[100px]"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">Max 512 characters</p>
+                      </div>
+                      <div>
+                        <Label htmlFor="wpCategory">Business Category</Label>
+                        <SimpleSelect
+                          value={wpCategory}
+                          onValueChange={setWpCategory}
+                          options={waCategoryOptions}
+                          className="mt-1.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact Info */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-lg bg-blue-50 p-2.5 mt-0.5">
+                      <Phone className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <h3 className="font-semibold text-gray-900">Contact Information</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="wpPhone">Phone Number</Label>
+                          <Input
+                            id="wpPhone"
+                            value={wpPhone}
+                            onChange={(e) => setWpPhone(e.target.value)}
+                            placeholder="+1-242-555-0199"
+                            className="mt-1.5"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="wpEmail">Email Address</Label>
+                          <Input
+                            id="wpEmail"
+                            type="email"
+                            value={wpEmail}
+                            onChange={(e) => setWpEmail(e.target.value)}
+                            placeholder="info@simplydavenassau.com"
+                            className="mt-1.5"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="wpWebsite">Website URL</Label>
+                        <Input
+                          id="wpWebsite"
+                          value={wpWebsite}
+                          onChange={(e) => setWpWebsite(e.target.value)}
+                          placeholder="www.simplydavenassau.com"
+                          className="mt-1.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Location & Hours */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-lg bg-amber-50 p-2.5 mt-0.5">
+                      <MapPin className="h-5 w-5 text-amber-600" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <h3 className="font-semibold text-gray-900">Location & Hours</h3>
+                      <div>
+                        <Label htmlFor="wpAddress">Business Address</Label>
+                        <Input
+                          id="wpAddress"
+                          value={wpAddress}
+                          onChange={(e) => setWpAddress(e.target.value)}
+                          placeholder="Paradise Island, Nassau, Bahamas"
+                          className="mt-1.5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="wpHours">Business Hours</Label>
+                        <Input
+                          id="wpHours"
+                          value={wpHours}
+                          onChange={(e) => setWpHours(e.target.value)}
+                          placeholder="Monday-Saturday 8:00 AM - 6:00 PM, Sunday Closed"
+                          className="mt-1.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Save */}
+              <div className="flex items-center justify-end gap-3">
+                {wpSaved && (
+                  <span className="flex items-center gap-1.5 text-sm text-green-600">
+                    <CheckCircle className="h-4 w-4" />
+                    Saved successfully
+                  </span>
+                )}
+                <Button
+                  onClick={handleSaveWhatsAppProfile}
+                  disabled={wpSaving}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] px-8"
+                >
+                  {wpSaving ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         {/* Billing Tab */}

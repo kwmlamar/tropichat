@@ -43,6 +43,12 @@ export async function DELETE(
     )
   }
 
+  // Demo token — simulate successful deletion without calling Meta API
+  if (connection.access_token.startsWith('DEMO_')) {
+    console.log('[meta/templates] Demo token detected — simulating template deletion:', name)
+    return NextResponse.json({ success: true })
+  }
+
   // Resolve WABA ID — use DB value, fall back to env var
   const wabaId = connection.account_id || process.env.WHATSAPP_BUSINESS_ACCOUNT_ID
   if (!wabaId) {

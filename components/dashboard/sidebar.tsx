@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   Crown,
+  FileStack,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
@@ -34,6 +35,7 @@ const navItems = [
   { href: "/dashboard", label: "Inbox", icon: Inbox },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
+  { href: "/dashboard/page-selection", label: "Page Selection", icon: FileStack },
   { href: "/dashboard/automations", label: "Automations", icon: Zap },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },

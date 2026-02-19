@@ -15,6 +15,119 @@ import { createServerClient } from '@/lib/supabase-server'
 
 const META_GRAPH = 'https://graph.facebook.com/v19.0'
 
+/** Check if the access token is a demo/seed token (not a real Meta token) */
+function isDemoToken(accessToken: string): boolean {
+  return accessToken.startsWith('DEMO_')
+}
+
+/** Realistic demo templates for a Bahamian tour operator — shown when using demo tokens */
+const DEMO_TEMPLATES = [
+  {
+    id: '900000000000001',
+    name: 'booking_confirmation',
+    status: 'APPROVED',
+    category: 'UTILITY',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Hi {{1}}, your booking for {{2}} on {{3}} is confirmed! Meet us at Paradise Island dock 15 minutes before departure. Questions? Reply to this message.',
+      },
+    ],
+  },
+  {
+    id: '900000000000002',
+    name: 'tour_reminder',
+    status: 'APPROVED',
+    category: 'UTILITY',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Reminder: Hi {{1}}, your {{2}} tour is tomorrow at {{3}}. Please bring sunscreen, a towel, and a sense of adventure! See you at the dock.',
+      },
+    ],
+  },
+  {
+    id: '900000000000003',
+    name: 'welcome_message',
+    status: 'APPROVED',
+    category: 'MARKETING',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Welcome to Simply Dave Nassau Tours! We offer snorkeling, sunset cruises, and island-hopping adventures. Reply TOURS to see our full lineup or BOOK to reserve your spot.',
+      },
+    ],
+  },
+  {
+    id: '900000000000004',
+    name: 'seasonal_promotion',
+    status: 'APPROVED',
+    category: 'MARKETING',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Spring Special! Book any tour before {{1}} and get 15% off for groups of 4+. Use code SPRING25 when booking. Limited spots available — reserve yours today!',
+      },
+    ],
+  },
+  {
+    id: '900000000000005',
+    name: 'payment_receipt',
+    status: 'APPROVED',
+    category: 'UTILITY',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Payment received! Hi {{1}}, we\'ve received your payment of {{2}} for {{3}}. Your confirmation number is {{4}}. Thank you for choosing Simply Dave Nassau Tours!',
+      },
+    ],
+  },
+  {
+    id: '900000000000006',
+    name: 'review_request',
+    status: 'PENDING',
+    category: 'MARKETING',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Hi {{1}}, thanks for joining us on the {{2}} tour! We\'d love to hear about your experience. Leave us a review and get 10% off your next booking: {{3}}',
+      },
+    ],
+  },
+  {
+    id: '900000000000007',
+    name: 'login_verification',
+    status: 'APPROVED',
+    category: 'AUTHENTICATION',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'Your Simply Dave Nassau Tours verification code is {{1}}. This code expires in 10 minutes. Do not share this code with anyone.',
+      },
+    ],
+  },
+  {
+    id: '900000000000008',
+    name: 'last_minute_deal',
+    status: 'REJECTED',
+    category: 'MARKETING',
+    language: 'en',
+    components: [
+      {
+        type: 'BODY',
+        text: 'FLASH SALE! Empty seats on tomorrow\'s sunset cruise — 50% off! Only {{1}} spots left. Book NOW at {{2}} before midnight!',
+      },
+    ],
+  },
+]
+
 /**
  * Resolve a WABA ID from a phone number ID by querying the Graph API.
  * Phone numbers in Meta's API don't directly expose their parent WABA in
@@ -188,6 +301,27 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
+  // Check for demo token before attempting real Meta API calls
+  const supabase = createServerClient(token)
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const { data: conn } = await supabase
+    .from('meta_connections')
+    .select('access_token')
+    .eq('user_id', user.id)
+    .eq('channel', 'whatsapp')
+    .eq('is_active', true)
+    .single()
+
+  if (conn && isDemoToken(conn.access_token)) {
+    console.log('[meta/templates] Demo token detected — returning demo templates')
+    return NextResponse.json({ templates: DEMO_TEMPLATES })
+  }
+
+  // Real path: resolve WABA and fetch from Meta Graph API
   const { error, status, connection } = await getWhatsAppConnection(token)
   if (error || !connection) {
     return NextResponse.json({ error }, { status })
@@ -227,11 +361,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const { error, status, connection } = await getWhatsAppConnection(token)
-  if (error || !connection) {
-    return NextResponse.json({ error }, { status })
-  }
-
   const body = await request.json()
   const { name, category, language, body: templateBody } = body
 
@@ -244,6 +373,40 @@ export async function POST(request: Request) {
 
   // Validate template name: lowercase, underscores only
   const cleanName = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+
+  // Check for demo token — simulate creation without calling Meta API
+  const supabase = createServerClient(token)
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const { data: conn } = await supabase
+    .from('meta_connections')
+    .select('access_token')
+    .eq('user_id', user.id)
+    .eq('channel', 'whatsapp')
+    .eq('is_active', true)
+    .single()
+
+  if (conn && isDemoToken(conn.access_token)) {
+    console.log('[meta/templates] Demo token detected — simulating template creation:', cleanName)
+    return NextResponse.json({
+      template: {
+        id: `demo_${Date.now()}`,
+        name: cleanName,
+        status: 'PENDING',
+        category: category.toUpperCase(),
+        language,
+      },
+    })
+  }
+
+  // Real path: create template on Meta Graph API
+  const { error, status, connection } = await getWhatsAppConnection(token)
+  if (error || !connection) {
+    return NextResponse.json({ error }, { status })
+  }
 
   // Extract {{n}} variables and generate example values for Meta
   const varMatches = templateBody.match(/\{\{(\d+)\}\}/g) || []
