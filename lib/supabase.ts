@@ -146,7 +146,7 @@ export async function getUser() {
   return { user, error: error?.message || null }
 }
 
-export type OAuthProvider = 'facebook' | 'google'
+export type OAuthProvider = 'google'
 
 export async function signInWithOAuth(provider: OAuthProvider) {
   const client = getSupabase()
@@ -155,7 +155,6 @@ export async function signInWithOAuth(provider: OAuthProvider) {
     provider,
     options: {
       redirectTo: `${window.location.origin}/auth/callback`,
-      scopes: provider === 'facebook' ? 'public_profile' : undefined,
     },
   })
 

@@ -8,16 +8,8 @@ import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn, signInWithOAuth, OAuthProvider } from "@/lib/supabase"
+import { signIn, signInWithOAuth } from "@/lib/supabase"
 import { toast } from "sonner"
-
-function FacebookIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  )
-}
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -36,7 +28,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [oauthLoading, setOauthLoading] = useState<OAuthProvider | null>(null)
+  const [oauthLoading, setOauthLoading] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +46,7 @@ export default function LoginPage() {
     router.push("/dashboard")
   }
 
-  const handleOAuth = async (provider: OAuthProvider) => {
+  const handleOAuth = async (provider: 'google') => {
     setOauthLoading(provider)
 
     const { error } = await signInWithOAuth(provider)
@@ -120,25 +112,6 @@ export default function LoginPage() {
 
             {/* OAuth Buttons */}
             <div className="space-y-3 mb-6">
-              <Button
-                type="button"
-                onClick={() => handleOAuth("facebook")}
-                disabled={anyLoading}
-                className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-6 h-auto text-base font-semibold"
-              >
-                {oauthLoading === "facebook" ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    Connecting...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <FacebookIcon className="h-5 w-5" />
-                    Continue with Facebook
-                  </span>
-                )}
-              </Button>
-
               <Button
                 type="button"
                 onClick={() => handleOAuth("google")}
