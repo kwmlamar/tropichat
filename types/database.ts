@@ -163,6 +163,40 @@ export interface Notification {
   created_at: string
 }
 
+// Meta Connection table (OAuth tokens per channel)
+export type MetaChannel = 'whatsapp' | 'instagram' | 'messenger'
+
+export interface MetaConnection {
+  id: string
+  user_id: string
+  channel: MetaChannel
+  access_token: string
+  page_access_token: string | null
+  token_expires_at: string | null
+  account_id: string | null
+  account_name: string | null
+  metadata: Record<string, unknown>
+  scopes: string[]
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// WhatsApp template from Meta Graph API
+export interface WhatsAppMetaTemplate {
+  name: string
+  language: string
+  status: string // APPROVED, PENDING, REJECTED
+  category: string // MARKETING, UTILITY, AUTHENTICATION
+  id: string
+  components: Array<{
+    type: string
+    text?: string
+    format?: string
+    example?: Record<string, unknown>
+  }>
+}
+
 // Team Member table (for future use)
 export interface TeamMember {
   id: string

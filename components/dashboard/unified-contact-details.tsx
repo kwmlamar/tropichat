@@ -80,10 +80,10 @@ export function UnifiedContactDetails({
           <h2 className="text-lg font-semibold text-gray-900">
             {conversation.customer_name || "Unknown"}
           </h2>
-          <p className="text-sm text-gray-500 mt-0.5 flex items-center justify-center gap-1.5">
+          <div className="text-sm text-gray-500 mt-0.5 flex items-center justify-center gap-1.5">
             <ChannelIcon channel={conversation.channel_type} size="sm" />
             {getChannelLabel(conversation.channel_type)}
-          </p>
+          </div>
         </div>
       </div>
 

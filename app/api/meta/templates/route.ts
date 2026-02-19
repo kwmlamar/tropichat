@@ -1,0 +1,292 @@
+/**
+ * WhatsApp Message Template Management via Meta Graph API
+ *
+ * GET  /api/meta/templates         — List templates from Meta
+ * POST /api/meta/templates         — Create a new template on Meta
+ *
+ * All routes require Authorization: Bearer <supabase_jwt>
+ *
+ * The user must have an active WhatsApp meta_connection with a waba_id
+ * stored in account_id.
+ */
+
+import { NextResponse } from 'next/server'
+import { createServerClient } from '@/lib/supabase-server'
+
+const META_GRAPH = 'https://graph.facebook.com/v19.0'
+
+/**
+ * Resolve a WABA ID from a phone number ID by querying the Graph API.
+ * Phone numbers in Meta's API don't directly expose their parent WABA in
+ * all cases, so we try multiple approaches.
+ */
+async function resolveWabaFromPhoneNumber(
+  phoneNumberId: string,
+  accessToken: string
+): Promise<string | null> {
+  // Try 1: query the phone number for its whatsapp_business_account edge
+  try {
+    const res = await fetch(
+      `${META_GRAPH}/${phoneNumberId}?fields=whatsapp_business_account&access_token=${accessToken}`
+    )
+    const data = await res.json()
+    if (data.whatsapp_business_account?.id) {
+      console.log('[meta/templates] Resolved WABA from phone edge:', data.whatsapp_business_account.id)
+      return data.whatsapp_business_account.id
+    }
+  } catch (e) {
+    console.warn('[meta/templates] Phone WABA edge lookup failed:', e)
+  }
+
+  // Try 2: query the phone number's owner
+  try {
+    const res = await fetch(
+      `${META_GRAPH}/${phoneNumberId}/owner?access_token=${accessToken}`
+    )
+    const data = await res.json()
+    if (data.id && !data.error) {
+      console.log('[meta/templates] Resolved WABA from phone owner:', data.id)
+      return data.id
+    }
+  } catch (e) {
+    console.warn('[meta/templates] Phone owner lookup failed:', e)
+  }
+
+  // Try 3: check me?fields=whatsapp_business_accounts for shared WABAs
+  try {
+    const res = await fetch(
+      `${META_GRAPH}/me?fields=whatsapp_business_accounts{id,name}&access_token=${accessToken}`
+    )
+    const data = await res.json()
+    const wabas = data.whatsapp_business_accounts?.data || []
+    if (wabas.length > 0) {
+      console.log('[meta/templates] Resolved WABA from shared accounts:', wabas[0].id)
+      return wabas[0].id
+    }
+  } catch (e) {
+    console.warn('[meta/templates] Shared WABAs lookup failed:', e)
+  }
+
+  return null
+}
+
+/**
+ * Validate that an ID is a WABA (not a phone number or other node type)
+ * by checking if it has the message_templates edge.
+ */
+async function validateWabaId(
+  wabaId: string,
+  accessToken: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${META_GRAPH}/${wabaId}/message_templates?limit=1&access_token=${accessToken}`
+    )
+    const data = await res.json()
+    // If we get an error about InvalidID or nonexisting field, it's not a WABA
+    if (data.error) {
+      console.log('[meta/templates] ID validation failed:', data.error.message)
+      return false
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function getWhatsAppConnection(token: string) {
+  const supabase = createServerClient(token)
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return { error: 'Not authenticated', status: 401, connection: null }
+  }
+
+  const { data: connection } = await supabase
+    .from('meta_connections')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('channel', 'whatsapp')
+    .eq('is_active', true)
+    .single()
+
+  if (!connection) {
+    return { error: 'WhatsApp not connected. Please connect via Settings > Integrations.', status: 400, connection: null }
+  }
+
+  // Determine the WABA ID to use for template operations
+  let wabaId = connection.account_id
+
+  // If account_id is missing, try to use the WHATSAPP_BUSINESS_ACCOUNT_ID env var
+  if (!wabaId) {
+    wabaId = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || null
+    if (wabaId) {
+      console.log('[meta/templates] No account_id in DB, trying WHATSAPP_BUSINESS_ACCOUNT_ID env var:', wabaId)
+    }
+  }
+
+  // Validate the WABA ID is actually a WABA (not a phone number ID)
+  if (wabaId) {
+    const isValid = await validateWabaId(wabaId, connection.access_token)
+    if (!isValid) {
+      console.log('[meta/templates] ID', wabaId, 'is not a valid WABA — attempting reverse lookup from phone number')
+      // The ID might be a phone number ID — try to resolve the real WABA
+      const resolvedWaba = await resolveWabaFromPhoneNumber(wabaId, connection.access_token)
+      if (resolvedWaba) {
+        wabaId = resolvedWaba
+        // Cache the resolved WABA ID back to the DB so we don't re-resolve every time
+        await supabase.from('meta_connections').update({
+          account_id: resolvedWaba,
+        }).eq('user_id', user.id).eq('channel', 'whatsapp')
+        console.log('[meta/templates] Cached resolved WABA ID to meta_connections:', resolvedWaba)
+      } else {
+        // Also try the WHATSAPP_PHONE_NUMBER_ID env var for reverse lookup
+        const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID
+        if (phoneId && phoneId !== wabaId) {
+          const resolvedFromPhone = await resolveWabaFromPhoneNumber(phoneId, connection.access_token)
+          if (resolvedFromPhone) {
+            wabaId = resolvedFromPhone
+            await supabase.from('meta_connections').update({
+              account_id: resolvedFromPhone,
+            }).eq('user_id', user.id).eq('channel', 'whatsapp')
+            console.log('[meta/templates] Cached resolved WABA ID (from phone) to meta_connections:', resolvedFromPhone)
+          } else {
+            return {
+              error: 'Could not find your WhatsApp Business Account. Please verify WHATSAPP_BUSINESS_ACCOUNT_ID in your environment is set to a valid WABA ID (not a phone number ID). You can find this in Meta Business Suite > WhatsApp > API Setup.',
+              status: 400,
+              connection: null,
+            }
+          }
+        } else {
+          return {
+            error: 'Could not find your WhatsApp Business Account. Please verify WHATSAPP_BUSINESS_ACCOUNT_ID in your environment is set to a valid WABA ID (not a phone number ID). You can find this in Meta Business Suite > WhatsApp > API Setup.',
+            status: 400,
+            connection: null,
+          }
+        }
+      }
+    }
+  } else {
+    return { error: 'No WhatsApp Business Account found. Reconnect your Meta account.', status: 400, connection: null }
+  }
+
+  // Use the resolved WABA ID
+  connection.account_id = wabaId
+
+  return { error: null, status: 200, connection }
+}
+
+/**
+ * GET /api/meta/templates
+ * Fetches all message templates from the user's WABA.
+ */
+export async function GET(request: Request) {
+  const authHeader = request.headers.get('Authorization')
+  const token = authHeader?.replace('Bearer ', '')
+
+  if (!token) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const { error, status, connection } = await getWhatsAppConnection(token)
+  if (error || !connection) {
+    return NextResponse.json({ error }, { status })
+  }
+
+  try {
+    const url = `${META_GRAPH}/${connection.account_id}/message_templates?fields=name,language,status,category,id,components&limit=100&access_token=${connection.access_token}`
+    const res = await fetch(url)
+    const data = await res.json()
+
+    if (data.error) {
+      console.error('Meta templates fetch error:', data.error)
+      return NextResponse.json(
+        { error: data.error.message || 'Failed to fetch templates' },
+        { status: 502 }
+      )
+    }
+
+    return NextResponse.json({ templates: data.data || [] })
+  } catch (e) {
+    console.error('Templates fetch error:', e)
+    return NextResponse.json({ error: 'Failed to fetch templates' }, { status: 500 })
+  }
+}
+
+/**
+ * POST /api/meta/templates
+ * Creates a new message template on the user's WABA.
+ *
+ * Body: { name, category, language, body }
+ */
+export async function POST(request: Request) {
+  const authHeader = request.headers.get('Authorization')
+  const token = authHeader?.replace('Bearer ', '')
+
+  if (!token) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const { error, status, connection } = await getWhatsAppConnection(token)
+  if (error || !connection) {
+    return NextResponse.json({ error }, { status })
+  }
+
+  const body = await request.json()
+  const { name, category, language, body: templateBody } = body
+
+  if (!name || !category || !language || !templateBody) {
+    return NextResponse.json(
+      { error: 'name, category, language, and body are required' },
+      { status: 400 }
+    )
+  }
+
+  // Validate template name: lowercase, underscores only
+  const cleanName = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+
+  try {
+    const url = `${META_GRAPH}/${connection.account_id}/message_templates`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${connection.access_token}`,
+      },
+      body: JSON.stringify({
+        name: cleanName,
+        category: category.toUpperCase(), // MARKETING, UTILITY, AUTHENTICATION
+        language,
+        components: [
+          {
+            type: 'BODY',
+            text: templateBody,
+          },
+        ],
+      }),
+    })
+
+    const data = await res.json()
+
+    if (data.error) {
+      console.error('Meta template create error:', data.error)
+      return NextResponse.json(
+        { error: data.error.message || 'Failed to create template' },
+        { status: 502 }
+      )
+    }
+
+    return NextResponse.json({
+      template: {
+        id: data.id,
+        name: cleanName,
+        status: data.status || 'PENDING',
+        category: category.toUpperCase(),
+        language,
+      },
+    })
+  } catch (e) {
+    console.error('Template create error:', e)
+    return NextResponse.json({ error: 'Failed to create template' }, { status: 500 })
+  }
+}

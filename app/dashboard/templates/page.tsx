@@ -6,13 +6,17 @@ import {
   Search,
   FileText,
   MoreVertical,
-  Edit2,
   Trash2,
   Copy,
   Clock,
   CheckCircle,
   XCircle,
+  Loader2,
+  RefreshCw,
+  AlertTriangle,
+  Link2,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -22,163 +26,166 @@ import { Textarea } from "@/components/ui/textarea"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent } from "@/components/ui/card"
 import {
-  getTemplates,
-  createTemplate,
-  updateTemplate,
-  deleteTemplate,
-} from "@/lib/supabase"
-import { formatDistanceToNow, parseTemplateVariables } from "@/lib/utils"
+  fetchMetaTemplates,
+  createMetaTemplate,
+  deleteMetaTemplate,
+  getMetaStatus,
+} from "@/lib/meta-connections"
 import { toast } from "sonner"
-import type { MessageTemplate, TemplateCategory } from "@/types/database"
+import type { WhatsAppMetaTemplate } from "@/types/database"
 
 const categoryOptions = [
-  { value: "utility", label: "Utility" },
-  { value: "marketing", label: "Marketing" },
-  { value: "authentication", label: "Authentication" },
+  { value: "UTILITY", label: "Utility" },
+  { value: "MARKETING", label: "Marketing" },
+  { value: "AUTHENTICATION", label: "Authentication" },
+]
+
+const languageOptions = [
+  { value: "en", label: "English" },
+  { value: "en_US", label: "English (US)" },
+  { value: "es", label: "Spanish" },
+  { value: "fr", label: "French" },
+  { value: "pt_BR", label: "Portuguese (BR)" },
+  { value: "nl", label: "Dutch" },
 ]
 
 const statusFilters = [
   { value: "all", label: "All" },
-  { value: "approved", label: "Approved" },
-  { value: "pending", label: "Pending" },
-  { value: "rejected", label: "Rejected" },
+  { value: "APPROVED", label: "Approved" },
+  { value: "PENDING", label: "Pending" },
+  { value: "REJECTED", label: "Rejected" },
 ]
 
 export default function TemplatesPage() {
-  const [templates, setTemplates] = useState<MessageTemplate[]>([])
+  const router = useRouter()
+  const [templates, setTemplates] = useState<WhatsAppMetaTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingTemplate, setEditingTemplate] = useState<Partial<MessageTemplate> | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [whatsappConnected, setWhatsappConnected] = useState<boolean | null>(null)
 
-  // Fetch templates
+  // New template form
+  const [newName, setNewName] = useState("")
+  const [newCategory, setNewCategory] = useState("UTILITY")
+  const [newLanguage, setNewLanguage] = useState("en")
+  const [newBody, setNewBody] = useState("")
+
+  // Check WhatsApp connection and fetch templates
   useEffect(() => {
-    async function fetchTemplates() {
+    async function init() {
       setLoading(true)
-      const { data, error } = await getTemplates(
-        undefined,
-        statusFilter === "all" ? undefined : statusFilter
-      )
 
-      if (error) {
-        toast.error("Failed to load templates")
-      } else {
-        setTemplates(data)
+      // Check if WhatsApp is connected
+      const { data: status } = await getMetaStatus()
+      const connected = status?.whatsapp?.connected ?? false
+      setWhatsappConnected(connected)
+
+      if (connected) {
+        await loadTemplates()
       }
 
       setLoading(false)
     }
 
-    fetchTemplates()
-  }, [statusFilter])
+    init()
+  }, [])
 
-  const filteredTemplates = templates.filter(
-    (t) =>
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.body.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
-  const handleCreateTemplate = () => {
-    setEditingTemplate({
-      name: "",
-      category: "utility" as TemplateCategory,
-      language: "en",
-      body: "",
-    })
-    setIsModalOpen(true)
+  const loadTemplates = async () => {
+    const { data, error } = await fetchMetaTemplates()
+    if (error) {
+      toast.error(error)
+    } else {
+      setTemplates(data)
+    }
   }
 
-  const handleEditTemplate = (template: MessageTemplate) => {
-    setEditingTemplate(template)
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    await loadTemplates()
+    setIsRefreshing(false)
+    toast.success("Templates refreshed")
+  }
+
+  const filteredTemplates = templates.filter((t) => {
+    const matchesSearch =
+      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.components?.some(c => c.text?.toLowerCase().includes(searchQuery.toLowerCase()))
+    const matchesStatus = statusFilter === "all" || t.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  const handleCreateTemplate = () => {
+    setNewName("")
+    setNewCategory("UTILITY")
+    setNewLanguage("en")
+    setNewBody("")
     setIsModalOpen(true)
   }
 
   const handleSaveTemplate = async () => {
-    if (!editingTemplate?.name || !editingTemplate?.body) {
-      toast.error("Please fill in all required fields")
+    if (!newName.trim() || !newBody.trim()) {
+      toast.error("Please fill in template name and body")
       return
     }
 
     setIsSaving(true)
 
-    const variables = parseTemplateVariables(editingTemplate.body)
+    const { data, error } = await createMetaTemplate({
+      name: newName,
+      category: newCategory,
+      language: newLanguage,
+      body: newBody,
+    })
 
-    if (editingTemplate.id) {
-      // Update existing
-      const { error } = await updateTemplate(editingTemplate.id, {
-        name: editingTemplate.name,
-        category: editingTemplate.category,
-        body: editingTemplate.body,
-        variables,
-      })
-
-      if (error) {
-        toast.error("Failed to update template")
-      } else {
-        setTemplates((prev) =>
-          prev.map((t) =>
-            t.id === editingTemplate.id
-              ? { ...t, ...editingTemplate, variables }
-              : t
-          )
-        )
-        toast.success("Template updated")
-        setIsModalOpen(false)
-      }
-    } else {
-      // Create new
-      const { data, error } = await createTemplate({
-        ...editingTemplate,
-        variables,
-      } as MessageTemplate)
-
-      if (error) {
-        toast.error("Failed to create template")
-      } else if (data) {
-        setTemplates((prev) => [data, ...prev])
-        toast.success("Template created")
-        setIsModalOpen(false)
-      }
+    if (error) {
+      toast.error(error)
+    } else if (data) {
+      toast.success(`Template "${data.name}" created with status: ${data.status}`)
+      setIsModalOpen(false)
+      // Refresh the full list from Meta
+      await loadTemplates()
     }
 
     setIsSaving(false)
   }
 
-  const handleDeleteTemplate = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this template?")) {
+  const handleDeleteTemplate = async (name: string) => {
+    if (!window.confirm(`Delete template "${name}"? This will delete it from Meta and cannot be undone.`)) {
       return
     }
 
-    const { error } = await deleteTemplate(id)
+    const { error } = await deleteMetaTemplate(name)
 
     if (error) {
-      toast.error("Failed to delete template")
+      toast.error(error)
     } else {
-      setTemplates((prev) => prev.filter((t) => t.id !== id))
+      setTemplates((prev) => prev.filter((t) => t.name !== name))
       toast.success("Template deleted")
     }
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "approved":
+      case "APPROVED":
         return (
           <Badge variant="success" className="gap-1">
             <CheckCircle className="h-3 w-3" />
             Approved
           </Badge>
         )
-      case "pending":
+      case "PENDING":
         return (
           <Badge variant="warning" className="gap-1">
             <Clock className="h-3 w-3" />
             Pending
           </Badge>
         )
-      case "rejected":
+      case "REJECTED":
         return (
           <Badge variant="danger" className="gap-1">
             <XCircle className="h-3 w-3" />
@@ -186,8 +193,55 @@ export default function TemplatesPage() {
           </Badge>
         )
       default:
-        return null
+        return (
+          <Badge variant="secondary" className="gap-1">
+            {status}
+          </Badge>
+        )
     }
+  }
+
+  const getBodyText = (template: WhatsAppMetaTemplate): string => {
+    const bodyComponent = template.components?.find(c => c.type === "BODY")
+    return bodyComponent?.text || ""
+  }
+
+  // Not connected state
+  if (!loading && whatsappConnected === false) {
+    return (
+      <div className="p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">WhatsApp Templates</h1>
+            <p className="text-gray-500 mt-1">
+              Manage your WhatsApp message templates via Meta
+            </p>
+          </div>
+        </div>
+
+        <Card>
+          <CardContent className="p-12 text-center">
+            <div className="rounded-full bg-yellow-50 p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <AlertTriangle className="h-8 w-8 text-yellow-500" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">
+              WhatsApp Not Connected
+            </h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
+              Connect your Meta account with WhatsApp Business permissions to manage message templates.
+              Templates are synced directly with Meta's API.
+            </p>
+            <Button
+              onClick={() => router.push("/dashboard/settings?tab=integrations")}
+              className="bg-[#3A9B9F] hover:bg-[#2F8488]"
+            >
+              <Link2 className="h-4 w-4 mr-2" />
+              Go to Integrations
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -195,19 +249,29 @@ export default function TemplatesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Message Templates</h1>
+          <h1 className="text-2xl font-bold text-gray-900">WhatsApp Templates</h1>
           <p className="text-gray-500 mt-1">
-            Create and manage your message templates
+            Manage your WhatsApp message templates via Meta
           </p>
         </div>
 
-        <Button
-          className="bg-[#3A9B9F] hover:bg-[#2F8488]"
-          onClick={handleCreateTemplate}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Create Template
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Button
+            className="bg-[#3A9B9F] hover:bg-[#2F8488]"
+            onClick={handleCreateTemplate}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Create Template
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -266,7 +330,7 @@ export default function TemplatesPage() {
             <p className="text-sm text-gray-500 mb-4">
               {searchQuery
                 ? "Try a different search term"
-                : "Create your first template to get started"}
+                : "Create your first WhatsApp template to get started"}
             </p>
             <Button
               className="bg-[#3A9B9F] hover:bg-[#2F8488]"
@@ -281,14 +345,14 @@ export default function TemplatesPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredTemplates.map((template) => (
             <div
-              key={template.id}
+              key={`${template.name}-${template.language}`}
               className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-gray-900">{template.name}</h3>
-                  <p className="text-sm text-gray-500 capitalize">
-                    {template.category}
+                  <p className="text-sm text-gray-500">
+                    {template.category} &middot; {template.language}
                   </p>
                 </div>
                 <Dropdown
@@ -300,15 +364,9 @@ export default function TemplatesPage() {
                   }
                 >
                   <DropdownItem
-                    icon={<Edit2 className="h-4 w-4" />}
-                    onClick={() => handleEditTemplate(template)}
-                  >
-                    Edit
-                  </DropdownItem>
-                  <DropdownItem
                     icon={<Copy className="h-4 w-4" />}
                     onClick={() => {
-                      navigator.clipboard.writeText(template.body)
+                      navigator.clipboard.writeText(getBodyText(template))
                       toast.success("Copied to clipboard")
                     }}
                   >
@@ -318,7 +376,7 @@ export default function TemplatesPage() {
                   <DropdownItem
                     icon={<Trash2 className="h-4 w-4" />}
                     destructive
-                    onClick={() => handleDeleteTemplate(template.id)}
+                    onClick={() => handleDeleteTemplate(template.name)}
                   >
                     Delete
                   </DropdownItem>
@@ -327,14 +385,14 @@ export default function TemplatesPage() {
 
               <div className="bg-gray-50 rounded-lg p-3 mb-4">
                 <p className="text-sm text-gray-700 line-clamp-3">
-                  {template.body}
+                  {getBodyText(template) || "(No body text)"}
                 </p>
               </div>
 
               <div className="flex items-center justify-between">
-                {getStatusBadge(template.approval_status)}
-                <span className="text-xs text-gray-500">
-                  Used {template.times_used} times
+                {getStatusBadge(template.status)}
+                <span className="text-xs text-gray-400">
+                  ID: {template.id?.slice(-8)}
                 </span>
               </div>
             </div>
@@ -342,95 +400,95 @@ export default function TemplatesPage() {
         </div>
       )}
 
-      {/* Create/Edit Modal */}
+      {/* Create Template Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingTemplate(null)
-        }}
-        title={editingTemplate?.id ? "Edit Template" : "Create Template"}
+        onClose={() => setIsModalOpen(false)}
+        title="Create WhatsApp Template"
         size="lg"
       >
-        {editingTemplate && (
-          <div className="space-y-4">
-            <div>
-              <Label>Template Name *</Label>
-              <Input
-                value={editingTemplate.name || ""}
-                onChange={(e) =>
-                  setEditingTemplate({ ...editingTemplate, name: e.target.value })
-                }
-                placeholder="e.g., Welcome Message"
-                className="mt-1"
-              />
-            </div>
+        <div className="space-y-4">
+          <div>
+            <Label>Template Name *</Label>
+            <Input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="e.g., welcome_message"
+              className="mt-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Lowercase letters, numbers, and underscores only. Spaces will be converted to underscores.
+            </p>
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Category *</Label>
               <SimpleSelect
-                value={editingTemplate.category || "utility"}
-                onValueChange={(value) =>
-                  setEditingTemplate({
-                    ...editingTemplate,
-                    category: value as TemplateCategory,
-                  })
-                }
+                value={newCategory}
+                onValueChange={setNewCategory}
                 options={categoryOptions}
                 className="mt-1"
               />
             </div>
-
             <div>
-              <Label>Message Body *</Label>
-              <Textarea
-                value={editingTemplate.body || ""}
-                onChange={(e) =>
-                  setEditingTemplate({ ...editingTemplate, body: e.target.value })
-                }
-                placeholder="Type your message here. Use {{variable}} for dynamic content."
-                className="mt-1 min-h-[150px]"
+              <Label>Language *</Label>
+              <SimpleSelect
+                value={newLanguage}
+                onValueChange={setNewLanguage}
+                options={languageOptions}
+                className="mt-1"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Use {"{{name}}"}, {"{{date}}"}, etc. for variables
-              </p>
             </div>
-
-            {editingTemplate.body && (
-              <div>
-                <Label>Preview</Label>
-                <div className="mt-1 bg-[#3A9B9F]/10 rounded-lg p-4">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {editingTemplate.body}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <ModalFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsModalOpen(false)
-                  setEditingTemplate(null)
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-[#3A9B9F]"
-                onClick={handleSaveTemplate}
-                disabled={isSaving}
-              >
-                {isSaving
-                  ? "Saving..."
-                  : editingTemplate.id
-                  ? "Save Changes"
-                  : "Create Template"}
-              </Button>
-            </ModalFooter>
           </div>
-        )}
+
+          <div>
+            <Label>Message Body *</Label>
+            <Textarea
+              value={newBody}
+              onChange={(e) => setNewBody(e.target.value)}
+              placeholder="Type your message here. Use {{1}}, {{2}}, etc. for variables."
+              className="mt-1 min-h-[150px]"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Use {"{{1}}"}, {"{{2}}"}, etc. for dynamic variables. Meta will review this template.
+            </p>
+          </div>
+
+          {newBody && (
+            <div>
+              <Label>Preview</Label>
+              <div className="mt-1 bg-[#3A9B9F]/10 rounded-lg p-4">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {newBody}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <ModalFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-[#3A9B9F]"
+              onClick={handleSaveTemplate}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit to Meta"
+              )}
+            </Button>
+          </ModalFooter>
+        </div>
       </Modal>
     </div>
   )

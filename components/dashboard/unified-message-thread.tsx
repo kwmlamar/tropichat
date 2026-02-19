@@ -133,7 +133,7 @@ export function UnifiedMessageThread({
             <h2 className="font-semibold text-gray-900">
               {conversation.customer_name || conversation.customer_id}
             </h2>
-            <p className="text-xs text-gray-500 flex items-center gap-1.5">
+            <div className="text-xs text-gray-500 flex items-center gap-1.5">
               <ChannelIcon channel={conversation.channel_type} size="sm" />
               <span>{getChannelLabel(conversation.channel_type)}</span>
               {conversation.connected_account && (
@@ -142,7 +142,7 @@ export function UnifiedMessageThread({
                   <span>{conversation.connected_account.channel_account_name || "Connected"}</span>
                 </>
               )}
-            </p>
+            </div>
           </div>
         </div>
 
