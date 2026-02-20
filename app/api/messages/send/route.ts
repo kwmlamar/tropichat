@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       connected_account_id,
       human_agent_enabled,
       connected_account:connected_accounts(
-        id, channel_type, channel_account_id, access_token
+        id, channel_type, channel_account_id, access_token, metadata
       )
     `)
     .eq('id', conversation_id)
@@ -77,11 +77,17 @@ export async function POST(request: NextRequest) {
     channel_type: ChannelType
     channel_account_id: string
     access_token: string
+    metadata: Record<string, string> | null
   }
 
   if (!account) {
     return NextResponse.json({ error: 'Connected account not found' }, { status: 404 })
   }
+
+  // For Instagram/Messenger, prefer the page access token stored in metadata
+  // over the user access token — page tokens are required for sending messages
+  const accessToken =
+    account.metadata?.page_access_token ?? account.access_token
 
   // Determine if we should use human_agent tag
   // Use it if explicitly passed OR if the conversation has human_agent_enabled
@@ -92,7 +98,7 @@ export async function POST(request: NextRequest) {
     const result = await sendMessage({
       channelType: account.channel_type,
       accountId: account.channel_account_id,
-      accessToken: account.access_token,
+      accessToken,
       recipientId: conversation.customer_id,
       content,
       messageType: message_type,
