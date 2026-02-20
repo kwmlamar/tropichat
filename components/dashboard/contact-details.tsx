@@ -119,7 +119,7 @@ export function ContactDetails({
       {/* Contact Header */}
       <div className="p-6 border-b border-gray-200 text-center">
         <Avatar
-          fallback={contact.name || contact.phone_number}
+          fallback={contact.name || contact.phone_number || undefined}
           size="xl"
           className="mx-auto"
         />
