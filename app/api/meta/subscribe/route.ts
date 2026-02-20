@@ -4,9 +4,6 @@
  * One-time setup: subscribes Facebook Pages to the app webhook so that
  * real Instagram DMs and Messenger messages trigger webhook events.
  *
- * This calls POST /{page-id}/subscribed_apps with the page access token
- * for every active Messenger/Instagram connected account.
- *
  * Hit this URL once after connecting accounts:
  *   https://www.tropichat.chat/api/meta/subscribe
  */
@@ -22,7 +19,7 @@ export async function GET() {
   // Fetch all active messenger + instagram connected accounts
   const { data: accounts, error } = await db
     .from('connected_accounts')
-    .select('id, channel_type, channel_account_id, channel_account_name, access_token, metadata')
+    .select('id, user_id, channel_type, channel_account_id, channel_account_name, access_token, metadata')
     .in('channel_type', ['messenger', 'instagram'])
     .eq('is_active', true)
 
@@ -30,38 +27,71 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch accounts', detail: error }, { status: 500 })
   }
 
+  // Build a lookup: user_id -> page_id -> page_access_token from Messenger rows
+  // (Messenger rows store the page access token directly as access_token)
+  const messengerTokenByPageId: Record<string, string> = {}
+  for (const account of accounts) {
+    if (account.channel_type === 'messenger') {
+      messengerTokenByPageId[account.channel_account_id] = account.access_token
+    }
+  }
+
   const results = []
+
+  // Process only unique page subscriptions (dedupe by pageId)
+  const subscribedPageIds = new Set<string>()
 
   for (const account of accounts) {
     const meta = account.metadata as Record<string, string> | null
 
-    // For Instagram accounts, the page access token is stored in metadata.page_access_token
-    // For Messenger, the access_token on the row is already the page access token
-    const pageAccessToken =
-      meta?.page_access_token ?? account.access_token
+    let pageId: string
+    let pageAccessToken: string
 
-    // For Instagram, we need the Facebook Page ID (stored in metadata.page_id)
-    // For Messenger, channel_account_id IS the page ID
-    const pageId =
-      account.channel_type === 'instagram'
-        ? (meta?.page_id ?? account.channel_account_id)
-        : account.channel_account_id
+    if (account.channel_type === 'messenger') {
+      pageId = account.channel_account_id
+      pageAccessToken = account.access_token
+    } else {
+      // Instagram: page_id is in metadata, token comes from the matching Messenger row
+      pageId = meta?.page_id ?? ''
+      // Try: metadata.page_access_token first, then matching Messenger row, then own token
+      pageAccessToken =
+        meta?.page_access_token ??
+        messengerTokenByPageId[pageId] ??
+        account.access_token
+    }
 
-    if (!pageId || !pageAccessToken) {
+    if (!pageId) {
       results.push({
         account: account.channel_account_name,
         channel: account.channel_type,
         status: 'skipped',
-        reason: 'Missing page_id or page_access_token',
+        reason: 'No page_id found',
       })
       continue
     }
 
-    // Subscribe fields differ by channel
-    const subscribedFields =
-      account.channel_type === 'instagram'
-        ? 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads'
-        : 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads'
+    // Skip if we already subscribed this page (messenger + instagram share the same page)
+    if (subscribedPageIds.has(pageId)) {
+      results.push({
+        account: account.channel_account_name,
+        channel: account.channel_type,
+        pageId,
+        status: 'skipped',
+        reason: 'Page already subscribed via another account row',
+      })
+      continue
+    }
+
+    if (!pageAccessToken) {
+      results.push({
+        account: account.channel_account_name,
+        channel: account.channel_type,
+        pageId,
+        status: 'skipped',
+        reason: 'No page access token found',
+      })
+      continue
+    }
 
     try {
       const res = await fetch(
@@ -70,7 +100,7 @@ export async function GET() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            subscribed_fields: subscribedFields,
+            subscribed_fields: 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads',
             access_token: pageAccessToken,
           }),
         }
@@ -84,8 +114,10 @@ export async function GET() {
           pageId,
           status: 'error',
           error: data.error.message,
+          errorCode: data.error.code,
         })
       } else {
+        subscribedPageIds.add(pageId)
         results.push({
           account: account.channel_account_name,
           channel: account.channel_type,
