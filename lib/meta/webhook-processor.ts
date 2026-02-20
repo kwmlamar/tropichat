@@ -156,7 +156,11 @@ export async function handleIncomingMessage(
   event: IncomingWebhookEvent
 ): Promise<void> {
   // 1. Find the connected account (include access_token for profile lookups)
-  const { data: account, error: accountError } = await db
+  // For Instagram, recipient.id in the webhook may be the IGID OR the Facebook Page ID,
+  // so we try both: first by channel_account_id, then by metadata->page_id.
+  let account: { id: string; user_id: string; access_token: string; metadata: unknown } | null = null
+
+  const { data: directMatch } = await db
     .from('connected_accounts')
     .select('id, user_id, access_token, metadata')
     .eq('channel_type', event.channel_type)
@@ -164,7 +168,22 @@ export async function handleIncomingMessage(
     .eq('is_active', true)
     .single()
 
-  if (accountError || !account) {
+  account = directMatch
+
+  // Fallback: for instagram, try matching by metadata->page_id
+  if (!account && event.channel_type === 'instagram') {
+    console.log(`[Webhook:instagram] Direct match failed for ${event.account_id}, trying page_id fallback`)
+    const { data: pageMatch } = await db
+      .from('connected_accounts')
+      .select('id, user_id, access_token, metadata')
+      .eq('channel_type', 'instagram')
+      .eq('is_active', true)
+      .filter('metadata->>page_id', 'eq', event.account_id)
+      .single()
+    account = pageMatch
+  }
+
+  if (!account) {
     console.warn(
       `[Webhook:${event.channel_type}] No connected account found for`,
       event.account_id
