@@ -132,7 +132,7 @@ export function MessageThread({
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <Avatar
-            fallback={conversation.contact?.name || conversation.contact?.phone_number}
+            fallback={conversation.contact?.name || conversation.contact?.phone_number || undefined}
             size="md"
           />
           <div>
