@@ -115,28 +115,46 @@ export async function getInstagramConversations(
 /**
  * Instagram webhook payload structure.
  * https://developers.facebook.com/docs/instagram-platform/webhooks
+ *
+ * Instagram sends webhooks in two formats depending on the product config:
+ *
+ * Format A — "messaging" array (Messenger Platform for Instagram):
+ *   entry[].messaging[].{ sender, recipient, timestamp, message, read, delivery }
+ *   entry[].id = Instagram Business Account ID
+ *
+ * Format B — "changes" array (Instagram Webhooks product):
+ *   entry[].changes[].{ field: "messages", value: { sender, recipient, timestamp, message } }
+ *   entry[].id = "0" (placeholder); real account ID is in value.recipient.id
  */
+interface MessagingEvent {
+  sender: { id: string }
+  recipient: { id: string }
+  timestamp: number
+  message?: {
+    mid: string
+    text?: string
+    attachments?: Array<{
+      type: 'image' | 'video' | 'audio' | 'file' | 'share' | 'story_mention'
+      payload: { url: string }
+    }>
+    is_echo?: boolean
+    reply_to?: { mid: string }
+  }
+  read?: { watermark: number }
+  delivery?: { mids: string[]; watermark: number }
+}
+
 interface InstagramWebhookPayload {
   object: string
   entry: Array<{
     id: string
     time: number
-    messaging: Array<{
-      sender: { id: string }
-      recipient: { id: string }
-      timestamp: number
-      message?: {
-        mid: string
-        text?: string
-        attachments?: Array<{
-          type: 'image' | 'video' | 'audio' | 'file' | 'share' | 'story_mention'
-          payload: { url: string }
-        }>
-        is_echo?: boolean
-        reply_to?: { mid: string }
-      }
-      read?: { watermark: number }
-      delivery?: { mids: string[]; watermark: number }
+    // Format A
+    messaging?: MessagingEvent[]
+    // Format B
+    changes?: Array<{
+      field: string
+      value: MessagingEvent
     }>
   }>
 }
@@ -174,9 +192,26 @@ export function parseInstagramWebhook(payload: unknown): {
   console.log('[parseInstagramWebhook] Processing payload, object:', data.object, 'entries:', data.entry?.length)
 
   for (const entry of data.entry) {
-    const igUserId = entry.id
+    // Collect messaging events from whichever format this entry uses.
+    // Format A: entry.messaging[]
+    // Format B: entry.changes[].value (field === 'messages')
+    const events: Array<{ event: MessagingEvent; accountId: string }> = []
 
-    for (const event of entry.messaging) {
+    if (entry.messaging && entry.messaging.length > 0) {
+      // Format A — account ID is on the entry itself
+      for (const event of entry.messaging) {
+        events.push({ event, accountId: entry.id })
+      }
+    } else if (entry.changes && entry.changes.length > 0) {
+      // Format B — account ID is the recipient ID inside the change value
+      for (const change of entry.changes) {
+        if (change.field === 'messages' && change.value) {
+          events.push({ event: change.value, accountId: change.value.recipient.id })
+        }
+      }
+    }
+
+    for (const { event, accountId } of events) {
       // Skip echo messages (messages sent by us)
       if (event.message?.is_echo) continue
 
@@ -200,13 +235,13 @@ export function parseInstagramWebhook(payload: unknown): {
 
         messages.push({
           channel_type: 'instagram',
-          account_id: igUserId,
+          account_id: accountId,
           customer_id: event.sender.id,
           message: {
             id: msg.mid,
             type,
             content,
-            timestamp: new Date(event.timestamp).toISOString(),
+            timestamp: new Date(Number(event.timestamp) * (String(event.timestamp).length <= 10 ? 1000 : 1)).toISOString(),
             metadata,
           },
         })
@@ -216,7 +251,7 @@ export function parseInstagramWebhook(payload: unknown): {
       if (event.read) {
         statuses.push({
           channel_type: 'instagram',
-          channel_message_id: '', // IG read receipts use watermark, not specific message ID
+          channel_message_id: '',
           status: 'read' as MessageDeliveryStatus,
           timestamp: new Date(event.read.watermark).toISOString(),
         })
