@@ -11,6 +11,8 @@ import {
   Trash2,
   Download,
   Filter,
+  MessageCircle,
+  Instagram,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -93,10 +95,11 @@ export default function ContactsPage() {
       : contacts
 
     const csv = [
-      ["Name", "Phone", "Email", "Tags", "First Contact", "Last Contact", "Messages"],
+      ["Name", "Phone", "Channel", "Email", "Tags", "First Contact", "Last Contact", "Messages"],
       ...dataToExport.map((c) => [
         c.name || "",
-        c.phone_number,
+        c.phone_number || "",
+        c.channel_type || "whatsapp",
         c.email || "",
         (c.tags || []).join(", "),
         c.first_message_at ? formatDate(c.first_message_at) : "",
@@ -178,7 +181,7 @@ export default function ContactsPage() {
                   Contact
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone
+                  Phone / Channel
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Last Contact
@@ -260,13 +263,26 @@ export default function ContactsPage() {
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar
-                          fallback={contact.name || contact.phone_number}
+                          src={contact.avatar_url ?? undefined}
+                          fallback={contact.name || contact.phone_number || contact.channel_id || "?"}
                           size="md"
                         />
                         <div>
-                          <p className="font-medium text-gray-900">
-                            {contact.name || "Unknown"}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-gray-900">
+                              {contact.name || "Unknown"}
+                            </p>
+                            {contact.channel_type === 'messenger' && (
+                              <span title="Messenger">
+                                <MessageCircle className="h-3.5 w-3.5 text-blue-500" />
+                              </span>
+                            )}
+                            {contact.channel_type === 'instagram' && (
+                              <span title="Instagram">
+                                <Instagram className="h-3.5 w-3.5 text-pink-500" />
+                              </span>
+                            )}
+                          </div>
                           {contact.email && (
                             <p className="text-sm text-gray-500">
                               {contact.email}
@@ -276,7 +292,13 @@ export default function ContactsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-900">
-                      {contact.phone_number}
+                      {contact.phone_number || (
+                        <span className="text-gray-400 italic text-xs">
+                          {contact.channel_type === 'messenger' ? 'Messenger contact' :
+                           contact.channel_type === 'instagram' ? 'Instagram contact' :
+                           '—'}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-500 hidden md:table-cell">
                       {contact.last_message_at

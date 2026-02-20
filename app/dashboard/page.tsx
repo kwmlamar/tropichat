@@ -34,6 +34,7 @@ export default function InboxPage() {
   const [channelFilter, setChannelFilter] = useState<ChannelType | "all">("all")
   const [hasMoreMessages, setHasMoreMessages] = useState(true)
   const [accountIds, setAccountIds] = useState<string[]>([])
+  const [showArchived, setShowArchived] = useState(false)
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
@@ -65,7 +66,7 @@ export default function InboxPage() {
     if (!mountedRef.current) return
     setLoadingConversations(true)
     try {
-      const { data, error } = await getUnifiedConversations(channelFilter, debouncedSearch)
+      const { data, error } = await getUnifiedConversations(channelFilter, debouncedSearch, 50, showArchived)
       if (!mountedRef.current) return
 
       if (error) {
@@ -79,7 +80,7 @@ export default function InboxPage() {
       console.error("Failed to fetch conversations:", err)
     }
     if (mountedRef.current) setLoadingConversations(false)
-  }, [channelFilter, debouncedSearch])
+  }, [channelFilter, debouncedSearch, showArchived])
 
   useEffect(() => {
     fetchConversations()
@@ -314,21 +315,26 @@ export default function InboxPage() {
     }
   }
 
-  // Archive handler
+  // Archive / Unarchive handler
   const handleArchive = async () => {
     if (!selectedConversation) return
+    const willArchive = !selectedConversation.is_archived
     const { error } = await updateUnifiedConversation(selectedConversation.id, {
-      is_archived: !selectedConversation.is_archived,
+      is_archived: willArchive,
     })
     if (error) {
-      toast.error("Failed to archive conversation")
+      toast.error(willArchive ? "Failed to archive conversation" : "Failed to unarchive conversation")
     } else {
-      toast.success(
-        selectedConversation.is_archived ? "Conversation unarchived" : "Conversation archived"
-      )
+      toast.success(willArchive ? "Conversation archived" : "Conversation unarchived")
       setSelectedConversation(null)
       fetchConversations()
     }
+  }
+
+  // Toggle between inbox and archived view
+  const handleToggleArchived = () => {
+    setShowArchived((prev) => !prev)
+    setSelectedConversation(null)
   }
 
   // Load more messages
@@ -359,6 +365,8 @@ export default function InboxPage() {
           onSearch={setSearchQuery}
           onChannelFilter={setChannelFilter}
           currentChannelFilter={channelFilter}
+          showArchived={showArchived}
+          onToggleArchived={handleToggleArchived}
         />
       </div>
 

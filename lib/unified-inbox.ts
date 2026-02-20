@@ -52,7 +52,8 @@ export async function getConnectedAccount(id: string): Promise<{
 export async function getUnifiedConversations(
   channelFilter?: ChannelType | 'all',
   search?: string,
-  limit = 50
+  limit = 50,
+  showArchived = false
 ): Promise<{ data: ConversationWithAccount[]; error: string | null }> {
   const client = getSupabase()
   const { user } = await getUser()
@@ -78,7 +79,7 @@ export async function getUnifiedConversations(
       connected_account:connected_accounts(id, channel_type, channel_account_name)
     `)
     .in('connected_account_id', accountIds)
-    .eq('is_archived', false)
+    .eq('is_archived', showArchived)
     .order('last_message_at', { ascending: false, nullsFirst: false })
     .limit(limit)
 

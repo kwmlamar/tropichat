@@ -22,6 +22,103 @@ export function getServiceClient(): ServiceClient {
   return _serviceClient
 }
 
+const META_GRAPH = 'https://graph.facebook.com/v19.0'
+
+/**
+ * Fetch a Messenger user's name and profile pic using their PSID.
+ * Requires a Page Access Token.
+ */
+async function fetchMessengerProfile(
+  psid: string,
+  pageAccessToken: string
+): Promise<{ name: string | null; avatarUrl: string | null }> {
+  try {
+    const url = `${META_GRAPH}/${psid}?fields=name,profile_pic&access_token=${pageAccessToken}`
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.error) {
+      console.warn('[Webhook:messenger] Profile fetch error:', data.error.message)
+      return { name: null, avatarUrl: null }
+    }
+    const name = data.name ?? null
+    const avatarUrl = data.profile_pic ?? null
+    return { name, avatarUrl }
+  } catch (e) {
+    console.warn('[Webhook:messenger] Profile fetch failed:', e)
+    return { name: null, avatarUrl: null }
+  }
+}
+
+/**
+ * Fetch an Instagram user's name/username using their IGSID.
+ * Requires a Page Access Token (linked to the IG account).
+ */
+async function fetchInstagramProfile(
+  igsid: string,
+  pageAccessToken: string
+): Promise<{ name: string | null; avatarUrl: string | null }> {
+  try {
+    const url = `${META_GRAPH}/${igsid}?fields=name,username,profile_pic&access_token=${pageAccessToken}`
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.error) {
+      console.warn('[Webhook:instagram] Profile fetch error:', data.error.message)
+      return { name: null, avatarUrl: null }
+    }
+    const name = data.name ?? data.username ?? null
+    const avatarUrl = data.profile_pic ?? null
+    return { name, avatarUrl }
+  } catch (e) {
+    console.warn('[Webhook:instagram] Profile fetch failed:', e)
+    return { name: null, avatarUrl: null }
+  }
+}
+
+/**
+ * Upsert a contact row for a unified inbox conversation.
+ * Uses (customer_id/user_id, channel_type, channel_id) as the unique key.
+ */
+async function upsertChannelContact(
+  db: ServiceClient,
+  userId: string,
+  channelType: string,
+  channelId: string,
+  name: string | null,
+  avatarUrl: string | null
+): Promise<void> {
+  try {
+    const now = new Date().toISOString()
+    const { error } = await db.from('contacts').upsert(
+      {
+        customer_id: userId,
+        channel_type: channelType,
+        channel_id: channelId,
+        name: name ?? null,
+        avatar_url: avatarUrl ?? null,
+        phone_number: null,
+        last_message_at: now,
+        first_message_at: now,
+        total_messages_received: 1,
+        total_messages_sent: 0,
+        is_blocked: false,
+        opted_out: false,
+        tags: [],
+      },
+      {
+        onConflict: 'customer_id,channel_type,channel_id',
+        ignoreDuplicates: false,
+      }
+    )
+    if (error) {
+      console.error(`[Webhook:${channelType}] Failed to upsert contact:`, error)
+    } else {
+      console.log(`[Webhook:${channelType}] Contact upserted for ${channelId} (${name ?? 'no name'})`)
+    }
+  } catch (e) {
+    console.error(`[Webhook:${channelType}] Contact upsert exception:`, e)
+  }
+}
+
 /**
  * Verify Meta webhook signature using HMAC-SHA256.
  */
@@ -50,17 +147,18 @@ export async function verifyMetaSignature(
 /**
  * Process an incoming message webhook event:
  * - Find the connected account
- * - Find or create the conversation
+ * - Find or create the conversation (fetching profile name for new ones)
+ * - Upsert the contact into the contacts table
  * - Insert the message
  */
 export async function handleIncomingMessage(
   db: ServiceClient,
   event: IncomingWebhookEvent
 ): Promise<void> {
-  // 1. Find the connected account
+  // 1. Find the connected account (include access_token for profile lookups)
   const { data: account, error: accountError } = await db
     .from('connected_accounts')
-    .select('id, user_id')
+    .select('id, user_id, access_token, metadata')
     .eq('channel_type', event.channel_type)
     .eq('channel_account_id', event.account_id)
     .eq('is_active', true)
@@ -79,21 +177,39 @@ export async function handleIncomingMessage(
 
   const { data: conversation } = await db
     .from('unified_conversations')
-    .select('id')
+    .select('id, customer_name')
     .eq('connected_account_id', account.id)
     .eq('channel_conversation_id', channelConvId)
     .single()
 
   let conversationDbId: string
+  let resolvedName: string | null = event.customer_name ?? null
+  let resolvedAvatar: string | null = null
 
   if (!conversation) {
+    // New conversation — fetch real name from Meta profile API
+    const pageAccessToken: string =
+      (account.metadata as Record<string, unknown>)?.page_access_token as string
+      ?? account.access_token
+
+    if (event.channel_type === 'messenger') {
+      const profile = await fetchMessengerProfile(event.customer_id, pageAccessToken)
+      resolvedName = profile.name
+      resolvedAvatar = profile.avatarUrl
+    } else if (event.channel_type === 'instagram') {
+      const profile = await fetchInstagramProfile(event.customer_id, pageAccessToken)
+      resolvedName = profile.name
+      resolvedAvatar = profile.avatarUrl
+    }
+
     const { data: newConv, error: insertError } = await db
       .from('unified_conversations')
       .insert({
         connected_account_id: account.id,
         channel_type: event.channel_type,
         channel_conversation_id: channelConvId,
-        customer_name: event.customer_name ?? null,
+        customer_name: resolvedName,
+        customer_avatar_url: resolvedAvatar,
         customer_id: event.customer_id,
         last_message_at: event.message.timestamp,
         last_message_preview: event.message.content?.substring(0, 100) ?? null,
@@ -109,9 +225,22 @@ export async function handleIncomingMessage(
     conversationDbId = newConv.id
   } else {
     conversationDbId = conversation.id
+    resolvedName = conversation.customer_name
   }
 
-  // 3. Insert the message (DB trigger updates conversation stats)
+  // 3. Upsert contact (Messenger/Instagram) into contacts table
+  if (event.channel_type === 'messenger' || event.channel_type === 'instagram') {
+    await upsertChannelContact(
+      db,
+      account.user_id,
+      event.channel_type,
+      event.customer_id,
+      resolvedName,
+      resolvedAvatar
+    )
+  }
+
+  // 4. Insert the message (DB trigger updates conversation stats)
   const { error: msgError } = await db.from('unified_messages').insert({
     conversation_id: conversationDbId,
     channel_message_id: event.message.id,

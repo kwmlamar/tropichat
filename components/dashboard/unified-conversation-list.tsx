@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Inbox, Shield } from "lucide-react"
+import { Search, Inbox, Shield, ArchiveX } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -19,6 +19,8 @@ interface UnifiedConversationListProps {
   onSearch: (query: string) => void
   onChannelFilter: (channel: ChannelType | "all") => void
   currentChannelFilter: ChannelType | "all"
+  showArchived: boolean
+  onToggleArchived: () => void
 }
 
 const channelFilters: { value: ChannelType | "all"; label: string }[] = [
@@ -36,6 +38,8 @@ export function UnifiedConversationList({
   onSearch,
   onChannelFilter,
   currentChannelFilter,
+  showArchived,
+  onToggleArchived,
 }: UnifiedConversationListProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -69,9 +73,9 @@ export function UnifiedConversationList({
 
   return (
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      {/* Search */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="relative">
+      {/* Search + Archived toggle */}
+      <div className="p-4 border-b border-gray-200 flex items-center gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search conversations..."
@@ -80,28 +84,50 @@ export function UnifiedConversationList({
             className="pl-9 bg-gray-50 border-gray-200"
           />
         </div>
+        <button
+          onClick={onToggleArchived}
+          title={showArchived ? "Back to inbox" : "View archived"}
+          className={cn(
+            "p-2 rounded-lg transition-colors flex-shrink-0",
+            showArchived
+              ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
+              : "hover:bg-gray-100 text-gray-500"
+          )}
+        >
+          <ArchiveX className="h-4 w-4" />
+        </button>
       </div>
 
-      {/* Channel filters */}
-      <div className="px-4 py-2 border-b border-gray-200 flex gap-1.5 overflow-x-auto">
-        {channelFilters.map((filter) => (
-          <button
-            key={filter.value}
-            onClick={() => onChannelFilter(filter.value)}
-            className={cn(
-              "px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors flex items-center gap-1.5",
-              currentChannelFilter === filter.value
-                ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
-                : "text-gray-600 hover:bg-gray-100"
-            )}
-          >
-            {filter.value !== "all" && (
-              <ChannelIcon channel={filter.value} size="sm" />
-            )}
-            {filter.value === "all" ? filter.label : ""}
-          </button>
-        ))}
-      </div>
+      {/* Channel filters (hidden in archived view) */}
+      {!showArchived && (
+        <div className="px-4 py-2 border-b border-gray-200 flex gap-1.5 overflow-x-auto">
+          {channelFilters.map((filter) => (
+            <button
+              key={filter.value}
+              onClick={() => onChannelFilter(filter.value)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap transition-colors flex items-center gap-1.5",
+                currentChannelFilter === filter.value
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
+                  : "text-gray-600 hover:bg-gray-100"
+              )}
+            >
+              {filter.value !== "all" && (
+                <ChannelIcon channel={filter.value} size="sm" />
+              )}
+              {filter.value === "all" ? filter.label : ""}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Archived label */}
+      {showArchived && (
+        <div className="px-4 py-2 border-b border-gray-200 flex items-center gap-2">
+          <ArchiveX className="h-3.5 w-3.5 text-gray-400" />
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Archived conversations</span>
+        </div>
+      )}
 
       {/* Conversation list */}
       <div className="flex-1 overflow-y-auto">
@@ -110,10 +136,14 @@ export function UnifiedConversationList({
             <div className="rounded-full bg-gray-100 p-4 mb-4">
               <Inbox className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className="font-medium text-gray-900 mb-1">No conversations</h3>
+            <h3 className="font-medium text-gray-900 mb-1">
+              {showArchived ? "No archived conversations" : "No conversations"}
+            </h3>
             <p className="text-sm text-gray-500">
               {searchQuery
                 ? "No conversations match your search"
+                : showArchived
+                ? "Conversations you archive will appear here"
                 : "Messages from WhatsApp, Instagram, and Messenger will appear here"}
             </p>
           </div>

@@ -48,7 +48,7 @@ export interface Customer {
 export interface Contact {
   id: string
   customer_id: string
-  phone_number: string
+  phone_number: string | null
   name: string | null
   email: string | null
   tags: string[]
@@ -59,6 +59,10 @@ export interface Contact {
   total_messages_received: number
   is_blocked: boolean
   opted_out: boolean
+  // Unified inbox channel fields (Messenger / Instagram contacts have no phone)
+  channel_type: 'whatsapp' | 'instagram' | 'messenger' | null
+  channel_id: string | null
+  avatar_url: string | null
   created_at: string
   updated_at: string
 }

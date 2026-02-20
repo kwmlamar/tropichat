@@ -220,7 +220,7 @@ export function UnifiedMessageThread({
                 icon={<Archive className="h-4 w-4" />}
                 onClick={onArchive}
               >
-                Archive conversation
+                {conversation.is_archived ? "Unarchive conversation" : "Archive conversation"}
               </DropdownItem>
             )}
             <DropdownSeparator />

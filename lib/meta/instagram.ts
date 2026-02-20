@@ -164,9 +164,14 @@ export function parseInstagramWebhook(payload: unknown): {
   const messages: IncomingWebhookEvent[] = []
   const statuses: MessageStatusUpdate[] = []
 
-  if (data.object !== 'instagram') {
+  // Meta can send Instagram DMs with object = 'instagram' OR 'page'
+  // (Messenger Platform API for Instagram uses 'instagram'; some app configs use 'page')
+  if (data.object !== 'instagram' && data.object !== 'page') {
+    console.warn('[parseInstagramWebhook] Unexpected object type:', data.object)
     return { messages, statuses }
   }
+
+  console.log('[parseInstagramWebhook] Processing payload, object:', data.object, 'entries:', data.entry?.length)
 
   for (const entry of data.entry) {
     const igUserId = entry.id
