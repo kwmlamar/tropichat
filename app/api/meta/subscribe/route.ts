@@ -70,7 +70,20 @@ export async function GET() {
       continue
     }
 
-    // Skip if we already subscribed this page (messenger + instagram share the same page)
+    // Skip non-PAGE tokens — only PAGE tokens can subscribe fields
+    // The Messenger row always has a PAGE token; use it for both channels
+    if (account.channel_type === 'instagram') {
+      results.push({
+        account: account.channel_account_name,
+        channel: account.channel_type,
+        pageId,
+        status: 'skipped',
+        reason: 'Instagram uses same page subscription as Messenger row',
+      })
+      continue
+    }
+
+    // Skip if we already subscribed this page
     if (subscribedPageIds.has(pageId)) {
       results.push({
         account: account.channel_account_name,
@@ -100,7 +113,7 @@ export async function GET() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            subscribed_fields: 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads',
+            subscribed_fields: 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads,instagram_manage_messages',
             access_token: pageAccessToken,
           }),
         }
