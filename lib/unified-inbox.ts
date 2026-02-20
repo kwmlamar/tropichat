@@ -274,7 +274,13 @@ export function subscribeToUnifiedMessages(
       },
       (payload) => callback(payload.new as UnifiedMessage, 'UPDATE')
     )
-    .subscribe()
+    .subscribe((status, err) => {
+      if (status === 'SUBSCRIBED') {
+        console.log(`[Realtime] Messages subscription active for ${conversationId}`)
+      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        console.error(`[Realtime] Messages subscription ${status}:`, err)
+      }
+    })
 
   return () => {
     client.removeChannel(channel)
@@ -306,7 +312,13 @@ export function subscribeToUnifiedConversations(
         },
         (payload) => callback(payload.new as UnifiedConversation)
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`[Realtime] Conversations subscription active for account ${accountId}`)
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.error(`[Realtime] Conversations subscription ${status}:`, err)
+        }
+      })
   })
 
   return () => {

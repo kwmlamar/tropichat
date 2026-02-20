@@ -22,6 +22,7 @@ function GoogleIcon({ className }: { className?: string }) {
   )
 }
 
+
 const features = [
   "Unified inbox for WhatsApp, Instagram & Facebook",
   "Tag and categorize customers",

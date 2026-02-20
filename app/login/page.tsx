@@ -22,6 +22,7 @@ function GoogleIcon({ className }: { className?: string }) {
   )
 }
 
+
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")

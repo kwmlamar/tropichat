@@ -179,6 +179,13 @@ export default function InboxPage() {
     return unsubscribe
   }, [selectedConversation?.id])
 
+  // Stable ref to fetchConversations so the realtime subscription
+  // doesn't re-subscribe when filters change.
+  const fetchConversationsRef = useRef(fetchConversations)
+  useEffect(() => {
+    fetchConversationsRef.current = fetchConversations
+  }, [fetchConversations])
+
   // Real-time subscription for conversation list updates
   useEffect(() => {
     if (accountIds.length === 0) return
@@ -190,7 +197,7 @@ export default function InboxPage() {
           const index = prev.findIndex((c) => c.id === updatedConv.id)
           if (index === -1) {
             // New conversation — refetch to get full data with joins
-            fetchConversations()
+            fetchConversationsRef.current()
             return prev
           }
           return prev
@@ -211,7 +218,7 @@ export default function InboxPage() {
     )
 
     return unsubscribe
-  }, [accountIds, fetchConversations])
+  }, [accountIds])
 
   // Send message handler
   const handleSendMessage = async (messageText: string) => {
