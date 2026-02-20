@@ -73,10 +73,13 @@ export async function POST(request: NextRequest) {
   // Log the raw payload for diagnostics (first 500 chars)
   console.log('[Instagram Webhook] Payload preview:', JSON.stringify(payload).slice(0, 500))
 
-  // Respond 200 immediately, process asynchronously
-  processInstagramWebhook(payload).catch((err) => {
+  // Process synchronously before responding — Vercel serverless functions
+  // terminate after the response is sent, killing any async work.
+  try {
+    await processInstagramWebhook(payload)
+  } catch (err) {
     console.error('[Instagram Webhook] Processing error:', err)
-  })
+  }
 
   return NextResponse.json({ status: 'ok' }, { status: 200 })
 }

@@ -68,10 +68,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  // Respond 200 immediately, process asynchronously
-  processWhatsAppWebhook(payload).catch((err) => {
+  // Process synchronously before responding — Vercel serverless functions
+  // terminate after the response is sent, killing any async work.
+  try {
+    await processWhatsAppWebhook(payload)
+  } catch (err) {
     console.error('[WhatsApp Webhook] Processing error:', err)
-  })
+  }
 
   return NextResponse.json({ status: 'ok' }, { status: 200 })
 }

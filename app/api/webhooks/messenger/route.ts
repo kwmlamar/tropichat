@@ -67,15 +67,16 @@ export async function POST(request: NextRequest) {
   const objectType = (payload as Record<string, unknown>)?.object
   console.log('[Messenger Webhook] Payload object type:', objectType, '| preview:', JSON.stringify(payload).slice(0, 300))
 
-  // Respond 200 immediately, process asynchronously
-  if (objectType === 'instagram') {
-    processInstagramViaMessengerWebhook(payload).catch((err) => {
-      console.error('[Messenger Webhook] Instagram processing error:', err)
-    })
-  } else {
-    processMessengerWebhook(payload).catch((err) => {
-      console.error('[Messenger Webhook] Processing error:', err)
-    })
+  // Process synchronously before responding — Vercel serverless functions
+  // terminate after the response is sent, killing any async work.
+  try {
+    if (objectType === 'instagram') {
+      await processInstagramViaMessengerWebhook(payload)
+    } else {
+      await processMessengerWebhook(payload)
+    }
+  } catch (err) {
+    console.error('[Messenger Webhook] Processing error:', err)
   }
 
   return NextResponse.json({ status: 'ok' }, { status: 200 })
