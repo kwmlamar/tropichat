@@ -13,7 +13,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ChannelIcon, getChannelLabel } from "./channel-icon"
-import { formatDate, formatDistanceToNow } from "@/lib/utils"
+import { formatDate, formatDistanceToNow, getConversationDisplayName } from "@/lib/utils"
 import type { ConversationWithAccount, UnifiedMessage } from "@/types/unified-inbox"
 
 interface UnifiedContactDetailsProps {
@@ -67,7 +67,7 @@ export function UnifiedContactDetails({
         <div className="relative inline-block">
           <Avatar
             src={conversation.customer_avatar_url}
-            fallback={conversation.customer_name || conversation.customer_id}
+            fallback={getConversationDisplayName(conversation)}
             size="xl"
             className="mx-auto"
           />
@@ -78,7 +78,7 @@ export function UnifiedContactDetails({
 
         <div className="mt-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {conversation.customer_name || "Unknown"}
+            {getConversationDisplayName(conversation)}
           </h2>
           <div className="text-sm text-gray-500 mt-0.5 flex items-center justify-center gap-1.5">
             <ChannelIcon channel={conversation.channel_type} size="sm" />

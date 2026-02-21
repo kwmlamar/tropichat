@@ -173,6 +173,12 @@ export async function resetPassword(email: string) {
   return { error: error?.message || null }
 }
 
+export async function changePassword(newPassword: string) {
+  const client = getSupabase()
+  const { error } = await client.auth.updateUser({ password: newPassword })
+  return { error: error?.message || null }
+}
+
 // ==================== CUSTOMER FUNCTIONS ====================
 
 export async function getCurrentCustomer(): Promise<{ data: Customer | null; error: string | null }> {

@@ -23,7 +23,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { SkeletonMessage } from "@/components/ui/skeleton"
 import { ChannelIcon, getChannelLabel } from "./channel-icon"
-import { cn, formatMessageTime, formatDateDivider } from "@/lib/utils"
+import { cn, formatMessageTime, formatDateDivider, getConversationDisplayName } from "@/lib/utils"
 import type { UnifiedMessage, ConversationWithAccount, MessageDeliveryStatus } from "@/types/unified-inbox"
 
 interface UnifiedMessageThreadProps {
@@ -160,7 +160,7 @@ export function UnifiedMessageThread({
           <div className="relative">
             <Avatar
               src={conversation.customer_avatar_url}
-              fallback={conversation.customer_name || conversation.customer_id}
+              fallback={getConversationDisplayName(conversation)}
               size="md"
             />
             <div className="absolute -bottom-0.5 -right-0.5">
@@ -170,7 +170,7 @@ export function UnifiedMessageThread({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-semibold text-gray-900">
-                {conversation.customer_name || conversation.customer_id}
+                {getConversationDisplayName(conversation)}
               </h2>
               {isHumanAgentEnabled && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">

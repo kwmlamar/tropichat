@@ -278,7 +278,8 @@ export function subscribeToUnifiedMessages(
       if (status === 'SUBSCRIBED') {
         console.log(`[Realtime] Messages subscription active for ${conversationId}`)
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-        console.error(`[Realtime] Messages subscription ${status}:`, err)
+        const msg = err?.message ?? (status === 'CHANNEL_ERROR' ? 'Connection closed or subscription failed.' : 'Subscription timed out.')
+        console.warn(`[Realtime] Messages subscription ${status}:`, msg)
       }
     })
 
@@ -316,7 +317,8 @@ export function subscribeToUnifiedConversations(
         if (status === 'SUBSCRIBED') {
           console.log(`[Realtime] Conversations subscription active for account ${accountId}`)
         } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          console.error(`[Realtime] Conversations subscription ${status}:`, err)
+          const msg = err?.message ?? (status === 'CHANNEL_ERROR' ? 'Connection closed or subscription failed.' : 'Subscription timed out.')
+          console.warn(`[Realtime] Conversations subscription ${status}:`, msg)
         }
       })
   })

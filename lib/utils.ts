@@ -150,6 +150,23 @@ export function getInitials(name: string): string {
   return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 }
 
+/** Display name for a unified inbox conversation. Avoids showing raw numeric IDs (e.g. Instagram/Messenger) when customer_name is missing. */
+export function getConversationDisplayName(conversation: {
+  customer_name: string | null
+  customer_id: string
+  channel_type: string
+}): string {
+  if (conversation.customer_name?.trim()) return conversation.customer_name.trim()
+  switch (conversation.channel_type) {
+    case 'instagram':
+      return 'Instagram User'
+    case 'messenger':
+      return 'Messenger User'
+    default:
+      return conversation.customer_id || 'Unknown'
+  }
+}
+
 // Check if a string is a valid email
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

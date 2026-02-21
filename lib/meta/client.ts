@@ -146,7 +146,21 @@ export async function metaApiRequest<T = unknown>(options: RequestOptions): Prom
           continue
         }
 
-        throw new MetaApiClientError(message, code, err?.error_subcode, err?.fbtrace_id)
+        // Log full Meta error and request for debugging (code 1 is generic)
+        console.error('[Meta API]', {
+          code,
+          subcode: err?.error_subcode,
+          message: err?.message,
+          type: err?.type,
+          fbtrace_id: err?.fbtrace_id,
+          path,
+          method,
+          request_body: body,
+        })
+
+        const detail =
+          err?.fbtrace_id ? `${message} (code: ${code}, fbtrace_id: ${err.fbtrace_id})` : `${message} (code: ${code})`
+        throw new MetaApiClientError(detail, code, err?.error_subcode, err?.fbtrace_id)
       }
 
       return data

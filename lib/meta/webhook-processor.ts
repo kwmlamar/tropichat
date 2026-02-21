@@ -32,16 +32,23 @@ async function fetchMessengerProfile(
   psid: string,
   pageAccessToken: string
 ): Promise<{ name: string | null; avatarUrl: string | null }> {
+  if (!pageAccessToken?.trim()) {
+    console.warn('[Webhook:messenger] Profile fetch skipped: no page access token')
+    return { name: null, avatarUrl: null }
+  }
   try {
     const url = `${META_GRAPH}/${psid}?fields=name,profile_pic&access_token=${pageAccessToken}`
     const res = await fetch(url)
     const data = await res.json()
     if (data.error) {
-      console.warn('[Webhook:messenger] Profile fetch error:', data.error.message)
+      console.warn('[Webhook:messenger] Profile fetch error:', data.error.code, data.error.message, data.error.error_user_msg ?? '')
       return { name: null, avatarUrl: null }
     }
     const name = data.name ?? null
     const avatarUrl = data.profile_pic ?? null
+    if (!name) {
+      console.warn('[Webhook:messenger] Profile returned no name for PSID:', psid)
+    }
     return { name, avatarUrl }
   } catch (e) {
     console.warn('[Webhook:messenger] Profile fetch failed:', e)
@@ -57,16 +64,23 @@ async function fetchInstagramProfile(
   igsid: string,
   pageAccessToken: string
 ): Promise<{ name: string | null; avatarUrl: string | null }> {
+  if (!pageAccessToken?.trim()) {
+    console.warn('[Webhook:instagram] Profile fetch skipped: no page access token')
+    return { name: null, avatarUrl: null }
+  }
   try {
     const url = `${META_GRAPH}/${igsid}?fields=name,username,profile_pic&access_token=${pageAccessToken}`
     const res = await fetch(url)
     const data = await res.json()
     if (data.error) {
-      console.warn('[Webhook:instagram] Profile fetch error:', data.error.message)
+      console.warn('[Webhook:instagram] Profile fetch error:', data.error.code, data.error.message, data.error.error_user_msg ?? '')
       return { name: null, avatarUrl: null }
     }
     const name = data.name ?? data.username ?? null
     const avatarUrl = data.profile_pic ?? null
+    if (!name) {
+      console.warn('[Webhook:instagram] Profile returned no name/username for IGSID:', igsid)
+    }
     return { name, avatarUrl }
   } catch (e) {
     console.warn('[Webhook:instagram] Profile fetch failed:', e)
@@ -76,7 +90,9 @@ async function fetchInstagramProfile(
 
 /**
  * Upsert a contact row for a unified inbox conversation.
- * Uses (customer_id/user_id, channel_type, channel_id) as the unique key.
+ * Called for every channel (WhatsApp, Instagram, Messenger) when a message is received.
+ * Uses (customer_id, channel_type, channel_id) as the unique key.
+ * customer_id here is the business owner's user id; channel_id is the platform customer id.
  */
 async function upsertChannelContact(
   db: ServiceClient,
@@ -84,7 +100,8 @@ async function upsertChannelContact(
   channelType: string,
   channelId: string,
   name: string | null,
-  avatarUrl: string | null
+  avatarUrl: string | null,
+  phoneNumber?: string | null
 ): Promise<void> {
   try {
     const now = new Date().toISOString()
@@ -95,7 +112,7 @@ async function upsertChannelContact(
         channel_id: channelId,
         name: name ?? null,
         avatar_url: avatarUrl ?? null,
-        phone_number: null,
+        phone_number: phoneNumber ?? (channelType === 'whatsapp' ? channelId : null),
         last_message_at: now,
         first_message_at: now,
         total_messages_received: 1,
@@ -205,12 +222,16 @@ export async function handleIncomingMessage(
   let resolvedName: string | null = event.customer_name ?? null
   let resolvedAvatar: string | null = null
 
+  const pageAccessToken: string =
+    (account.metadata as Record<string, unknown>)?.page_access_token as string
+    ?? account.access_token
+  const tokenSource = (account.metadata as Record<string, unknown>)?.page_access_token ? 'metadata.page_access_token' : 'account.access_token'
+
   if (!conversation) {
     // New conversation — fetch real name from Meta profile API
-    const pageAccessToken: string =
-      (account.metadata as Record<string, unknown>)?.page_access_token as string
-      ?? account.access_token
-
+    if (event.channel_type === 'messenger' || event.channel_type === 'instagram') {
+      console.log(`[Webhook:${event.channel_type}] Fetching profile for new conversation (token from ${tokenSource})`)
+    }
     if (event.channel_type === 'messenger') {
       const profile = await fetchMessengerProfile(event.customer_id, pageAccessToken)
       resolvedName = profile.name
@@ -245,19 +266,50 @@ export async function handleIncomingMessage(
   } else {
     conversationDbId = conversation.id
     resolvedName = conversation.customer_name
+    // Backfill: if conversation exists but name/avatar are null, try fetching profile now (e.g. after token was fixed)
+    if ((event.channel_type === 'messenger' || event.channel_type === 'instagram') && !resolvedName?.trim()) {
+      if (event.channel_type === 'messenger') {
+        const profile = await fetchMessengerProfile(event.customer_id, pageAccessToken)
+        if (profile.name || profile.avatarUrl) {
+          resolvedName = profile.name
+          resolvedAvatar = profile.avatarUrl
+          await db
+            .from('unified_conversations')
+            .update({
+              customer_name: resolvedName,
+              customer_avatar_url: resolvedAvatar,
+            })
+            .eq('id', conversationDbId)
+          console.log(`[Webhook:messenger] Backfilled profile for conversation ${conversationDbId}:`, resolvedName ?? '(no name)')
+        }
+      } else if (event.channel_type === 'instagram') {
+        const profile = await fetchInstagramProfile(event.customer_id, pageAccessToken)
+        if (profile.name || profile.avatarUrl) {
+          resolvedName = profile.name
+          resolvedAvatar = profile.avatarUrl
+          await db
+            .from('unified_conversations')
+            .update({
+              customer_name: resolvedName,
+              customer_avatar_url: resolvedAvatar,
+            })
+            .eq('id', conversationDbId)
+          console.log(`[Webhook:instagram] Backfilled profile for conversation ${conversationDbId}:`, resolvedName ?? '(no name)')
+        }
+      }
+    }
   }
 
-  // 3. Upsert contact (Messenger/Instagram) into contacts table
-  if (event.channel_type === 'messenger' || event.channel_type === 'instagram') {
-    await upsertChannelContact(
-      db,
-      account.user_id,
-      event.channel_type,
-      event.customer_id,
-      resolvedName,
-      resolvedAvatar
-    )
-  }
+  // 3. Upsert contact into contacts table (WhatsApp, Instagram, Messenger)
+  await upsertChannelContact(
+    db,
+    account.user_id,
+    event.channel_type,
+    event.customer_id,
+    resolvedName,
+    resolvedAvatar,
+    event.channel_type === 'whatsapp' ? event.customer_id : undefined
+  )
 
   // 4. Insert the message (DB trigger updates conversation stats)
   const { error: msgError } = await db.from('unified_messages').insert({

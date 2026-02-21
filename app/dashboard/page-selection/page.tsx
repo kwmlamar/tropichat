@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar } from "@/components/ui/avatar"
-import { fetchFacebookPages, type FacebookPage } from "@/lib/meta-connections"
+import { fetchFacebookPages, selectFacebookPage, type FacebookPage } from "@/lib/meta-connections"
 import { toast } from "sonner"
 
 export default function PageSelectionPage() {
@@ -50,17 +50,23 @@ export default function PageSelectionPage() {
       return
     }
 
+    const page = pages.find((p) => p.id === selectedPageId)
     setConnecting(true)
 
-    // Simulate connection (in production this would call the Meta API)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const { error } = await selectFacebookPage({
+      pageId: selectedPageId,
+      pageName: page?.name,
+      profilePictureUrl: page?.profile_picture_url ?? undefined,
+    })
 
-    setPages((prev) =>
-      prev.map((p) => ({
-        ...p,
-        is_connected: p.id === selectedPageId,
-      }))
-    )
+    if (error) {
+      toast.error(error)
+      setConnecting(false)
+      return
+    }
+
+    const { data } = await fetchFacebookPages()
+    setPages(data)
 
     toast.success("Page connected successfully!")
     setConnecting(false)

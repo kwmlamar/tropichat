@@ -30,7 +30,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
-import { getCurrentCustomer, updateCustomer } from "@/lib/supabase"
+import { getCurrentCustomer, updateCustomer, changePassword } from "@/lib/supabase"
 import {
   getMetaStatus,
   initiateMetaConnect,
@@ -92,6 +92,11 @@ export default function SettingsPage() {
   const [businessHours, setBusinessHours] = useState<BusinessHours>(defaultBusinessHours)
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(false)
   const [autoReplyMessage, setAutoReplyMessage] = useState("")
+
+  // Password state
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [savingPassword, setSavingPassword] = useState(false)
 
   // Integrations state
   const [metaStatus, setMetaStatus] = useState<MetaStatus | null>(null)
@@ -214,6 +219,34 @@ export default function SettingsPage() {
     }
 
     setSaving(false)
+  }
+
+  const handleChangePassword = async () => {
+    if (!newPassword) {
+      toast.error("Please enter a new password")
+      return
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters")
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match")
+      return
+    }
+
+    setSavingPassword(true)
+    const { error } = await changePassword(newPassword)
+
+    if (error) {
+      toast.error(error)
+    } else {
+      toast.success("Password updated successfully")
+      setNewPassword("")
+      setConfirmPassword("")
+    }
+
+    setSavingPassword(false)
   }
 
   const handleSaveBusinessHours = async () => {
@@ -422,6 +455,53 @@ export default function SettingsPage() {
                   <Save className="h-4 w-4 mr-2" />
                 )}
                 Save Changes
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Change Password */}
+          <Card className="mt-6">
+            <CardContent className="p-6 space-y-6">
+              <div className="flex items-center gap-2">
+                <Key className="h-5 w-5 text-gray-500" />
+                <h3 className="font-semibold text-gray-900">Change Password</h3>
+              </div>
+
+              <div>
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="mt-1"
+                />
+              </div>
+
+              <Button
+                onClick={handleChangePassword}
+                disabled={savingPassword || !newPassword || !confirmPassword}
+                className="bg-[#3A9B9F]"
+              >
+                {savingPassword ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Key className="h-4 w-4 mr-2" />
+                )}
+                Update Password
               </Button>
             </CardContent>
           </Card>

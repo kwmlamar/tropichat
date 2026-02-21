@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ChannelIcon } from "./channel-icon"
-import { cn, formatDistanceToNow } from "@/lib/utils"
+import { cn, formatDistanceToNow, getConversationDisplayName } from "@/lib/utils"
 import type { ConversationWithAccount } from "@/types/unified-inbox"
 import type { ChannelType } from "@/types/unified-inbox"
 
@@ -164,7 +164,7 @@ export function UnifiedConversationList({
                 <div className="relative flex-shrink-0">
                   <Avatar
                     src={conversation.customer_avatar_url}
-                    fallback={conversation.customer_name || conversation.customer_id}
+                    fallback={getConversationDisplayName(conversation)}
                     size="md"
                   />
                   {/* Channel indicator overlaid on avatar */}
@@ -177,7 +177,7 @@ export function UnifiedConversationList({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-medium text-gray-900 truncate">
-                      {conversation.customer_name || conversation.customer_id}
+                      {getConversationDisplayName(conversation)}
                     </span>
                     <span className="text-xs text-gray-500 whitespace-nowrap">
                       {conversation.last_message_at

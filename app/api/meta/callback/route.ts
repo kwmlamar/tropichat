@@ -413,10 +413,10 @@ export async function GET(request: Request) {
         console.log('[meta/callback] Instagram base connection saved')
       }
 
-      // Best-effort: enrich with IG account details
+      // Best-effort: enrich with IG account details (request access_token — required for sending messages)
       try {
         const pagesRes = await fetch(
-          `${META_GRAPH}/me/accounts?fields=id,name,instagram_business_account{id,username,name}&access_token=${accessToken}`
+          `${META_GRAPH}/me/accounts?fields=id,name,access_token,instagram_business_account{id,username,name}&access_token=${accessToken}`
         )
         const pagesData = await pagesRes.json()
 
@@ -433,15 +433,20 @@ export async function GET(request: Request) {
             console.log('[meta/callback] Instagram enriched with:', igAccount.username || igAccount.id)
 
             // ── Bridge: sync to connected_accounts so the inbox can use this token ──
+            const pageToken = page.access_token || accessToken
             const { error: caErr } = await supabase.from('connected_accounts').upsert(
               {
                 user_id: userId,
                 channel_type: 'instagram',
-                access_token: page.access_token || accessToken,
+                access_token: pageToken,
                 token_expires_at: tokenExpiresAt,
                 channel_account_id: igAccount.id,
                 channel_account_name: igAccount.username || igAccount.name,
-                metadata: { ig_username: igAccount.username, page_id: page.id },
+                metadata: {
+                  ig_username: igAccount.username,
+                  page_id: page.id,
+                  page_access_token: page.access_token || undefined,
+                },
                 is_active: true,
               },
               { onConflict: 'channel_type,channel_account_id' }

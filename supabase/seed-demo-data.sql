@@ -17,8 +17,7 @@
 
 INSERT INTO connected_accounts (
   id, user_id, channel_type, access_token, channel_account_id,
-  channel_account_name, channel_username, profile_picture_url,
-  metadata, is_active, status
+  channel_account_name, metadata, is_active
 ) VALUES
 -- WhatsApp Business Account
 (
@@ -28,11 +27,8 @@ INSERT INTO connected_accounts (
   'DEMO_ACCESS_TOKEN_WA',
   '100000000000001',
   'Simply Dave Nassau Tours',
-  '+1-242-555-0199',
-  NULL,
   '{"phone_display": "+1 (242) 555-0199", "waba_id": "100000000000099", "phone_number_id": "100000000000001", "verified_name": "Simply Dave Nassau Tours"}'::jsonb,
-  true,
-  'active'
+  true
 ),
 -- Instagram Business Account
 (
@@ -42,11 +38,8 @@ INSERT INTO connected_accounts (
   'DEMO_ACCESS_TOKEN_IG',
   '17841405309211844',
   'Simply Dave Nassau Tours',
-  '@simplydavenassau',
-  'https://ui-avatars.com/api/?name=SD&background=E4405F&color=fff&size=200',
-  '{"ig_username": "@simplydavenassau", "account_type": "Instagram Business Account", "follower_count": 2847, "ig_user_id": "17841405309211844"}'::jsonb,
-  true,
-  'active'
+  '{"ig_username": "@simplydavenassau", "account_type": "Instagram Business Account", "follower_count": 2847, "ig_user_id": "17841405309211844", "profile_picture_url": "https://ui-avatars.com/api/?name=SD&background=E4405F&color=fff&size=200"}'::jsonb,
+  true
 ),
 -- Facebook Messenger Page
 (
@@ -56,18 +49,13 @@ INSERT INTO connected_accounts (
   'DEMO_ACCESS_TOKEN_FB',
   '200000000000001',
   'Simply Dave Nassau Tours',
-  NULL,
-  'https://ui-avatars.com/api/?name=SD&background=0084FF&color=fff&size=200',
-  '{"page_name": "Simply Dave Nassau Tours", "page_category": "Tour Operator", "follower_count": 1247, "page_id": "200000000000001"}'::jsonb,
-  true,
-  'active'
+  '{"page_name": "Simply Dave Nassau Tours", "page_category": "Tour Operator", "follower_count": 1247, "page_id": "200000000000001", "profile_picture_url": "https://ui-avatars.com/api/?name=SD&background=0084FF&color=fff&size=200"}'::jsonb,
+  true
 )
 ON CONFLICT (channel_type, channel_account_id) DO UPDATE
 SET
   access_token = EXCLUDED.access_token,
   channel_account_name = EXCLUDED.channel_account_name,
-  channel_username = EXCLUDED.channel_username,
-  profile_picture_url = EXCLUDED.profile_picture_url,
   metadata = EXCLUDED.metadata,
   is_active = EXCLUDED.is_active;
 

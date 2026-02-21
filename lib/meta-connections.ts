@@ -261,6 +261,35 @@ export interface FacebookPage {
   is_connected: boolean
 }
 
+export async function selectFacebookPage(page: {
+  pageId: string
+  pageName?: string
+  profilePictureUrl?: string
+}): Promise<{ error: string | null }> {
+  const token = await getAccessToken()
+  if (!token) return { error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/pages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(page),
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      return { error: data.error || 'Failed to connect page' }
+    }
+
+    return { error: null }
+  } catch {
+    return { error: 'Failed to connect to server' }
+  }
+}
+
 export async function fetchFacebookPages(): Promise<{
   data: FacebookPage[]
   error: string | null
