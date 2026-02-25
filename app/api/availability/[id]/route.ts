@@ -21,7 +21,8 @@ async function getUserId(req: NextRequest) {
 }
 
 // PATCH /api/availability/[id]
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -32,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const { data: existing } = await db
     .from('availability_slots')
     .select('id, service:booking_services(user_id)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!existing || (existing.service as any)?.user_id !== userId) {
@@ -42,7 +43,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const { data, error } = await db
     .from('availability_slots')
     .update(body)
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single()
 
@@ -51,7 +52,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 // DELETE /api/availability/[id]
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -60,14 +62,14 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const { data: existing } = await db
     .from('availability_slots')
     .select('id, service:booking_services(user_id)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!existing || (existing.service as any)?.user_id !== userId) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  const { error } = await db.from('availability_slots').delete().eq('id', params.id)
+  const { error } = await db.from('availability_slots').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }

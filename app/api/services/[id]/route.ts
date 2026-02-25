@@ -21,7 +21,8 @@ async function getUserId(req: NextRequest) {
 }
 
 // GET /api/services/[id]
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const { data, error } = await db
     .from('booking_services')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
     .single()
 
@@ -38,7 +39,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PATCH /api/services/[id]
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -48,7 +50,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const { data, error } = await db
     .from('booking_services')
     .update(body)
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
     .select()
     .single()
@@ -58,7 +60,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 // DELETE /api/services/[id]
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -68,7 +71,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const { error } = await db
     .from('booking_services')
     .update({ active: false })
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

@@ -303,9 +303,10 @@ export default function PrivacyPolicyPage() {
             </li>
           </ul>
           <p>
-            You may request deletion of your data at any time by contacting us
-            at{" "}
-            <a href="mailto:lamar@tropitech.org">lamar@tropitech.org</a>.
+            You may request deletion of your data at any time. See our{" "}
+            <Link href="/data-deletion">Data Deletion</Link> page for
+            instructions, or contact us directly at{" "}
+            <a href="mailto:support@tropichat.chat">support@tropichat.chat</a>.
           </p>
 
           {/* 6 */}
@@ -436,6 +437,13 @@ export default function PrivacyPolicyPage() {
               className="transition-colors hover:text-[#3A9B9F]"
             >
               Terms of Service
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link
+              href="/data-deletion"
+              className="transition-colors hover:text-[#3A9B9F]"
+            >
+              Data Deletion
             </Link>
           </div>
         </div>

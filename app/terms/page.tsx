@@ -635,6 +635,13 @@ export default function TermsOfServicePage() {
             >
               Terms of Service
             </Link>
+            <span className="text-gray-300">|</span>
+            <Link
+              href="/data-deletion"
+              className="transition-colors hover:text-[#3A9B9F]"
+            >
+              Data Deletion
+            </Link>
           </div>
         </div>
       </footer>

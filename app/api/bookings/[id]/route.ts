@@ -21,7 +21,8 @@ async function getUserId(req: NextRequest) {
 }
 
 // GET /api/bookings/[id]
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const { data, error } = await db
     .from('bookings')
     .select('*, service:booking_services(*)')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
     .single()
 
@@ -38,7 +39,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PATCH /api/bookings/[id]
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -53,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const { data, error } = await db
     .from('bookings')
     .update(updates)
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
     .select('*, service:booking_services(*)')
     .single()
@@ -63,7 +65,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 // DELETE /api/bookings/[id] — hard delete (usually use PATCH status=cancelled instead)
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const userId = await getUserId(req)
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -71,7 +74,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const { error } = await db
     .from('bookings')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', userId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
