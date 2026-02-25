@@ -17,6 +17,7 @@ import {
   X,
   Crown,
   FileStack,
+  CalendarDays,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
@@ -33,6 +34,7 @@ interface SidebarProps {
 
 const navItems = [
   { href: "/dashboard", label: "Inbox", icon: Inbox },
+  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
   { href: "/dashboard/page-selection", label: "Page Selection", icon: FileStack },

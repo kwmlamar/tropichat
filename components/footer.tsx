@@ -47,7 +47,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/terms"
                   className="transition-colors hover:text-[#3A9B9F]"
                 >
                   Terms of Service

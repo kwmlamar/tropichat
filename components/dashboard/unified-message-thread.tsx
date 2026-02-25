@@ -15,6 +15,7 @@ import {
   UserCog,
   Shield,
   X,
+  CalendarPlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -35,6 +36,7 @@ interface UnifiedMessageThreadProps {
   onLoadMore?: () => void
   hasMore?: boolean
   onToggleHumanAgent?: (enabled: boolean, reason?: string) => void
+  onCreateBooking?: () => void
 }
 
 /** Calculate days remaining from a marked-at timestamp (7-day window) */
@@ -56,6 +58,7 @@ export function UnifiedMessageThread({
   onLoadMore,
   hasMore,
   onToggleHumanAgent,
+  onCreateBooking,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
@@ -193,6 +196,18 @@ export function UnifiedMessageThread({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Create Booking button */}
+          {onCreateBooking && (
+            <button
+              onClick={onCreateBooking}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F] hover:bg-[#3A9B9F]/20 transition-colors text-xs font-medium"
+              title="Create a booking from this conversation"
+            >
+              <CalendarPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Book</span>
+            </button>
+          )}
+
           {/* Human Agent Toggle Button */}
           <button
             onClick={() => setShowHumanAgentPanel(!showHumanAgentPanel)}

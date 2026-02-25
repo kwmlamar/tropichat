@@ -55,8 +55,9 @@ export default function PrivacyPolicyPage() {
             Service.
           </p>
           <p>
-            By accessing or using TropiChat, you agree to this Privacy Policy.
-            If you do not agree, please do not use the Service.
+            By accessing or using TropiChat, you agree to this Privacy Policy
+            and our <Link href="/terms">Terms of Service</Link>. If you do not
+            agree, please do not use the Service.
           </p>
 
           {/* 1 */}
@@ -428,6 +429,13 @@ export default function PrivacyPolicyPage() {
               className="font-medium text-[#3A9B9F]"
             >
               Privacy Policy
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link
+              href="/terms"
+              className="transition-colors hover:text-[#3A9B9F]"
+            >
+              Terms of Service
             </Link>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { UnifiedConversationList } from "@/components/dashboard/unified-conversation-list"
 import { UnifiedMessageThread } from "@/components/dashboard/unified-message-thread"
 import { UnifiedContactDetails } from "@/components/dashboard/unified-contact-details"
+import { CreateBookingModal } from "@/components/bookings/create-booking-modal"
 import {
   getUnifiedConversations,
   getUnifiedMessages,
@@ -35,6 +36,7 @@ export default function InboxPage() {
   const [hasMoreMessages, setHasMoreMessages] = useState(true)
   const [accountIds, setAccountIds] = useState<string[]>([])
   const [showArchived, setShowArchived] = useState(false)
+  const [bookingModalOpen, setBookingModalOpen] = useState(false)
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
@@ -391,6 +393,7 @@ export default function InboxPage() {
             onLoadMore={handleLoadMore}
             hasMore={hasMoreMessages}
             onToggleHumanAgent={handleToggleHumanAgent}
+            onCreateBooking={() => setBookingModalOpen(true)}
           />
         </div>
       </div>
@@ -403,6 +406,25 @@ export default function InboxPage() {
           onArchive={handleArchive}
         />
       </div>
+
+      {/* Create Booking Modal — opened from conversation thread */}
+      <CreateBookingModal
+        open={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        onCreated={(booking) => {
+          toast.success(`Booking created for ${booking.customer_name}`)
+          setBookingModalOpen(false)
+        }}
+        prefill={selectedConversation ? {
+          customerName: selectedConversation.customer_name ?? undefined,
+          conversationId: selectedConversation.id,
+        } : undefined}
+        onSendConfirmation={(message) => {
+          if (selectedConversation) {
+            handleSendMessage(message)
+          }
+        }}
+      />
     </div>
   )
 }
