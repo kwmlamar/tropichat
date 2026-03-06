@@ -19,7 +19,10 @@ import {
   Building2,
   MapPin,
   Phone,
+  LogOut,
 } from "lucide-react"
+import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -30,6 +33,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
+import { ChannelIcon } from "@/components/dashboard/channel-icon"
 import { getCurrentCustomer, updateCustomer, changePassword } from "@/lib/supabase"
 import {
   getMetaStatus,
@@ -398,690 +402,441 @@ export default function SettingsPage() {
         </TabsList>
 
         {/* Profile Tab */}
-        <TabsContent value="profile">
-          <Card>
-            <CardContent className="p-6 space-y-6">
-              <div>
-                <Label htmlFor="businessName">Business Name</Label>
-                <Input
-                  id="businessName"
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
-                  className="mt-1"
-                />
+        <TabsContent value="profile" className="space-y-10 pb-12">
+          {/* Profile Details */}
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-9 w-9 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center flex-shrink-0">
+                <User className="h-5 w-5 text-[#3A9B9F]" />
               </div>
-
               <div>
-                <Label htmlFor="email">Contact Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                  className="mt-1"
-                />
+                <h4 className="font-semibold text-gray-900">Personal Details</h4>
+                <p className="text-xs text-[#475569]">Manage your primary account information and contact details</p>
               </div>
-
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+1 (242) 555-0123"
-                  className="mt-1"
-                />
+            </div>
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <Label htmlFor="businessName" className="text-sm font-medium text-gray-700">Business Name</Label>
+                  <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="mt-1.5 rounded-xl border-gray-200" />
+                </div>
+                <div>
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">Contact Email</Label>
+                  <Input id="email" type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className="mt-1.5 rounded-xl border-gray-200" />
+                </div>
               </div>
-
-              <div>
-                <Label htmlFor="timezone">Timezone</Label>
-                <SimpleSelect
-                  value={timezone}
-                  onValueChange={setTimezone}
-                  options={timezones}
-                  className="mt-1"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone Number</Label>
+                  <Input id="phone" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="+1 (242) 555-0123" className="mt-1.5 rounded-xl border-gray-200" />
+                </div>
+                <div>
+                  <Label htmlFor="timezone" className="text-sm font-medium text-gray-700">Timezone</Label>
+                  <SimpleSelect value={timezone} onValueChange={setTimezone} options={timezones} className="mt-1.5" />
+                </div>
               </div>
-
-              <Button
-                onClick={handleSaveProfile}
-                disabled={saving}
-                className="bg-[#3A9B9F]"
-              >
-                {saving ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4 mr-2" />
-                )}
+            </div>
+            <div className="flex items-center justify-end mt-6">
+              <Button onClick={handleSaveProfile} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
+                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Save Changes
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+
+          <div className="h-px bg-gray-100" />
 
           {/* Change Password */}
-          <Card className="mt-6">
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-9 w-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
                 <Key className="h-5 w-5 text-gray-500" />
-                <h3 className="font-semibold text-gray-900">Change Password</h3>
               </div>
-
               <div>
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  className="mt-1"
-                />
+                <h4 className="font-semibold text-gray-900">Change Password</h4>
+                <p className="text-xs text-[#475569]">Ensure your account is using a long, random password to stay secure</p>
               </div>
-
+            </div>
+            <div className="space-y-5 max-w-md">
               <div>
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
-                  className="mt-1"
-                />
+                <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">New Password</Label>
+                <Input id="newPassword" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Enter new password" className="mt-1.5 rounded-xl border-gray-200" />
               </div>
-
-              <Button
-                onClick={handleChangePassword}
-                disabled={savingPassword || !newPassword || !confirmPassword}
-                className="bg-[#3A9B9F]"
-              >
-                {savingPassword ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Key className="h-4 w-4 mr-2" />
-                )}
+              <div>
+                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm New Password</Label>
+                <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="mt-1.5 rounded-xl border-gray-200" />
+              </div>
+            </div>
+            <div className="mt-6">
+              <Button onClick={handleChangePassword} disabled={savingPassword || !newPassword || !confirmPassword} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
+                {savingPassword && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Update Password
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Business Hours Tab */}
-        <TabsContent value="hours">
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm text-gray-500 mb-6">
-                Set your business hours. Auto-replies can be configured to send
-                different messages during and after business hours.
-              </p>
-
-              <div className="space-y-4">
-                {days.map((day) => (
-                  <div
-                    key={day}
-                    className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0"
-                  >
-                    <div className="w-28">
-                      <Switch
-                        checked={businessHours[day]?.enabled || false}
-                        onCheckedChange={(checked) =>
-                          updateDayHours(day, "enabled", checked)
-                        }
-                      />
-                    </div>
-                    <span className="w-24 font-medium text-gray-900 capitalize">
-                      {day}
-                    </span>
-                    {businessHours[day]?.enabled ? (
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="time"
-                          value={businessHours[day]?.start || "09:00"}
-                          onChange={(e) =>
-                            updateDayHours(day, "start", e.target.value)
-                          }
-                          className="w-32"
-                        />
-                        <span className="text-gray-500">to</span>
-                        <Input
-                          type="time"
-                          value={businessHours[day]?.end || "17:00"}
-                          onChange={(e) =>
-                            updateDayHours(day, "end", e.target.value)
-                          }
-                          className="w-32"
-                        />
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">Closed</span>
-                    )}
-                  </div>
-                ))}
+        <TabsContent value="hours" className="pb-12">
+          <div className="space-y-8">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-9 w-9 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-5 w-5 text-amber-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">Business Hours</h4>
+                  <p className="text-xs text-[#475569]">Set your standard hours. Auto-replies use these hours to determine working state.</p>
+                </div>
               </div>
 
-              <Button
-                onClick={handleSaveBusinessHours}
-                disabled={saving}
-                className="bg-[#3A9B9F] mt-6"
-              >
-                {saving ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4 mr-2" />
-                )}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden">
+                <div className="divide-y divide-gray-100">
+                  {days.map((day) => (
+                    <div key={day} className="flex items-center justify-between sm:justify-start gap-4 p-4 hover:bg-gray-50/50 transition-colors">
+                      <div className="w-14">
+                        <Switch checked={businessHours[day]?.enabled || false} onCheckedChange={(checked) => updateDayHours(day, "enabled", checked)} />
+                      </div>
+                      <span className="w-24 font-medium text-sm text-gray-900 capitalize">{day}</span>
+                      {businessHours[day]?.enabled ? (
+                        <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                          <Input type="time" value={businessHours[day]?.start || "09:00"} onChange={(e) => updateDayHours(day, "start", e.target.value)} className="w-32 rounded-lg border-gray-200 h-9" />
+                          <span className="text-gray-400 text-sm">to</span>
+                          <Input type="time" value={businessHours[day]?.end || "17:00"} onChange={(e) => updateDayHours(day, "end", e.target.value)} className="w-32 rounded-lg border-gray-200 h-9" />
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-sm italic py-1.5 flex-1 sm:flex-none">Closed</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end">
+              <Button onClick={handleSaveBusinessHours} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
+                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Save Business Hours
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Auto-Reply Tab */}
-        <TabsContent value="autoreply">
-          <Card>
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-gray-900">
-                    Enable Auto-Reply
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Automatically respond to incoming messages
-                  </p>
+        <TabsContent value="autoreply" className="pb-12">
+          <div className="space-y-8">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-9 w-9 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+                  <MessageSquare className="h-5 w-5 text-purple-500" />
                 </div>
-                <Switch
-                  checked={autoReplyEnabled}
-                  onCheckedChange={setAutoReplyEnabled}
-                />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900">Auto-Reply Configuration</h4>
+                  <p className="text-xs text-[#475569]">Automatically respond to incoming messages outside of business hours</p>
+                </div>
+                <Switch checked={autoReplyEnabled} onCheckedChange={setAutoReplyEnabled} />
               </div>
 
               {autoReplyEnabled && (
-                <div>
-                  <Label htmlFor="autoReplyMessage">Auto-Reply Message</Label>
+                <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 block transition-all">
+                  <Label htmlFor="autoReplyMessage" className="text-sm font-medium text-gray-700">Offline Auto-Reply Message</Label>
                   <Textarea
                     id="autoReplyMessage"
                     value={autoReplyMessage}
                     onChange={(e) => setAutoReplyMessage(e.target.value)}
                     placeholder="Thanks for reaching out! We'll get back to you as soon as possible."
-                    className="mt-1 min-h-[120px]"
+                    className="mt-2 min-h-[140px] rounded-xl border-gray-200 resize-none bg-white shadow-sm"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    This message will be sent automatically when someone
-                    messages you.
+                  <p className="text-xs text-[#475569] mt-2">
+                    This message is sent instantly when customers message you while you are closed.
                   </p>
                 </div>
               )}
+            </div>
 
-              <Button
-                onClick={handleSaveAutoReply}
-                disabled={saving}
-                className="bg-[#3A9B9F]"
-              >
-                {saving ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4 mr-2" />
-                )}
+            <div className="flex items-center justify-end">
+              <Button onClick={handleSaveAutoReply} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
+                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Save Auto-Reply Settings
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Team Tab */}
-        <TabsContent value="team">
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-center py-8">
-                <div className="rounded-full bg-gray-100 p-4 w-16 h-16 mx-auto mb-4">
-                  <Users className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="font-medium text-gray-900 mb-2">
-                  Team Management Coming Soon
-                </h3>
-                <p className="text-sm text-gray-500 max-w-sm mx-auto">
-                  Invite team members to help manage your conversations.
-                  Upgrade to Professional to unlock this feature.
-                </p>
-                <Button className="mt-4 bg-[#3A9B9F]">
-                  Upgrade to Professional
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="team" className="pb-12">
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="h-16 w-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-5">
+              <Users className="h-8 w-8 text-indigo-500" />
+            </div>
+            <h3 className="font-semibold text-gray-900 text-lg mb-2">Team Management</h3>
+            <p className="text-sm text-[#475569] max-w-sm mb-6 leading-relaxed">
+              Invite team members to help manage your customer conversations across multiple channels.
+            </p>
+            <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-6">
+              Upgrade to Professional
+            </Button>
+          </div>
         </TabsContent>
 
         {/* Integrations Tab */}
-        <TabsContent value="integrations">
-          <div className="space-y-6">
-            {/* Connect with Meta CTA */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Meta Business Platform</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Connect your Meta account to manage WhatsApp, Instagram, and Messenger in one place.
-                    </p>
-                  </div>
-                  <Button
-                    onClick={handleConnectMeta}
-                    disabled={connecting}
-                    className="bg-[#1877F2] hover:bg-[#166FE5] text-white shrink-0"
-                  >
-                    {connecting ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                    )}
-                    {connecting ? "Redirecting..." : "Connect with Meta"}
-                  </Button>
-                </div>
-                <p className="text-xs text-gray-400">
-                  This will request permissions for all three channels in a single OAuth flow.
-                  You can disconnect individual channels below.
-                </p>
-              </CardContent>
-            </Card>
+        <TabsContent value="integrations" className="space-y-10 pb-12">
 
-            {/* Channel Status Cards */}
+          {/* Hero Banner */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#213138] to-[#2d4654] p-8 text-white">
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 70% 50%, #3A9B9F 0%, transparent 60%)' }} />
+            <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="h-8 w-8 rounded-lg bg-[#1877F2] flex items-center justify-center flex-shrink-0">
+                    <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold text-white/70">Meta Business Platform</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Connect your channels</h3>
+                <p className="text-white/65 text-sm max-w-md leading-relaxed">
+                  Link WhatsApp Business, Instagram, and Messenger in one OAuth flow. Manage all customer conversations from a single inbox.
+                </p>
+              </div>
+              <Button
+                onClick={handleConnectMeta}
+                disabled={connecting}
+                className={cn(
+                  "shrink-0 h-12 min-w-[180px] font-bold px-8 rounded-2xl shadow-lg transition-all duration-300 active:scale-95",
+                  connecting
+                    ? "bg-white/10 text-white backdrop-blur-md border border-white/20 cursor-wait opacity-100"
+                    : "bg-white text-[#213138] hover:bg-gray-100 border-none shadow-white/10"
+                )}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  {connecting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-teal-400" />
+                      <span className="animate-pulse">Redirecting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                      Connect with Meta
+                    </>
+                  )}
+                </div>
+              </Button>
+            </div>
+          </div>
+
+          {/* Channel Cards */}
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-1">Connected Channels</h4>
+            <p className="text-sm text-[#475569] mb-5">Each channel connects independently. Disconnect them individually at any time.</p>
             {metaLoading ? (
               <div className="grid gap-4 md:grid-cols-3">
                 {[1, 2, 3].map((i) => (
-                  <Card key={i}>
-                    <CardContent className="p-6">
-                      <Skeleton className="h-6 w-24 mb-3" />
-                      <Skeleton className="h-4 w-40 mb-2" />
-                      <Skeleton className="h-8 w-full mt-4" />
-                    </CardContent>
-                  </Card>
+                  <div key={i} className="rounded-2xl border border-gray-100 p-6 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                    <Skeleton className="h-10 w-10 rounded-xl mb-4" />
+                    <Skeleton className="h-5 w-28 mb-2" />
+                    <Skeleton className="h-4 w-40 mb-6" />
+                    <Skeleton className="h-9 w-full rounded-xl" />
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-3">
-                {/* WhatsApp */}
-                <ChannelCard
-                  channel="whatsapp"
-                  label="WhatsApp Business"
-                  color="#25D366"
-                  icon={
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                    </svg>
-                  }
-                  status={metaStatus?.whatsapp}
-                  disconnecting={disconnecting === "whatsapp"}
-                  onDisconnect={() => handleDisconnectChannel("whatsapp")}
-                />
-
-                {/* Instagram */}
-                <ChannelCard
-                  channel="instagram"
-                  label="Instagram"
-                  color="#E4405F"
-                  icon={
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                  }
-                  status={metaStatus?.instagram}
-                  disconnecting={disconnecting === "instagram"}
-                  onDisconnect={() => handleDisconnectChannel("instagram")}
-                />
-
-                {/* Messenger */}
-                <ChannelCard
-                  channel="messenger"
-                  label="Messenger"
-                  color="#0084FF"
-                  icon={
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z"/>
-                    </svg>
-                  }
-                  status={metaStatus?.messenger}
-                  disconnecting={disconnecting === "messenger"}
-                  onDisconnect={() => handleDisconnectChannel("messenger")}
-                />
+                <ChannelCard channel="whatsapp" label="WhatsApp Business" color="#25D366"
+                  icon={<ChannelIcon channel="whatsapp" size="xl" />}
+                  status={metaStatus?.whatsapp} disconnecting={disconnecting === "whatsapp"} onDisconnect={() => handleDisconnectChannel("whatsapp")} />
+                <ChannelCard channel="instagram" label="Instagram" color="#E4405F"
+                  icon={<ChannelIcon channel="instagram" size="xl" />}
+                  status={metaStatus?.instagram} disconnecting={disconnecting === "instagram"} onDisconnect={() => handleDisconnectChannel("instagram")} />
+                <ChannelCard channel="messenger" label="Messenger" color="#0084FF"
+                  icon={<ChannelIcon channel="messenger" size="xl" />}
+                  status={metaStatus?.messenger} disconnecting={disconnecting === "messenger"} onDisconnect={() => handleDisconnectChannel("messenger")} />
               </div>
             )}
+          </div>
 
-            {/* Connected Account Details */}
-            {metaStatus && (metaStatus.instagram?.connected || metaStatus.whatsapp?.connected || metaStatus.messenger?.connected) && (
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-gray-900 mb-4">Connected Account Details</h3>
-                  <div className="space-y-4">
-                    {/* Instagram Account Detail */}
-                    {metaStatus.instagram?.connected && (
-                      <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-pink-100">
-                        <div className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
-                          {metaStatus.instagram.account_name?.[0] || "IG"}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-gray-900">
-                              {(metaStatus.instagram.metadata as Record<string, string>)?.ig_username || metaStatus.instagram.account_name || "Instagram"}
-                            </h4>
-                            <Badge variant="secondary" size="sm">Instagram Business Account</Badge>
-                          </div>
-                          <p className="text-sm text-gray-500 mt-0.5">
-                            ID: {metaStatus.instagram.account_id?.slice(0, 8)}...{metaStatus.instagram.account_id?.slice(-4)}
-                          </p>
-                          {(metaStatus.instagram.metadata as Record<string, number>)?.follower_count && (
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {(metaStatus.instagram.metadata as Record<string, number>).follower_count.toLocaleString()} followers
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
-                          <CheckCircle className="h-4 w-4" />
-                          <span className="text-sm font-medium">Connected</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* WhatsApp Account Detail */}
-                    {metaStatus.whatsapp?.connected && (
-                      <div className="flex items-center gap-4 p-4 bg-green-50 rounded-xl border border-green-100">
-                        <div className="h-14 w-14 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0">
-                          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                          </svg>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-gray-900">
-                              {metaStatus.whatsapp.account_name || "WhatsApp Business"}
-                            </h4>
-                            <Badge variant="secondary" size="sm">WhatsApp Business</Badge>
-                          </div>
-                          {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && (
-                            <p className="text-sm text-gray-500 mt-0.5">
-                              {(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
-                          <CheckCircle className="h-4 w-4" />
-                          <span className="text-sm font-medium">Connected</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Messenger Account Detail */}
-                    {metaStatus.messenger?.connected && (
-                      <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
-                        <div className="h-14 w-14 rounded-full bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0">
-                          <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z"/>
-                          </svg>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-gray-900">
-                              {metaStatus.messenger.account_name || "Messenger"}
-                            </h4>
-                            <Badge variant="secondary" size="sm">Facebook Page</Badge>
-                          </div>
-                          {(metaStatus.messenger.metadata as Record<string, number>)?.follower_count && (
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {(metaStatus.messenger.metadata as Record<string, number>).follower_count.toLocaleString()} followers
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-green-600 flex-shrink-0">
-                          <CheckCircle className="h-4 w-4" />
-                          <span className="text-sm font-medium">Connected</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Webhook Status */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Webhook Subscriptions</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
-                    <div className="flex items-center gap-3">
-                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-sm font-medium text-gray-900">Webhook Status</span>
+          {/* Connected Account Details */}
+          {metaStatus && (metaStatus.instagram?.connected || metaStatus.whatsapp?.connected || metaStatus.messenger?.connected) && (
+            <div>
+              <div className="h-px bg-gray-100 mb-8" />
+              <h4 className="font-semibold text-gray-900 mb-5">Connected Accounts</h4>
+              <div className="space-y-3">
+                {metaStatus.instagram?.connected && (
+                  <div className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white font-bold flex-shrink-0">{metaStatus.instagram.account_name?.[0] || "I"}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2"><p className="font-semibold text-gray-900 text-sm">{(metaStatus.instagram.metadata as Record<string, string>)?.ig_username || metaStatus.instagram.account_name || "Instagram"}</p><Badge variant="secondary" size="sm">Instagram</Badge></div>
+                      <p className="text-xs text-[#475569] mt-0.5">ID: {metaStatus.instagram.account_id?.slice(0, 8)}...{metaStatus.instagram.account_id?.slice(-4)}</p>
                     </div>
-                    <Badge variant="success" size="sm">Active</Badge>
+                    <div className="flex items-center gap-1.5 text-emerald-600 flex-shrink-0"><CheckCircle className="h-4 w-4" /><span className="text-xs font-semibold">Active</span></div>
                   </div>
+                )}
+                {metaStatus.whatsapp?.connected && (
+                  <div className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+                    <div className="h-11 w-11 rounded-xl bg-[#25D366] flex items-center justify-center text-white flex-shrink-0"><svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2"><p className="font-semibold text-gray-900 text-sm">{metaStatus.whatsapp.account_name || "WhatsApp Business"}</p><Badge variant="secondary" size="sm">WhatsApp</Badge></div>
+                      {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && <p className="text-xs text-[#475569] mt-0.5">{(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}</p>}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-emerald-600 flex-shrink-0"><CheckCircle className="h-4 w-4" /><span className="text-xs font-semibold">Active</span></div>
+                  </div>
+                )}
+                {metaStatus.messenger?.connected && (
+                  <div className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+                    <div className="h-11 w-11 rounded-xl bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0"><svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z" /></svg></div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2"><p className="font-semibold text-gray-900 text-sm">{metaStatus.messenger.account_name || "Messenger"}</p><Badge variant="secondary" size="sm">Messenger</Badge></div>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-emerald-600 flex-shrink-0"><CheckCircle className="h-4 w-4" /><span className="text-xs font-semibold">Active</span></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-                  <div className="grid gap-2 text-sm">
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">Subscribed Events</span>
-                      <span className="text-gray-900 font-medium">messages, message_deliveries, message_reads</span>
-                    </div>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">Webhook URL</span>
-                      <code className="text-xs bg-gray-200 px-2 py-0.5 rounded text-gray-700">/api/webhooks/meta</code>
-                    </div>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">Verification Status</span>
-                      <span className="text-green-600 font-medium flex items-center gap-1">
-                        <CheckCircle className="h-3.5 w-3.5" />
-                        Verified
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">Last Webhook Received</span>
-                      <span className="text-gray-900 font-medium">
-                        {new Date().toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Permissions Info */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Required Permissions</h3>
-                <div className="grid gap-3 md:grid-cols-3 text-sm">
-                  <div>
-                    <p className="font-medium text-gray-700 mb-1">WhatsApp</p>
-                    <ul className="space-y-1 text-gray-500">
-                      <li>whatsapp_business_management</li>
-                      <li>whatsapp_business_messaging</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700 mb-1">Instagram</p>
-                    <ul className="space-y-1 text-gray-500">
-                      <li>instagram_basic</li>
-                      <li>instagram_manage_messages</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700 mb-1">Messenger</p>
-                    <ul className="space-y-1 text-gray-500">
-                      <li>pages_messaging</li>
-                      <li>pages_manage_metadata</li>
-                      <li>pages_read_engagement</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Webhook info strip */}
+          <div>
+            <div className="h-px bg-gray-100 mb-8" />
+            <h4 className="font-semibold text-gray-900 mb-5">Webhook Status</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3">
+                <div className="flex items-center gap-2 mb-1"><div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /><span className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Status</span></div>
+                <p className="font-semibold text-emerald-800 text-sm">Active</p>
+              </div>
+              <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3">
+                <p className="text-xs font-semibold text-[#475569] uppercase tracking-wide mb-1">Endpoint</p>
+                <code className="text-xs font-mono text-gray-700">/api/webhooks/meta</code>
+              </div>
+              <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3">
+                <p className="text-xs font-semibold text-[#475569] uppercase tracking-wide mb-1">Verification</p>
+                <div className="flex items-center gap-1 text-emerald-600"><CheckCircle className="h-3.5 w-3.5" /><span className="text-sm font-semibold">Verified</span></div>
+              </div>
+              <div className="rounded-xl bg-gray-50 border border-gray-100 px-4 py-3">
+                <p className="text-xs font-semibold text-[#475569] uppercase tracking-wide mb-1">Last Event</p>
+                <p className="text-sm font-semibold text-gray-800">{new Date().toLocaleTimeString()}</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#475569] mt-3">Subscribed events: <span className="font-medium text-gray-700">messages · message_deliveries · message_reads</span></p>
           </div>
         </TabsContent>
 
         {/* WhatsApp Business Profile Tab */}
-        <TabsContent value="whatsapp">
+        <TabsContent value="whatsapp" className="pb-12">
           {metaStatus?.whatsapp?.connected === false ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <div className="rounded-full bg-yellow-50 p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <Building2 className="h-8 w-8 text-yellow-500" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">WhatsApp Not Connected</h3>
-                <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
-                  Connect your Meta account with WhatsApp Business permissions to manage your business profile.
-                </p>
-                <Button
-                  onClick={() => {
-                    const tabsEl = document.querySelector('[value="integrations"]') as HTMLButtonElement | null
-                    tabsEl?.click()
-                  }}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488]"
-                >
-                  <Link2 className="h-4 w-4 mr-2" />
-                  Go to Integrations
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-5">
+                <Building2 className="h-8 w-8 text-amber-500" />
+              </div>
+              <h3 className="font-semibold text-gray-900 text-lg mb-2">WhatsApp Not Connected</h3>
+              <p className="text-sm text-[#475569] max-w-sm mb-6 leading-relaxed">
+                Connect your Meta account with WhatsApp Business permissions to manage your public business profile.
+              </p>
+              <Button
+                onClick={() => { const el = document.querySelector('[value="integrations"]') as HTMLButtonElement | null; el?.click() }}
+                className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-6"
+              >
+                Go to Integrations
+              </Button>
+            </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-10">
+
               {/* Business Info */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-lg bg-green-50 p-2.5 mt-0.5">
-                      <Building2 className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div className="flex-1 space-y-4">
-                      <div>
-                        <Label htmlFor="wpBusinessName">Business Name *</Label>
-                        <Input
-                          id="wpBusinessName"
-                          value={wpBusinessName}
-                          onChange={(e) => setWpBusinessName(e.target.value)}
-                          placeholder="Simply Dave Nassau Tours"
-                          className="mt-1.5"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="wpDescription">Business Description</Label>
-                        <Textarea
-                          id="wpDescription"
-                          value={wpDescription}
-                          onChange={(e) => setWpDescription(e.target.value)}
-                          placeholder="Premier boat tours and water sports in Nassau, Bahamas..."
-                          className="mt-1.5 min-h-[100px]"
-                        />
-                        <p className="text-xs text-gray-400 mt-1">Max 512 characters</p>
-                      </div>
-                      <div>
-                        <Label htmlFor="wpCategory">Business Category</Label>
-                        <SimpleSelect
-                          value={wpCategory}
-                          onValueChange={setWpCategory}
-                          options={waCategoryOptions}
-                          className="mt-1.5"
-                        />
-                      </div>
-                    </div>
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-9 w-9 rounded-xl bg-[#25D366]/10 flex items-center justify-center flex-shrink-0">
+                    <Building2 className="h-5 w-5 text-[#25D366]" />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Business Info</h4>
+                    <p className="text-xs text-[#475569]">Displayed publicly on your WhatsApp Business profile</p>
+                  </div>
+                </div>
+                <div className="space-y-5">
+                  <div>
+                    <Label htmlFor="wpBusinessName" className="text-sm font-medium text-gray-700">Business Name <span className="text-[#FF8B66]">*</span></Label>
+                    <Input id="wpBusinessName" value={wpBusinessName} onChange={(e) => setWpBusinessName(e.target.value)} placeholder="Simply Dave Nassau Tours" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="wpDescription" className="text-sm font-medium text-gray-700">Business Description</Label>
+                    <Textarea id="wpDescription" value={wpDescription} onChange={(e) => setWpDescription(e.target.value)} placeholder="Premier boat tours and water sports in Nassau, Bahamas..." className="mt-1.5 min-h-[110px] rounded-xl border-gray-200 resize-none" />
+                    <p className="text-xs text-[#475569] mt-1.5">Max 512 characters · Shown in your WhatsApp profile card</p>
+                  </div>
+                  <div>
+                    <Label htmlFor="wpCategory" className="text-sm font-medium text-gray-700">Business Category</Label>
+                    <SimpleSelect value={wpCategory} onValueChange={setWpCategory} options={waCategoryOptions} className="mt-1.5" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100" />
 
               {/* Contact Info */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-lg bg-blue-50 p-2.5 mt-0.5">
-                      <Phone className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div className="flex-1 space-y-4">
-                      <h3 className="font-semibold text-gray-900">Contact Information</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="wpPhone">Phone Number</Label>
-                          <Input
-                            id="wpPhone"
-                            value={wpPhone}
-                            onChange={(e) => setWpPhone(e.target.value)}
-                            placeholder="+1-242-555-0199"
-                            className="mt-1.5"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="wpEmail">Email Address</Label>
-                          <Input
-                            id="wpEmail"
-                            type="email"
-                            value={wpEmail}
-                            onChange={(e) => setWpEmail(e.target.value)}
-                            placeholder="info@simplydavenassau.com"
-                            className="mt-1.5"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Label htmlFor="wpWebsite">Website URL</Label>
-                        <Input
-                          id="wpWebsite"
-                          value={wpWebsite}
-                          onChange={(e) => setWpWebsite(e.target.value)}
-                          placeholder="www.simplydavenassau.com"
-                          className="mt-1.5"
-                        />
-                      </div>
-                    </div>
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <Phone className="h-5 w-5 text-blue-500" />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Contact Information</h4>
+                    <p className="text-xs text-[#475569]">How customers can reach you outside of WhatsApp</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <Label htmlFor="wpPhone" className="text-sm font-medium text-gray-700">Phone Number</Label>
+                    <Input id="wpPhone" value={wpPhone} onChange={(e) => setWpPhone(e.target.value)} placeholder="+1-242-555-0199" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="wpEmail" className="text-sm font-medium text-gray-700">Email Address</Label>
+                    <Input id="wpEmail" type="email" value={wpEmail} onChange={(e) => setWpEmail(e.target.value)} placeholder="info@simplydavenassau.com" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Label htmlFor="wpWebsite" className="text-sm font-medium text-gray-700">Website URL</Label>
+                    <Input id="wpWebsite" value={wpWebsite} onChange={(e) => setWpWebsite(e.target.value)} placeholder="www.simplydavenassau.com" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100" />
 
               {/* Location & Hours */}
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-lg bg-amber-50 p-2.5 mt-0.5">
-                      <MapPin className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div className="flex-1 space-y-4">
-                      <h3 className="font-semibold text-gray-900">Location & Hours</h3>
-                      <div>
-                        <Label htmlFor="wpAddress">Business Address</Label>
-                        <Input
-                          id="wpAddress"
-                          value={wpAddress}
-                          onChange={(e) => setWpAddress(e.target.value)}
-                          placeholder="Paradise Island, Nassau, Bahamas"
-                          className="mt-1.5"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="wpHours">Business Hours</Label>
-                        <Input
-                          id="wpHours"
-                          value={wpHours}
-                          onChange={(e) => setWpHours(e.target.value)}
-                          placeholder="Monday-Saturday 8:00 AM - 6:00 PM, Sunday Closed"
-                          className="mt-1.5"
-                        />
-                      </div>
-                    </div>
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-9 w-9 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-5 w-5 text-amber-500" />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Location &amp; Hours</h4>
+                    <p className="text-xs text-[#475569]">Let customers know where to find you and when you're open</p>
+                  </div>
+                </div>
+                <div className="space-y-5">
+                  <div>
+                    <Label htmlFor="wpAddress" className="text-sm font-medium text-gray-700">Business Address</Label>
+                    <Input id="wpAddress" value={wpAddress} onChange={(e) => setWpAddress(e.target.value)} placeholder="Paradise Island, Nassau, Bahamas" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="wpHours" className="text-sm font-medium text-gray-700">Business Hours</Label>
+                    <Input id="wpHours" value={wpHours} onChange={(e) => setWpHours(e.target.value)} placeholder="Monday-Saturday 8:00 AM - 6:00 PM, Sunday Closed" className="mt-1.5 rounded-xl border-gray-200" />
+                  </div>
+                </div>
+              </div>
 
               {/* Save */}
-              <div className="flex items-center justify-end gap-3">
+              <div className="flex items-center justify-end gap-3 pt-2">
                 {wpSaved && (
-                  <span className="flex items-center gap-1.5 text-sm text-green-600">
+                  <span className="flex items-center gap-1.5 text-sm text-emerald-600">
                     <CheckCircle className="h-4 w-4" />
                     Saved successfully
                   </span>
                 )}
-                <Button
-                  onClick={handleSaveWhatsAppProfile}
-                  disabled={wpSaving}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] px-8"
-                >
-                  {wpSaving ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4 mr-2" />
-                  )}
+                <Button onClick={handleSaveWhatsAppProfile} disabled={wpSaving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
+                  {wpSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   Save Changes
                 </Button>
               </div>
@@ -1090,94 +845,112 @@ export default function SettingsPage() {
         </TabsContent>
 
         {/* Billing Tab */}
-        <TabsContent value="billing">
-          <div className="space-y-6">
-            {/* Current Plan */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">Current Plan</h3>
-                  <Badge
-                    variant={customer?.plan === "free" ? "secondary" : "success"}
-                  >
-                    {customer?.plan?.charAt(0).toUpperCase() +
-                      (customer?.plan?.slice(1) || "")}
-                  </Badge>
+        <TabsContent value="billing" className="space-y-10 pb-12">
+
+          {/* Current Plan */}
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                <CreditCard className="h-5 w-5 text-emerald-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Current Plan Overview</h4>
+                <p className="text-xs text-[#475569]">Manage your active subscription and upcoming charges</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
+              <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
+                <div>
+                  <h5 className="font-semibold text-gray-900 text-lg">TropiChat {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}</h5>
+                  <p className="text-sm text-[#475569] mt-1">{customer?.plan === "free" ? "You are currently exploring the 14-day free trial." : "Your workspace is growing efficiently."}</p>
                 </div>
+                <Badge variant={customer?.plan === "free" ? "secondary" : "success"} className="px-3 py-1">
+                  {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}
+                </Badge>
+              </div>
 
-                {customer?.plan === "free" ? (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-600 mb-3">
-                      You're on the free trial. Upgrade to unlock more features.
-                    </p>
-                    <Button className="bg-[#3A9B9F]">
-                      Upgrade to Professional
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Monthly price</span>
-                      <span className="font-medium">$59/month</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Next billing date</span>
-                      <span className="font-medium">Feb 15, 2024</span>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Usage */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Usage</h3>
-                <div className="space-y-4">
+              {customer?.plan === "free" ? (
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-500">Contacts</span>
-                      <span className="font-medium">127 / 500</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div
-                        className="bg-[#3A9B9F] h-2 rounded-full"
-                        style={{ width: "25%" }}
-                      />
-                    </div>
+                    <h6 className="font-semibold text-emerald-900">Ready to level up?</h6>
+                    <p className="text-sm text-emerald-700 mt-1">Upgrade to Professional to unlock team management and advanced integrations.</p>
                   </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-500">Messages this month</span>
-                      <span className="font-medium">1,234</span>
-                    </div>
-                    <p className="text-xs text-gray-400">Unlimited on all plans</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Payment Method */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">
-                  Payment Method
-                </h3>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <div className="bg-white rounded p-2">
-                    <CreditCard className="h-5 w-5 text-gray-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">•••• •••• •••• 4242</p>
-                    <p className="text-xs text-gray-500">Expires 12/25</p>
-                  </div>
-                  <Button variant="outline" size="sm" className="ml-auto">
-                    Update
+                  <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm">
+                    Upgrade Now
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm text-[#475569] font-medium mb-1">Monthly Cost</p>
+                    <p className="text-2xl font-bold text-gray-900">$59<span className="text-sm text-gray-500 font-normal">/mo</span></p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-[#475569] font-medium mb-1">Next Billing Date</p>
+                    <p className="text-lg font-semibold text-gray-900">Feb 15, 2024</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+
+          <div className="h-px bg-gray-100" />
+
+          {/* Usage */}
+          <div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900">Workspace Usage</h4>
+              <p className="text-xs text-[#475569]">Monitor your limits and message volume for the current billing cycle</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-medium text-sm text-gray-900">Contacts</span>
+                  <span className="text-sm font-semibold text-[#3A9B9F]">127 / 500</span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                  <div className="bg-[#3A9B9F] h-full rounded-full transition-all" style={{ width: "25%" }} />
+                </div>
+                <p className="text-xs text-[#475569] mt-3">Active unique clients</p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="font-medium text-sm text-gray-900">Messages</span>
+                  <span className="text-sm font-semibold text-gray-900">1,234</span>
+                </div>
+                <div className="w-full bg-emerald-50 rounded-full h-2.5 overflow-hidden">
+                  <div className="bg-emerald-400 h-full rounded-full transition-all" style={{ width: "100%" }} />
+                </div>
+                <p className="text-xs text-[#475569] mt-3">Unlimited messages on all plans</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="h-px bg-gray-100" />
+
+          {/* Payment Method */}
+          <div>
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900">Payment Method</h4>
+              <p className="text-xs text-[#475569]">The card charged for your monthly subscription</p>
+            </div>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-gray-50 border border-gray-100 rounded-xl w-14 h-10 flex items-center justify-center">
+                  <CreditCard className="h-5 w-5 text-gray-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-gray-900">•••• •••• •••• 4242</p>
+                  <p className="text-xs text-[#475569] mt-0.5">Expires 12/25</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="rounded-xl border-gray-200 shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+                Update
+              </Button>
+            </div>
+          </div>
+
         </TabsContent>
       </Tabs>
     </div>
@@ -1206,59 +979,82 @@ function ChannelCard({
   const isConnected = status?.connected ?? false
 
   return (
-    <Card className={isConnected ? "border-green-200" : undefined}>
-      <CardContent className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div
-            className="rounded-lg p-2 text-white"
-            style={{ backgroundColor: color }}
-          >
-            {icon}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-gray-900">{label}</h4>
+    <motion.div
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "relative overflow-hidden p-6 rounded-[28px] transition-all duration-300",
+        "bg-white border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]",
+        isConnected ? "ring-2 ring-teal-500/5 shadow-[0_8px_30px_rgba(58,155,159,0.08)]" : "opacity-60 grayscale-[0.5]"
+      )}
+    >
+      {/* Dynamic Glow Background */}
+      {isConnected && (
+        <div
+          className="absolute -right-6 -top-6 w-24 h-24 blur-[40px] opacity-20 transition-opacity rounded-full"
+          style={{ backgroundColor: color }}
+        />
+      )}
+
+      <div className="flex items-start gap-4 mb-5">
+        <div className="shrink-0 flex items-center justify-center transition-transform hover:scale-110 duration-300">
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0 pt-0.5">
+          <h4 className="font-bold text-[#213138] font-[family-name:var(--font-poppins)] text-lg leading-tight truncate">
+            {label}
+          </h4>
+          <div className="flex items-center gap-1.5 mt-1">
             {isConnected ? (
-              <div className="flex items-center gap-1 text-green-600 text-sm">
-                <CheckCircle className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1.5 text-[#3A9B9F] text-xs font-bold uppercase tracking-wider">
+                <div className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
                 Connected
               </div>
             ) : (
-              <div className="flex items-center gap-1 text-gray-400 text-sm">
-                <XCircle className="h-3.5 w-3.5" />
-                Not connected
+              <div className="flex items-center gap-1.5 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                <div className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+                Disconnected
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        {isConnected && status?.account_name && (
-          <p className="text-sm text-gray-600 mb-3 truncate">
-            {status.account_name}
+      <div className="min-h-[48px] mb-5">
+        {isConnected && status?.account_name ? (
+          <div className="p-3 rounded-xl bg-gray-50/50 border border-gray-100/50">
+            <p className="text-sm font-semibold text-gray-700 truncate">
+              {status.account_name}
+            </p>
             {status.metadata && (status.metadata as Record<string, string>).phone_display && (
-              <span className="text-gray-400 ml-1">
-                ({(status.metadata as Record<string, string>).phone_display})
-              </span>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {(status.metadata as Record<string, string>).phone_display}
+              </p>
             )}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 italic">
+            Waiting for connection...
           </p>
         )}
+      </div>
 
-        {isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onDisconnect}
-            disabled={disconnecting}
-            className="w-full text-red-600 border-red-200 hover:bg-red-50"
-          >
-            {disconnecting ? (
-              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-            ) : (
-              <Unplug className="h-3.5 w-3.5 mr-1.5" />
-            )}
-            Disconnect
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+      {isConnected && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onDisconnect}
+          disabled={disconnecting}
+          className="w-full rounded-xl border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 font-bold transition-all duration-200"
+        >
+          {disconnecting ? (
+            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+          ) : (
+            <LogOut className="h-3.5 w-3.5 mr-2" />
+          )}
+          Disconnect Channel
+        </Button>
+      )}
+    </motion.div>
   )
 }

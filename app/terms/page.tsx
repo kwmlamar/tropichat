@@ -17,12 +17,12 @@ export default function TermsOfServicePage() {
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <Link href="/" className="flex items-center group">
             <Image
-              src="/tropichat-full-logo2.png"
+              src="/tropichat-logo.png"
               alt="TropiChat"
-              width={320}
-              height={88}
+              width={64}
+              height={64}
               unoptimized
-              className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 md:h-16"
+              className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-110 md:h-14 md:w-14"
             />
           </Link>
           <Link

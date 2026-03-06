@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-plus-jakarta",
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tropichat.com";
@@ -19,10 +27,10 @@ export const metadata: Metadata = {
   authors: [{ name: "TropiTech Solutions" }],
   icons: {
     icon: [
-      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "32x32" },
-      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "192x192" },
+      { url: "/tropichat-logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/tropichat-logo.png", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/tropichat-logo-transparent.png",
+    apple: "/tropichat-logo.png",
   },
   openGraph: {
     title: "TropiChat - Run Your Business Like a Pro, Right From WhatsApp",
@@ -31,13 +39,13 @@ export const metadata: Metadata = {
     siteName: "TropiChat",
     locale: "en_US",
     type: "website",
-    images: ["/tropichat-logo-transparent.png"],
+    images: ["/tropichat-logo.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "TropiChat - WhatsApp Business Tools for Caribbean SMBs",
     description: "Turn WhatsApp chaos into organized success. Label customers, track orders, save responses. Try free for 14 days.",
-    images: ["/tropichat-logo-transparent.png"],
+    images: ["/tropichat-logo.png"],
   },
   robots: {
     index: true,
@@ -52,9 +60,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${plusJakarta.variable} font-sans antialiased`}>
+      <body className={`${poppins.variable} ${inter.variable} font-sans antialiased`}>
         {children}
-        <Toaster position="top-center" richColors />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            className: "tropichat-toast",
+            style: {
+              borderRadius: "20px",
+              padding: "16px 20px",
+              fontSize: "0.9375rem",
+              fontWeight: "500",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              backdropFilter: "blur(12px)",
+              background: "rgba(255, 255, 255, 0.8)",
+              color: "#213138",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        />
       </body>
     </html>
   );

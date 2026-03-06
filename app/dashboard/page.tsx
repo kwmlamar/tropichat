@@ -14,6 +14,7 @@ import {
   subscribeToUnifiedConversations,
   getConnectedAccounts,
 } from "@/lib/unified-inbox"
+import { getCurrentCustomer } from "@/lib/supabase"
 import { useDebounce } from "@/lib/hooks"
 import { generateId } from "@/lib/utils"
 import { toast } from "sonner"
@@ -38,6 +39,7 @@ export default function InboxPage() {
   const [showArchived, setShowArchived] = useState(false)
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
 
+  const [customerName, setCustomerName] = useState<string | null>(null)
   const debouncedSearch = useDebounce(searchQuery, 300)
 
   // Track mount status for async safety
@@ -52,11 +54,14 @@ export default function InboxPage() {
     let ignore = false
     async function fetchAccounts() {
       try {
-        const { data } = await getConnectedAccounts()
-        if (!ignore) setAccountIds(data.map((a) => a.id))
+        const { data: accountsData } = await getConnectedAccounts()
+        if (!ignore) setAccountIds(accountsData.map((a) => a.id))
+
+        const { data: customerData } = await getCurrentCustomer()
+        if (!ignore) setCustomerName(customerData?.business_name || null)
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return
-        console.error("Failed to fetch accounts:", err)
+        console.error("Failed to fetch dashboard data:", err)
       }
     }
     fetchAccounts()
@@ -226,8 +231,6 @@ export default function InboxPage() {
   const handleSendMessage = async (messageText: string) => {
     if (!selectedConversation) return
 
-    const isHumanAgent = selectedConversation.human_agent_enabled
-
     // Optimistic update
     const tempMessage: UnifiedMessage = {
       id: generateId(),
@@ -242,7 +245,7 @@ export default function InboxPage() {
       failed_at: null,
       status: "sending",
       error_message: null,
-      metadata: isHumanAgent ? { human_agent_tag: true } : {},
+      metadata: {},
       created_at: new Date().toISOString(),
     }
 
@@ -253,21 +256,19 @@ export default function InboxPage() {
       prev.map((conv) =>
         conv.id === selectedConversation.id
           ? {
-              ...conv,
-              last_message_at: tempMessage.sent_at,
-              last_message_preview: messageText.substring(0, 100),
-            }
+            ...conv,
+            last_message_at: tempMessage.sent_at,
+            last_message_preview: messageText.substring(0, 100),
+          }
           : conv
       )
     )
 
-    // Send via API (pass human_agent_tag flag)
+    // Send via API
     const { data, error } = await sendUnifiedMessage(
       selectedConversation.id,
       messageText,
-      "text",
-      undefined,
-      isHumanAgent
+      "text"
     )
 
     if (error) {
@@ -278,11 +279,6 @@ export default function InboxPage() {
         )
       )
     } else if (data) {
-      // Show success toast for human agent messages
-      if (isHumanAgent) {
-        toast.success("Sent with Human Agent tag (7-day window)")
-      }
-
       // Replace temp with real message, dedupe
       setMessages((prev) => {
         const updated = prev.map((m) => (m.id === tempMessage.id ? data : m))
@@ -294,35 +290,6 @@ export default function InboxPage() {
     }
   }
 
-  // Human Agent toggle handler
-  const handleToggleHumanAgent = async (enabled: boolean, reason?: string) => {
-    if (!selectedConversation) return
-
-    const updates: Record<string, unknown> = {
-      human_agent_enabled: enabled,
-      human_agent_reason: enabled ? (reason || null) : null,
-      human_agent_marked_at: enabled ? new Date().toISOString() : null,
-    }
-
-    const { error } = await updateUnifiedConversation(selectedConversation.id, updates as never)
-
-    if (error) {
-      toast.error("Failed to update Human Agent mode")
-    } else {
-      // Update local state
-      const updatedConv = { ...selectedConversation, ...updates } as ConversationWithAccount
-      setSelectedConversation(updatedConv)
-      setConversations((prev) =>
-        prev.map((c) => (c.id === selectedConversation.id ? { ...c, ...updates } as ConversationWithAccount : c))
-      )
-
-      if (enabled) {
-        toast.success("Human Agent mode enabled — 7 days to respond")
-      } else {
-        toast.success("Human Agent mode disabled")
-      }
-    }
-  }
 
   // Archive / Unarchive handler
   const handleArchive = async () => {
@@ -392,8 +359,8 @@ export default function InboxPage() {
             onArchive={handleArchive}
             onLoadMore={handleLoadMore}
             hasMore={hasMoreMessages}
-            onToggleHumanAgent={handleToggleHumanAgent}
             onCreateBooking={() => setBookingModalOpen(true)}
+            customerName={customerName}
           />
         </div>
       </div>

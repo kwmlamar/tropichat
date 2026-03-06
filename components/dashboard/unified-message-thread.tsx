@@ -2,21 +2,27 @@
 
 import { useState, useRef, useEffect } from "react"
 import {
-  Send,
-  Paperclip,
-  MoreVertical,
+  AlertCircle,
+  Archive,
+  AtSign,
+  CalendarPlus,
   Check,
   CheckCheck,
   Clock,
-  AlertCircle,
   FileText,
   Image as ImageIcon,
-  Archive,
-  UserCog,
+  Inbox,
+  Maximize2,
+  Mic,
+  MoreVertical,
+  Paperclip,
+  Plus,
+  Send,
   Shield,
-  X,
-  CalendarPlus,
+  Smile,
 } from "lucide-react"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -35,19 +41,10 @@ interface UnifiedMessageThreadProps {
   onArchive?: () => void
   onLoadMore?: () => void
   hasMore?: boolean
-  onToggleHumanAgent?: (enabled: boolean, reason?: string) => void
   onCreateBooking?: () => void
+  customerName?: string | null
 }
 
-/** Calculate days remaining from a marked-at timestamp (7-day window) */
-function getDaysRemaining(markedAt: string | null): number | null {
-  if (!markedAt) return null
-  const marked = new Date(markedAt)
-  const deadline = new Date(marked.getTime() + 7 * 24 * 60 * 60 * 1000)
-  const now = new Date()
-  const remaining = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-  return Math.max(0, remaining)
-}
 
 export function UnifiedMessageThread({
   conversation,
@@ -57,13 +54,11 @@ export function UnifiedMessageThread({
   onArchive,
   onLoadMore,
   hasMore,
-  onToggleHumanAgent,
   onCreateBooking,
+  customerName,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
-  const [showHumanAgentPanel, setShowHumanAgentPanel] = useState(false)
-  const [humanAgentReason, setHumanAgentReason] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -74,8 +69,6 @@ export function UnifiedMessageThread({
 
   // Sync reason state when conversation changes
   useEffect(() => {
-    setHumanAgentReason(conversation?.human_agent_reason || "")
-    setShowHumanAgentPanel(false)
   }, [conversation?.id])
 
   const handleSend = async () => {
@@ -94,16 +87,13 @@ export function UnifiedMessageThread({
     }
   }
 
-  const handleEnableHumanAgent = () => {
-    onToggleHumanAgent?.(true, humanAgentReason || undefined)
-    setShowHumanAgentPanel(false)
-  }
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`
+    }
+  }, [messageText])
 
-  const handleDisableHumanAgent = () => {
-    onToggleHumanAgent?.(false)
-    setHumanAgentReason("")
-    setShowHumanAgentPanel(false)
-  }
 
   const getStatusIcon = (status: MessageDeliveryStatus) => {
     switch (status) {
@@ -137,28 +127,81 @@ export function UnifiedMessageThread({
     []
   )
 
-  // Empty state
+  // Modern Welcome Empty state
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-8 text-center">
-        <div className="rounded-full bg-gray-100 p-6 mb-4">
-          <FileText className="h-12 w-12 text-gray-400" />
-        </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
-        <p className="text-sm text-gray-500 max-w-sm">
-          Select a conversation from the list to view messages and start chatting
-        </p>
+      <div className="flex flex-col items-center justify-center h-full bg-[#F8FAFB] p-8 text-center relative overflow-hidden">
+        {/* Background Decor */}
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent opacity-60 z-0" />
+        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-teal-500/5 blur-[120px] rounded-full z-0 animate-float" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-coral-500/5 blur-[120px] rounded-full z-0 animate-float-delayed" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative z-10 max-w-lg w-full"
+        >
+          {/* Main Card */}
+          <div className="bg-white/70 backdrop-blur-xl rounded-[32px] border border-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-gray-100">
+            <div className="mb-8 relative inline-block">
+              <div className="absolute inset-0 bg-teal-500/20 blur-2xl rounded-full" />
+              <div className="relative rounded-3xl bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] p-5 shadow-lg shadow-teal-500/20">
+                <Image
+                  src="/tropichat-logo.png"
+                  alt="TropiChat"
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="h-14 w-14 object-contain brightness-0 invert"
+                />
+              </div>
+            </div>
+
+            <h3 className="text-3xl font-extrabold text-[#213138] mb-3 tracking-tight font-[family-name:var(--font-poppins)]">
+              Welcome Back{customerName ? `, ${customerName}` : ""}!
+            </h3>
+            <p className="text-base text-gray-500 mb-8 leading-relaxed max-w-xs mx-auto">
+              Ready to grow your business today? Select a conversation from the sidebar to start chatting.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-gray-100">
+              <div className="text-left p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 flex flex-col gap-1 items-start">
+                <div className="p-2 rounded-lg bg-teal-50 text-teal-600 mb-1">
+                  <Inbox className="h-4 w-4" />
+                </div>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Unified Inbox</span>
+                <span className="text-sm font-semibold text-gray-700">All messages in one view</span>
+              </div>
+              <div className="text-left p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 flex flex-col gap-1 items-start">
+                <div className="p-2 rounded-lg bg-amber-50 text-amber-600 mb-1">
+                  <Shield className="h-4 w-4" />
+                </div>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Business Pro</span>
+                <span className="text-sm font-semibold text-gray-700">Enterprise Security</span>
+              </div>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            Inbox is connected and synchronized
+          </motion.div>
+        </motion.div>
       </div>
     )
   }
 
-  const isHumanAgentEnabled = conversation.human_agent_enabled
-  const daysRemaining = getDaysRemaining(conversation.human_agent_marked_at)
 
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <div className="flex items-center gap-3">
           <div className="relative">
             <Avatar
@@ -175,12 +218,6 @@ export function UnifiedMessageThread({
               <h2 className="font-semibold text-gray-900">
                 {getConversationDisplayName(conversation)}
               </h2>
-              {isHumanAgentEnabled && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                  <Shield className="h-3 w-3" />
-                  Human Agent
-                </span>
-              )}
             </div>
             <div className="text-xs text-gray-500 flex items-center gap-1.5">
               <ChannelIcon channel={conversation.channel_type} size="sm" />
@@ -208,19 +245,6 @@ export function UnifiedMessageThread({
             </button>
           )}
 
-          {/* Human Agent Toggle Button */}
-          <button
-            onClick={() => setShowHumanAgentPanel(!showHumanAgentPanel)}
-            className={cn(
-              "p-2 rounded-lg transition-colors",
-              isHumanAgentEnabled
-                ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                : "hover:bg-gray-100 text-gray-500"
-            )}
-            title={isHumanAgentEnabled ? "Human Agent mode active" : "Enable Human Agent mode (7-day window)"}
-          >
-            <UserCog className="h-5 w-5" />
-          </button>
 
           <Dropdown
             align="right"
@@ -244,74 +268,6 @@ export function UnifiedMessageThread({
         </div>
       </div>
 
-      {/* Human Agent Banner - shown when enabled */}
-      {isHumanAgentEnabled && (
-        <div className="px-6 py-3 bg-amber-50 border-b border-amber-200 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full bg-amber-100 p-1.5">
-              <Shield className="h-4 w-4 text-amber-700" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-amber-900">
-                Human Agent Mode — {daysRemaining !== null ? `${daysRemaining} day${daysRemaining !== 1 ? "s" : ""} remaining` : "7-day window"}
-              </p>
-              {conversation.human_agent_reason && (
-                <p className="text-xs text-amber-700 mt-0.5">
-                  Reason: {conversation.human_agent_reason}
-                </p>
-              )}
-            </div>
-          </div>
-          <button
-            onClick={handleDisableHumanAgent}
-            className="text-amber-700 hover:text-amber-900 p-1 rounded-lg hover:bg-amber-100 transition-colors"
-            title="Disable Human Agent mode"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Human Agent Setup Panel - shown when toggling */}
-      {showHumanAgentPanel && !isHumanAgentEnabled && (
-        <div className="px-6 py-4 bg-amber-50 border-b border-amber-200">
-          <div className="flex items-start gap-3">
-            <div className="rounded-full bg-amber-100 p-2 mt-0.5">
-              <UserCog className="h-5 w-5 text-amber-700" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-amber-900">Enable Human Agent Response</h3>
-              <p className="text-xs text-amber-700 mt-1">
-                Extends your response window from 24 hours to 7 days. Use this for complex inquiries that need more time to resolve.
-              </p>
-              <div className="mt-3">
-                <Input
-                  placeholder="Reason (optional) — e.g., Need to coordinate with caterer"
-                  value={humanAgentReason}
-                  onChange={(e) => setHumanAgentReason(e.target.value)}
-                  className="bg-white border-amber-300 text-sm placeholder:text-amber-400"
-                />
-              </div>
-              <div className="flex gap-2 mt-3">
-                <Button
-                  onClick={handleEnableHumanAgent}
-                  className="bg-amber-600 hover:bg-amber-700 text-white text-sm h-8 px-4"
-                >
-                  <Shield className="h-3.5 w-3.5 mr-1.5" />
-                  Enable Human Agent Mode
-                </Button>
-                <Button
-                  onClick={() => setShowHumanAgentPanel(false)}
-                  variant="outline"
-                  className="text-sm h-8 px-4 border-amber-300 text-amber-700"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -345,7 +301,7 @@ export function UnifiedMessageThread({
                   </span>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {group.messages.map((message) => {
                     const isOutbound = message.sender_type === "business"
                     const mediaUrl = message.metadata?.media_url as string | undefined
@@ -362,27 +318,18 @@ export function UnifiedMessageThread({
                       >
                         <div
                           className={cn(
-                            "max-w-[70%] rounded-2xl px-4 py-2",
+                            "max-w-[75%] rounded-[24px] px-[18px] py-[10px] transition-all",
                             isOutbound
-                              ? hasHumanAgentTag
-                                ? "bg-amber-600 text-white rounded-br-md"
-                                : "bg-[#3A9B9F] text-white rounded-br-md"
-                              : "bg-gray-100 text-gray-900 rounded-bl-md"
+                              ? "bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/20"
+                              : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
                           )}
                         >
-                          {/* Human Agent tag indicator on message */}
-                          {hasHumanAgentTag && isOutbound && (
-                            <div className="flex items-center gap-1 mb-1 text-xs text-amber-200">
-                              <Shield className="h-3 w-3" />
-                              <span>Human Agent</span>
-                            </div>
-                          )}
 
                           {/* Media preview */}
                           {mediaUrl && (
                             <div className="mb-2">
                               {mediaMime?.startsWith("image/") ||
-                              message.message_type === "image" ? (
+                                message.message_type === "image" ? (
                                 <img
                                   src={mediaUrl}
                                   alt="Media"
@@ -421,7 +368,9 @@ export function UnifiedMessageThread({
 
                           {/* Message content */}
                           {message.content && (
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit drop-shadow-sm">
+                              {message.content}
+                            </p>
                           )}
 
                           {/* Failed indicator */}
@@ -441,9 +390,7 @@ export function UnifiedMessageThread({
                             className={cn(
                               "flex items-center gap-1 mt-1 text-xs",
                               isOutbound
-                                ? hasHumanAgentTag
-                                  ? "text-amber-200 justify-end"
-                                  : "text-white/70 justify-end"
+                                ? "text-white/70 justify-end"
                                 : "text-gray-500"
                             )}
                           >
@@ -463,53 +410,60 @@ export function UnifiedMessageThread({
         )}
       </div>
 
-      {/* Message Input */}
-      <div className="border-t border-gray-200 p-4">
-        {/* Human agent indicator above input */}
-        {isHumanAgentEnabled && (
-          <div className="flex items-center gap-1.5 mb-2 text-xs text-amber-700">
-            <Shield className="h-3 w-3" />
-            <span>Messages will be sent with Human Agent tag (7-day window)</span>
-          </div>
-        )}
+      {/* Message Input Area */}
+      <div className="p-4 bg-white">
 
-        <div className="flex items-end gap-3">
-          <div className="flex gap-1">
-            <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
-              <Paperclip className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="flex-1 relative">
+        <div className="relative flex flex-col rounded-[20px] bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all focus-within:ring-2 focus-within:ring-[#3A9B9F]/10 focus-within:border-[#3A9B9F]/30">
+          {/* Main Text Input Part */}
+          <div className="relative p-2 pb-0">
             <Textarea
               ref={textareaRef}
-              placeholder={`Message via ${getChannelLabel(conversation.channel_type)}...`}
+              placeholder="Type your message"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              className={cn(
-                "min-h-[44px] max-h-32 resize-none pr-16",
-                isHumanAgentEnabled && "border-amber-300 focus:border-amber-400 focus:ring-amber-400/20"
-              )}
+              className="resize-none border-0 focus-visible:ring-0 shadow-none px-3 py-2 bg-transparent text-sm overflow-y-auto"
+              style={{ minHeight: "60px", maxHeight: "160px" }}
               rows={1}
             />
-            <div className="absolute right-3 bottom-3 text-xs text-gray-400 pointer-events-none">
+
+            {/* Maximize Icon */}
+            <button className="absolute top-3 right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors">
+              <Maximize2 className="h-4 w-4" />
+            </button>
+            <div className="absolute right-4 bottom-0 text-[10px] text-gray-300 pointer-events-none">
               {messageText.length}/1000
             </div>
           </div>
 
-          <Button
-            onClick={handleSend}
-            disabled={!messageText.trim() || isSending}
-            className={cn(
-              "h-11 w-11 p-0",
-              isHumanAgentEnabled
-                ? "bg-amber-600 hover:bg-amber-700"
-                : "bg-[#3A9B9F] hover:bg-[#2F8488]"
-            )}
-          >
-            <Send className="h-5 w-5" />
-          </Button>
+          {/* Toolbar & Send Button */}
+          <div className="flex items-center justify-between px-3 py-3 mt-1">
+            <div className="flex items-center gap-1 text-gray-400">
+              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Add">
+                <Plus className="h-[18px] w-[18px]" />
+              </button>
+              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Emoji">
+                <Smile className="h-[18px] w-[18px]" />
+              </button>
+              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Mention">
+                <AtSign className="h-[18px] w-[18px]" />
+              </button>
+              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Attach file">
+                <Paperclip className="h-[18px] w-[18px]" />
+              </button>
+              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Voice message">
+                <Mic className="h-[18px] w-[18px]" />
+              </button>
+            </div>
+
+            <Button
+              onClick={handleSend}
+              disabled={!messageText.trim() || isSending}
+              className="h-9 w-9 p-0 rounded-full shadow-sm transition-all flex items-center justify-center bg-[#3A9B9F] hover:bg-[#2F8488] disabled:bg-gray-200 disabled:text-gray-400 text-white"
+            >
+              <Send className="h-[18px] w-[18px] ml-0.5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

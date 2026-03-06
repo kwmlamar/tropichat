@@ -30,15 +30,15 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       if (!name) return "bg-gray-400"
       const colors = [
         "bg-blue-500",
-        "bg-green-500",
-        "bg-yellow-500",
-        "bg-purple-500",
-        "bg-pink-500",
+        "bg-[#3A9B9F]", // Brand Teal
+        "bg-amber-500",
+        "bg-[#FF8B66]", // Brand Coral
         "bg-indigo-500",
-        "bg-teal-500",
-        "bg-orange-500",
         "bg-cyan-500",
-        "bg-rose-500",
+        "bg-emerald-500",
+        "bg-orange-500",
+        "bg-sky-500",
+        "bg-slate-500",
       ]
       const index = name.charCodeAt(0) % colors.length
       return colors[index]

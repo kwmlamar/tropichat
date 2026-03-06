@@ -2,69 +2,79 @@
 
 import { motion } from "framer-motion"
 import { Tags, UserCircle, Zap, UsersRound } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
 
 const features = [
   {
     icon: Tags,
-    title: "One Inbox for WhatsApp, Instagram & Facebook",
-    outcome: "Never switch between apps to find a conversation again.",
+    title: "One inbox. Every channel.",
+    outcome: "Never switch apps to find a conversation again.",
     description:
-      "All your messages from WhatsApp, Instagram DMs, and Facebook Messenger land in one unified inbox. Tag customers as VIP, New, Payment Pending — click someone's name and see every conversation across all platforms instantly.",
-    gradient: "from-blue-500 to-cyan-500",
-    bgColor: "bg-blue-50",
+      "All your messages from WhatsApp, Instagram DMs, and Facebook Messenger land in one unified inbox. Tag customers as VIP, New, or Payment Pending — and see every conversation across all platforms instantly.",
+    gradient: "from-[#3A9B9F] to-teal-600",
+    iconBg: "bg-teal-50",
     badge: "Most Popular",
+    badgeStyle: "bg-teal-100 text-teal-800",
   },
   {
     icon: UserCircle,
-    title: "Remember Every Customer Like They're Your Only Customer",
-    outcome: "Provide VIP-level service even when you have 500 customers.",
+    title: "Remember every customer.",
+    outcome: "Deliver VIP service for all 500+ of them.",
     description:
-      "TropiChat automatically builds a profile for every person — across all channels. Order history, preferences, last contact, payment status. Whether they messaged on WhatsApp or Instagram, you see the full picture.",
-    gradient: "from-purple-500 to-pink-500",
-    bgColor: "bg-purple-50",
+      "TropiChat automatically builds a profile for every person across every channel — order history, preferences, last contact, payment status. Whether they messaged on WhatsApp or Instagram, you see the full picture.",
+    gradient: "from-violet-500 to-purple-600",
+    iconBg: "bg-violet-50",
+    badge: null,
+    badgeStyle: "",
   },
   {
     icon: Zap,
-    title: "Stop Typing the Same Thing 50 Times a Day",
+    title: "Stop typing the same thing 50× a day.",
     outcome: "Reply in 10 seconds instead of 2 minutes.",
     description:
-      "Save your common responses (pricing, hours, menu, delivery info). Hit a button, message sent — on any platform. Works across WhatsApp, Instagram, and Facebook Messenger.",
-    gradient: "from-yellow-500 to-orange-500",
-    bgColor: "bg-yellow-50",
+      "Save your most common responses — pricing, hours, menu, delivery info. One tap and it's sent, on any platform. Works seamlessly across WhatsApp, Instagram, and Facebook Messenger.",
+    gradient: "from-amber-400 to-orange-500",
+    iconBg: "bg-amber-50",
+    badge: null,
+    badgeStyle: "",
   },
   {
     icon: UsersRound,
-    title: "Your Team Stays on the Same Page (Finally)",
-    outcome: "No more 'I thought you handled that' awkwardness.",
+    title: "Your team stays on the same page.",
+    outcome: "No more 'I thought you handled that' moments.",
     description:
-      "Assign conversations from any channel, leave internal notes, see who's handling what. Your helper can see you already replied on Instagram. You can see they handled the WhatsApp order.",
-    gradient: "from-teal-500 to-cyan-500",
-    bgColor: "bg-teal-50",
+      "Assign conversations from any channel, leave internal notes, see who's handling what — in real time. Your helper knows you replied on Instagram. You know they handled the WhatsApp order.",
+    gradient: "from-[#3A9B9F] to-cyan-600",
+    iconBg: "bg-cyan-50",
     badge: "New",
+    badgeStyle: "bg-cyan-100 text-cyan-800",
   },
+]
+
+const stats = [
+  { value: "3×", label: "Faster Response Time", sub: "2 min → 40 sec avg" },
+  { value: "$2,400", label: "Extra Revenue/Month", sub: "From not missing leads" },
+  { value: "12 hrs", label: "Saved Every Week", sub: "Time you get back" },
+  { value: "0", label: "Missed Opportunities", sub: "Smart reminders work" },
 ]
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
+    transition: { staggerChildren: 0.12 },
   },
 }
 
-const item = {
-  hidden: { opacity: 0, scale: 0.95 },
-  show: { opacity: 1, scale: 1 },
+const cardVariant = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 }
 
 export function SolutionSection() {
   return (
-    <section className="relative bg-white py-20 md:py-28 overflow-hidden">
-      {/* Subtle background mesh gradient */}
-      <div className="absolute inset-0 -z-10 bg-mesh-gradient" />
+    <section className="relative bg-white py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -74,19 +84,18 @@ export function SolutionSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
-            What If You Could Handle 3x More Customers—
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-800 shadow-sm">
+            The Solution
+          </div>
+          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] md:text-5xl">
+            Handle 3× more customers —
             <br />
-            <span className="bg-gradient-to-r from-[#3A9B9F] to-teal-700 bg-clip-text text-transparent">
-              Without the Chaos?
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
+              without the chaos.
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            TropiChat brings WhatsApp, Instagram, and Facebook Messenger into one unified inbox with the one thing they're all missing: organization.
-            <br />
-            <strong className="text-gray-900">
-              No app switching. No complicated setup. All your platforms, one dashboard.
-            </strong>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 leading-relaxed">
+            TropiChat brings all your channels together in one organized inbox with the one thing they're all missing.
           </p>
         </motion.div>
 
@@ -96,101 +105,69 @@ export function SolutionSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid gap-6 md:grid-cols-2 lg:gap-8"
+          className="grid gap-5 md:grid-cols-2"
         >
           {features.map((feature, index) => (
-            <motion.div key={index} variants={item}>
-              <Card className="group h-full overflow-hidden border-2 border-gray-100 transition-all duration-300 hover:border-[#3A9B9F] hover:shadow-2xl hover:shadow-[#3A9B9F]/10 hover:-translate-y-1">
-                <CardContent className="p-8">
-                  {/* Badge */}
-                  {feature.badge && (
-                    <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-800">
-                      <span className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
-                      {feature.badge}
-                    </div>
-                  )}
+            <motion.div
+              key={index}
+              variants={cardVariant}
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+            >
+              {/* Top gradient accent bar */}
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`} />
 
-                  {/* Icon */}
-                  <div
-                    className={`mb-6 inline-flex rounded-2xl ${feature.bgColor} p-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}
-                  >
-                    <div
-                      className={`rounded-xl bg-gradient-to-br ${feature.gradient} p-3 transition-transform duration-300 group-hover:rotate-3`}
-                    >
-                      <feature.icon className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
+              {/* Badge */}
+              {feature.badge && (
+                <div className={`mb-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${feature.badgeStyle}`}>
+                  <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70 animate-pulse" />
+                  {feature.badge}
+                </div>
+              )}
 
-                  {/* Title */}
-                  <h3 className="mb-3 text-2xl font-bold text-gray-900">
-                    {feature.title}
-                  </h3>
+              {/* Icon */}
+              <div className={`mb-5 inline-flex rounded-2xl ${feature.iconBg} p-4 transition-transform duration-300 group-hover:scale-105`}>
+                <div className={`rounded-xl bg-gradient-to-br ${feature.gradient} p-2.5`}>
+                  <feature.icon className="h-5 w-5 text-white" />
+                </div>
+              </div>
 
-                  {/* Outcome */}
-                  <p className="mb-3 text-base font-semibold text-[#3A9B9F]">
-                    The outcome: {feature.outcome}
-                  </p>
+              {/* Title */}
+              <h3 className="mb-2 text-xl font-bold text-[#213138] leading-snug">
+                {feature.title}
+              </h3>
 
-                  {/* Description */}
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
+              {/* Outcome */}
+              <p className="mb-3 text-sm font-semibold text-[#3A9B9F]">
+                {feature.outcome}
+              </p>
 
-                  {/* Hover indicator */}
-                  <div className="mt-6 flex items-center text-sm font-medium text-[#3A9B9F] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    Learn more
-                    <svg
-                      className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Description */}
+              <p className="text-slate-600 leading-relaxed text-[15px]">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Bottom Stats */}
+        {/* Stats Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-16"
         >
-          <h3 className="mb-8 text-center text-2xl font-bold text-gray-900">
+          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-slate-400">
             Real Results From Caribbean Businesses
-          </h3>
-          <div className="grid gap-8 md:grid-cols-4 rounded-2xl bg-gradient-to-r from-teal-50 to-cyan-50 p-8">
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">3x</div>
-              <div className="text-sm font-medium text-gray-900">Faster Response Time</div>
-              <div className="text-xs text-gray-600">(2 min → 40 sec avg)</div>
-            </div>
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">$2,400</div>
-              <div className="text-sm font-medium text-gray-900">Extra Revenue/Month</div>
-              <div className="text-xs text-gray-600">(From not missing leads)</div>
-            </div>
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">12 hrs</div>
-              <div className="text-sm font-medium text-gray-900">Saved Every Week</div>
-              <div className="text-xs text-gray-600">(Time you get back)</div>
-            </div>
-            <div className="text-center">
-              <div className="mb-2 text-4xl font-bold text-[#3A9B9F]">0</div>
-              <div className="text-sm font-medium text-gray-900">Missed Opportunities</div>
-              <div className="text-xs text-gray-600">(Smart reminders work)</div>
-            </div>
+          </p>
+          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-teal-50/60 to-white p-6 md:grid-cols-4 md:p-10">
+            {stats.map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="mb-1 text-4xl font-bold text-[#3A9B9F]">{stat.value}</div>
+                <div className="text-sm font-semibold text-[#213138]">{stat.label}</div>
+                <div className="text-xs text-slate-500 mt-0.5">{stat.sub}</div>
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>

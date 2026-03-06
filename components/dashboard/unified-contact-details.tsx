@@ -31,9 +31,9 @@ export function UnifiedContactDetails({
 }: UnifiedContactDetailsProps) {
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-8 text-center">
-        <div className="rounded-full bg-gray-100 p-4 mb-4">
-          <User className="h-8 w-8 text-gray-400" />
+      <div className="flex flex-col items-center justify-center h-full bg-white border-l border-gray-100 p-8 text-center">
+        <div className="rounded-full bg-gray-50 p-4 mb-4">
+          <User className="h-8 w-8 text-gray-300" />
         </div>
         <h3 className="font-medium text-gray-900 mb-1">No contact selected</h3>
         <p className="text-sm text-gray-500">
@@ -61,9 +61,9 @@ export function UnifiedContactDetails({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-y-auto">
+    <div className="flex flex-col h-full bg-white overflow-y-auto border-l border-gray-100">
       {/* Contact Header */}
-      <div className="p-6 border-b border-gray-200 text-center">
+      <div className="p-6 border-b border-gray-100 text-center">
         <div className="relative inline-block">
           <Avatar
             src={conversation.customer_avatar_url}
@@ -166,7 +166,7 @@ export function UnifiedContactDetails({
         </div>
 
         {/* Actions */}
-        <div className="pt-4 border-t border-gray-200 space-y-2">
+        <div className="pt-4 border-t border-gray-100 space-y-2">
           {onArchive && (
             <Button
               variant="outline"

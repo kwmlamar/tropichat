@@ -77,6 +77,13 @@ export function MessageThread({
     }
   }
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 128)}px`
+    }
+  }, [messageText])
+
   const getStatusIcon = (status: Message["status"]) => {
     switch (status) {
       case "queued":
@@ -203,7 +210,7 @@ export function MessageThread({
                 </div>
 
                 {/* Messages */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {group.messages.map((message) => (
                     <div
                       key={message.id}
@@ -214,10 +221,10 @@ export function MessageThread({
                     >
                       <div
                         className={cn(
-                          "max-w-[70%] rounded-2xl px-4 py-2",
+                          "max-w-[70%] rounded-[24px] px-[18px] py-[10px] transition-all",
                           message.direction === "outbound"
-                            ? "bg-[#3A9B9F] text-white rounded-br-md"
-                            : "bg-gray-100 text-gray-900 rounded-bl-md"
+                            ? "bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/20"
+                            : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
                         )}
                       >
                         {/* Media */}
@@ -245,7 +252,9 @@ export function MessageThread({
 
                         {/* Message body */}
                         {message.body && (
-                          <p className="text-sm whitespace-pre-wrap">{message.body}</p>
+                          <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit drop-shadow-sm">
+                            {message.body}
+                          </p>
                         )}
 
                         {/* Footer */}
@@ -291,7 +300,8 @@ export function MessageThread({
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="min-h-[44px] max-h-32 resize-none pr-16"
+              className="resize-none pr-16 overflow-y-auto"
+              style={{ minHeight: "44px", maxHeight: "128px" }}
               rows={1}
             />
             <div className="absolute right-3 bottom-3 text-xs text-gray-400 pointer-events-none">

@@ -35,23 +35,22 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100"
-            : "bg-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100"
+          : "bg-transparent"
+          }`}
       >
         <div className="container mx-auto px-4">
           <div className="flex h-20 items-center justify-between md:h-24">
             {/* Logo */}
             <a href="/" className="flex items-center group">
               <Image
-                src="/tropichat-full-logo2.png"
+                src="/tropichat-logo.png"
                 alt="TropiChat"
-                width={320}
-                height={88}
+                width={80}
+                height={80}
                 unoptimized
-                className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105 md:h-20"
+                className="h-14 w-14 object-contain transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16"
               />
             </a>
 

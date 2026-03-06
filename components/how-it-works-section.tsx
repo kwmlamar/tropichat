@@ -1,47 +1,49 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Plug, Sparkles, Rocket } from "lucide-react"
+import { Plug, Sparkles, Rocket, Clock } from "lucide-react"
 
 const steps = [
   {
     number: "01",
     icon: Plug,
-    title: "Connect WhatsApp, Instagram & Facebook",
+    title: "Connect your channels",
     description:
       "Simple one-click connection for each platform. Link your WhatsApp Business, Instagram, and Facebook Messenger accounts in minutes. Your messages stay secure and private.",
-    color: "text-blue-600",
-    bgColor: "bg-blue-50",
+    color: "text-[#3A9B9F]",
+    bgColor: "bg-teal-50",
+    ringColor: "ring-teal-100",
+    barColor: "bg-teal-500",
   },
   {
     number: "02",
     icon: Sparkles,
-    title: "Let TropiChat Organize Everything Automatically",
+    title: "TropiChat organizes everything",
     description:
-      "Our smart system pulls messages from all your platforms into one inbox, categorizes contacts, tags conversations, and builds your customer database — across every channel.",
-    color: "text-purple-600",
-    bgColor: "bg-purple-50",
+      "Our system pulls messages from all your platforms into one inbox, categorizes contacts, tags conversations, and builds your customer database — across every channel.",
+    color: "text-violet-600",
+    bgColor: "bg-violet-50",
+    ringColor: "ring-violet-100",
+    barColor: "bg-violet-500",
   },
   {
     number: "03",
     icon: Rocket,
-    title: "Respond Faster, Track Better, Sell More",
+    title: "Respond faster. Sell more.",
     description:
-      "Manage all your customer conversations from one dashboard. Never miss a message on any platform and close more deals.",
-    color: "text-[#3A9B9F]",
-    bgColor: "bg-teal-50",
+      "Manage all your customer conversations from one dashboard. Never miss a message on any platform and close more deals than ever before.",
+    color: "text-[#FF8B66]",
+    bgColor: "bg-orange-50",
+    ringColor: "ring-orange-100",
+    barColor: "bg-[#FF8B66]",
   },
 ]
 
 export function HowItWorksSection() {
   return (
-    <section className="relative bg-gradient-to-b from-gray-50 via-white to-white py-20 md:py-28 overflow-hidden">
-      {/* Subtle background elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute left-0 top-1/3 h-[300px] w-[300px] rounded-full bg-blue-100/20 blur-3xl" />
-        <div className="absolute right-0 top-2/3 h-[250px] w-[250px] rounded-full bg-purple-100/15 blur-3xl" />
-        <div className="absolute inset-0 bg-grid-pattern opacity-20" />
-      </div>
+    <section className="relative bg-[#F8FAFB] py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -51,90 +53,74 @@ export function HowItWorksSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl lg:text-5xl">
-            Get Organized in{" "}
-            <span className="text-[#3A9B9F]">3 Simple Steps</span>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-semibold text-slate-500 shadow-sm">
+            How It Works
+          </div>
+          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] md:text-5xl">
+            Up and running in{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
+              3 simple steps
+            </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            No complicated setup. No technical skills needed. Just connect and
-            start organizing.
+          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 leading-relaxed">
+            No complicated setup. No technical skills needed. Just connect and start organizing.
           </p>
         </motion.div>
 
-        {/* Steps */}
-        <div className="relative mx-auto max-w-4xl">
-          {/* Connecting line - hidden on mobile */}
-          <div className="absolute left-1/2 top-0 hidden h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-blue-200 via-purple-200 to-green-200 md:block" />
+        {/* Steps — Horizontal on desktop */}
+        <div className="relative mx-auto max-w-5xl">
+          {/* Connector line (desktop only) */}
+          <div className="absolute top-14 left-[16.66%] right-[16.66%] hidden h-px bg-gradient-to-r from-teal-200 via-violet-200 to-orange-200 md:block" />
 
-          <div className="space-y-16 md:space-y-24">
+          <div className="grid gap-8 md:grid-cols-3">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2, duration: 0.6 }}
-                className="relative"
+                transition={{ delay: index * 0.15, duration: 0.55 }}
+                className="group flex flex-col items-center text-center"
               >
-                <div
-                  className={`flex flex-col items-center gap-8 md:flex-row ${
-                    index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
-                >
-                  {/* Content */}
-                  <div className="flex-1 text-center md:text-left">
-                    <div className="mb-4 inline-flex">
-                      <span className="text-5xl font-bold text-gray-200">
-                        {step.number}
-                      </span>
-                    </div>
-                    <h3 className="mb-3 text-2xl font-bold text-gray-900">
-                      {step.title}
-                    </h3>
-                    <p className="text-lg text-gray-600">{step.description}</p>
+                {/* Number + Icon stack */}
+                <div className="relative mb-6">
+                  {/* Step circle */}
+                  <motion.div
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className={`flex h-28 w-28 items-center justify-center rounded-full ${step.bgColor} ring-8 ${step.ringColor} shadow-md transition-shadow duration-300 group-hover:shadow-xl`}
+                  >
+                    <step.icon className={`h-12 w-12 ${step.color}`} />
+                  </motion.div>
+                  {/* Step number badge */}
+                  <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-2 ring-slate-200 text-xs font-bold text-slate-500 select-none">
+                    {step.number}
                   </div>
-
-                  {/* Icon Circle */}
-                  <div className="relative z-10 flex-shrink-0">
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className={`flex h-24 w-24 items-center justify-center rounded-full ${step.bgColor} shadow-lg ring-4 ring-white`}
-                    >
-                      <step.icon className={`h-12 w-12 ${step.color}`} />
-                    </motion.div>
-                  </div>
-
-                  {/* Spacer for alternating layout */}
-                  <div className="hidden flex-1 md:block" />
                 </div>
+
+                {/* Content */}
+                <div className={`mb-3 h-1 w-10 rounded-full ${step.barColor} opacity-60`} />
+                <h3 className="mb-3 text-xl font-bold text-[#213138]">
+                  {step.title}
+                </h3>
+                <p className="text-slate-600 leading-relaxed text-[15px]">
+                  {step.description}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom pill */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="mt-16 text-center"
+          className="mt-16 flex justify-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-6 py-3 text-sm font-medium text-teal-800">
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white px-6 py-3 text-sm font-semibold text-teal-800 shadow-sm">
+            <Clock className="h-4 w-4 text-[#3A9B9F]" />
             Setup takes less than 5 minutes
           </div>
         </motion.div>

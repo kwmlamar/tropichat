@@ -32,10 +32,10 @@ export function Dropdown({
       {isOpen && (
         <div
           className={cn(
-            "absolute z-[9999] min-w-[180px] rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5",
-            "animate-in fade-in-0 zoom-in-95 duration-100",
+            "absolute z-[9999] min-w-[200px] rounded-[18px] bg-white/90 backdrop-blur-xl py-2 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-white/40 ring-1 ring-black/[0.03]",
+            "animate-in fade-in-0 scale-in-95 duration-200 ease-out",
             align === "right" ? "right-0" : "left-0",
-            side === "top" ? "bottom-full mb-2" : "mt-2 top-full"
+            side === "top" ? "bottom-full mb-3" : "mt-3 top-full"
           )}
         >
           {children}
@@ -67,14 +67,14 @@ export function DropdownItem({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors",
-        "hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50",
-        destructive ? "text-red-600 hover:bg-red-50" : "text-gray-700",
+        "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-all duration-200 mx-1 w-[calc(100%-8px)] rounded-xl",
+        "hover:bg-[#3A9B9F]/5 hover:text-[#3A9B9F] disabled:cursor-not-allowed disabled:opacity-50",
+        destructive ? "text-red-500 hover:bg-red-50 hover:text-red-600" : "text-gray-600",
         className
       )}
     >
-      {icon && <span className="h-4 w-4">{icon}</span>}
-      {children}
+      {icon && <span className="h-4 w-4 shrink-0">{icon}</span>}
+      <span className="flex-1 truncate font-medium">{children}</span>
     </button>
   )
 }
@@ -134,7 +134,7 @@ export function SimpleSelect({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+        <div className="absolute z-50 mt-2 w-full rounded-[18px] bg-white/90 backdrop-blur-xl py-2 shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-white/40 ring-1 ring-black/[0.03] animate-in fade-in-0 scale-in-95 duration-200 ease-out">
           {options.map((option) => (
             <button
               key={option.value}
@@ -143,13 +143,13 @@ export function SimpleSelect({
                 setIsOpen(false)
               }}
               className={cn(
-                "flex w-full items-center justify-between px-3 py-2 text-sm",
-                "hover:bg-gray-100",
-                option.value === value && "bg-blue-50 text-blue-600"
+                "flex w-full items-center justify-between px-4 py-2.5 text-sm transition-all duration-200 mx-1 w-[calc(100%-8px)] rounded-xl",
+                "hover:bg-[#3A9B9F]/5 hover:text-[#3A9B9F]",
+                option.value === value ? "bg-[#3A9B9F]/10 text-[#3A9B9F] font-semibold" : "text-gray-600"
               )}
             >
-              <span>{option.label}</span>
-              {option.value === value && <Check className="h-4 w-4" />}
+              <span className="truncate">{option.label}</span>
+              {option.value === value && <Check className="h-4 w-4 shrink-0" />}
             </button>
           ))}
         </div>

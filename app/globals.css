@@ -9,7 +9,9 @@
   --color-brand-coral: #FF8B66;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plus-jakarta);
+  /* Typography — Poppins headings, Inter body (skill recommendation) */
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-poppins);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -122,17 +124,98 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    /* Skill: text contrast #1E1B4B equivalent in light mode */
+    color: #1e293b;
+  }
+
+  /* Headings use Poppins as per skill recommendation */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-poppins), system-ui, sans-serif;
+    font-weight: 600;
+  }
+
+  /* Skill: visible focus rings for keyboard nav using brand teal */
+  :focus-visible {
+    outline: 2px solid #3A9B9F;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Skill: cursor-pointer on all interactive elements */
+  button,
+  [role="button"],
+  a,
+  [tabindex]:not([tabindex="-1"]),
+  label[for],
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  /* Skill: muted text must meet 4.5:1 contrast — use slate-600 minimum */
+  .text-gray-400 {
+    color: #64748b !important;
+  }
+
+  .text-gray-500 {
+    color: #475569;
+  }
+
+  /* Sleek Minimalist Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    /* slate-300 */
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+    /* slate-400 */
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+
+  /* Skill: fix yellow autofill background in WebKit/Blink browsers */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    -webkit-text-fill-color: #1e293b !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 }
 
 /* Background Design System */
 @layer utilities {
+
   /* Subtle noise texture overlay */
   .bg-noise {
     position: relative;
   }
+
   .bg-noise::before {
     content: "";
     position: absolute;
@@ -169,10 +252,23 @@
 
   /* Floating gradient orb animations */
   @keyframes float {
-    0%, 100% { transform: translateY(0) translateX(0); }
-    25% { transform: translateY(-10px) translateX(5px); }
-    50% { transform: translateY(-5px) translateX(-5px); }
-    75% { transform: translateY(-15px) translateX(3px); }
+
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+    }
+
+    25% {
+      transform: translateY(-10px) translateX(5px);
+    }
+
+    50% {
+      transform: translateY(-5px) translateX(-5px);
+    }
+
+    75% {
+      transform: translateY(-15px) translateX(3px);
+    }
   }
 
   .animate-float {
@@ -193,6 +289,7 @@
   .hover-lift {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
   }
+
   .hover-lift:hover {
     transform: translateY(-4px);
   }
@@ -201,6 +298,7 @@
   .hover-scale {
     transition: transform 0.2s ease;
   }
+
   .hover-scale:hover {
     transform: scale(1.02);
   }
@@ -215,6 +313,7 @@
     position: relative;
     overflow: hidden;
   }
+
   .hover-shine::after {
     content: "";
     position: absolute;
@@ -222,14 +321,13 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent);
     transition: left 0.5s ease;
   }
+
   .hover-shine:hover::after {
     left: 100%;
   }
@@ -238,6 +336,7 @@
   .btn-glow {
     position: relative;
   }
+
   .btn-glow::before {
     content: "";
     position: absolute;
@@ -249,15 +348,72 @@
     transition: opacity 0.3s ease;
     z-index: -1;
   }
+
   .btn-glow:hover::before {
     opacity: 0.4;
   }
 
   /* Focus ring enhancement */
   .focus-ring:focus-visible {
-    outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: #3A9B9F;
+    outline: 2px solid #3A9B9F;
+    outline-offset: 2px;
+    border-radius: 4px;
   }
+}
+
+/* Skill: prefers-reduced-motion — respect user accessibility settings */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-float,
+  .animate-float-delayed,
+  .animate-float-slow {
+    animation: none !important;
+  }
+}
+/* Modern TropiChat Toast Styles */
+.tropichat-toast {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+
+[data-sonner-toast].tropichat-toast {
+  --success-bg: rgba(255, 255, 255, 0.8) !important;
+  --success-text: #213138 !important;
+  --success-border: rgba(58, 155, 159, 0.2) !important;
+  --error-bg: rgba(255, 255, 255, 0.8) !important;
+  --error-text: #213138 !important;
+  --error-border: rgba(255, 139, 102, 0.2) !important;
+}
+
+.tropichat-toast [data-icon] {
+  margin-right: 12px !important;
+}
+
+/* Branding distinct toast types icon colors */
+.tropichat-toast[data-type="success"] [data-icon] svg {
+  color: #3A9B9F !important; /* Brand Teal */
+}
+
+.tropichat-toast[data-type="error"] [data-icon] svg {
+  color: #FF8B66 !important; /* Brand Coral */
+}
+
+.tropichat-toast [data-title] {
+  font-weight: 600 !important;
+  color: #213138 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.tropichat-toast [data-description] {
+  color: #64748b !important;
+  font-size: 0.875rem !important;
+  margin-top: 2px !important;
 }

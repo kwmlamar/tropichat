@@ -1,113 +1,119 @@
 import Image from "next/image"
-import { Mail, Twitter, Instagram, Linkedin } from "lucide-react"
+import Link from "next/link"
+import { Mail, Twitter, Instagram, Linkedin, MessageCircle } from "lucide-react"
+
+const navLinks = [
+  { label: "Features", href: "#features" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Testimonials", href: "#testimonials" },
+]
+
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Data Deletion", href: "/data-deletion" },
+]
+
+const socialLinks = [
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
+]
 
 export function Footer() {
   return (
-    <footer className="bg-[#213138] text-gray-300">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
+    <footer className="relative border-t border-white/5 bg-[#213138] text-gray-400 overflow-hidden">
+      {/* Subtle glow */}
+      <div className="absolute left-1/2 -top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-[#3A9B9F]/10 blur-3xl pointer-events-none" />
+
+      <div className="container relative mx-auto px-4 py-16">
+        <div className="grid gap-10 md:grid-cols-4 lg:gap-16">
           {/* Brand */}
-          <div>
-            <div className="mb-4 flex items-center">
+          <div className="md:col-span-2">
+            <div className="mb-5 flex items-center">
               <Image
-                src="/tropichat-full-logo2.png"
+                src="/tropichat-logo.png"
                 alt="TropiChat"
-                width={320}
-                height={88}
+                width={80}
+                height={80}
                 unoptimized
-                className="h-20 w-auto object-contain"
+                className="h-16 w-16 object-contain"
               />
             </div>
-            <p className="mb-4 text-sm text-gray-400">
-              Helping Caribbean small businesses turn messaging chaos into
-              organized success — across WhatsApp, Instagram & Facebook.
+            <p className="mb-4 text-sm leading-relaxed text-gray-400 max-w-xs">
+              Helping Caribbean small businesses turn messaging chaos into organized success — across WhatsApp, Instagram &amp; Facebook Messenger.
             </p>
-            <p className="flex items-center gap-1 text-sm text-gray-400">
-              Built by{" "}
-              <span className="font-semibold text-white">
-                TropiTech Solutions
-              </span>{" "}
-              🇧🇸
-            </p>
+            <a
+              href="mailto:support@tropichat.com"
+              className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#3A9B9F]"
+            >
+              <Mail className="h-4 w-4" />
+              support@tropichat.com
+            </a>
+            {/* Social icons */}
+            <div className="mt-5 flex gap-2">
+              {socialLinks.map((s) => {
+                const Icon = s.icon
+                return (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-gray-400 transition-all duration-200 hover:bg-[#3A9B9F]/20 hover:text-[#3A9B9F]"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                )
+              })}
+            </div>
           </div>
 
-          {/* Links */}
+          {/* Product Links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
-              Legal
+            <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-white/60">
+              Product
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="/privacy"
-                  className="transition-colors hover:text-[#3A9B9F]"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/terms"
-                  className="transition-colors hover:text-[#3A9B9F]"
-                >
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/data-deletion"
-                  className="transition-colors hover:text-[#3A9B9F]"
-                >
-                  Data Deletion
-                </a>
-              </li>
+            <ul className="space-y-3">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className="text-sm transition-colors duration-200 hover:text-[#3A9B9F]"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Legal Links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
-              Contact
+            <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-white/60">
+              Legal
             </h3>
-            <div className="space-y-2 text-sm">
-              <a
-                href="mailto:support@tropichat.com"
-                className="flex items-center gap-2 transition-colors hover:text-[#3A9B9F]"
-              >
-                <Mail className="h-4 w-4" />
-                support@tropichat.com
-              </a>
-            </div>
-            <div className="mt-4 flex gap-4">
-              <a
-                href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-lg transition-all duration-300 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/10 hover:scale-110"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </div>
+            <ul className="space-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm transition-colors duration-200 hover:text-[#3A9B9F]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400">
-          <p>
-            &copy; {new Date().getFullYear()} TropiChat. All rights reserved.
+        <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-8 text-xs text-gray-500 md:flex-row">
+          <p>&copy; {new Date().getFullYear()} TropiChat by TropiTech Solutions. All rights reserved.</p>
+          <p className="flex items-center gap-1.5 text-gray-500">
+            <MessageCircle className="h-3.5 w-3.5 text-[#3A9B9F]" />
+            Built with care in the Bahamas
           </p>
         </div>
       </div>

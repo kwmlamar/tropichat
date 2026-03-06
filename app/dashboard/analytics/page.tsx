@@ -15,28 +15,34 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getAnalytics } from "@/lib/supabase"
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 // Simple chart components (in production, use recharts or similar)
-function SimpleBarChart({ data, height = 200 }: { data: { label: string; value: number }[]; height?: number }) {
+function SimpleBarChart({ data, height = 240 }: { data: { label: string; value: number }[]; height?: number }) {
   const maxValue = Math.max(...data.map(d => d.value), 1)
 
   return (
-    <div className="flex items-end justify-between gap-2" style={{ height }}>
+    <div className="flex items-end justify-between gap-3 pt-6" style={{ height }}>
       {data.map((item, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-2">
-          <div
-            className="w-full bg-[#3A9B9F]/20 rounded-t-md transition-all hover:bg-[#3A9B9F]/30"
-            style={{
-              height: `${(item.value / maxValue) * 100}%`,
-              minHeight: item.value > 0 ? 4 : 0,
-            }}
-          >
-            <div
-              className="w-full bg-[#3A9B9F] rounded-t-md"
-              style={{ height: "100%" }}
-            />
+        <div key={i} className="flex-1 flex flex-col items-center gap-3 h-full group">
+          <div className="flex-1 w-full flex flex-col justify-end">
+            <motion.div
+              initial={{ height: 0 }}
+              animate={{ height: `${(item.value / maxValue) * 100}%` }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: i * 0.05 }}
+              className="w-full bg-[#3A9B9F]/10 rounded-t-xl transition-all relative overflow-hidden group-hover:bg-[#3A9B9F]/20"
+              style={{
+                minHeight: item.value > 0 ? 4 : 0,
+              }}
+            >
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-[#3A9B9F] to-[#3A9B9F]/80 rounded-t-xl"
+              />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-1 bg-white/20 rounded-full mt-1 blur-[1px]" />
+            </motion.div>
           </div>
-          <span className="text-xs text-gray-500 truncate w-full text-center">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate w-full text-center group-hover:text-[#3A9B9F] transition-colors">
             {item.label}
           </span>
         </div>
@@ -210,191 +216,269 @@ export default function AnalyticsPage() {
 
   const metrics = [
     {
-      label: "Messages Sent",
+      label: "Sent",
       value: analyticsData?.messagesSent || 0,
       icon: MessageSquare,
       change: "+12%",
       positive: true,
+      color: "#3A9B9F",
+      bg: "bg-teal-50/50"
     },
     {
-      label: "Messages Received",
+      label: "Received",
       value: analyticsData?.messagesReceived || 0,
       icon: MessageSquare,
       change: "+8%",
       positive: true,
+      color: "#FF8B66",
+      bg: "bg-coral-50/50"
     },
     {
-      label: "Total Conversations",
+      label: "Conversations",
       value: analyticsData?.totalConversations || 0,
       icon: TrendingUp,
       change: "+15%",
       positive: true,
+      color: "#3A9B9F",
+      bg: "bg-teal-50/50"
     },
     {
-      label: "Active Contacts",
+      label: "Contacts",
       value: analyticsData?.activeContacts || 0,
       icon: Users,
       change: "+5%",
       positive: true,
+      color: "#FF8B66",
+      bg: "bg-coral-50/50"
     },
   ]
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  }
+
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-          <p className="text-gray-500 mt-1">
-            Track your messaging performance
-          </p>
-        </div>
-
-        <div className="flex gap-2">
-          {[
-            { value: "7d", label: "7 days" },
-            { value: "30d", label: "30 days" },
-            { value: "90d", label: "90 days" },
-          ].map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setDateRange(option.value)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                dateRange === option.value
-                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+    <div className="relative min-h-screen p-8 overflow-y-auto bg-gray-50/30">
+      {/* Decorative Orbs */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[10%] left-[10%] w-[600px] h-[600px] bg-[#3A9B9F]/5 blur-[120px] rounded-full animate-float-slow" />
+        <div className="absolute bottom-[10%] right-[10%] w-[600px] h-[600px] bg-[#FF8B66]/5 blur-[120px] rounded-full animate-float" />
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-        {loading
-          ? [...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-8 w-16 mb-1" />
-                  <Skeleton className="h-3 w-12" />
-                </CardContent>
-              </Card>
-            ))
-          : metrics.map((metric, i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">{metric.label}</span>
-                    <metric.icon className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-gray-900">
-                    {metric.value.toLocaleString()}
-                  </div>
-                  <div
-                    className={`flex items-center text-sm ${
-                      metric.positive ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {metric.positive ? (
-                      <ArrowUpRight className="h-4 w-4 mr-1" />
-                    ) : (
-                      <ArrowDownRight className="h-4 w-4 mr-1" />
-                    )}
-                    {metric.change} vs last period
-                  </div>
-                </CardContent>
-              </Card>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+        >
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 rounded-xl bg-[#3A9B9F]/10 text-[#3A9B9F]">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-[#3A9B9F]">Market Performance</p>
+            </div>
+            <h1 className="text-4xl font-extrabold text-[#213138] tracking-tight font-[family-name:var(--font-poppins)]">
+              Analytics Overview
+            </h1>
+            <p className="text-gray-500 text-lg mt-2 font-medium">
+              Real-time insights for your Caribbean business ecosystem.
+            </p>
+          </div>
+
+          <div className="bg-white/50 backdrop-blur-xl p-1.5 rounded-[20px] border border-white shadow-sm flex gap-1 ring-1 ring-black/5">
+            {[
+              { value: "7d", label: "7D" },
+              { value: "30d", label: "30D" },
+              { value: "90d", label: "90D" },
+            ].map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setDateRange(option.value)}
+                className={cn(
+                  "px-6 py-2.5 text-xs font-bold rounded-[14px] transition-all duration-300",
+                  dateRange === option.value
+                    ? "bg-[#213138] text-white shadow-lg shadow-navy-900/20"
+                    : "text-gray-500 hover:text-[#213138] hover:bg-white"
+                )}
+              >
+                {option.label}
+              </button>
             ))}
-      </div>
+          </div>
+        </motion.div>
 
-      {/* Charts */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Messages Over Time */}
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">
-              Messages Over Time
-            </h3>
+        {/* Metrics Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10"
+        >
+          {loading
+            ? Array(4).fill(0).map((_, i) => (
+              <div key={i} className="h-32 bg-white/50 backdrop-blur-md rounded-[32px] border border-white animate-pulse" />
+            ))
+            : metrics.map((metric, i) => (
+              <motion.div
+                key={metric.label}
+                initial={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className="bg-white/80 backdrop-blur-2xl rounded-[32px] border border-white p-7 shadow-[0_8px_30px_rgba(0,0,0,0.02)] ring-1 ring-black/5 relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-[#3A9B9F]/5"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={cn("p-3 rounded-2xl text-white shadow-lg", i % 2 === 0 ? "bg-[#3A9B9F]" : "bg-[#FF8B66]")}>
+                    <metric.icon className="h-5 w-5" />
+                  </div>
+                  <div className={cn(
+                    "flex items-center text-xs font-bold px-2.5 py-1 rounded-full",
+                    metric.positive ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
+                  )}>
+                    {metric.change}
+                  </div>
+                </div>
+
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{metric.label}</p>
+                <h3 className="text-3xl font-extrabold text-[#213138] font-[family-name:var(--font-poppins)]">
+                  {metric.value.toLocaleString()}
+                </h3>
+
+                {/* Subtle underline gradient */}
+                <div className={cn(
+                  "absolute bottom-0 left-0 right-0 h-1 transition-opacity opacity-0 group-hover:opacity-100",
+                  i % 2 === 0 ? "bg-[#3A9B9F]" : "bg-[#FF8B66]"
+                )} />
+              </motion.div>
+            ))}
+        </motion.div>
+
+        {/* Main Charts */}
+        <div className="grid gap-8 lg:grid-cols-2 mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-bold text-[#213138] font-[family-name:var(--font-poppins)]">Message Volume</h3>
+                <p className="text-sm text-gray-400 font-medium tracking-tight mt-1">Daily engagement trends across Bahamas & Caribbean</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-teal-50 flex items-center justify-center">
+                <ArrowUpRight className="h-5 w-5 text-[#3A9B9F]" />
+              </div>
+            </div>
             {loading ? (
-              <Skeleton className="h-[200px] w-full" />
+              <Skeleton className="h-[240px] w-full rounded-2xl" />
             ) : (
               <SimpleBarChart data={dailyMessages} />
             )}
-          </CardContent>
-        </Card>
+          </motion.div>
 
-        {/* Conversations by Status */}
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">
-              Conversations by Status
-            </h3>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-bold text-[#213138] font-[family-name:var(--font-poppins)]">Conversion Funnel</h3>
+                <p className="text-sm text-gray-400 font-medium tracking-tight mt-1">Status distribution of unified conversations</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-coral-50 flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#FF8B66]" />
+              </div>
+            </div>
             {loading ? (
-              <div className="flex items-center gap-6">
-                <Skeleton className="h-32 w-32 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-28" />
+              <div className="flex items-center gap-10 h-[240px]">
+                <Skeleton className="h-40 w-40 rounded-full" />
+                <div className="space-y-4 flex-1">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
                 </div>
               </div>
             ) : (
-              <SimplePieChart data={conversationsByStatus} />
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Response Time */}
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">
-              Average Response Time
-            </h3>
-            <div className="flex items-center gap-4">
-              <div className="rounded-full bg-[#3A9B9F]/10 p-4">
-                <Clock className="h-8 w-8 text-[#3A9B9F]" />
+              <div className="flex flex-col items-center justify-center h-[240px]">
+                <SimplePieChart data={conversationsByStatus} />
               </div>
-              <div>
-                <p className="text-3xl font-bold text-gray-900">2.5 min</p>
-                <p className="text-sm text-gray-500">
-                  Average time to first response
-                </p>
+            )}
+          </motion.div>
+        </div>
+
+        {/* Secondary Stats */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid gap-8 md:grid-cols-2"
+        >
+          <motion.div
+            variants={itemVariants}
+            className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5 flex items-center gap-10 group"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-2xl rounded-full scale-150 animate-pulse" />
+              <div className="relative h-24 w-24 rounded-[32px] bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] flex items-center justify-center shadow-xl shadow-teal-500/20 rotate-3 group-hover:rotate-0 transition-transform">
+                <Clock className="h-10 w-10 text-white" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Responsiveness</p>
+              <h3 className="text-4xl font-extrabold text-[#213138] font-[family-name:var(--font-poppins)] mb-1">
+                2.5 <span className="text-lg">min</span>
+              </h3>
+              <p className="text-sm font-medium text-gray-500">Average time to Bahamas first response</p>
+            </div>
+          </motion.div>
 
-        {/* Peak Hours */}
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Peak Hours</h3>
-            <div className="space-y-3">
+          <motion.div
+            variants={itemVariants}
+            className="bg-white/80 backdrop-blur-2xl rounded-[40px] border border-white p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-bold text-[#213138] font-[family-name:var(--font-poppins)] tracking-tight">Prime Interaction Slots</h3>
+              <Calendar className="h-5 w-5 text-coral-500" />
+            </div>
+            <div className="space-y-4">
               {[
-                { hour: "9:00 AM - 10:00 AM", messages: 45 },
-                { hour: "2:00 PM - 3:00 PM", messages: 38 },
-                { hour: "5:00 PM - 6:00 PM", messages: 32 },
+                { hour: "9:00 AM - 10:00 AM", messages: 45, color: "#3A9B9F" },
+                { hour: "2:00 PM - 3:00 PM", messages: 38, color: "#FF8B66" },
+                { hour: "5:00 PM - 6:00 PM", messages: 32, color: "#3A9B9F" },
               ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{item.hour}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#3A9B9F] rounded-full"
-                        style={{ width: `${(item.messages / 50) * 100}%` }}
+                <div key={i} className="flex items-center justify-between group cursor-default">
+                  <span className="text-sm font-bold text-gray-500 group-hover:text-[#213138] transition-colors">{item.hour}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner ring-1 ring-black/5">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(item.messages / 50) * 100}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 + (i * 0.1) }}
+                        className="h-full rounded-full shadow-lg"
+                        style={{ backgroundColor: item.color }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-gray-900 w-8">
+                    <span className="text-sm font-black text-[#213138] w-8">
                       {item.messages}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   )
