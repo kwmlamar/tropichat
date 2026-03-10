@@ -116,38 +116,37 @@ export default function InboxPage() {
         if (!isSubscribed) return
 
         setMessages((prev) => {
-          if (eventType === "UPDATE") {
-            return prev.map((m) => (m.id === message.id ? message : m))
-          }
+          if (eventType === "UPDATE" || eventType === "INSERT") {
+            // Check if exact message exists
+            const existingIdx = prev.findIndex(
+              (m) =>
+                m.id === message.id ||
+                (m.channel_message_id && m.channel_message_id === message.channel_message_id)
+            )
+            if (existingIdx >= 0) {
+              return prev.map((m, i) => (i === existingIdx ? message : m))
+            }
 
-          // INSERT — handle race with optimistic update or API response
-          const existingIdx = prev.findIndex(
-            (m) =>
-              m.id === message.id ||
-              (m.channel_message_id && m.channel_message_id === message.channel_message_id)
-          )
-          if (existingIdx >= 0) {
-            return prev.map((m, i) => (i === existingIdx ? message : m))
-          }
+            // Replace optimistic message
+            const optimisticIdx = prev.findIndex(
+              (m) =>
+                m.sender_type === "business" &&
+                m.status === "sending" &&
+                m.content === message.content &&
+                Math.abs(new Date(m.sent_at).getTime() - new Date(message.sent_at).getTime()) < 30000
+            )
+            if (optimisticIdx >= 0) {
+              return prev.map((m, i) => (i === optimisticIdx ? message : m))
+            }
 
-          // Replace optimistic message
-          const optimisticIdx = prev.findIndex(
-            (m) =>
-              m.sender_type === "business" &&
-              m.status === "sending" &&
-              m.content === message.content &&
-              Math.abs(new Date(m.sent_at).getTime() - new Date(message.sent_at).getTime()) < 30000
-          )
-          if (optimisticIdx >= 0) {
-            return prev.map((m, i) => (i === optimisticIdx ? message : m))
+            // Dedupe & sort
+            const merged = [...prev, message]
+            const byId = new Map(merged.map((m) => [m.id, m]))
+            return Array.from(byId.values()).sort(
+              (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
+            )
           }
-
-          // Dedupe & sort
-          const merged = [...prev, message]
-          const byId = new Map(merged.map((m) => [m.id, m]))
-          return Array.from(byId.values()).sort(
-            (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
-          )
+          return prev
         })
       }
     )
@@ -308,7 +307,18 @@ export default function InboxPage() {
     } else if (data) {
       // Replace temp with real message, dedupe
       setMessages((prev) => {
+        // If the realtime UPDATE or INSERT already replaced this temp message, it won't exist here.
+        // We only add/replace it if tempMessage.id still exists.
+        const existsId = prev.some(m => m.id === data.id)
+        if (existsId) {
+          // Realtime already did its job and inserted the real UUID, do nothing to avoid reverting status back to 'sent'
+          return prev
+        }
+
         const updated = prev.map((m) => (m.id === tempMessage.id ? data : m))
+        if (!updated.some(m => m.id === data.id)) {
+          updated.push(data)
+        }
         const byId = new Map(updated.map((m) => [m.id, m]))
         return Array.from(byId.values()).sort(
           (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
