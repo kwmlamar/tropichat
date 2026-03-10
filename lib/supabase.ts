@@ -46,10 +46,16 @@ export const getSupabase = () => {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      // Bypass navigator.locks which hangs in dev (React Strict Mode double-mount
-      // causes the lock to never release). This no-op lock is safe for single-tab usage.
-      lock: async (name: string, acquireTimeout: number, fn: () => Promise<any>) => {
-        return await fn()
+      detectSessionInUrl: true,
+      // Only bypass navigator.locks in development to avoid hangs during fast refresh.
+      // In production, standard locking is safer for session consistency.
+      lock: typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? async (name: string, acquireTimeout: number, fn: () => Promise<any>) => await fn()
+        : undefined,
+    },
+    realtime: {
+      params: {
+        events_per_second: 10,
       },
     },
   })
