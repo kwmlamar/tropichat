@@ -64,7 +64,7 @@ export function UnifiedMessageThread({
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
   }, [messages])
 
   // Sync reason state when conversation changes
@@ -73,9 +73,10 @@ export function UnifiedMessageThread({
 
   const handleSend = async () => {
     if (!messageText.trim() || isSending) return
-    setIsSending(true)
-    await onSendMessage(messageText.trim())
+    const text = messageText.trim()
     setMessageText("")
+    setIsSending(true)
+    await onSendMessage(text)
     setIsSending(false)
     textareaRef.current?.focus()
   }
@@ -271,7 +272,7 @@ export function UnifiedMessageThread({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4">
-        {loading ? (
+        {loading && messages.length === 0 ? (
           <div className="space-y-4">
             <SkeletonMessage direction="inbound" />
             <SkeletonMessage direction="outbound" />

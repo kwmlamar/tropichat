@@ -93,65 +93,28 @@ export default function InboxPage() {
     fetchConversations()
   }, [fetchConversations])
 
-  // Fetch messages when conversation changes
+  // Combined: Initial fetch + Real-time subscription for messages
   useEffect(() => {
     if (!selectedConversation) {
       setMessages([])
       return
     }
 
-    let ignore = false
+    let isSubscribed = true
+    const conversationId = selectedConversation.id
 
-    async function fetchMessages() {
-      setLoadingMessages(true)
-      try {
-        const { data, error } = await getUnifiedMessages(selectedConversation!.id)
-        if (ignore) return
-
-        if (error) {
-          toast.error("Failed to load messages")
-          console.error(error)
-        } else {
-          setMessages(data)
-          setHasMoreMessages(data.length === 50)
-        }
-        setLoadingMessages(false)
-
-        // Mark conversation as read
-        if (selectedConversation!.unread_count > 0) {
-          await updateUnifiedConversation(selectedConversation!.id, { unread_count: 0 })
-          if (!ignore) {
-            setConversations((prev) =>
-              prev.map((conv) =>
-                conv.id === selectedConversation!.id ? { ...conv, unread_count: 0 } : conv
-              )
-            )
-          }
-        }
-      } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return
-        console.error("Failed to fetch messages:", err)
-        if (!ignore) setLoadingMessages(false)
-      }
-    }
-
-    fetchMessages()
-    return () => { ignore = true }
-  }, [selectedConversation?.id])
-
-  // Real-time subscription for messages in the selected conversation
-  useEffect(() => {
-    if (!selectedConversation) return
-
+    // 1. Set up Real-time subscription first to catch any messages during fetch
     const unsubscribe = subscribeToUnifiedMessages(
-      selectedConversation.id,
+      conversationId,
       (message, eventType) => {
+        if (!isSubscribed) return
+
         setMessages((prev) => {
           if (eventType === "UPDATE") {
             return prev.map((m) => (m.id === message.id ? message : m))
           }
 
-          // INSERT — handle race with optimistic update
+          // INSERT — handle race with optimistic update or API response
           const existingIdx = prev.findIndex(
             (m) =>
               m.id === message.id ||
@@ -183,7 +146,54 @@ export default function InboxPage() {
       }
     )
 
-    return unsubscribe
+    // 2. Fetch existing messages
+    async function fetchMessages() {
+      if (!isSubscribed) return
+      setLoadingMessages(true)
+
+      try {
+        const { data, error } = await getUnifiedMessages(conversationId)
+        if (!isSubscribed) return
+
+        if (error) {
+          toast.error("Failed to load messages")
+          console.error(error)
+        } else {
+          // Merge with any messages that might have arrived via Realtime/Optimistic while fetch was in flight
+          setMessages((prev) => {
+            const merged = [...data, ...prev]
+            const byId = new Map(merged.map((m) => [m.id, m]))
+            return Array.from(byId.values()).sort(
+              (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
+            )
+          })
+          setHasMoreMessages(data.length === 50)
+        }
+      } catch (err) {
+        console.error("Failed to fetch messages:", err)
+      } finally {
+        if (isSubscribed) setLoadingMessages(false)
+      }
+
+      // Mark conversation as read (secondary task)
+      if (isSubscribed && selectedConversation!.unread_count > 0) {
+        await updateUnifiedConversation(conversationId, { unread_count: 0 })
+        if (isSubscribed) {
+          setConversations((prev) =>
+            prev.map((conv) =>
+              conv.id === conversationId ? { ...conv, unread_count: 0 } : conv
+            )
+          )
+        }
+      }
+    }
+
+    fetchMessages()
+
+    return () => {
+      isSubscribed = false
+      unsubscribe()
+    }
   }, [selectedConversation?.id])
 
   // Stable ref to fetchConversations so the realtime subscription
