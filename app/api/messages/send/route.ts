@@ -165,6 +165,7 @@ export async function POST(request: NextRequest) {
     const result = await sendMessage({
       channelType: account.channel_type,
       accountId: account.channel_account_id,
+      pageId: account.metadata?.page_id,
       accessToken,
       recipientId: conversation.customer_id,
       content,

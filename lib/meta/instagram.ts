@@ -20,6 +20,7 @@ import type {
 
 export interface InstagramSendTextOptions {
   igUserId: string
+  pageId?: string
   accessToken: string
   recipientId: string
   text: string
@@ -28,7 +29,7 @@ export interface InstagramSendTextOptions {
 }
 
 export async function sendInstagramText(options: InstagramSendTextOptions): Promise<MetaSendResponse> {
-  const { igUserId, accessToken, recipientId, text, humanAgentTag } = options
+  const { igUserId, pageId, accessToken, recipientId, text, humanAgentTag } = options
 
   const body: MetaSendRequest = {
     recipient: { id: recipientId },
@@ -37,9 +38,11 @@ export async function sendInstagramText(options: InstagramSendTextOptions): Prom
   }
   if (humanAgentTag) body.tag = 'HUMAN_AGENT'
 
+  const targetId = pageId || igUserId
+
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
-    path: `${igUserId}/messages`,
+    path: `${targetId}/messages`,
     accessToken,
     body: body as MetaSendRequest,
   })
@@ -47,6 +50,7 @@ export async function sendInstagramText(options: InstagramSendTextOptions): Prom
 
 export interface InstagramSendMediaOptions {
   igUserId: string
+  pageId?: string
   accessToken: string
   recipientId: string
   type: 'image' | 'video' | 'audio' | 'file'
@@ -56,7 +60,7 @@ export interface InstagramSendMediaOptions {
 }
 
 export async function sendInstagramMedia(options: InstagramSendMediaOptions): Promise<MetaSendResponse> {
-  const { igUserId, accessToken, recipientId, type, mediaUrl, humanAgentTag } = options
+  const { igUserId, pageId, accessToken, recipientId, type, mediaUrl, humanAgentTag } = options
 
   const body: MetaSendRequest = {
     recipient: { id: recipientId },
@@ -70,9 +74,11 @@ export async function sendInstagramMedia(options: InstagramSendMediaOptions): Pr
   }
   if (humanAgentTag) body.tag = 'HUMAN_AGENT'
 
+  const targetId = pageId || igUserId
+
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',
-    path: `${igUserId}/messages`,
+    path: `${targetId}/messages`,
     accessToken,
     body: body as MetaSendRequest,
   })

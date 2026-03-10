@@ -55,6 +55,8 @@ export interface UnifiedSendOptions {
   channelType: ChannelType
   /** Platform account ID (phone_number_id / ig_user_id / page_id) */
   accountId: string
+  /** The Facebook Page ID linked to the Instagram account (required for sending through Messenger API for Instagram) */
+  pageId?: string
   accessToken: string
   /** Recipient ID (phone number / IG-scoped ID / PSID) */
   recipientId: string
@@ -92,6 +94,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
       case 'instagram':
         return sendInstagramMedia({
           igUserId: accountId,
+          pageId: options.pageId,
           accessToken,
           recipientId,
           type: mediaType,
@@ -123,6 +126,7 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
     case 'instagram':
       return sendInstagramText({
         igUserId: accountId,
+        pageId: options.pageId,
         accessToken,
         recipientId,
         text: content,
