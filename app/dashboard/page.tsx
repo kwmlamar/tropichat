@@ -106,6 +106,9 @@ export default function InboxPage() {
       return
     }
 
+    // Clear messages immediately when switching to a new conversation
+    setMessages([])
+
     let isSubscribed = true
     const conversationId = selectedConversation.id
 
@@ -164,9 +167,12 @@ export default function InboxPage() {
           toast.error("Failed to load messages")
           console.error(error)
         } else {
-          // Merge with any messages that might have arrived via Realtime/Optimistic while fetch was in flight
+          // Merge with any realtime messages that arrived for THIS conversation while fetching
           setMessages((prev) => {
-            const merged = [...data, ...prev]
+            // Filter out any lingering messages from a previous conversation just in case,
+            // though the synchronous setMessages([]) should have handled it.
+            const validPrev = prev.filter(m => m.conversation_id === conversationId)
+            const merged = [...data, ...validPrev]
             const byId = new Map(merged.map((m) => [m.id, m]))
             return Array.from(byId.values()).sort(
               (a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime()
@@ -361,7 +367,10 @@ export default function InboxPage() {
     if (error) {
       toast.error("Failed to load more messages")
     } else {
-      setMessages((prev) => [...data, ...prev])
+      setMessages((prev) => {
+        const validPrev = prev.filter(m => m.conversation_id === selectedConversation.id)
+        return [...data, ...validPrev]
+      })
       setHasMoreMessages(data.length === 50)
     }
   }
