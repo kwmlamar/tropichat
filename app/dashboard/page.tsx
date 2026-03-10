@@ -49,6 +49,12 @@ export default function InboxPage() {
     return () => { mountedRef.current = false }
   }, [])
 
+  // Track selected conversation in a ref so realtime callbacks see the latest value
+  const selectedConversationRef = useRef(selectedConversation)
+  useEffect(() => {
+    selectedConversationRef.current = selectedConversation
+  }, [selectedConversation])
+
   // Fetch connected account IDs for realtime subscriptions
   useEffect(() => {
     let ignore = false
@@ -210,6 +216,17 @@ export default function InboxPage() {
     const unsubscribe = subscribeToUnifiedConversations(
       accountIds,
       (updatedConv: UnifiedConversation) => {
+        // Check if this update is for the conversation the user is currently viewing
+        const isViewingThis = selectedConversationRef.current?.id === updatedConv.id
+
+        // If the user is viewing this conversation and unread_count went up,
+        // reset it to 0 — they've already seen the message
+        if (isViewingThis && updatedConv.unread_count > 0) {
+          updatedConv = { ...updatedConv, unread_count: 0 }
+          // Fire-and-forget DB update to clear unread count
+          updateUnifiedConversation(updatedConv.id, { unread_count: 0 })
+        }
+
         setConversations((prev) => {
           const index = prev.findIndex((c) => c.id === updatedConv.id)
           if (index === -1) {
