@@ -1,7 +1,7 @@
 // TropiChat PWA Service Worker
 // Caches the app shell for offline support and faster loads
 
-const CACHE_NAME = "tropichat-v1";
+const CACHE_NAME = "tropichat-v2";
 
 // App shell: core pages and assets to cache on install
 const PRECACHE_URLS = [
