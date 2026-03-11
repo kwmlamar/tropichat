@@ -20,6 +20,9 @@ import {
   MapPin,
   Phone,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Bell,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -83,6 +86,14 @@ const waCategoryOptions = [
 export default function SettingsPage() {
   const searchParams = useSearchParams()
   const initialTab = searchParams.get("tab") || "profile"
+
+  const [activeTab, setActiveTab] = useState(initialTab)
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(!searchParams.get("tab"))
+
+  const handleMobileNav = (tab: string) => {
+    setActiveTab(tab)
+    setMobileMenuVisible(false)
+  }
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -358,48 +369,108 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+    <div className="relative min-h-screen lg:min-h-full">
+      {/* ================= MOBILE MENU VIEW ================= */}
+      <div className={cn("lg:hidden w-full pb-24", !mobileMenuVisible && "hidden")}>
+        {/* Soft Teal Gradient Background */}
+        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent z-0 pointer-events-none" />
+        
+        {/* Header */}
+        <div className="relative z-10 pt-12 pb-6 px-6 flex items-center justify-between">
+          <div className="w-10" /> {/* spacer to center title */}
+          <h1 className="text-[22px] font-bold text-[#213138] font-[family-name:var(--font-poppins)] tracking-tight">Profile</h1>
+          <button className="h-10 w-10 bg-white/70 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center text-[#213138] border border-white">
+            <Bell className="h-5 w-5" />
+          </button>
+        </div>
 
-      <Tabs defaultValue={initialTab} onValueChange={(tab) => {
-        if (tab === "integrations" && !metaStatus) {
-          fetchMetaConnectionStatus()
-        }
-        if (tab === "whatsapp") {
-          fetchWhatsAppProfile()
-          if (!metaStatus) fetchMetaConnectionStatus()
-        }
-      }}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="profile">
-            <User className="h-4 w-4 mr-2" />
-            Profile
-          </TabsTrigger>
-          <TabsTrigger value="hours">
-            <Clock className="h-4 w-4 mr-2" />
-            Business Hours
-          </TabsTrigger>
-          <TabsTrigger value="autoreply">
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Auto-Reply
-          </TabsTrigger>
-          <TabsTrigger value="team">
-            <Users className="h-4 w-4 mr-2" />
-            Team
-          </TabsTrigger>
-          <TabsTrigger value="integrations">
-            <Link2 className="h-4 w-4 mr-2" />
-            Integrations
-          </TabsTrigger>
-          <TabsTrigger value="whatsapp">
-            <Building2 className="h-4 w-4 mr-2" />
-            WhatsApp Profile
-          </TabsTrigger>
-          <TabsTrigger value="billing">
-            <CreditCard className="h-4 w-4 mr-2" />
-            Billing
-          </TabsTrigger>
-        </TabsList>
+        {/* Avatar & Info */}
+        <div className="relative z-10 flex flex-col items-center px-6 mt-4 mb-10">
+          <div className="relative">
+            <div className="h-28 w-28 rounded-full bg-white shadow-sm border-[4px] border-white overflow-hidden flex items-center justify-center">
+              <span className="text-[40px] font-bold text-[#3A9B9F] font-[family-name:var(--font-poppins)]">
+                {(businessName || contactEmail || "U")[0].toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <h2 className="mt-5 text-[22px] font-bold text-[#213138] font-[family-name:var(--font-poppins)] tracking-tight">
+            {businessName || "Your Business"}
+          </h2>
+          <div className="flex items-center justify-center gap-1.5 text-[13px] font-medium text-[#475569] mt-1.5">
+            <MapPin className="h-3.5 w-3.5 text-[#3A9B9F]" />
+            <span>{timezone.split('/')[1]?.replace('_', ' ') || "Local"}</span>
+          </div>
+        </div>
+
+        <div className="relative z-10 px-6 space-y-8">
+          {/* Action / Mode Toggle */}
+          <div className="bg-white rounded-2xl p-4 md:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3.5">
+              <div className="h-9 w-9 bg-gray-50 flex items-center justify-center rounded-xl border border-gray-100">
+                <MessageSquare className="h-4 w-4 text-[#475569]" />
+              </div>
+              <span className="font-semibold text-gray-900 text-[15px]">Auto-Reply Mode</span>
+            </div>
+            <Switch 
+              checked={autoReplyEnabled} 
+              onCheckedChange={async (c) => {
+                setAutoReplyEnabled(c)
+                await updateCustomer({ auto_reply_enabled: c })
+                toast.success(c ? "Auto-reply activated" : "Auto-reply disabled")
+              }} 
+            />
+          </div>
+
+          {/* Links Section */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#475569] px-2 mb-2">General</h3>
+            <div className="bg-white rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden divide-y divide-gray-50 flex flex-col">
+               <MobileTabLink icon={User} label="Profile Setting" onClick={() => handleMobileNav('profile')} />
+               <MobileTabLink icon={Clock} label="Business Hours" onClick={() => handleMobileNav('hours')} />
+               <MobileTabLink icon={Users} label="Team Management" onClick={() => handleMobileNav('team')} />
+               <MobileTabLink icon={Link2} label="Integrations" onClick={() => handleMobileNav('integrations')} />
+               <MobileTabLink icon={Building2} label="WhatsApp Profile" onClick={() => handleMobileNav('whatsapp')} />
+               <MobileTabLink icon={CreditCard} label="Billing & Plan" onClick={() => handleMobileNav('billing')} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= DESKTOP & MOBILE CONTENT VIEW ================= */}
+      <div className={cn("p-6 max-w-4xl pb-24 lg:pb-6", !mobileMenuVisible ? "block" : "hidden lg:block")}>
+        
+        {/* Mobile Back Header */}
+        <div className="lg:hidden flex items-center gap-4 mb-8">
+          <button 
+            onClick={() => setMobileMenuVisible(true)}
+            className="h-10 w-10 bg-white rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center text-gray-600 border border-gray-100 transition-transform active:scale-95"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <h1 className="text-[22px] font-bold text-[#213138] font-[family-name:var(--font-poppins)] tracking-tight">
+            Settings
+          </h1>
+        </div>
+
+        <h1 className="hidden lg:block text-2xl font-bold text-[#213138] mb-6 font-[family-name:var(--font-poppins)] tracking-tight">Settings</h1>
+
+        <Tabs value={activeTab} defaultValue={initialTab} onValueChange={(tab) => {
+          setActiveTab(tab)
+          if (tab === "integrations" && !metaStatus) fetchMetaConnectionStatus()
+          if (tab === "whatsapp") {
+            fetchWhatsAppProfile()
+            if (!metaStatus) fetchMetaConnectionStatus()
+          }
+        }}>
+          <TabsList className="hidden lg:flex mb-6 text-sm font-medium">
+            <TabsTrigger value="profile"><User className="h-4 w-4 mr-2" />Profile</TabsTrigger>
+            <TabsTrigger value="hours"><Clock className="h-4 w-4 mr-2" />Business Hours</TabsTrigger>
+            <TabsTrigger value="autoreply"><MessageSquare className="h-4 w-4 mr-2" />Auto-Reply</TabsTrigger>
+            <TabsTrigger value="team"><Users className="h-4 w-4 mr-2" />Team</TabsTrigger>
+            <TabsTrigger value="integrations"><Link2 className="h-4 w-4 mr-2" />Integrations</TabsTrigger>
+            <TabsTrigger value="whatsapp"><Building2 className="h-4 w-4 mr-2" />WhatsApp Profile</TabsTrigger>
+            <TabsTrigger value="billing"><CreditCard className="h-4 w-4 mr-2" />Billing</TabsTrigger>
+          </TabsList>
 
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-10 pb-12">
@@ -953,7 +1024,20 @@ export default function SettingsPage() {
 
         </TabsContent>
       </Tabs>
+      </div>
     </div>
+  )
+}
+
+function MobileTabLink({ icon: Icon, label, onClick }: { icon: any, label: string, onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="w-full flex items-center justify-between p-[20px] transition-colors active:bg-gray-50">
+      <div className="flex items-center gap-4">
+        <Icon className="h-[22px] w-[22px] text-[#213138]" />
+        <span className="font-medium text-[#213138] text-[16px]">{label}</span>
+      </div>
+      <ChevronRight className="h-[22px] w-[22px] text-gray-400" />
+    </button>
   )
 }
 
