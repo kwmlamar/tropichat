@@ -62,14 +62,12 @@ export function UnifiedConversationList({
       <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
 
       {/* Mobile Top Header (replaces the removed hamburger nav) */}
-      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-14 pb-4">
-        <div className="flex-1" />
+      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-12 pb-6">
+        <div className="w-10" /> {/* spacer to center title */}
         <h1 className="text-[22px] font-bold text-[#213138] font-heading tracking-tight">Chats</h1>
-        <div className="flex-1 flex justify-end">
-          <button className="p-2.5 bg-white/70 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all border border-white">
-            <Bell className="w-5 h-5 text-[#213138]" />
-          </button>
-        </div>
+        <button className="h-10 w-10 bg-white shadow-sm flex items-center justify-center text-[#213138] border border-gray-100 rounded-[14px]">
+          <Bell className="h-5 w-5 text-[#475569]" strokeWidth={2} />
+        </button>
       </div>
 
       {/* Search on Desktop, hidden on Mobile to match clean design (or kept subtle if needed) */}
