@@ -13,8 +13,6 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  Menu,
-  X,
   FileStack,
   CalendarDays,
   PanelLeftClose,
@@ -48,7 +46,6 @@ const navItems = [
 export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
   // Fetch unread conversation count
@@ -121,7 +118,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {}}
               className={cn(
                 "flex items-center rounded-xl text-sm font-medium transition-all duration-200 relative",
                 collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5",
@@ -185,7 +182,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         {/* Settings Button */}
         <Link
           href="/dashboard/settings"
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={() => {}}
           className={cn(
             "flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-1 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
@@ -244,43 +241,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
 
   return (
     <>
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <Image
-              src="/tropichat-logo.png"
-              alt="TropiChat"
-              width={64}
-              height={64}
-              unoptimized
-              className="h-16 w-16 shrink-0 object-contain"
-            />
-            <p className="text-sm font-bold text-gray-900 truncate">
-              {customer?.business_name || "TropiChat"}
-            </p>
-          </div>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Sidebar */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-30">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="fixed left-0 top-14 bottom-0 w-72 bg-white flex flex-col overflow-y-auto overflow-x-hidden shadow-2xl z-40">
-            <SidebarContent collapsed={false} />
-          </div>
-        </div>
-      )}
+      {/* Mobile navigation is handled by MobileBottomNav in the layout */}
 
       {/* Desktop Sidebar */}
       <div className={cn("hidden lg:flex lg:flex-col lg:min-h-0 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-[#F9FAFB] lg:border-r lg:border-gray-200 transition-all duration-300", isCollapsed ? "lg:w-20" : "lg:w-72")}>

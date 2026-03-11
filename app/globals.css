@@ -417,3 +417,14 @@
   font-size: 0.875rem !important;
   margin-top: 2px !important;
 }
+
+/* Utilities for hiding bottom nav in mobile chat view */
+body.mobile-chat-open .bottom-nav-container {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  body.mobile-chat-open main {
+    padding-bottom: 0 !important;
+  }
+}

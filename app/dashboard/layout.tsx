@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/dashboard/sidebar"
+import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav"
 import { getSession, getCurrentCustomer } from "@/lib/supabase"
 import type { Customer } from "@/types/database"
 import { cn } from "@/lib/utils"
@@ -51,13 +52,14 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-72")}>
-        {/* Mobile header spacer */}
-        <div className="h-14 lg:h-0 flex-shrink-0" />
-
-        {/* Page content — scrolls internally */}
-        <main className="flex-1 overflow-y-auto">
+        {/* Page content — scrolls internally. pb-16 on mobile reserves space for bottom nav. */}
+        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           {children}
         </main>
+      </div>
+      {/* Mobile Bottom Navigation — hidden when a thread is active via body class */}
+      <div className="bottom-nav-container">
+        <MobileBottomNav customer={customer} />
       </div>
     </div>
   )

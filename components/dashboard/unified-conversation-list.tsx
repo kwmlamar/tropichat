@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Inbox, Shield, ArchiveX } from "lucide-react"
+import { Search, Inbox, Shield, ArchiveX, Bell, Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -57,9 +57,23 @@ export function UnifiedConversationList({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      {/* Search + Archived toggle */}
-      <div className="p-4 border-b border-gray-200 flex items-center gap-2">
+    <div className="flex flex-col h-full bg-white lg:border-r border-gray-200 relative">
+      {/* Soft teal gradient background on mobile */}
+      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
+
+      {/* Mobile Top Header (replaces the removed hamburger nav) */}
+      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-14 pb-4">
+        <div className="flex-1" />
+        <h1 className="text-[22px] font-bold text-[#213138] font-heading tracking-tight">Chats</h1>
+        <div className="flex-1 flex justify-end">
+          <button className="p-2.5 bg-white/70 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all border border-white">
+            <Bell className="w-5 h-5 text-[#213138]" />
+          </button>
+        </div>
+      </div>
+
+      {/* Search on Desktop, hidden on Mobile to match clean design (or kept subtle if needed) */}
+      <div className="hidden lg:flex p-4 border-b border-gray-200 items-center gap-2 relative z-10">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -83,29 +97,39 @@ export function UnifiedConversationList({
         </button>
       </div>
 
-      {/* Channel filters (Expandable Tabs) */}
+      {/* Horizontal Filter Tabs (Matches the mobile design: All, Unread, Favorite, +) */}
       {!showArchived && (
-        <div className="px-4 py-3 border-b border-gray-100/50 flex">
-          <ExpandableTabs
-            tabs={channelFilters}
-            activeColor={
-              currentChannelFilter === "whatsapp" ? "text-[#25D366]" :
-                currentChannelFilter === "instagram" ? "text-[#DD2A7B]" :
-                  currentChannelFilter === "messenger" ? "text-[#0084FF]" :
-                    "text-[#3A9B9F]"
-            }
-            className="w-full border-none shadow-none bg-gray-100/80 p-1.5 rounded-2xl"
-            onChange={(index) => {
-              if (index === null) {
-                onChannelFilter("all");
-              } else {
-                onChannelFilter(channelFilters[index].value);
-              }
-            }}
-            selectedIndex={channelFilters.findIndex(f => f.value === currentChannelFilter)}
-          />
+        <div className="relative z-10 px-6 py-3 lg:border-b lg:border-gray-100 flex items-center overflow-x-auto no-scrollbar gap-5">
+          {/* We'll map the channel filters to look like the text tabs in the design */}
+          {channelFilters.map((filter) => {
+            const isActive = currentChannelFilter === filter.value
+            return (
+              <button
+                key={filter.value}
+                onClick={() => onChannelFilter(filter.value)}
+                className={cn(
+                  "whitespace-nowrap font-medium transition-all duration-200 relative py-1 text-[15px]",
+                  isActive ? "text-[#3A9B9F]" : "text-gray-500 hover:text-gray-800"
+                )}
+              >
+                {filter.title}
+                {isActive && (
+                  <motion.div
+                    layoutId="active-tab"
+                    className="absolute inset-0 bg-white rounded-xl -z-10 shadow-[0_2px_12px_rgba(58,155,159,0.15)] border border-white/50"
+                    style={{ padding: '0 16px', margin: '0 -16px' }}
+                  />
+                )}
+              </button>
+            )
+          })}
+          {/* Plus button from design */}
+          <button className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#3A9B9F] transition-colors rounded-full hover:bg-white/50">
+            <Plus className="w-5 h-5" />
+          </button>
         </div>
       )}
+
 
       {/* Archived label */}
       {showArchived && (
@@ -172,18 +196,19 @@ export function UnifiedConversationList({
                     <button
                       onClick={() => onSelect(conversation)}
                       className={cn(
-                        "w-full flex items-start gap-4 p-4 rounded-xl text-left transition-all border border-transparent group relative",
+                        "w-full flex items-center gap-4 py-3.5 px-6 rounded-3xl text-left transition-all border border-transparent group relative bg-white/40 hover:bg-white/80",
                         selectedId === conversation.id
-                          ? "bg-white shadow-sm ring-1 ring-gray-200/50 z-10"
-                          : "hover:bg-gray-50"
+                          ? "bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] ring-1 ring-white/50 z-10"
+                          : ""
                       )}
                     >
-                      {/* Avatar with channel badge */}
+                      {/* Avatar with online dot / channel badge */}
                       <div className="relative flex-shrink-0">
                         <Avatar
                           src={conversation.customer_avatar_url}
                           fallback={getConversationDisplayName(conversation)}
                           size="md"
+                          className="h-14 w-14 rounded-full border-2 border-white shadow-sm"
                         />
                         <div className="absolute -bottom-0.5 -right-0.5">
                           <ChannelIcon channel={conversation.channel_type} size="sm" />
@@ -191,35 +216,38 @@ export function UnifiedConversationList({
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-bold text-gray-900 truncate">
+                      <div className="flex-1 min-w-0 py-1">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="font-semibold text-[16px] text-[#213138] truncate tracking-tight pr-2">
                             {getConversationDisplayName(conversation)}
                           </span>
-                          <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap uppercase tracking-wider">
+                          <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
                             {conversation.last_message_at
-                              ? formatDistanceToNow(conversation.last_message_at)
+                              ? new Date(conversation.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                               : ""}
                           </span>
                         </div>
 
-                        <p className="text-sm text-gray-500 truncate mt-0.5 leading-snug">
-                          {conversation.last_message_preview || "No messages yet"}
-                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-[14px] text-gray-500 truncate leading-snug pr-4">
+                            {conversation.last_message_preview || "No messages yet"}
+                          </p>
 
-                        <div className="flex items-center gap-1.5 mt-2">
-                          {conversation.human_agent_enabled && (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-600 ring-1 ring-amber-200/50">
-                              <Shield className="h-2.5 w-2.5" />
-                              7D ACTIVE
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1.5 flex-shrink-0">
+                            {conversation.human_agent_enabled && (
+                              <span className="inline-flex items-center justify-center p-1 rounded-full bg-amber-50 text-amber-600 ring-1 ring-amber-200/50" title="Human Agent 7D Active">
+                                <Shield className="h-3 w-3" />
+                              </span>
+                            )}
 
-                          {conversation.unread_count > 0 && (
-                            <Badge className="bg-[#FF8B66] hover:bg-[#ff7b52] text-white border-none text-[10px] px-1.5 h-4.5 flex items-center justify-center font-black min-w-[20px] rounded-full">
-                              {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
-                            </Badge>
-                          )}
+                            {conversation.unread_count > 0 && (
+                              <div className="h-5 min-w-[20px] rounded-full bg-[#3A9B9F] flex items-center justify-center px-1.5 shadow-[0_2px_8px_rgba(58,155,159,0.4)]">
+                                <span className="text-[11px] font-bold text-white leading-none">
+                                  {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </button>

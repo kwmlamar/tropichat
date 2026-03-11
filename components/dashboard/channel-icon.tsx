@@ -10,6 +10,45 @@ interface ChannelIconProps {
   showLabel?: boolean
 }
 
+import React, { useId } from "react"
+
+function InstaSvg({ className }: { className: string }) {
+  const id = useId()
+  const gradId = `insta-${id}`
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill={`url(#${gradId})`} />
+      <path d="M12 6.8c-2.8 0-5.1 2.3-5.1 5.2s2.3 5.2 5.1 5.2 5.1-2.3 5.1-5.2S14.8 6.8 12 6.8zm0 8.4c-1.8 0-3.3-1.5-3.3-3.2 0-1.8 1.5-3.2 3.3-3.2s3.3 1.4 3.3 3.2c0 1.7-1.4 3.2-3.3 3.2zM18.8 6.9c0 .6-.5 1.1-1.1 1.1-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1.6 0 1.1.5 1.1 1.1z" fill="white" />
+      <path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.3-2.3.5-.6.2-1.1.6-1.6 1.1-.5.5-.9 1-1.1 1.6-.2.6-.4 1.3-.5 2.3-.1 1-.1 1.4-.1 4.1s0 3.1.1 4.1c.1 1 .3 1.7.5 2.3.2.6.6 1.1 1.1 1.6.5.5 1 1 1.6 1.1.6.2 1.3.4 2.3.5 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c1-.1 1.7-.3 2.3-.5.6-.2 1.1-.6 1.6-1.1.5-.5.9-1 1.1-1.6.2-.6.4-1.3.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.3-1.7-.5-2.3-.2-.6-.6-1.1-1.1-1.6-.5-.5-1-1-1.6-1.1-.6-.2-1.3-.4-2.3-.5C15.1 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1.9.1 1.4.2 1.7.3.4.2.7.4 1 .7.3.3.5.6.7 1 .1.3.3.8.4 1.7.1 1 .1 1.3.1 4s0 3-.1 4c-.1.9-.2 1.4-.3 1.7-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.3.1-.8.3-1.7.4-1 .1-1.3-.1-4 .1s-3 0-4-.1c-.9-.1-1.4-.2-1.7-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.1-.3-.3-.8-.4-1.7-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-.9.2-1.4.3-1.7.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.3-.1.8-.3 1.7-.4 1-.1 1.3-.1 4-.1z" fill="white" />
+      <defs>
+        <linearGradient id={gradId} x1="2.5" y1="21.5" x2="21.6" y2="2.5" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F58529" />
+          <stop offset="0.1" stopColor="#FEDA77" />
+          <stop offset="0.5" stopColor="#DD2A7B" />
+          <stop offset="1" stopColor="#8134AF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+function MessengerSvg({ className }: { className: string }) {
+  const id = useId()
+  const gradId = `messenger-${id}`
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2.5C6.75 2.5 2.5 6.4 2.5 11.2C2.5 13.9 3.8 16.3 6 17.9C6.2 18 6.3 18.2 6.3 18.5L6.3 20.6C6.3 20.8 6.5 21 6.7 20.9L9 19.6C9.1 19.5 9.3 19.5 9.4 19.5C10.2 19.7 11.1 19.9 12 19.9C17.25 19.9 21.5 16 21.5 11.2C21.5 6.4 17.25 2.5 12 2.5Z" fill={`url(#${gradId})`} />
+      <path d="M6.5 12.8L9.6 7.8C9.9 7.4 10.5 7.3 10.9 7.6L13.8 9.8C14 10 14.2 10 14.4 9.8L17.9 7.2C18.1 7 18.4 7.2 18.4 7.5L15.3 12.5C14.9 13.1 14.3 13.2 13.9 12.9L11 10.7C10.8 10.5 10.6 10.5 10.4 10.7L6.9 13.3C6.7 13.5 6.4 13.3 6.4 13.1C6.4 13.1 6.4 12.9 6.5 12.8Z" fill="white" />
+      <defs>
+        <linearGradient id={gradId} x1="12" y1="19.9" x2="12" y2="2.5" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0084FF" />
+          <stop offset="1" stopColor="#00C6FF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
 const channelConfig = {
   whatsapp: {
     label: "WhatsApp",
@@ -28,39 +67,14 @@ const channelConfig = {
     color: "text-[#DD2A7B]",
     bg: "bg-[#DD2A7B]/10",
     borderColor: "border-[#DD2A7B]/20",
-    icon: (className: string) => (
-      <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="24" height="24" rx="5" fill="url(#insta_gradient_dashboard)" />
-        <path d="M12 6.8c-2.8 0-5.1 2.3-5.1 5.2s2.3 5.2 5.1 5.2 5.1-2.3 5.1-5.2S14.8 6.8 12 6.8zm0 8.4c-1.8 0-3.3-1.5-3.3-3.2 0-1.8 1.5-3.2 3.3-3.2s3.3 1.4 3.3 3.2c0 1.7-1.4 3.2-3.3 3.2zM18.8 6.9c0 .6-.5 1.1-1.1 1.1-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1.6 0 1.1.5 1.1 1.1z" fill="white" />
-        <path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.3-2.3.5-.6.2-1.1.6-1.6 1.1-.5.5-.9 1-1.1 1.6-.2.6-.4 1.3-.5 2.3-.1 1-.1 1.4-.1 4.1s0 3.1.1 4.1c.1 1 .3 1.7.5 2.3.2.6.6 1.1 1.1 1.6.5.5 1 1 1.6 1.1.6.2 1.3.4 2.3.5 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c1-.1 1.7-.3 2.3-.5.6-.2 1.1-.6 1.6-1.1.5-.5.9-1 1.1-1.6.2-.6.4-1.3.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.3-1.7-.5-2.3-.2-.6-.6-1.1-1.1-1.6-.5-.5-1-1-1.6-1.1-.6-.2-1.3-.4-2.3-.5C15.1 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1.9.1 1.4.2 1.7.3.4.2.7.4 1 .7.3.3.5.6.7 1 .1.3.3.8.4 1.7.1 1 .1 1.3.1 4s0 3-.1 4c-.1.9-.2 1.4-.3 1.7-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.3.1-.8.3-1.7.4-1 .1-1.3.1-4 .1s-3 0-4-.1c-.9-.1-1.4-.2-1.7-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.1-.3-.3-.8-.4-1.7-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-.9.2-1.4.3-1.7.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.3-.1.8-.3 1.7-.4 1-.1 1.3-.1 4-.1z" fill="white" />
-        <defs>
-          <linearGradient id="insta_gradient_dashboard" x1="2.5" y1="21.5" x2="21.6" y2="2.5" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#F58529" />
-            <stop offset="0.1" stopColor="#FEDA77" />
-            <stop offset="0.5" stopColor="#DD2A7B" />
-            <stop offset="1" stopColor="#8134AF" />
-          </linearGradient>
-        </defs>
-      </svg>
-    ),
+    icon: (className: string) => <InstaSvg className={className} />,
   },
   messenger: {
     label: "Messenger",
     color: "text-[#0084FF]",
     bg: "bg-[#0084FF]/10",
     borderColor: "border-[#0084FF]/20",
-    icon: (className: string) => (
-      <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2.5C6.75 2.5 2.5 6.4 2.5 11.2C2.5 13.9 3.8 16.3 6 17.9C6.2 18 6.3 18.2 6.3 18.5L6.3 20.6C6.3 20.8 6.5 21 6.7 20.9L9 19.6C9.1 19.5 9.3 19.5 9.4 19.5C10.2 19.7 11.1 19.9 12 19.9C17.25 19.9 21.5 16 21.5 11.2C21.5 6.4 17.25 2.5 12 2.5Z" fill="url(#messenger_gradient_dashboard)" />
-        <path d="M6.5 12.8L9.6 7.8C9.9 7.4 10.5 7.3 10.9 7.6L13.8 9.8C14 10 14.2 10 14.4 9.8L17.9 7.2C18.1 7 18.4 7.2 18.4 7.5L15.3 12.5C14.9 13.1 14.3 13.2 13.9 12.9L11 10.7C10.8 10.5 10.6 10.5 10.4 10.7L6.9 13.3C6.7 13.5 6.4 13.3 6.4 13.1C6.4 13.1 6.4 12.9 6.5 12.8Z" fill="white" />
-        <defs>
-          <linearGradient id="messenger_gradient_dashboard" x1="12" y1="19.9" x2="12" y2="2.5" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#0084FF" />
-            <stop offset="1" stopColor="#00C6FF" />
-          </linearGradient>
-        </defs>
-      </svg>
-    ),
+    icon: (className: string) => <MessengerSvg className={className} />,
   },
 }
 

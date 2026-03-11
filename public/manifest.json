@@ -1,0 +1,27 @@
+{
+  "name": "TropiChat",
+  "short_name": "TropiChat",
+  "description": "Run Your Business Like a Pro, Right From WhatsApp. CRM for Caribbean small businesses.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#213138",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/tropichat-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/tropichat-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "communication"],
+  "lang": "en",
+  "scope": "/"
+}

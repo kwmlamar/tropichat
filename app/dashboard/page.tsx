@@ -16,7 +16,7 @@ import {
 } from "@/lib/unified-inbox"
 import { getCurrentCustomer } from "@/lib/supabase"
 import { useDebounce } from "@/lib/hooks"
-import { generateId } from "@/lib/utils"
+import { generateId, cn } from "@/lib/utils"
 import { toast } from "sonner"
 import type {
   ConversationWithAccount,
@@ -53,6 +53,15 @@ export default function InboxPage() {
   const selectedConversationRef = useRef(selectedConversation)
   useEffect(() => {
     selectedConversationRef.current = selectedConversation
+    
+    // Toggle class on body to hide bottom nav on mobile when chat is open
+    if (selectedConversation) {
+      document.body.classList.add('mobile-chat-open')
+    } else {
+      document.body.classList.remove('mobile-chat-open')
+    }
+    
+    return () => document.body.classList.remove('mobile-chat-open')
   }, [selectedConversation])
 
   // Fetch connected account IDs for realtime subscriptions
@@ -378,7 +387,10 @@ export default function InboxPage() {
   return (
     <div className="flex h-full">
       {/* Conversation List */}
-      <div className="w-full md:w-80 lg:w-96 flex-shrink-0">
+      <div className={cn(
+        "w-full md:w-80 lg:w-96 flex-shrink-0",
+        selectedConversation ? "hidden md:block" : "block"
+      )}>
         <UnifiedConversationList
           conversations={conversations}
           selectedId={selectedConversation?.id || null}
@@ -394,7 +406,11 @@ export default function InboxPage() {
 
       {/* Message Thread */}
       <div
-        className={`hidden md:flex flex-1 min-w-0 ${!selectedConversation ? "bg-gray-50" : ""}`}
+        className={cn(
+          "flex-1 min-w-0",
+          selectedConversation ? "flex" : "hidden md:flex",
+          !selectedConversation ? "bg-gray-50" : ""
+        )}
       >
         <div className="flex flex-col w-full h-full">
           <UnifiedMessageThread
@@ -407,6 +423,7 @@ export default function InboxPage() {
             hasMore={hasMoreMessages}
             onCreateBooking={() => setBookingModalOpen(true)}
             customerName={customerName}
+            onBack={() => setSelectedConversation(null)}
           />
         </div>
       </div>

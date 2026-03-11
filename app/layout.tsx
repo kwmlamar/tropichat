@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Script from "next/script";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,12 +26,18 @@ export const metadata: Metadata = {
   description: "Turn WhatsApp chaos into organized success. Label customers, save responses, track orders. Never lose a conversation. Built for Caribbean small businesses. Try free for 14 days.",
   keywords: ["WhatsApp Business", "Caribbean", "Small Business", "Customer Management", "CRM", "Business Tools", "WhatsApp CRM", "Bahamas", "Jamaica", "Trinidad", "Barbados", "Caribbean business tools"],
   authors: [{ name: "TropiTech Solutions" }],
+  manifest: "/manifest.json",
   icons: {
     icon: [
       { url: "/tropichat-logo.png", type: "image/png", sizes: "32x32" },
       { url: "/tropichat-logo.png", type: "image/png", sizes: "192x192" },
     ],
     apple: "/tropichat-logo.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TropiChat",
   },
   openGraph: {
     title: "TropiChat - Run Your Business Like a Pro, Right From WhatsApp",
@@ -51,6 +58,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#213138",
 };
 
 export default function RootLayout({
@@ -77,6 +92,22 @@ export default function RootLayout({
               color: "#213138",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.04)",
             },
+          }}
+        />
+        {/* Service Worker Registration */}
+        <Script
+          id="register-sw"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                    console.error('SW registration failed:', err);
+                  });
+                });
+              }
+            `,
           }}
         />
       </body>

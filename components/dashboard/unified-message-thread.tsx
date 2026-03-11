@@ -9,6 +9,7 @@ import {
   Check,
   CheckCheck,
   Clock,
+  Camera,
   FileText,
   Image as ImageIcon,
   Inbox,
@@ -20,6 +21,7 @@ import {
   Send,
   Shield,
   Smile,
+  ChevronLeft,
 } from "lucide-react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -43,6 +45,7 @@ interface UnifiedMessageThreadProps {
   hasMore?: boolean
   onCreateBooking?: () => void
   customerName?: string | null
+  onBack?: () => void
 }
 
 
@@ -56,6 +59,7 @@ export function UnifiedMessageThread({
   hasMore,
   onCreateBooking,
   customerName,
+  onBack,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
@@ -202,8 +206,16 @@ export function UnifiedMessageThread({
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
+        <div className="flex items-center gap-1 lg:gap-3">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="lg:hidden p-2 -ml-2 mr-1 text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+          )}
           <div className="relative">
             <Avatar
               src={conversation.customer_avatar_url}
@@ -219,16 +231,6 @@ export function UnifiedMessageThread({
               <h2 className="font-semibold text-gray-900">
                 {getConversationDisplayName(conversation)}
               </h2>
-            </div>
-            <div className="text-xs text-gray-500 flex items-center gap-1.5">
-              <ChannelIcon channel={conversation.channel_type} size="sm" />
-              <span>{getChannelLabel(conversation.channel_type)}</span>
-              {conversation.connected_account && (
-                <>
-                  <span className="text-gray-300">·</span>
-                  <span>{conversation.connected_account.channel_account_name || "Connected"}</span>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -411,61 +413,46 @@ export function UnifiedMessageThread({
         )}
       </div>
 
-      {/* Message Input Area */}
-      <div className="p-4 bg-white">
+      {/* Minimal Message Input Area */}
+      <div className="p-2.5 bg-transparent flex items-end gap-2 relative z-10 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors shrink-0 mb-0.5">
+          <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
+        </button>
 
-        <div className="relative flex flex-col rounded-[20px] bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all focus-within:ring-2 focus-within:ring-[#3A9B9F]/10 focus-within:border-[#3A9B9F]/30">
-          {/* Main Text Input Part */}
-          <div className="relative p-2 pb-0">
-            <Textarea
-              ref={textareaRef}
-              placeholder="Type your message"
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="resize-none border-0 focus-visible:ring-0 shadow-none px-3 py-2 bg-transparent text-sm overflow-y-auto"
-              style={{ minHeight: "60px", maxHeight: "160px" }}
-              rows={1}
-            />
-
-            {/* Maximize Icon */}
-            <button className="absolute top-3 right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors">
-              <Maximize2 className="h-4 w-4" />
-            </button>
-            <div className="absolute right-4 bottom-0 text-[10px] text-gray-300 pointer-events-none">
-              {messageText.length}/1000
-            </div>
-          </div>
-
-          {/* Toolbar & Send Button */}
-          <div className="flex items-center justify-between px-3 py-3 mt-1">
-            <div className="flex items-center gap-1 text-gray-400">
-              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Add">
-                <Plus className="h-[18px] w-[18px]" />
-              </button>
-              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Emoji">
-                <Smile className="h-[18px] w-[18px]" />
-              </button>
-              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Mention">
-                <AtSign className="h-[18px] w-[18px]" />
-              </button>
-              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Attach file">
-                <Paperclip className="h-[18px] w-[18px]" />
-              </button>
-              <button className="p-1.5 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-colors" title="Voice message">
-                <Mic className="h-[18px] w-[18px]" />
-              </button>
-            </div>
-
-            <Button
-              onClick={handleSend}
-              disabled={!messageText.trim() || isSending}
-              className="h-9 w-9 p-0 rounded-full shadow-sm transition-all flex items-center justify-center bg-[#3A9B9F] hover:bg-[#2F8488] disabled:bg-gray-200 disabled:text-gray-400 text-white"
-            >
-              <Send className="h-[18px] w-[18px] ml-0.5" />
-            </Button>
-          </div>
+        <div className="flex-1 bg-white rounded-3xl border border-gray-300/60 flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
+          <Textarea
+            ref={textareaRef}
+            placeholder=""
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 border-0 focus-visible:ring-0 shadow-none px-3 py-[9px] min-h-[40px] max-h-[120px] resize-none bg-transparent text-[15px] leading-snug overflow-y-auto"
+            rows={1}
+            style={{ height: "40px" }}
+          />
+          <button className="p-2 mb-0.5 text-gray-400 hover:text-gray-600 transition-colors shrink-0" title="Stickers / Attachments">
+            <Paperclip className="w-5 h-5" strokeWidth={1.75} />
+          </button>
         </div>
+
+        {messageText.trim() ? (
+          <button
+            onClick={handleSend}
+            disabled={isSending}
+            className="mb-1 p-2.5 bg-[#0084FF] text-white rounded-full shrink-0 flex items-center justify-center transition-all hover:bg-[#0073E6] active:scale-95 shadow-md disabled:bg-gray-300"
+          >
+            <Send className="w-5 h-5 ml-0.5" strokeWidth={2} />
+          </button>
+        ) : (
+          <div className="flex items-center gap-1 shrink-0 mb-0.5">
+            <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors">
+              <Camera className="w-6 h-6" strokeWidth={1.5} />
+            </button>
+            <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors">
+              <Mic className="w-6 h-6" strokeWidth={1.5} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
