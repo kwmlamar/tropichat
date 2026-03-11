@@ -7,6 +7,7 @@ import {
   Users,
   CalendarDays,
   Settings,
+  User,
   LayoutGrid,
   FileText,
   Zap,
@@ -23,14 +24,14 @@ import type { Customer } from "@/types/database"
 
 // Primary tabs displayed in the bottom bar
 const primaryTabs = [
-  { href: "/dashboard", label: "Chats", icon: MessageCircle, exact: true },
-  { href: "/dashboard/contacts", label: "Contacts", icon: Users, exact: false },
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays, exact: false },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings, exact: false },
+  { href: "/dashboard", label: "Chats", icon: MessageCircle, exact: true },
+  { href: "/dashboard/settings", label: "Profile", icon: User, exact: false },
 ]
 
 // Secondary items shown in the "More" sheet
 const moreItems = [
+  { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
   { href: "/dashboard/automations", label: "Automations", icon: Zap },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
