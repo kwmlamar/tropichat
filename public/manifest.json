@@ -4,8 +4,8 @@
   "description": "Run Your Business Like a Pro, Right From WhatsApp. CRM for Caribbean small businesses.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#213138",
+  "background_color": "#E1F0F1",
+  "theme_color": "#E1F0F1",
   "orientation": "portrait-primary",
   "icons": [
     {

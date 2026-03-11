@@ -65,7 +65,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#213138",
+  themeColor: "#E1F0F1", // Matches the top of the mobile inbox gradient
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

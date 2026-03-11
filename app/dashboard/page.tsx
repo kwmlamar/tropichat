@@ -55,13 +55,25 @@ export default function InboxPage() {
     selectedConversationRef.current = selectedConversation
     
     // Toggle class on body to hide bottom nav on mobile when chat is open
+    // Also smoothly transition the iOS PWA status bar color to match the UI!
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (!metaThemeColor) {
+      metaThemeColor = document.createElement('meta')
+      metaThemeColor.setAttribute('name', 'theme-color')
+      document.head.appendChild(metaThemeColor)
+    }
+
     if (selectedConversation) {
       document.body.classList.add('mobile-chat-open')
+      metaThemeColor.setAttribute('content', '#ffffff') // White for chat thread
     } else {
       document.body.classList.remove('mobile-chat-open')
+      metaThemeColor.setAttribute('content', '#E1F0F1') // Light teal gradient top for inbox
     }
     
-    return () => document.body.classList.remove('mobile-chat-open')
+    return () => {
+      document.body.classList.remove('mobile-chat-open')
+    }
   }, [selectedConversation])
 
   // Fetch connected account IDs for realtime subscriptions
