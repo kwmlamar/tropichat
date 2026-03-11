@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  Inbox,
+  MessageCircle,
   Users,
   CalendarDays,
   Settings,
@@ -23,7 +23,7 @@ import type { Customer } from "@/types/database"
 
 // Primary tabs displayed in the bottom bar
 const primaryTabs = [
-  { href: "/dashboard", label: "Inbox", icon: Inbox, exact: true },
+  { href: "/dashboard", label: "Chats", icon: MessageCircle, exact: true },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users, exact: false },
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays, exact: false },
   { href: "/dashboard/settings", label: "Settings", icon: Settings, exact: false },

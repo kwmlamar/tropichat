@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  Inbox,
+  MessageCircle,
   Users,
   FileText,
   Zap,
@@ -34,7 +34,7 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Inbox", icon: Inbox },
+  { href: "/dashboard", label: "Chats", icon: MessageCircle },
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
@@ -130,12 +130,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             >
               <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400", collapsed ? "h-6 w-6" : "h-5 w-5")} />
               {!collapsed && <span>{item.label}</span>}
-              {!collapsed && item.label === "Inbox" && unreadCount > 0 && (
+              {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </Badge>
               )}
-              {collapsed && item.label === "Inbox" && unreadCount > 0 && (
+              {collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500" />
               )}
             </Link>

@@ -108,11 +108,12 @@ export function UnifiedConversationList({
                 key={filter.value}
                 onClick={() => onChannelFilter(filter.value)}
                 className={cn(
-                  "whitespace-nowrap font-medium transition-all duration-200 relative py-1 text-[15px]",
+                  "whitespace-nowrap font-medium transition-all duration-200 relative py-1 flex items-center justify-center",
+                  filter.value === "all" ? "text-[15px]" : "px-1",
                   isActive ? "text-[#3A9B9F]" : "text-gray-500 hover:text-gray-800"
                 )}
               >
-                {filter.title}
+                {filter.value === "all" ? filter.title : <filter.icon />}
                 {isActive && (
                   <motion.div
                     layoutId="active-tab"
