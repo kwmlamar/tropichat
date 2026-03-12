@@ -62,7 +62,7 @@ export function UnifiedConversationList({
       <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
 
       {/* Mobile Top Header (replaces the removed hamburger nav) */}
-      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-12 pb-6">
+      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-6">
         <div className="w-10" /> {/* spacer to center title */}
         <h1 className="text-[22px] font-bold text-[#213138] font-heading tracking-tight">Chats</h1>
         <button className="h-10 w-10 bg-white shadow-sm flex items-center justify-center text-[#213138] border border-gray-100 rounded-[14px]">

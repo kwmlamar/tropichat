@@ -128,6 +128,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    background-color: #E1F0F1;
     /* Skill: text contrast #1E1B4B equivalent in light mode */
     color: #1e293b;
   }
