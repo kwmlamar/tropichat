@@ -50,6 +50,11 @@ export function UnifiedConversationList({
   onToggleArchived,
 }: UnifiedConversationListProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setIsScrolled(e.currentTarget.scrollTop > 30)
+  }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
@@ -57,89 +62,131 @@ export function UnifiedConversationList({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white lg:border-r border-gray-200 relative">
+    <div className="flex flex-col h-full bg-white lg:border-r border-gray-200 relative overflow-hidden">
       {/* Soft teal gradient background on mobile */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
+      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
 
-      {/* Mobile Top Header (replaces the removed hamburger nav) */}
-      <div className="lg:hidden relative z-10 flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-6">
-        <div className="w-10" /> {/* spacer to center title */}
-        <h1 className="text-[22px] font-bold text-[#213138] font-heading tracking-tight">Chats</h1>
-        <button className="h-10 w-10 bg-white shadow-sm flex items-center justify-center text-[#213138] border border-gray-100 rounded-[14px]">
-          <Bell className="h-5 w-5 text-[#475569]" strokeWidth={2} />
-        </button>
-      </div>
+      {/* Mobile Sticky Top Header (Fixed at the very top) */}
+      <div className={cn(
+        "lg:hidden fixed top-0 left-0 right-0 z-30 px-6 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-3 transition-all duration-300",
+        isScrolled ? "bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm" : "bg-transparent border-b border-transparent"
+      )}>
+        <div className="flex items-center justify-between">
+          <div className="w-10 flex items-center">
+            {/* Minimalist dot menu icon for left side */}
+            <div className="h-9 w-9 bg-white/40 backdrop-blur-md shadow-sm border border-white/50 rounded-full flex items-center justify-center">
+              <div className="flex gap-0.5">
+                <div className="w-1 h-1 bg-gray-600 rounded-full" />
+                <div className="w-1 h-1 bg-gray-600 rounded-full" />
+                <div className="w-1 h-1 bg-gray-600 rounded-full" />
+              </div>
+            </div>
+          </div>
+          
+          <h2 className={cn(
+            "text-[17px] font-bold text-[#213138] transition-all duration-300 transform",
+            isScrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none"
+          )}>
+            Chats
+          </h2>
 
-      {/* Search on Desktop, hidden on Mobile to match clean design (or kept subtle if needed) */}
-      <div className="hidden lg:flex p-4 border-b border-gray-200 items-center gap-2 relative z-10">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search conversations..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="pl-9 bg-gray-100/50 border-transparent hover:bg-gray-100 focus:bg-white focus:border-gray-200 focus:ring-0 transition-all rounded-xl"
-          />
+          <div className="flex items-center gap-2">
+            <button className="h-9 w-9 bg-white shadow-sm flex items-center justify-center text-[#213138] border border-gray-100 rounded-[12px]">
+              <Bell className="h-5 w-5 text-[#475569]" strokeWidth={1.5} />
+            </button>
+            <button className="h-9 w-9 bg-[#3A9B9F] shadow-sm flex items-center justify-center text-white rounded-full">
+              <Plus className="h-5 w-5" strokeWidth={2.5} />
+            </button>
+          </div>
         </div>
-        <button
-          onClick={onToggleArchived}
-          title={showArchived ? "Back to inbox" : "View archived"}
-          className={cn(
-            "p-2 rounded-lg transition-colors flex-shrink-0",
-            showArchived
-              ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
-              : "hover:bg-gray-100 text-gray-500"
-          )}
-        >
-          <ArchiveX className="h-4 w-4" />
-        </button>
       </div>
 
-      {/* Horizontal Filter Tabs (Matches the mobile design: All, Unread, Favorite, +) */}
-      {!showArchived && (
-        <div className="relative z-10 px-6 py-3 lg:border-b lg:border-gray-100 flex items-center overflow-x-auto no-scrollbar gap-5">
-          {/* We'll map the channel filters to look like the text tabs in the design */}
-          {channelFilters.map((filter) => {
-            const isActive = currentChannelFilter === filter.value
-            return (
-              <button
-                key={filter.value}
-                onClick={() => onChannelFilter(filter.value)}
-                className={cn(
-                  "whitespace-nowrap font-medium transition-all duration-200 relative py-1 flex items-center justify-center",
-                  filter.value === "all" ? "text-[15px]" : "px-1",
-                  isActive ? "text-[#3A9B9F]" : "text-gray-500 hover:text-gray-800"
-                )}
-              >
-                {filter.value === "all" ? filter.title : <filter.icon />}
-                {isActive && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute inset-0 bg-white rounded-xl -z-10 shadow-[0_2px_12px_rgba(58,155,159,0.15)] border border-white/50"
-                    style={{ padding: '0 16px', margin: '0 -16px' }}
-                  />
-                )}
-              </button>
-            )
-          })}
-          {/* Plus button from design */}
-          <button className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#3A9B9F] transition-colors rounded-full hover:bg-white/50">
-            <Plus className="w-5 h-5" />
+      {/* Main Conversation Area (Scrollable) */}
+      <div className="flex-1 overflow-y-auto relative z-10 pt-[calc(env(safe-area-inset-top)+1rem)]" onScroll={onScroll}>
+        {/* Large WhatsApp-style Sidebar Title */}
+        <div className="lg:hidden px-6 pt-10 pb-4">
+          <h1 className="text-[34px] font-bold text-[#213138] tracking-tight font-heading">Chats</h1>
+        </div>
+
+        {/* Mobile Search Bar (Directly below Title) */}
+        <div className="lg:hidden px-6 pb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="pl-10 h-10 bg-gray-100/60 border-transparent transition-all rounded-[12px] text-[15px]"
+            />
+          </div>
+        </div>
+
+        {/* Desktop Header Content (Kept hidden on mobile now as we have the scrollable one) */}
+        <div className="hidden lg:flex p-4 border-b border-gray-200 items-center gap-2 relative z-10">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="pl-9 bg-gray-100/50 border-transparent hover:bg-gray-100 focus:bg-white focus:border-gray-200 focus:ring-0 transition-all rounded-xl"
+            />
+          </div>
+          <button
+            onClick={onToggleArchived}
+            title={showArchived ? "Back to inbox" : "View archived"}
+            className={cn(
+              "p-2 rounded-lg transition-colors flex-shrink-0",
+              showArchived
+                ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
+                : "hover:bg-gray-100 text-gray-500"
+            )}
+          >
+            <ArchiveX className="h-4 w-4" />
           </button>
         </div>
-      )}
 
+        {/* Horizontal Filter Tabs (Part of scrollable area on mobile) */}
+        {!showArchived && (
+          <div className="px-6 py-3 lg:border-b lg:border-gray-100 flex items-center overflow-x-auto no-scrollbar gap-5">
+            {channelFilters.map((filter) => {
+              const isActive = currentChannelFilter === filter.value
+              return (
+                <button
+                  key={filter.value}
+                  onClick={() => onChannelFilter(filter.value)}
+                  className={cn(
+                    "whitespace-nowrap font-medium transition-all duration-200 relative py-1 flex items-center justify-center",
+                    filter.value === "all" ? "text-[15px]" : "px-1",
+                    isActive ? "text-[#3A9B9F]" : "text-gray-500 hover:text-gray-800"
+                  )}
+                >
+                  {filter.value === "all" ? filter.title : <filter.icon />}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-tab"
+                      className="absolute inset-0 bg-white rounded-xl -z-10 shadow-[0_2px_12px_rgba(58,155,159,0.15)] border border-white/50"
+                      style={{ padding: '0 16px', margin: '0 -16px' }}
+                    />
+                  )}
+                </button>
+              )
+            })}
+            <button className="hidden lg:flex ml-auto flex-shrink-0 w-8 h-8 items-center justify-center text-gray-400 hover:text-[#3A9B9F] transition-colors rounded-full hover:bg-white/50">
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
-      {/* Archived label */}
-      {showArchived && (
-        <div className="px-5 py-3 border-b border-gray-200 flex items-center gap-2 bg-gray-50/50">
-          <ArchiveX className="h-4 w-4 text-gray-500" />
-          <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Archived conversations</span>
-        </div>
-      )}
+        {/* Archived label */}
+        {showArchived && (
+          <div className="px-5 py-3 border-b border-gray-200 flex items-center gap-2 bg-gray-50/50">
+            <ArchiveX className="h-4 w-4 text-gray-500" />
+            <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Archived conversations</span>
+          </div>
+        ) }
 
-      {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto relative">
+        {/* Conversation list container */}
         <div className={cn(
           "transition-all duration-300",
           loading && conversations.length > 0 ? "opacity-60 grayscale-[20%]" : "opacity-100"
