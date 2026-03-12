@@ -204,9 +204,9 @@ export function UnifiedMessageThread({
 
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white relative overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100 bg-white/95 backdrop-blur-md sticky top-0 z-20 pt-[calc(env(safe-area-inset-top)+0.5rem)] lg:pt-4">
         <div className="flex items-center gap-1 lg:gap-3">
           {onBack && (
             <button
@@ -414,7 +414,7 @@ export function UnifiedMessageThread({
       </div>
 
       {/* Minimal Message Input Area */}
-      <div className="p-2.5 bg-transparent flex items-end gap-2 relative z-10 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div className="p-2.5 bg-white/95 backdrop-blur-md border-t border-gray-50 flex items-end gap-2 relative z-20 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:pb-3">
         <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>

@@ -47,12 +47,11 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen h-[100dvh] bg-gray-50 flex overflow-hidden">
       <Sidebar customer={customer} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
       {/* Main content */}
-      <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-72")}>
-        {/* Page content — scrolls internally. pb-16 on mobile reserves space for bottom nav. */}
+      <div className={cn("flex flex-col flex-1 min-w-0 h-screen h-[100dvh] overflow-hidden transition-all duration-300", isCollapsed ? "lg:pl-20" : "lg:pl-72")}>
         <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           {children}
         </main>

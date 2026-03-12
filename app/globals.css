@@ -426,6 +426,7 @@ body.mobile-chat-open .bottom-nav-container {
 
 @media (max-width: 1024px) {
   body.mobile-chat-open main {
+    overflow: hidden !important;
     padding-bottom: 0 !important;
   }
 }
