@@ -204,13 +204,13 @@ export function UnifiedMessageThread({
 
 
   return (
-    <div className="flex flex-col h-full bg-white relative overflow-hidden">
+    <div className="flex flex-col h-full bg-white relative overflow-hidden h-[100dvh]">
       {/* Soft teal gradient background on mobile */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
+      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/20 via-[#3A9B9F]/8 to-transparent lg:hidden pointer-events-none z-0" />
 
       {/* Header */}
-      <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4 border-b border-gray-100/50 bg-white/60 backdrop-blur-xl relative z-20 pt-[calc(env(safe-area-inset-top)+0.25rem)] lg:pt-4">
-        <div className="flex items-center gap-1.5 lg:gap-3">
+      <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100/50 bg-white/70 backdrop-blur-2xl relative z-20 pt-[calc(env(safe-area-inset-top)+0.75rem)] lg:pt-4 shadow-sm">
+        <div className="flex items-center gap-2 lg:gap-3">
           {onBack && (
             <button
               onClick={onBack}
@@ -277,7 +277,7 @@ export function UnifiedMessageThread({
 
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 relative z-10 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-6 py-4 relative z-10 scrollbar-hide overscroll-contain">
         {loading && messages.length === 0 ? (
           <div className="space-y-4">
             <SkeletonMessage direction="inbound" />
@@ -418,7 +418,7 @@ export function UnifiedMessageThread({
       </div>
 
       {/* Message Input Area (Anchored to bottom) */}
-      <div className="flex-shrink-0 p-2 lg:p-3 bg-white/80 backdrop-blur-xl border-t border-gray-100/50 flex items-end gap-2 relative z-20 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] lg:pb-3">
+      <div className="flex-shrink-0 p-2 lg:p-3 bg-white/80 backdrop-blur-2xl border-t border-gray-100/60 flex items-end gap-2 relative z-20 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] lg:pb-3">
         <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>
