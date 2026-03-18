@@ -65,10 +65,10 @@ export default function InboxPage() {
 
     if (selectedConversation) {
       document.body.classList.add('mobile-chat-open')
-      metaThemeColor.setAttribute('content', '#E1F0F1') // Keep light teal for seamless gradient matching
+      metaThemeColor.setAttribute('content', '#ffffff') // Match white background
     } else {
       document.body.classList.remove('mobile-chat-open')
-      metaThemeColor.setAttribute('content', '#E1F0F1') // Light teal gradient top for inbox
+      metaThemeColor.setAttribute('content', '#ffffff') // Match white background
     }
     
     return () => {

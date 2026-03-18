@@ -135,68 +135,42 @@ export function UnifiedMessageThread({
   // Modern Welcome Empty state
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#F8FAFB] p-8 text-center relative overflow-hidden">
-        {/* Background Decor */}
-        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent opacity-60 z-0" />
-        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-teal-500/5 blur-[120px] rounded-full z-0 animate-float" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-coral-500/5 blur-[120px] rounded-full z-0 animate-float-delayed" />
-
+      <div className="flex flex-col items-center justify-center h-full bg-white p-8 text-center relative overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative z-10 max-w-lg w-full"
         >
-          {/* Main Card */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-[32px] border border-white p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-gray-100">
+          <div className="bg-gray-50/50 rounded-[32px] border border-gray-100 p-10 shadow-sm">
             <div className="mb-8 relative inline-block">
-              <div className="absolute inset-0 bg-teal-500/20 blur-2xl rounded-full" />
-              <div className="relative rounded-3xl bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] p-5 shadow-lg shadow-teal-500/20">
+              <div className="relative rounded-3xl bg-gray-100 p-5">
                 <Image
                   src="/tropichat-logo.png"
                   alt="TropiChat"
                   width={64}
                   height={64}
-                  unoptimized
-                  className="h-14 w-14 object-contain brightness-0 invert"
+                  className="h-14 w-14 object-contain opacity-50 grayscale"
                 />
               </div>
             </div>
 
-            <h3 className="text-3xl font-extrabold text-[#213138] mb-3 tracking-tight font-[family-name:var(--font-poppins)]">
-              Welcome Back{customerName ? `, ${customerName}` : ""}!
+            <h3 className="text-2xl font-bold text-[#213138] mb-3 tracking-tight">
+              Select a conversation
             </h3>
             <p className="text-base text-gray-500 mb-8 leading-relaxed max-w-xs mx-auto">
-              Ready to grow your business today? Select a conversation from the sidebar to start chatting.
+              Choose someone from the list to start chatting. All your messages will appear here.
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-gray-100">
-              <div className="text-left p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 flex flex-col gap-1 items-start">
-                <div className="p-2 rounded-lg bg-teal-50 text-teal-600 mb-1">
-                  <Inbox className="h-4 w-4" />
+            <div className="flex justify-center gap-4 mt-8 pt-8 border-t border-gray-100">
+              <div className="flex flex-col items-center gap-1">
+                <div className="p-2 rounded-lg bg-gray-100 text-gray-400">
+                  <Inbox className="h-5 w-5" />
                 </div>
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Unified Inbox</span>
-                <span className="text-sm font-semibold text-gray-700">All messages in one view</span>
-              </div>
-              <div className="text-left p-4 rounded-2xl bg-gray-50/50 border border-gray-100/50 flex flex-col gap-1 items-start">
-                <div className="p-2 rounded-lg bg-amber-50 text-amber-600 mb-1">
-                  <Shield className="h-4 w-4" />
-                </div>
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Business Pro</span>
-                <span className="text-sm font-semibold text-gray-700">Enterprise Security</span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unified Inbox</span>
               </div>
             </div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            Inbox is connected and synchronized
-          </motion.div>
         </motion.div>
       </div>
     )
@@ -205,11 +179,9 @@ export function UnifiedMessageThread({
 
   return (
     <div className="flex flex-col h-full bg-white relative overflow-hidden h-[100dvh]">
-      {/* Soft teal gradient background on mobile */}
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-[#3A9B9F]/20 via-[#3A9B9F]/8 to-transparent lg:hidden pointer-events-none z-0" />
 
       {/* Header */}
-      <div className="flex-shrink-0 bg-white/40 backdrop-blur-2xl border-b border-gray-100/50 relative z-20 shadow-sm">
+      <div className="flex-shrink-0 bg-white border-b border-gray-100 relative z-20 shadow-sm">
         <div className="h-[env(safe-area-inset-top)] w-full" />
         <div className="flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4">
           <div className="flex items-center gap-2 lg:gap-3">
@@ -420,7 +392,7 @@ export function UnifiedMessageThread({
       </div>
 
       {/* Message Input Area (Anchored to bottom) */}
-      <div className="flex-shrink-0 bg-white/40 backdrop-blur-2xl border-t border-gray-100/60 relative z-20">
+      <div className="flex-shrink-0 bg-white border-t border-gray-100 relative z-20 pb-safe">
         <div className="p-2 lg:p-3 flex items-end gap-2 lg:pb-3">
         <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
@@ -461,7 +433,7 @@ export function UnifiedMessageThread({
           </div>
         )}
       </div>
-      <div className="h-[env(safe-area-inset-bottom)] w-full" />
+      <div className="h-[env(safe-area-inset-bottom)] w-full bg-white" />
     </div>
   </div>
 )

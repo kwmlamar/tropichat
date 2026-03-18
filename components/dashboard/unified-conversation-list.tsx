@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Inbox, Shield, ArchiveX, Bell, Plus } from "lucide-react"
+import { Search, Inbox, Shield, ArchiveX, Bell, Plus, MoreVertical, Camera } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -63,39 +63,32 @@ export function UnifiedConversationList({
 
   return (
     <div className="flex flex-col h-full bg-white lg:border-r border-gray-200 relative overflow-hidden">
-      {/* Soft teal gradient background on mobile */}
-      <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent lg:hidden pointer-events-none z-0" />
 
       {/* Mobile Sticky Top Header (Fixed at the very top) */}
       <div className={cn(
-        "lg:hidden fixed top-0 left-0 right-0 z-30 px-6 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-3 transition-all duration-300",
-        isScrolled ? "bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm" : "bg-transparent border-b border-transparent"
+        "lg:hidden fixed top-0 left-0 right-0 z-30 px-6 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-3 transition-all duration-300 bg-white",
+        isScrolled ? "border-b border-gray-100 shadow-sm" : "border-b border-transparent"
       )}>
         <div className="flex items-center justify-between">
-          <div className="w-10 flex items-center">
-            {/* Minimalist dot menu icon for left side */}
-            <div className="h-9 w-9 bg-white/40 backdrop-blur-md shadow-sm border border-white/50 rounded-full flex items-center justify-center">
-              <div className="flex gap-0.5">
-                <div className="w-1 h-1 bg-gray-600 rounded-full" />
-                <div className="w-1 h-1 bg-gray-600 rounded-full" />
-                <div className="w-1 h-1 bg-gray-600 rounded-full" />
-              </div>
-            </div>
+          <div className="flex items-center">
+            <button className="h-9 w-9 flex items-center justify-center text-[#213138]">
+              <MoreVertical className="h-6 w-6 rotate-90" />
+            </button>
           </div>
           
           <h2 className={cn(
-            "text-[17px] font-bold text-[#213138] transition-all duration-300 transform",
+            "text-[17px] font-bold text-[#213138] transition-all duration-300 transform absolute left-1/2 -translate-x-1/2",
             isScrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none"
           )}>
             Chats
           </h2>
-
-          <div className="flex items-center gap-2">
-            <button className="h-9 w-9 bg-white shadow-sm flex items-center justify-center text-[#213138] border border-gray-100 rounded-[12px]">
-              <Bell className="h-5 w-5 text-[#475569]" strokeWidth={1.5} />
+ 
+          <div className="flex items-center gap-4">
+            <button className="text-[#213138]">
+              <Camera className="h-6 w-6" strokeWidth={1.5} />
             </button>
-            <button className="h-9 w-9 bg-[#3A9B9F] shadow-sm flex items-center justify-center text-white rounded-full">
-              <Plus className="h-5 w-5" strokeWidth={2.5} />
+            <button className="h-8 w-8 bg-[#25D366] flex items-center justify-center text-white rounded-full">
+              <Plus className="h-5 w-5" strokeWidth={3} />
             </button>
           </div>
         </div>
@@ -111,12 +104,12 @@ export function UnifiedConversationList({
         {/* Mobile Search Bar (Directly below Title) */}
         <div className="lg:hidden px-6 pb-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
-              placeholder="Search conversations..."
+              placeholder="Ask Meta AI or Search"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="pl-10 h-10 bg-gray-100/60 border-transparent transition-all rounded-[12px] text-[15px]"
+              className="pl-10 h-10 bg-gray-100 border-transparent transition-all rounded-[10px] text-[15px]"
             />
           </div>
         </div>
@@ -242,10 +235,8 @@ export function UnifiedConversationList({
                     <button
                       onClick={() => onSelect(conversation)}
                       className={cn(
-                        "w-full flex items-center gap-4 py-3.5 px-6 rounded-3xl text-left transition-all border border-transparent group relative bg-white/40 hover:bg-white/80",
-                        selectedId === conversation.id
-                          ? "bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] ring-1 ring-white/50 z-10"
-                          : ""
+                        "w-full flex items-center gap-3 py-3 px-6 text-left transition-all border-b border-gray-100 group relative",
+                        selectedId === conversation.id ? "bg-gray-50" : "bg-white"
                       )}
                     >
                       {/* Avatar with online dot / channel badge */}
@@ -254,40 +245,37 @@ export function UnifiedConversationList({
                           src={conversation.customer_avatar_url}
                           fallback={getConversationDisplayName(conversation)}
                           size="md"
-                          className="h-14 w-14 rounded-full border-2 border-white shadow-sm"
+                          className="h-14 w-14 rounded-full"
                         />
-                        <div className="absolute -bottom-0.5 -right-0.5">
-                          <ChannelIcon channel={conversation.channel_type} size="sm" />
-                        </div>
+                         <div className="absolute -bottom-0.5 -right-0.5">
+                           <ChannelIcon channel={conversation.channel_type} size="sm" />
+                         </div>
                       </div>
-
+ 
                       {/* Content */}
                       <div className="flex-1 min-w-0 py-1">
                         <div className="flex items-center justify-between mb-0.5">
-                          <span className="font-semibold text-[16px] text-[#213138] truncate tracking-tight pr-2">
+                          <span className="font-bold text-[17px] text-[#213138] truncate tracking-tight pr-2">
                             {getConversationDisplayName(conversation)}
                           </span>
-                          <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
+                          <span className={cn(
+                            "text-[12px] font-medium whitespace-nowrap",
+                            conversation.unread_count > 0 ? "text-[#25D366]" : "text-gray-400"
+                          )}>
                             {conversation.last_message_at
                               ? new Date(conversation.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                               : ""}
                           </span>
                         </div>
-
+ 
                         <div className="flex items-center justify-between">
                           <p className="text-[14px] text-gray-500 truncate leading-snug pr-4">
                             {conversation.last_message_preview || "No messages yet"}
                           </p>
-
+ 
                           <div className="flex items-center gap-1.5 flex-shrink-0">
-                            {conversation.human_agent_enabled && (
-                              <span className="inline-flex items-center justify-center p-1 rounded-full bg-amber-50 text-amber-600 ring-1 ring-amber-200/50" title="Human Agent 7D Active">
-                                <Shield className="h-3 w-3" />
-                              </span>
-                            )}
-
-                            {conversation.unread_count > 0 && (
-                              <div className="h-5 min-w-[20px] rounded-full bg-[#3A9B9F] flex items-center justify-center px-1.5 shadow-[0_2px_8px_rgba(58,155,159,0.4)]">
+                             {conversation.unread_count > 0 && (
+                              <div className="h-5 min-w-[20px] rounded-full bg-[#25D366] flex items-center justify-center px-1.5">
                                 <span className="text-[11px] font-bold text-white leading-none">
                                   {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
                                 </span>

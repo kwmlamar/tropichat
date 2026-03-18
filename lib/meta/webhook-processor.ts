@@ -312,7 +312,7 @@ export async function handleIncomingMessage(
   )
 
   // 4. Insert the message (DB trigger updates conversation stats)
-  const { error: msgError } = await db.from('unified_messages').insert({
+  const { error: msgError } = await db.from('unified_messages').upsert({
     conversation_id: conversationDbId,
     channel_message_id: event.message.id,
     sender_type: 'customer',
@@ -321,6 +321,9 @@ export async function handleIncomingMessage(
     sent_at: event.message.timestamp,
     status: 'delivered',
     metadata: event.message.metadata ?? {},
+  }, {
+    onConflict: 'conversation_id,channel_message_id',
+    ignoreDuplicates: true
   })
 
   if (msgError) {
