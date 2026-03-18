@@ -382,8 +382,7 @@ export default function SettingsPage() {
     <div className="relative min-h-screen lg:min-h-full">
       {/* ================= MOBILE MENU VIEW ================= */}
       <div className={cn("lg:hidden w-full pb-24", !mobileMenuVisible && "hidden")}>
-        {/* Soft Teal Gradient Background */}
-        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-[#3A9B9F]/15 via-[#3A9B9F]/5 to-transparent z-0 pointer-events-none" />
+
 
         {/* Header */}
         <div className="relative z-10 pt-[calc(env(safe-area-inset-top)+1rem)] pb-6 px-6 flex items-center justify-between">
@@ -668,8 +667,8 @@ export default function SettingsPage() {
           <TabsContent value="integrations" className="space-y-10 pb-12">
 
             {/* Hero Banner */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#213138] to-[#2d4654] p-8 text-white">
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 70% 50%, #3A9B9F 0%, transparent 60%)' }} />
+            <div className="relative overflow-hidden rounded-2xl bg-[#213138] p-8 text-white">
+
               <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
