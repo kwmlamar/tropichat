@@ -213,7 +213,7 @@ export function CreateBookingModal({
 
           {/* ---- FORM STEP ---- */}
           {step === 'form' && (
-            <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
+            <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
               {/* Service */}
               <div>
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-3 ml-1">
@@ -442,7 +442,7 @@ export function CreateBookingModal({
 
           {/* ---- CONFIRM STEP ---- */}
           {step === 'confirm' && selectedService && (
-            <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
+            <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
               {/* Summary Card */}
               <div className="rounded-[24px] bg-navy-900 text-white p-6 shadow-xl relative overflow-hidden group">
                 {/* Background Glow */}

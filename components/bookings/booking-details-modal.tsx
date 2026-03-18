@@ -147,7 +147,7 @@ export function BookingDetailsModal({
             <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 blur-3xl rounded-full" />
           </div>
 
-          <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
+          <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-gray-50/50 border border-gray-100 p-3 text-center transition-transform hover:scale-[1.02]">

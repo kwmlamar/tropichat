@@ -18,6 +18,15 @@ const inter = Inter({
   display: "swap",
 });
 
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-plus-jakarta",
+  display: "swap",
+});
+
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tropichat.com";
 
 export const metadata: Metadata = {
@@ -76,7 +85,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${poppins.variable} ${inter.variable} font-sans antialiased`}>
+      <body className={`${poppins.variable} ${inter.variable} ${plusJakartaSans.variable} font-sans antialiased`}>
         {children}
         <Toaster
           position="top-center"
