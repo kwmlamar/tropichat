@@ -87,7 +87,7 @@ export function UnifiedConversationList({
             <button className="text-[#213138]">
               <Camera className="h-6 w-6" strokeWidth={1.5} />
             </button>
-            <button className="h-8 w-8 bg-[#25D366] flex items-center justify-center text-white rounded-full">
+            <button className="h-8 w-8 bg-[#3A9B9F] flex items-center justify-center text-white rounded-full">
               <Plus className="h-5 w-5" strokeWidth={3} />
             </button>
           </div>
