@@ -77,7 +77,7 @@ function MonthView({ calendarDays, dayNames, bookingsForDay, isToday, onBookingC
           const dayBookings = bookingsForDay(day)
           const today = isToday(day)
           return (
-            <div key={day} className={cn("min-h-[110px] rounded-2xl border transition-all duration-300 group overflow-hidden relative", today ? "border-[#3A9B9F] bg-[#3A9B9F]/5 ring-1 ring-[#3A9B9F]/20 shadow-md shadow-teal-500/5" : "border-gray-100 bg-white")}>
+            <div key={idx} className={cn("min-h-[110px] rounded-2xl border transition-all duration-300 group overflow-hidden relative", today ? "border-[#3A9B9F] bg-[#3A9B9F]/5 ring-1 ring-[#3A9B9F]/20 shadow-md shadow-teal-500/5" : "border-gray-100 bg-white")}>
               <div className="p-3">
                 <div className={cn("h-7 w-7 rounded-xl flex items-center justify-center text-xs font-bold mb-2 transition-all", today ? "bg-[#3A9B9F] text-white" : "text-gray-400 group-hover:text-gray-700")}>{day}</div>
                 <div className="space-y-1.5">
@@ -142,6 +142,8 @@ function ListView({ bookings, onBookingClick }: any) {
 export default function BookingsPage() {
   const router = useRouter()
   const today = new Date()
+  
+  // Base State
   const [viewYear, setViewYear] = useState(today.getFullYear())
   const [viewMonth, setViewMonth] = useState(today.getMonth())
   const [view, setView] = useState<'month' | 'list'>('month')
@@ -150,10 +152,11 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true)
   const [filterService, setFilterService] = useState<string>('all')
 
-  // Pagination & Responsive
+  // UI State
   const [isMobile, setIsMobile] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(today)
   const [pageIndex, setPageIndex] = useState(0)
+  const [selectedTime, setSelectedTime] = useState("10:00 AM")
 
   // Modals
   const [createOpen, setCreateOpen] = useState(false)
@@ -192,13 +195,11 @@ export default function BookingsPage() {
 
   const filtered = bookings.filter(b => filterService === 'all' || b.service_id === filterService)
 
-  const analytics = useMemo(() => {
-    return {
-      confirmed: filtered.filter(b => b.status === 'confirmed').length,
-      pending: filtered.filter(b => b.status === 'pending').length,
-      totalGuests: filtered.filter(b => b.status !== 'cancelled').reduce((s, b) => s + b.number_of_people, 0)
-    }
-  }, [filtered])
+  const analytics = useMemo(() => ({
+    confirmed: filtered.filter(b => b.status === 'confirmed').length,
+    pending: filtered.filter(b => b.status === 'pending').length,
+    totalGuests: filtered.filter(b => b.status !== 'cancelled').reduce((s, b) => s + b.number_of_people, 0)
+  }), [filtered])
 
   const carouselDays = useMemo(() => {
     const baseDate = new Date(viewYear, viewMonth, 1)
@@ -212,147 +213,87 @@ export default function BookingsPage() {
     return days
   }, [viewYear, viewMonth, pageIndex])
 
-  const bookingsForDay = (day: number) => {
+  const calendarDays = useMemo(() => {
+    const daysInMonth = getDaysInMonth(viewYear, viewMonth)
+    const firstDayOfWeek = getFirstDayOfMonth(viewYear, viewMonth)
+    const days: (number | null)[] = [...Array(firstDayOfWeek).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
+    while (days.length % 7 !== 0) days.push(null)
+    return days
+  }, [viewYear, viewMonth])
+
+  const bookingsForDay = useCallback((day: number) => {
     const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     return filtered.filter(b => b.booking_date === dateStr)
-  }
+  }, [viewYear, viewMonth, filtered])
 
-  const isToday = (day: number) => day === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()
+  const isToday = useCallback((day: number) => 
+    day === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()
+  , [viewMonth, viewYear, today])
 
   const handleBookingClick = (b: Booking) => { setSelectedBooking(b); setDetailsOpen(true) }
   const handleBookingUpdated = (updated: Booking) => { setBookings(prev => prev.map(b => b.id === updated.id ? updated : b)) }
 
   const headerMonth = carouselDays[0].toLocaleString('en-US', { month: 'long', year: 'numeric' })
-  // --- Mobile Dashboard (Full New Design from UI Reference) ---
-  const MobileDashboardView = () => {
-    const times = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"]
-    const [selectedTime, setSelectedTime] = useState("10:00 AM")
+  const timesList = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"]
 
-    const handleMobileBack = () => {
-      if (window.history.length > 2) {
-        router.back()
-      } else {
-        router.push('/dashboard')
-      }
+  const handleMobileBack = () => {
+    if (window.history.length > 2) {
+      router.back()
+    } else {
+      router.push('/dashboard')
     }
-
-    return (
-      <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
-        {/* Top Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-0">
-          <button 
-            onClick={handleMobileBack}
-            className="h-10 w-10 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-500 active:scale-90 transition-transform"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between px-8 py-3">
-          <h1 className="text-xl font-extrabold text-[#213138] tracking-tight">
-            {headerMonth}
-          </h1>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => setPageIndex(p => p - 1)}
-              className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button 
-              onClick={() => setPageIndex(p => p + 1)}
-              className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* 12-Day Grid */}
-        <div className="px-6 flex-1 flex flex-col justify-start">
-          <div className="grid grid-cols-3 gap-2.5 mb-6">
-            {carouselDays.map((date, idx) => {
-              const dayNum = date.getDate()
-              const dayName = DAY_NAMES[date.getDay()]
-              const isSelected = selectedDate.toDateString() === date.toDateString()
-              
-              return (
-                <motion.button
-                  key={idx}
-                  onClick={() => setSelectedDate(date)}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.02 }}
-                  className={cn(
-                    "flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative",
-                    isSelected 
-                      ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" 
-                      : "bg-white border-transparent text-[#213138] shadow-sm"
-                  )}
-                >
-                  <span className={cn(
-                    "text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5",
-                    isSelected ? "text-white/60" : "text-gray-400"
-                  )}>
-                    {dayName}
-                  </span>
-                  <span className={cn(
-                    "text-3xl font-extrabold leading-tight",
-                    isSelected ? "text-white" : "text-[#213138]"
-                  )}>
-                    {dayNum}
-                  </span>
-                </motion.button>
-              )
-            })}
-          </div>
-
-          {/* Time Selector */}
-          <div className="mb-2">
-            <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
-              {times.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => setSelectedTime(time)}
-                  className={cn(
-                    "px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border",
-                    selectedTime === time 
-                      ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10"
-                      : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50"
-                  )}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Footer with Main CTA */}
-        <div className="p-8 pb-10 bg-white/50 backdrop-blur-sm border-t border-gray-100/30">
-          <Button 
-            onClick={() => setCreateOpen(true)}
-            className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[24px] font-bold text-base shadow-xl shadow-teal-500/20 border-none transform active:scale-95 transition-all"
-          >
-            Book Appointment
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   return (
     <div className="h-full flex flex-col bg-[#F8FAFB] relative overflow-hidden">
       {isMobile ? (
-        <MobileDashboardView />
+        /* Mobile Dashboard Layout */
+        <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
+          <div className="flex items-center justify-between px-6 pt-6 pb-0">
+            <button onClick={handleMobileBack} className="h-10 w-10 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-500 active:scale-90 transition-transform">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between px-8 py-3">
+            <h1 className="text-xl font-extrabold text-[#213138] tracking-tight">{headerMonth}</h1>
+            <div className="flex gap-2">
+              <button onClick={() => setPageIndex(p => p - 1)} className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"><ChevronLeft className="h-4 w-4" /></button>
+              <button onClick={() => setPageIndex(p => p + 1)} className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"><ChevronRight className="h-4 w-4" /></button>
+            </div>
+          </div>
+          <div className="px-6 flex-1 flex flex-col justify-start">
+            <div className="grid grid-cols-3 gap-2.5 mb-6">
+              {carouselDays.map((date, idx) => {
+                const dayNum = date.getDate()
+                const dayName = DAY_NAMES[date.getDay()]
+                const isSelected = selectedDate.toDateString() === date.toDateString()
+                return (
+                  <motion.button key={idx} onClick={() => setSelectedDate(date)} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.02 }} className={cn("flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative", isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white border-transparent text-[#213138] shadow-sm")}>
+                    <span className={cn("text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5", isSelected ? "text-white/60" : "text-gray-400")}>{dayName}</span>
+                    <span className={cn("text-3xl font-extrabold leading-tight", isSelected ? "text-white" : "text-[#213138]")}>{dayNum}</span>
+                  </motion.button>
+                )
+              })}
+            </div>
+            <div className="mb-2">
+              <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
+                {timesList.map((t) => (
+                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50")}>{t}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="p-8 pb-10 bg-white/50 backdrop-blur-sm border-t border-gray-100/30">
+            <Button onClick={() => setCreateOpen(true)} className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[24px] font-bold text-base shadow-xl shadow-teal-500/20 border-none transform active:scale-95 transition-all">Book Appointment</Button>
+          </div>
+        </div>
       ) : (
+        /* Desktop Dashboard Layout */
         <>
-          {/* Desktop Background Decorations */}
           <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent opacity-60 z-0 pointer-events-none" />
           <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] bg-teal-500/5 blur-[120px] rounded-full z-0 pointer-events-none" />
           <div className="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-coral-500/5 blur-[120px] rounded-full z-0 pointer-events-none" />
 
-          {/* Desktop Top Bar */}
           <div className="relative z-10 bg-white/70 backdrop-blur-xl border-b border-white/40 px-8 py-6 flex items-center justify-between gap-6 flex-wrap">
             <div>
               <h1 className="text-3xl font-extrabold text-[#213138] tracking-tight font-[family-name:var(--font-poppins)]">Bookings</h1>
@@ -375,14 +316,12 @@ export default function BookingsPage() {
             </div>
           </div>
 
-          {/* Desktop Stats */}
           <div className="relative z-10 px-8 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
             <StatCard title="Confirmed" val={analytics.confirmed} color="#3A9B9F" icon={CheckCircle} />
             <StatCard title="Pending" val={analytics.pending} color="#FF8B66" icon={Clock} />
             <StatCard title="Total Guests" val={analytics.totalGuests} color="#213138" icon={Users} />
           </div>
 
-          {/* Desktop Content */}
           <div className="relative z-10 flex-1 flex flex-col px-8 pb-8 overflow-hidden">
             <div className="flex-1 bg-white/40 backdrop-blur-sm rounded-[32px] border border-white/60 shadow-inner flex flex-col overflow-hidden">
               <div className="flex items-center justify-between px-8 py-5 border-b border-white/40">
@@ -397,13 +336,17 @@ export default function BookingsPage() {
                 {loading ? <div className="flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" /></div> : (
                   <AnimatePresence mode="wait">
                     <motion.div key={view + monthStr} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.3 }} className="h-full">
-                      {view === 'month' ? <MonthView calendarDays={useMemo(() => {
-                        const daysInMonth = getDaysInMonth(viewYear, viewMonth)
-                        const firstDayOfWeek = getFirstDayOfMonth(viewYear, viewMonth)
-                        const days: (number | null)[] = [...Array(firstDayOfWeek).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)]
-                        while (days.length % 7 !== 0) days.push(null)
-                        return days
-                      }, [viewYear, viewMonth])} dayNames={DAY_NAMES} bookingsForDay={bookingsForDay} isToday={isToday} onBookingClick={handleBookingClick} /> : <ListView bookings={filtered} onBookingClick={handleBookingClick} />}
+                      {view === 'month' ? (
+                        <MonthView 
+                          calendarDays={calendarDays} 
+                          dayNames={DAY_NAMES} 
+                          bookingsForDay={bookingsForDay} 
+                          isToday={isToday} 
+                          onBookingClick={handleBookingClick} 
+                        />
+                      ) : (
+                        <ListView bookings={filtered} onBookingClick={handleBookingClick} />
+                      )}
                     </motion.div>
                   </AnimatePresence>
                 )}
@@ -413,7 +356,6 @@ export default function BookingsPage() {
         </>
       )}
 
-      {/* Shared Modals */}
       <CreateBookingModal open={createOpen} onClose={() => setCreateOpen(false)} onCreated={() => { fetchBookings(); setCreateOpen(false) }} />
       <BookingDetailsModal open={detailsOpen} booking={selectedBooking} onClose={() => { setDetailsOpen(false); setSelectedBooking(null) }} onUpdated={handleBookingUpdated} />
     </div>
