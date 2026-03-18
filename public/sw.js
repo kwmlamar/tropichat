@@ -90,3 +90,51 @@ self.addEventListener("fetch", (event) => {
       })
   );
 });
+
+// ==================== PWA PUSH NOTIFICATIONS ====================
+
+// Push: handle incoming system notifications
+self.addEventListener("push", (event) => {
+  if (!(self.Notification && self.Notification.permission === "granted")) {
+    return;
+  }
+
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || "New Message - TropiChat";
+  const options = {
+    body: data.body || "You have a new message from a customer.",
+    icon: "/tropichat-logo.png",
+    badge: "/tropichat-logo.png", // Small icon for top bar
+    tag: data.tag || "new_message", // Consolidate multiple notifications
+    data: {
+      url: data.url || "/dashboard",
+      conversationId: data.conversationId,
+    },
+    vibrate: [100, 50, 100],
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Click: handle tapping the notification
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const urlToOpen = new URL(event.notification.data.url, self.location.origin).href;
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windowClients) => {
+      // If a dashboard window is already open, focus it and navigate
+      for (let i = 0; i < windowClients.length; i++) {
+        const client = windowClients[i];
+        if (client.url.includes("/dashboard") && "focus" in client) {
+          return client.focus().then((c) => c.navigate(urlToOpen));
+        }
+      }
+      // If no dashboard window is open, open a new one
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});

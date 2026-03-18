@@ -49,6 +49,7 @@ import {
   type BusinessProfile,
 } from "@/lib/meta-connections"
 import { toast } from "sonner"
+import { subscribeToPush, unsubscribeFromPush, getNotificationPermission, isPushSupported } from "@/lib/push-notifications"
 import type { Customer, BusinessHours, MetaChannel } from "@/types/database"
 
 const timezones = [
@@ -133,6 +134,16 @@ export default function SettingsPage() {
   const [wpSaving, setWpSaving] = useState(false)
   const [wpSaved, setWpSaved] = useState(false)
   const [wpLoaded, setWpLoaded] = useState(false)
+
+  // Push notifications state
+  const [pushEnabled, setPushEnabled] = useState(false)
+  const [pushLoading, setPushLoading] = useState(false)
+  const [pushSupported, setPushSupported] = useState(true)
+
+  useEffect(() => {
+    setPushSupported(isPushSupported())
+    setPushEnabled(getNotificationPermission() === 'granted')
+  }, [])
 
   // Fetch customer data
   useEffect(() => {
@@ -352,6 +363,28 @@ export default function SettingsPage() {
     setWpSaving(false)
   }
 
+  const handleTogglePush = async (enabled: boolean) => {
+    setPushLoading(true)
+    if (enabled) {
+      const { success, error } = await subscribeToPush()
+      if (success) {
+        setPushEnabled(true)
+        toast.success("Push notifications enabled")
+      } else {
+        toast.error(error || "Failed to enable notifications")
+      }
+    } else {
+      const { success, error } = await unsubscribeFromPush()
+      if (success) {
+        setPushEnabled(false)
+        toast.success("Push notifications disabled")
+      } else {
+        toast.error(error || "Failed to disable notifications")
+      }
+    }
+    setPushLoading(false)
+  }
+
   const updateDayHours = (
     day: keyof BusinessHours,
     field: "start" | "end" | "enabled",
@@ -439,6 +472,7 @@ export default function SettingsPage() {
               <MobileTabLink icon={Users} label="Team Management" onClick={() => handleMobileNav('team')} />
               <MobileTabLink icon={Link2} label="Integrations" onClick={() => handleMobileNav('integrations')} />
               <MobileTabLink icon={Building2} label="WhatsApp Profile" onClick={() => handleMobileNav('whatsapp')} />
+              <MobileTabLink icon={Bell} label="Notifications" onClick={() => handleMobileNav('notifications')} />
               <MobileTabLink icon={CreditCard} label="Billing & Plan" onClick={() => handleMobileNav('billing')} />
             </div>
           </div>
@@ -481,6 +515,7 @@ export default function SettingsPage() {
             <TabsTrigger value="autoreply"><MessageSquare className="h-4 w-4 mr-2" />Auto-Reply</TabsTrigger>
             <TabsTrigger value="team"><Users className="h-4 w-4 mr-2" />Team</TabsTrigger>
             <TabsTrigger value="integrations"><Link2 className="h-4 w-4 mr-2" />Integrations</TabsTrigger>
+            <TabsTrigger value="notifications"><Bell className="h-4 w-4 mr-2" />Notifications</TabsTrigger>
             <TabsTrigger value="whatsapp"><Building2 className="h-4 w-4 mr-2" />WhatsApp Profile</TabsTrigger>
             <TabsTrigger value="billing"><CreditCard className="h-4 w-4 mr-2" />Billing</TabsTrigger>
           </TabsList>
@@ -926,6 +961,56 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications" className="space-y-10 pb-12">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-9 w-9 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+                  <Bell className="h-5 w-5 text-orange-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900">Push Notifications</h4>
+                  <p className="text-xs text-[#475569]">Receive real-time alerts on your phone or desktop even when the app is closed</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 pr-4">
+                    <p className="font-semibold text-gray-900">System Alerts</p>
+                    <p className="text-sm text-[#475569] mt-1">
+                      {pushSupported 
+                        ? "Get notified of new messages from WhatsApp, Instagram, and Facebook Messenger directly on your device's lock screen."
+                        : "Push notifications are not supported on this browser. Please use a modern browser like Chrome, Safari, or Edge."}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {pushLoading && <Loader2 className="h-4 w-4 animate-spin text-[#3A9B9F]" />}
+                    <Switch 
+                      disabled={!pushSupported || pushLoading} 
+                      checked={pushEnabled} 
+                      onCheckedChange={handleTogglePush}
+                    />
+                  </div>
+                </div>
+
+                {pushEnabled && (
+                  <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Connected Devices</p>
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                          <CheckCircle className="h-4 w-4 text-emerald-500" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-700">This Device is registered</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </TabsContent>
 
           {/* Billing Tab */}

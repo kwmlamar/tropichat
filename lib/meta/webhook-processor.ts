@@ -4,6 +4,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import webpush from 'web-push'
 import type { IncomingWebhookEvent, MessageStatusUpdate } from '@/types/unified-inbox'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,6 +24,15 @@ export function getServiceClient(): ServiceClient {
 }
 
 const META_GRAPH = 'https://graph.facebook.com/v19.0'
+
+// Initialize Web Push
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:contact@tropitechsolutions.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  )
+}
 
 /**
  * Fetch a Messenger user's name and profile pic using their PSID.
@@ -133,6 +143,56 @@ async function upsertChannelContact(
     }
   } catch (e) {
     console.error(`[Webhook:${channelType}] Contact upsert exception:`, e)
+  }
+}
+
+/**
+ * Trigger a push notification for a new message.
+ * Fetches all active subscriptions for the user and sends a web-push payload.
+ */
+async function triggerPushNotifications(
+  db: ServiceClient,
+  userId: string,
+  title: string,
+  body: string,
+  data: Record<string, unknown>
+): Promise<void> {
+  try {
+    const { data: subs, error } = await db
+      .from('push_subscriptions')
+      .select('*')
+      .eq('customer_id', userId)
+
+    if (error || !subs || subs.length === 0) return
+
+    const payload = JSON.stringify({
+      title,
+      body,
+      url: data.url || '/dashboard',
+      ...data
+    })
+
+    const pushPromises = subs.map(sub => {
+      const pushConfig = {
+        endpoint: sub.endpoint,
+        keys: {
+          p256dh: sub.p256dh,
+          auth: sub.auth
+        }
+      }
+      return webpush.sendNotification(pushConfig, payload).catch((err: any) => {
+        // If the subscription is gone or expired, remove it from the DB
+        if (err.statusCode === 404 || err.statusCode === 410) {
+          console.log('[Push] Removing expired subscription:', sub.id)
+          return db.from('push_subscriptions').delete().eq('id', sub.id)
+        }
+        console.error('[Push] Error sending notification:', err)
+      })
+    })
+
+    await Promise.allSettled(pushPromises)
+  } catch (e) {
+    console.error('[Push] Trigger exception:', e)
   }
 }
 
@@ -328,6 +388,22 @@ export async function handleIncomingMessage(
 
   if (msgError) {
     console.error(`[Webhook:${event.channel_type}] Failed to insert message:`, msgError)
+  } else {
+    // 5. Trigger push notification for browser/mobile
+    const channelName = event.channel_type === 'whatsapp' ? 'WhatsApp' : 
+                      event.channel_type === 'instagram' ? 'Instagram' : 'Facebook'
+    
+    await triggerPushNotifications(
+      db,
+      account.user_id,
+      `${resolvedName ?? 'New Message'} on ${channelName}`,
+      event.message.content?.substring(0, 100) || "Image or other attachment",
+      {
+        url: `/dashboard?conversation=${conversationDbId}`,
+        conversationId: conversationDbId,
+        channel: event.channel_type
+      }
+    )
   }
 }
 

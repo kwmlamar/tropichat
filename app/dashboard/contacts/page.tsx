@@ -15,6 +15,7 @@ import {
   Filter,
   MessageCircle,
   Instagram,
+  Facebook,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -155,12 +156,13 @@ export default function ContactsPage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         {[
           { label: "Total Contacts", value: contacts.length, icon: User, color: "teal" },
           { label: "Active Recently", value: contacts.filter(c => c.last_message_at).length, icon: Zap, color: "coral" },
           { label: "WhatsApp", value: contacts.filter(c => c.channel_type === 'whatsapp').length, icon: MessageCircle, color: "teal" },
           { label: "Instagram", value: contacts.filter(c => c.channel_type === 'instagram').length, icon: Instagram, color: "coral" },
+          { label: "Facebook", value: contacts.filter(c => c.channel_type === 'messenger').length, icon: Facebook, color: "teal" },
         ].map((stat, i) => (
           <div
             key={i}

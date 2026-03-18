@@ -70,7 +70,7 @@ const channelConfig = {
     icon: (className: string) => <InstaSvg className={className} />,
   },
   messenger: {
-    label: "Messenger",
+    label: "Facebook Messenger",
     color: "text-[#0084FF]",
     bg: "bg-[#0084FF]/10",
     borderColor: "border-[#0084FF]/20",

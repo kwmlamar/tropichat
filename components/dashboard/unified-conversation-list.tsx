@@ -35,7 +35,7 @@ const channelFilters: { title: string; icon: any; value: ChannelType | "all" }[]
   { title: "All", icon: AllIcon, value: "all" },
   { title: "WhatsApp", icon: WhatsAppIcon, value: "whatsapp" },
   { title: "Instagram", icon: InstagramIcon, value: "instagram" },
-  { title: "Messenger", icon: MessengerIcon, value: "messenger" },
+  { title: "Facebook", icon: MessengerIcon, value: "messenger" },
 ]
 
 export function UnifiedConversationList({
