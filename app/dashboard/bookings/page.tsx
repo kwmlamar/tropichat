@@ -223,53 +223,128 @@ export default function BookingsPage() {
   const handleBookingUpdated = (updated: Booking) => { setBookings(prev => prev.map(b => b.id === updated.id ? updated : b)) }
 
   const headerMonth = carouselDays[0].toLocaleString('en-US', { month: 'long', year: 'numeric' })
-  const times = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"]
-  const [selectedTime, setSelectedTime] = useState("10:00 AM")
+  // --- Mobile Dashboard (Full New Design from UI Reference) ---
+  const MobileDashboardView = () => {
+    const times = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM"]
+    const [selectedTime, setSelectedTime] = useState("10:00 AM")
+
+    const handleMobileBack = () => {
+      if (window.history.length > 2) {
+        router.back()
+      } else {
+        router.push('/dashboard')
+      }
+    }
+
+    return (
+      <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
+        {/* Top Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-0">
+          <button 
+            onClick={handleMobileBack}
+            className="h-10 w-10 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-500 active:scale-90 transition-transform"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between px-8 py-3">
+          <h1 className="text-xl font-extrabold text-[#213138] tracking-tight">
+            {headerMonth}
+          </h1>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => setPageIndex(p => p - 1)}
+              className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button 
+              onClick={() => setPageIndex(p => p + 1)}
+              className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm transition-all active:scale-95"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* 12-Day Grid */}
+        <div className="px-6 flex-1 flex flex-col justify-start">
+          <div className="grid grid-cols-3 gap-2.5 mb-6">
+            {carouselDays.map((date, idx) => {
+              const dayNum = date.getDate()
+              const dayName = DAY_NAMES[date.getDay()]
+              const isSelected = selectedDate.toDateString() === date.toDateString()
+              
+              return (
+                <motion.button
+                  key={idx}
+                  onClick={() => setSelectedDate(date)}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.02 }}
+                  className={cn(
+                    "flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative",
+                    isSelected 
+                      ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" 
+                      : "bg-white border-transparent text-[#213138] shadow-sm"
+                  )}
+                >
+                  <span className={cn(
+                    "text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5",
+                    isSelected ? "text-white/60" : "text-gray-400"
+                  )}>
+                    {dayName}
+                  </span>
+                  <span className={cn(
+                    "text-3xl font-extrabold leading-tight",
+                    isSelected ? "text-white" : "text-[#213138]"
+                  )}>
+                    {dayNum}
+                  </span>
+                </motion.button>
+              )
+            })}
+          </div>
+
+          {/* Time Selector */}
+          <div className="mb-2">
+            <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
+              {times.map((time) => (
+                <button
+                  key={time}
+                  onClick={() => setSelectedTime(time)}
+                  className={cn(
+                    "px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border",
+                    selectedTime === time 
+                      ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10"
+                      : "bg-white text-gray-400 border-gray-100 hover:bg-gray-50"
+                  )}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer with Main CTA */}
+        <div className="p-8 pb-10 bg-white/50 backdrop-blur-sm border-t border-gray-100/30">
+          <Button 
+            onClick={() => setCreateOpen(true)}
+            className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[24px] font-bold text-base shadow-xl shadow-teal-500/20 border-none transform active:scale-95 transition-all"
+          >
+            Book Appointment
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="h-full flex flex-col bg-[#F8FAFB] relative overflow-hidden">
       {isMobile ? (
-        <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
-          {/* Mobile Back & Title */}
-          <div className="flex items-center justify-between px-6 pt-8 pb-2">
-            <button onClick={() => router.back()} className="h-12 w-12 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-500 active:scale-90 transition-transform"><ArrowLeft className="h-6 w-6" /></button>
-          </div>
-          <div className="flex items-center justify-between px-8 py-4">
-            <h1 className="text-2xl font-extrabold text-[#213138] tracking-tight">{headerMonth}</h1>
-            <div className="flex gap-2">
-              <button onClick={() => setPageIndex(p => p - 1)} className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPageIndex(p => p + 1)} className="p-1 px-2 border border-gray-100 bg-white rounded-lg text-gray-400 hover:text-navy-900 shadow-sm"><ChevronRight className="h-4 w-4" /></button>
-            </div>
-          </div>
-          {/* Mobile Grid */}
-          <div className="px-6 flex-1 overflow-y-auto no-scrollbar pb-32">
-            <div className="grid grid-cols-3 gap-3 mb-8">
-              {carouselDays.map((date, idx) => {
-                const dayNum = date.getDate()
-                const dayName = DAY_NAMES[date.getDay()]
-                const isSelected = selectedDate.toDateString() === date.toDateString()
-                return (
-                  <motion.button key={idx} onClick={() => setSelectedDate(date)} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.03 }} className={cn("flex flex-col items-start justify-between p-5 rounded-[32px] border transition-all h-36 relative", isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/20 z-10" : "bg-white border-transparent text-[#213138] shadow-sm")}>
-                    <span className={cn("text-[10px] font-bold uppercase tracking-widest leading-none", isSelected ? "text-white/60" : "text-gray-400")}>{dayName}</span>
-                    <span className={cn("text-4xl font-extrabold mt-1", isSelected ? "text-white" : "text-[#213138]")}>{dayNum}</span>
-                  </motion.button>
-                )
-              })}
-            </div>
-            {/* Time Slots */}
-            <div className="mb-4">
-              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-4 -mx-1 px-1">
-                {times.map((t) => (
-                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-6 py-3.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white text-gray-400 border-gray-100")}>{t}</button>
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* Mobile Footer CTA */}
-          <div className="fixed bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[#F5F7FA] via-[#F5F7FA] to-transparent z-[110]">
-            <Button onClick={() => setCreateOpen(true)} className="w-full h-16 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[28px] font-bold text-lg shadow-2xl shadow-teal-500/20 border-none transition-all active:scale-95">Book Appointment</Button>
-          </div>
-        </div>
+        <MobileDashboardView />
       ) : (
         <>
           {/* Desktop Background Decorations */}
