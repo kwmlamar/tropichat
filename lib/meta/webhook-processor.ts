@@ -26,12 +26,17 @@ export function getServiceClient(): ServiceClient {
 const META_GRAPH = 'https://graph.facebook.com/v19.0'
 
 // Initialize Web Push
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+const vPubKey = process.env.VAPID_PUBLIC_KEY || process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+const vPrivKey = process.env.VAPID_PRIVATE_KEY
+
+if (vPubKey && vPrivKey) {
   webpush.setVapidDetails(
     'mailto:contact@tropitechsolutions.com',
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
+    vPubKey,
+    vPrivKey
   )
+} else {
+  console.warn('[Push] Missing VAPID keys. Notifications will not be sent.')
 }
 
 /**
