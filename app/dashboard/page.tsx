@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 import { UnifiedConversationList } from "@/components/dashboard/unified-conversation-list"
 import { UnifiedMessageThread } from "@/components/dashboard/unified-message-thread"
 import { UnifiedContactDetails } from "@/components/dashboard/unified-contact-details"
@@ -41,6 +42,9 @@ export default function InboxPage() {
 
   const [customerName, setCustomerName] = useState<string | null>(null)
   const debouncedSearch = useDebounce(searchQuery, 300)
+
+  const searchParams = useSearchParams()
+  const conversationIdParam = searchParams.get("conversation")
 
   // Track mount status for async safety
   const mountedRef = useRef(true)
@@ -119,6 +123,16 @@ export default function InboxPage() {
   useEffect(() => {
     fetchConversations()
   }, [fetchConversations])
+
+  // Handle auto-selecting conversation from URL query parameter (e.g. from push notifications)
+  useEffect(() => {
+    if (conversationIdParam && conversations.length > 0 && !selectedConversation) {
+      const conv = conversations.find(c => c.id === conversationIdParam)
+      if (conv) {
+        setSelectedConversation(conv)
+      }
+    }
+  }, [conversationIdParam, conversations, selectedConversation])
 
   // Combined: Initial fetch + Real-time subscription for messages
   useEffect(() => {
