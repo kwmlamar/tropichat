@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { UnifiedConversationList } from "@/components/dashboard/unified-conversation-list"
 import { UnifiedMessageThread } from "@/components/dashboard/unified-message-thread"
 import { UnifiedContactDetails } from "@/components/dashboard/unified-contact-details"
@@ -27,6 +27,7 @@ import type {
 } from "@/types/unified-inbox"
 
 export default function InboxPage() {
+  const router = useRouter()
   // State
   const [conversations, setConversations] = useState<ConversationWithAccount[]>([])
   const [selectedConversation, setSelectedConversation] = useState<ConversationWithAccount | null>(null)
@@ -449,7 +450,10 @@ export default function InboxPage() {
             hasMore={hasMoreMessages}
             onCreateBooking={() => setBookingModalOpen(true)}
             customerName={customerName}
-            onBack={() => setSelectedConversation(null)}
+            onBack={() => {
+              setSelectedConversation(null)
+              router.replace('/dashboard')
+            }}
           />
         </div>
       </div>
