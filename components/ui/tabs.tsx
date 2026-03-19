@@ -90,8 +90,8 @@ export function TabsTrigger({
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         isActive
-          ? "bg-white text-gray-900 shadow-sm"
-          : "text-gray-600 hover:text-gray-900",
+          ? "bg-white dark:bg-[#262626] text-gray-900 dark:text-white shadow-sm"
+          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white",
         className
       )}
     >

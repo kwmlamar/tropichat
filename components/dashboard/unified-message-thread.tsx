@@ -136,39 +136,45 @@ export function UnifiedMessageThread({
   if (!conversation) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] p-8 text-center relative overflow-hidden">
+        {/* Subtle background decoration */}
+        <div className="absolute inset-0 bg-dot-pattern opacity-10 dark:opacity-[0.05] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#3A9B9F]/5 blur-3xl rounded-full pointer-events-none" />
+
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
           className="relative z-10 max-w-lg w-full"
         >
-          <div className="bg-gray-50/50 dark:bg-[#1E1E1E] rounded-[32px] border border-gray-100 dark:border-[#262626] p-10 shadow-sm">
-            <div className="mb-8 relative inline-block">
-              <div className="relative rounded-3xl bg-gray-100 dark:bg-white/5 p-5">
-                <Image
-                  src="/tropichat-logo.png"
-                  alt="TropiChat"
-                  width={64}
-                  height={64}
-                  className="h-14 w-14 object-contain opacity-50 grayscale"
-                />
+          <div className="bg-white/40 dark:bg-[#1A1A1A]/40 backdrop-blur-xl rounded-[40px] border border-gray-100/50 dark:border-[#2A2A2A]/50 p-12 shadow-2xl shadow-sky-900/5 dark:shadow-black/20">
+            <div className="mb-10 relative">
+              <div className="relative inline-block">
+                <div className="relative rounded-full bg-white dark:bg-[#262626] p-7 shadow-xl shadow-teal-500/10 dark:shadow-[#3A9B9F]/10 border border-teal-50/50 dark:border-[#3A9B9F]/10">
+                  <Image
+                    src="/tropichat-logo.png"
+                    alt="TropiChat"
+                    width={72}
+                    height={72}
+                    className="h-16 w-16 object-contain"
+                  />
+                </div>
+                {/* Subtle pulse effect */}
+                <div className="absolute inset-0 rounded-full animate-ping-slow bg-[#3A9B9F]/10 -z-10" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-[#213138] dark:text-gray-100 mb-3 tracking-tight">
+            <h3 className="text-3xl font-bold text-[#213138] dark:text-gray-100 mb-4 tracking-tight" style={{ fontFamily: 'var(--font-poppins)' }}>
               Select a conversation
             </h3>
-            <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
-              Choose someone from the list to start chatting. All your messages will appear here.
+            <p className="text-[17px] text-gray-500 dark:text-gray-400 mb-10 leading-relaxed max-w-sm mx-auto">
+              Choose a customer from the list to start chatting. Your responses will be sent via their original platform.
             </p>
 
-            <div className="flex justify-center gap-4 mt-8 pt-8 border-t border-gray-100 dark:border-[#2A2A2A]">
-              <div className="flex flex-col items-center gap-1">
-                <div className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500">
-                  <Inbox className="h-5 w-5" />
-                </div>
-                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Unified Inbox</span>
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] transition-all hover:bg-white dark:hover:bg-[#333333]">
+              <div className="p-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F]">
+                <Inbox className="h-4 w-4" />
               </div>
+              <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-[0.2em]">Unified Inbox</span>
             </div>
           </div>
         </motion.div>

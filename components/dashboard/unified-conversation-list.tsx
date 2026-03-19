@@ -141,7 +141,7 @@ export function UnifiedConversationList({
 
         {/* Horizontal Filter Tabs (Part of scrollable area on mobile) */}
         {!showArchived && (
-          <div className="px-6 py-3 lg:border-b lg:border-gray-100 flex items-center overflow-x-auto no-scrollbar gap-5">
+          <div className="px-6 py-3 lg:border-b border-gray-100 dark:border-[#2A2A2A] flex items-center overflow-x-auto no-scrollbar gap-5">
             {channelFilters.map((filter) => {
               const isActive = currentChannelFilter === filter.value
               return (
