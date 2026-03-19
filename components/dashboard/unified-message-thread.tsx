@@ -135,16 +135,16 @@ export function UnifiedMessageThread({
   // Modern Welcome Empty state
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white p-8 text-center relative overflow-hidden">
+      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] p-8 text-center relative overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative z-10 max-w-lg w-full"
         >
-          <div className="bg-gray-50/50 rounded-[32px] border border-gray-100 p-10 shadow-sm">
+          <div className="bg-gray-50/50 dark:bg-[#1E1E1E] rounded-[32px] border border-gray-100 dark:border-[#262626] p-10 shadow-sm">
             <div className="mb-8 relative inline-block">
-              <div className="relative rounded-3xl bg-gray-100 p-5">
+              <div className="relative rounded-3xl bg-gray-100 dark:bg-white/5 p-5">
                 <Image
                   src="/tropichat-logo.png"
                   alt="TropiChat"
@@ -155,19 +155,19 @@ export function UnifiedMessageThread({
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-[#213138] mb-3 tracking-tight">
+            <h3 className="text-2xl font-bold text-[#213138] dark:text-gray-100 mb-3 tracking-tight">
               Select a conversation
             </h3>
-            <p className="text-base text-gray-500 mb-8 leading-relaxed max-w-xs mx-auto">
+            <p className="text-base text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
               Choose someone from the list to start chatting. All your messages will appear here.
             </p>
 
-            <div className="flex justify-center gap-4 mt-8 pt-8 border-t border-gray-100">
+            <div className="flex justify-center gap-4 mt-8 pt-8 border-t border-gray-100 dark:border-[#2A2A2A]">
               <div className="flex flex-col items-center gap-1">
-                <div className="p-2 rounded-lg bg-gray-100 text-gray-400">
+                <div className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-500">
                   <Inbox className="h-5 w-5" />
                 </div>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unified Inbox</span>
+                <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Unified Inbox</span>
               </div>
             </div>
           </div>
@@ -178,17 +178,17 @@ export function UnifiedMessageThread({
 
 
   return (
-    <div className="flex flex-col h-full bg-white relative overflow-hidden h-[100dvh]">
+    <div className="flex flex-col h-full bg-white dark:bg-[#121212] relative overflow-hidden h-[100dvh]">
 
       {/* Header */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-100 relative z-20 shadow-sm">
+      <div className="flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] relative z-20 shadow-sm">
         <div className="h-[env(safe-area-inset-top)] w-full" />
         <div className="flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4">
           <div className="flex items-center gap-2 lg:gap-3">
           {onBack && (
             <button
               onClick={onBack}
-              className="lg:hidden p-2 -ml-2 mr-1 text-gray-500 hover:text-gray-900 transition-colors"
+              className="lg:hidden p-2 -ml-2 mr-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -204,7 +204,7 @@ export function UnifiedMessageThread({
             </div>
           </div>
           <div className="min-w-0">
-            <h2 className="font-bold text-[#213138] text-[15px] lg:text-[16px] truncate leading-tight">
+            <h2 className="font-bold text-[#213138] dark:text-gray-100 text-[15px] lg:text-[16px] truncate leading-tight">
               {getConversationDisplayName(conversation)}
             </h2>
             <p className="text-[11px] text-[#3A9B9F] font-bold uppercase tracking-wider">
@@ -230,8 +230,8 @@ export function UnifiedMessageThread({
           <Dropdown
             align="right"
             trigger={
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <MoreVertical className="h-5 w-5 text-gray-500" />
+              <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                <MoreVertical className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               </button>
             }
           >
@@ -277,7 +277,7 @@ export function UnifiedMessageThread({
             {groupedMessages.map((group) => (
               <div key={group.date}>
                 <div className="flex items-center justify-center my-4">
-                  <span className="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-500">
+                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#262626] rounded-full text-xs text-gray-500 dark:text-gray-400">
                     {formatDateDivider(group.date)}
                   </span>
                 </div>
@@ -302,7 +302,7 @@ export function UnifiedMessageThread({
                             "max-w-[75%] rounded-[24px] px-[18px] py-[10px] transition-all",
                             isOutbound
                               ? "bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/20"
-                              : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
+                              : "bg-slate-50 dark:bg-[#262626] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/60 dark:border-[#2A2A2A] shadow-sm"
                           )}
                         >
 
@@ -392,24 +392,24 @@ export function UnifiedMessageThread({
       </div>
 
       {/* Message Input Area (Anchored to bottom) */}
-      <div className="flex-shrink-0 bg-white border-t border-gray-100 relative z-20 pb-safe">
+      <div className="flex-shrink-0 bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-[#2A2A2A] relative z-20 pb-safe">
         <div className="p-2 lg:p-3 flex items-end gap-2 lg:pb-3">
-        <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors shrink-0 mb-0.5">
+        <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>
 
-        <div className="flex-1 bg-white rounded-3xl border border-gray-300/60 flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
+        <div className="flex-1 bg-white dark:bg-[#262626] rounded-3xl border border-gray-300/60 dark:border-[#2A2A2A] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
           <Textarea
             ref={textareaRef}
             placeholder=""
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 border-0 focus-visible:ring-0 shadow-none px-3 py-[9px] min-h-[40px] max-h-[120px] resize-none bg-transparent text-[15px] leading-snug overflow-y-auto"
+            className="flex-1 border-0 focus-visible:ring-0 shadow-none px-3 py-[9px] min-h-[40px] max-h-[120px] resize-none bg-transparent text-[15px] dark:text-white leading-snug overflow-y-auto"
             rows={1}
             style={{ height: "40px" }}
           />
-          <button className="p-2 mb-0.5 text-gray-400 hover:text-gray-600 transition-colors shrink-0" title="Stickers / Attachments">
+          <button className="p-2 mb-0.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0" title="Stickers / Attachments">
             <Paperclip className="w-5 h-5" strokeWidth={1.75} />
           </button>
         </div>
@@ -424,16 +424,16 @@ export function UnifiedMessageThread({
           </button>
         ) : (
           <div className="flex items-center gap-1 shrink-0 mb-0.5">
-            <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors">
+            <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
               <Camera className="w-6 h-6" strokeWidth={1.5} />
             </button>
-            <button className="p-2 text-gray-500 hover:text-gray-800 transition-colors">
+            <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
               <Mic className="w-6 h-6" strokeWidth={1.5} />
             </button>
           </div>
         )}
       </div>
-      <div className="h-[env(safe-area-inset-bottom)] w-full bg-white" />
+      <div className="h-[env(safe-area-inset-bottom)] w-full bg-white dark:bg-[#121212]" />
     </div>
   </div>
 )

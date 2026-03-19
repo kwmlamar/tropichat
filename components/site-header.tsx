@@ -36,7 +36,7 @@ export function SiteHeader() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100"
+          ? "bg-white/80 dark:bg-[#121212]/80 backdrop-blur-lg shadow-sm border-b border-gray-100 dark:border-[#2A2A2A]"
           : "bg-transparent"
           }`}
       >
@@ -60,7 +60,7 @@ export function SiteHeader() {
                 <button
                   key={link.href}
                   onClick={() => scrollToSection(link.href)}
-                  className="relative px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 group"
+                  className="relative px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-gray-100 group"
                 >
                   {link.label}
                   {/* Hover underline */}
@@ -74,7 +74,7 @@ export function SiteHeader() {
               <Button
                 variant="ghost"
                 asChild
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#262626]"
               >
                 <Link href="/login">Log In</Link>
               </Button>
@@ -89,7 +89,7 @@ export function SiteHeader() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="md:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -112,23 +112,23 @@ export function SiteHeader() {
             transition={{ duration: 0.2 }}
             className="fixed inset-x-0 top-20 z-40 md:hidden"
           >
-            <div className="bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-lg">
+            <div className="bg-white/95 dark:bg-[#121212]/95 backdrop-blur-lg border-b border-gray-200 dark:border-[#2A2A2A] shadow-lg">
               <div className="container mx-auto px-4 py-4">
                 <nav className="flex flex-col gap-1">
                   {navLinks.map((link) => (
                     <button
                       key={link.href}
                       onClick={() => scrollToSection(link.href)}
-                      className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#262626] rounded-lg transition-colors"
                     >
                       {link.label}
                     </button>
                   ))}
-                  <hr className="my-2 border-gray-200" />
+                  <hr className="my-2 border-gray-200 dark:border-[#2A2A2A]" />
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#262626] rounded-lg transition-colors"
                   >
                     Log In
                   </Link>

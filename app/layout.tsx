@@ -78,32 +78,41 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${poppins.variable} ${inter.variable} ${plusJakartaSans.variable} font-sans antialiased`}>
-        {children}
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            className: "tropichat-toast",
-            style: {
-              borderRadius: "20px",
-              padding: "16px 20px",
-              fontSize: "0.9375rem",
-              fontWeight: "500",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(12px)",
-              background: "rgba(255, 255, 255, 0.8)",
-              color: "#213138",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.04)",
-            },
-          }}
-        />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              className: "tropichat-toast",
+              style: {
+                borderRadius: "20px",
+                padding: "16px 20px",
+                fontSize: "0.9375rem",
+                fontWeight: "500",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                backdropFilter: "blur(12px)",
+                background: "rgba(255, 255, 255, 0.8)",
+                color: "#213138",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          />
+        </ThemeProvider>
         {/* Service Worker Registration */}
         <Script
           id="register-sw"

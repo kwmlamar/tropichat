@@ -37,17 +37,17 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#121212]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#3A9B9F] border-t-transparent" />
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="h-screen h-[100dvh] bg-gray-50 flex overflow-hidden">
+    <div className="h-screen h-[100dvh] bg-gray-50 dark:bg-[#121212] flex overflow-hidden">
       <Sidebar customer={customer} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
       {/* Main content */}

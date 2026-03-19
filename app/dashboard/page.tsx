@@ -70,10 +70,12 @@ export default function InboxPage() {
 
     if (selectedConversation) {
       document.body.classList.add('mobile-chat-open')
-      metaThemeColor.setAttribute('content', '#ffffff') // Match white background
+      const isDark = document.documentElement.classList.contains('dark')
+      metaThemeColor.setAttribute('content', isDark ? '#121212' : '#ffffff')
     } else {
       document.body.classList.remove('mobile-chat-open')
-      metaThemeColor.setAttribute('content', '#ffffff') // Match white background
+      const isDark = document.documentElement.classList.contains('dark')
+      metaThemeColor.setAttribute('content', isDark ? '#121212' : '#ffffff')
     }
     
     return () => {
@@ -436,7 +438,7 @@ export default function InboxPage() {
         className={cn(
           "flex-1 min-w-0",
           selectedConversation ? "flex" : "hidden md:flex",
-          !selectedConversation ? "bg-gray-50" : ""
+          !selectedConversation ? "bg-gray-50 dark:bg-[#121212]" : ""
         )}
       >
         <div className="flex flex-col w-full h-full">
@@ -459,7 +461,7 @@ export default function InboxPage() {
       </div>
 
       {/* Contact Details */}
-      <div className="hidden lg:block w-80 flex-shrink-0 border-l border-gray-200">
+      <div className="hidden lg:block w-80 flex-shrink-0 border-l border-gray-200 dark:border-white/5">
         <UnifiedContactDetails
           conversation={selectedConversation}
           messageCount={messages.length}

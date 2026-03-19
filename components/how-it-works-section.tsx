@@ -41,8 +41,8 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="relative bg-[#F8FAFB] py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+    <section className="relative bg-[#F8FAFB] dark:bg-[#0A0A0A] py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -53,24 +53,24 @@ export function HowItWorksSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-semibold text-slate-500 shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
             How It Works
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] md:text-5xl">
+          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Up and running in{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
               3 simple steps
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 leading-relaxed">
+          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-gray-400 leading-relaxed">
             No complicated setup. No technical skills needed. Just connect and start organizing.
           </p>
         </motion.div>
 
         {/* Steps — Horizontal on desktop */}
         <div className="relative mx-auto max-w-5xl">
-          {/* Connector line (desktop only) */}
-          <div className="absolute top-14 left-[16.66%] right-[16.66%] hidden h-px bg-gradient-to-r from-teal-200 via-violet-200 to-orange-200 md:block" />
+           {/* Connector line (desktop only) */}
+          <div className="absolute top-14 left-[16.66%] right-[16.66%] hidden h-px bg-gradient-to-r from-teal-200 via-violet-200 to-orange-200 dark:opacity-20 md:block" />
 
           <div className="grid gap-8 md:grid-cols-3">
             {steps.map((step, index) => (
@@ -88,22 +88,22 @@ export function HowItWorksSection() {
                   <motion.div
                     whileHover={{ scale: 1.08 }}
                     transition={{ type: "spring", stiffness: 300 }}
-                    className={`flex h-28 w-28 items-center justify-center rounded-full ${step.bgColor} ring-8 ${step.ringColor} shadow-md transition-shadow duration-300 group-hover:shadow-xl`}
+                    className={`flex h-28 w-28 items-center justify-center rounded-full ${step.bgColor} dark:bg-[#262626] ring-8 ${step.ringColor} dark:ring-[#2A2A2A] shadow-md transition-shadow duration-300 group-hover:shadow-xl`}
                   >
                     <step.icon className={`h-12 w-12 ${step.color}`} />
                   </motion.div>
                   {/* Step number badge */}
-                  <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md ring-2 ring-slate-200 text-xs font-bold text-slate-500 select-none">
+                   <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#1E1E1E] shadow-md ring-2 ring-slate-200 dark:ring-[#2A2A2A] text-xs font-bold text-slate-500 dark:text-gray-400 select-none">
                     {step.number}
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className={`mb-3 h-1 w-10 rounded-full ${step.barColor} opacity-60`} />
-                <h3 className="mb-3 text-xl font-bold text-[#213138]">
+                 <h3 className="mb-3 text-xl font-bold text-[#213138] dark:text-white">
                   {step.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed text-[15px]">
+                 <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-[15px]">
                   {step.description}
                 </p>
               </motion.div>
@@ -119,7 +119,7 @@ export function HowItWorksSection() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="mt-16 flex justify-center"
         >
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-teal-200 bg-white px-6 py-3 text-sm font-semibold text-teal-800 shadow-sm">
+           <div className="inline-flex items-center gap-2.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-white dark:bg-[#1E1E1E] px-6 py-3 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm">
             <Clock className="h-4 w-4 text-[#3A9B9F]" />
             Setup takes less than 5 minutes
           </div>

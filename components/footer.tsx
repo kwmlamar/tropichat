@@ -23,7 +23,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/5 bg-[#213138] text-gray-400 overflow-hidden">
+    <footer className="relative border-t border-white/5 bg-[#213138] dark:bg-[#0A0A0A] text-gray-400 overflow-hidden">
       {/* Subtle glow */}
       <div className="absolute left-1/2 -top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-[#3A9B9F]/10 blur-3xl pointer-events-none" />
 
@@ -60,7 +60,7 @@ export function Footer() {
                     key={s.label}
                     href={s.href}
                     aria-label={s.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-gray-400 transition-all duration-200 hover:bg-[#3A9B9F]/20 hover:text-[#3A9B9F]"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 dark:bg-[#262626] text-gray-400 transition-all duration-200 hover:bg-[#3A9B9F]/20 hover:text-[#3A9B9F]"
                   >
                     <Icon className="h-4 w-4" />
                   </a>
@@ -109,7 +109,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-8 text-xs text-gray-500 md:flex-row">
+        <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 dark:border-[#2A2A2A] pt-8 text-xs text-gray-500 md:flex-row">
           <p>&copy; {new Date().getFullYear()} TropiChat by TropiTech Solutions. All rights reserved.</p>
           <p className="flex items-center gap-1.5 text-gray-500">
             <MessageCircle className="h-3.5 w-3.5 text-[#3A9B9F]" />

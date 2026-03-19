@@ -72,8 +72,8 @@ const cardVariant = {
 
 export function SolutionSection() {
   return (
-    <section className="relative bg-white py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+    <section className="relative bg-white dark:bg-[#121212] py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -84,17 +84,17 @@ export function SolutionSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-800 shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/10 px-4 py-1.5 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm">
             The Solution
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] md:text-5xl">
+          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Handle 3× more customers —
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
               without the chaos.
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 leading-relaxed">
+          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-gray-400 leading-relaxed">
             TropiChat brings all your channels together in one organized inbox with the one thing they're all missing.
           </p>
         </motion.div>
@@ -111,7 +111,7 @@ export function SolutionSection() {
             <motion.div
               key={index}
               variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
             >
               {/* Top gradient accent bar */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`} />
@@ -131,8 +131,8 @@ export function SolutionSection() {
                 </div>
               </div>
 
-              {/* Title */}
-              <h3 className="mb-2 text-xl font-bold text-[#213138] leading-snug">
+               {/* Title */}
+              <h3 className="mb-2 text-xl font-bold text-[#213138] dark:text-white leading-snug">
                 {feature.title}
               </h3>
 
@@ -141,8 +141,8 @@ export function SolutionSection() {
                 {feature.outcome}
               </p>
 
-              {/* Description */}
-              <p className="text-slate-600 leading-relaxed text-[15px]">
+               {/* Description */}
+              <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-[15px]">
                 {feature.description}
               </p>
             </motion.div>
@@ -157,15 +157,15 @@ export function SolutionSection() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-16"
         >
-          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-slate-400">
+          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-slate-400 dark:text-gray-500">
             Real Results From Caribbean Businesses
           </p>
-          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-gradient-to-br from-teal-50/60 to-white p-6 md:grid-cols-4 md:p-10">
+          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 dark:border-[#2A2A2A] bg-gradient-to-br from-teal-50/60 to-white dark:from-[#262626] dark:to-[#262626] p-6 md:grid-cols-4 md:p-10">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="mb-1 text-4xl font-bold text-[#3A9B9F]">{stat.value}</div>
-                <div className="text-sm font-semibold text-[#213138]">{stat.label}</div>
-                <div className="text-xs text-slate-500 mt-0.5">{stat.sub}</div>
+                <div className="text-sm font-semibold text-[#213138] dark:text-gray-200">{stat.label}</div>
+                <div className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">{stat.sub}</div>
               </div>
             ))}
           </div>

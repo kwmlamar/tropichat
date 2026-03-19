@@ -26,6 +26,7 @@ import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropd
 import { signOut, getUnreadConversationCount, subscribeToConversations } from "@/lib/supabase"
 import { toast } from "sonner"
 import type { Customer } from "@/types/database"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface SidebarProps {
   customer: Customer | null
@@ -100,10 +101,10 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         />
         {!collapsed && (
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-gray-900 truncate">
+            <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
               {customer?.business_name || "TropiChat"}
             </p>
-            <p className="text-xs text-gray-400">Workspace</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Workspace</p>
           </div>
         )}
       </div>
@@ -123,12 +124,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                 "flex items-center rounded-xl text-sm font-medium transition-all duration-200 relative",
                 collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5",
                 active
-                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100"
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400", collapsed ? "h-6 w-6" : "h-5 w-5")} />
+              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5 w-5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -146,12 +147,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
       {/* Plan Badge + User - footer stays at bottom */}
       {!collapsed && customer && customer.plan !== "professional" && (
         <div className="mx-4 mb-4 flex-shrink-0">
-          <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200/50 p-4 shadow-sm">
+          <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 border border-orange-200/50 dark:border-orange-500/20 p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Crown className="h-4 w-4 text-[#FF8B66]" />
-              <span className="text-sm font-semibold text-gray-900">Upgrade to Pro</span>
+              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Upgrade to Pro</span>
             </div>
-            <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
               Get unlimited team members, analytics, and more.
             </p>
             <Link
@@ -166,16 +167,22 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
 
       {/* Bottom Actions & User Profile */}
       <div className={cn("flex-shrink-0 mt-auto flex flex-col gap-1", collapsed ? "px-2 py-4" : "p-4")}>
+        {/* Theme Toggle */}
+        <div className={cn("flex items-center w-full mb-1", collapsed ? "justify-center" : "gap-3 px-1")}>
+          <ThemeToggle />
+          {!collapsed && <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Theme</span>}
+        </div>
+
         {/* Collapse Toggle Button (Desktop Only) */}
         <button
           onClick={() => setIsCollapsed(!collapsed)}
           className={cn(
-            "hidden lg:flex items-center rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 w-full",
+            "hidden lg:flex items-center rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left"
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <PanelLeftOpen className="shrink-0 h-6 w-6 text-gray-400" /> : <PanelLeftClose className="shrink-0 h-5 w-5 text-gray-400" />}
+          {collapsed ? <PanelLeftOpen className="shrink-0 h-6 w-6 text-gray-400 dark:text-gray-500" /> : <PanelLeftClose className="shrink-0 h-5 w-5 text-gray-400 dark:text-gray-500" />}
           {!collapsed && <span>Collapse</span>}
         </button>
 
@@ -187,12 +194,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             "flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-1 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
             isActive("/dashboard/settings")
-              ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
-              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
+              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100"
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <Settings className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400", collapsed ? "h-6 w-6" : "h-5 w-5")} />
+          <Settings className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5 w-5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 
@@ -201,20 +208,20 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           align="left"
           side="top"
           trigger={
-            <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 transition-colors overflow-hidden border border-transparent hover:border-gray-200", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
+            <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-[#2A2A2A]", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
               <Avatar
                 fallback={customer?.business_name || "User"}
                 size="sm"
-                className="shrink-0 ring-2 ring-white"
+                className="shrink-0 ring-2 ring-white dark:ring-[#2A2A2A]"
               />
               {!collapsed && (
                 <>
                   <div className="flex-1 min-w-0 text-left overflow-hidden">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                       {customer?.contact_email || "Loading..."}
                     </p>
                   </div>
-                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
                 </>
               )}
             </button>
@@ -244,7 +251,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
       {/* Mobile navigation is handled by MobileBottomNav in the layout */}
 
       {/* Desktop Sidebar */}
-      <div className={cn("hidden lg:flex lg:flex-col lg:min-h-0 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-[#F9FAFB] lg:border-r lg:border-gray-200 transition-all duration-300", isCollapsed ? "lg:w-20" : "lg:w-72")}>
+      <div className={cn("hidden lg:flex lg:flex-col lg:min-h-0 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-[#F9FAFB] lg:border-r lg:border-gray-200 dark:lg:bg-[#121212] dark:lg:border-[#2A2A2A] transition-all duration-300", isCollapsed ? "lg:w-20" : "lg:w-72")}>
         <SidebarContent collapsed={isCollapsed} />
       </div>
     </>

@@ -31,12 +31,12 @@ export function UnifiedContactDetails({
 }: UnifiedContactDetailsProps) {
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white border-l border-gray-100 p-8 text-center">
-        <div className="rounded-full bg-gray-50 p-4 mb-4">
-          <User className="h-8 w-8 text-gray-300" />
+      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] border-l border-gray-100 dark:border-[#2A2A2A] p-8 text-center">
+        <div className="rounded-full bg-gray-50 dark:bg-white/5 p-4 mb-4">
+          <User className="h-8 w-8 text-gray-300 dark:text-gray-600" />
         </div>
-        <h3 className="font-medium text-gray-900 mb-1">No contact selected</h3>
-        <p className="text-sm text-gray-500">
+        <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">No contact selected</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Select a conversation to view contact details
         </p>
       </div>
@@ -61,9 +61,9 @@ export function UnifiedContactDetails({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white overflow-y-auto border-l border-gray-100">
+    <div className="flex flex-col h-full bg-white dark:bg-[#121212] overflow-y-auto border-l border-gray-100 dark:border-[#2A2A2A]">
       {/* Contact Header */}
-      <div className="p-6 border-b border-gray-100 text-center">
+      <div className="p-6 border-b border-gray-100 dark:border-[#2A2A2A] text-center">
         <div className="relative inline-block">
           <Avatar
             src={conversation.customer_avatar_url}
@@ -77,10 +77,10 @@ export function UnifiedContactDetails({
         </div>
 
         <div className="mt-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {getConversationDisplayName(conversation)}
           </h2>
-          <div className="text-sm text-gray-500 mt-0.5 flex items-center justify-center gap-1.5">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 flex items-center justify-center gap-1.5">
             <ChannelIcon channel={conversation.channel_type} size="sm" />
             {getChannelLabel(conversation.channel_type)}
           </div>
@@ -91,18 +91,18 @@ export function UnifiedContactDetails({
       <div className="p-6 space-y-6">
         {/* Customer ID */}
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-gray-100 p-2">
-            <Hash className="h-4 w-4 text-gray-500" />
+          <div className="rounded-lg bg-gray-100 dark:bg-white/5 p-2">
+            <Hash className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {conversation.channel_type === "whatsapp"
                 ? "Phone Number"
                 : conversation.channel_type === "instagram"
                   ? "Instagram ID"
                   : "Messenger ID"}
             </p>
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
               {conversation.customer_id}
             </p>
           </div>
@@ -111,12 +111,12 @@ export function UnifiedContactDetails({
         {/* Connected Account */}
         {conversation.connected_account && (
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-gray-100 p-2">
-              <ExternalLink className="h-4 w-4 text-gray-500" />
+            <div className="rounded-lg bg-gray-100 dark:bg-white/5 p-2">
+              <ExternalLink className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-gray-500">Connected Account</p>
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Connected Account</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {conversation.connected_account.channel_account_name || "—"}
               </p>
             </div>
@@ -135,38 +135,38 @@ export function UnifiedContactDetails({
 
         {/* Stats */}
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase mb-3">Statistics</p>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-3">Statistics</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
-                <Calendar className="h-3 w-3 text-gray-400" />
-                <p className="text-xs text-gray-500">First Message</p>
+                <Calendar className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">First Message</p>
               </div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 {conversation.created_at
                   ? formatDate(conversation.created_at)
                   : "N/A"}
               </p>
             </div>
-            <div className="bg-gray-50 rounded-lg p-3">
+            <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
-                <MessageSquare className="h-3 w-3 text-gray-400" />
-                <p className="text-xs text-gray-500">Messages</p>
+                <MessageSquare className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">Messages</p>
               </div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 {messageCount}
               </p>
             </div>
           </div>
           {conversation.last_message_at && (
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
               Last active {formatDistanceToNow(conversation.last_message_at)}
             </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="pt-4 border-t border-gray-100 space-y-2">
+        <div className="pt-4 border-t border-gray-100 dark:border-[#2A2A2A] space-y-2">
           {onArchive && (
             <Button
               variant="outline"

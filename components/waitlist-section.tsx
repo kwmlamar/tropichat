@@ -79,7 +79,7 @@ export function WaitlistSection() {
     return (
       <section
         id="waitlist"
-        className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] py-24 md:py-32"
+        className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-[#121212] py-24 md:py-32"
       >
         <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
@@ -114,7 +114,7 @@ export function WaitlistSection() {
   return (
     <section
       id="waitlist"
-      className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] py-24 md:py-32"
+      className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-[#121212] py-24 md:py-32"
     >
       {/* Background glow */}
       <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
@@ -155,27 +155,27 @@ export function WaitlistSection() {
           >
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="rounded-2xl bg-white p-8 shadow-[0_32px_80px_rgba(0,0,0,0.3)] md:p-10"
+              className="rounded-2xl bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_32px_80px_rgba(0,0,0,0.3)] md:p-10 border border-transparent dark:border-[#2A2A2A]"
             >
               <div className="space-y-5">
                 {/* Name & Email row */}
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="name" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                    <Label htmlFor="name" className="text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5 block">
                       Name <span className="text-red-400">*</span>
                     </Label>
                     <Input
                       id="name"
                       placeholder="Your full name"
                       {...register("name")}
-                      className="rounded-xl border-slate-200 h-11 focus-visible:ring-[#3A9B9F]"
+                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                     {errors.name && (
                       <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                    <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5 block">
                       Email <span className="text-red-400">*</span>
                     </Label>
                     <Input
@@ -183,7 +183,7 @@ export function WaitlistSection() {
                       type="email"
                       placeholder="your@email.com"
                       {...register("email")}
-                      className="rounded-xl border-slate-200 h-11 focus-visible:ring-[#3A9B9F]"
+                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                     {errors.email && (
                       <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
@@ -194,14 +194,14 @@ export function WaitlistSection() {
                 {/* Business Type & Phone row */}
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
-                    <Label htmlFor="business_type" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                    <Label htmlFor="business_type" className="text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5 block">
                       Business Type <span className="text-red-400">*</span>
                     </Label>
                     <Select
                       onValueChange={(value) => setValue("business_type", value)}
                       value={businessType}
                     >
-                      <SelectTrigger className="rounded-xl border-slate-200 h-11 focus:ring-[#3A9B9F]">
+                      <SelectTrigger className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus:ring-[#3A9B9F] dark:text-white">
                         <SelectValue placeholder="Select business type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -217,15 +217,15 @@ export function WaitlistSection() {
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="phone" className="text-sm font-semibold text-slate-700 mb-1.5 block">
-                      Phone <span className="text-xs font-normal text-slate-400">(Optional)</span>
+                    <Label htmlFor="phone" className="text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5 block">
+                      Phone <span className="text-xs font-normal text-slate-400 dark:text-gray-500">(Optional)</span>
                     </Label>
                     <Input
                       id="phone"
                       type="tel"
                       placeholder="+1 (242) 555-0123"
                       {...register("phone")}
-                      className="rounded-xl border-slate-200 h-11 focus-visible:ring-[#3A9B9F]"
+                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                   </div>
                 </div>

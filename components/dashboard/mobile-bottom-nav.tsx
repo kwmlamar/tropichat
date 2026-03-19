@@ -98,23 +98,23 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
 
           {/* Sheet */}
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl"
+            className="absolute bottom-0 left-0 right-0 bg-white dark:bg-[#1E1E1E] rounded-t-3xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 5rem)" }}
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-gray-200" />
+              <div className="w-10 h-1 rounded-full bg-gray-200 dark:bg-[#2A2A2A]" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-semibold text-[#213138]" style={{ fontFamily: "var(--font-poppins)" }}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#2A2A2A]">
+              <h2 className="text-base font-semibold text-[#213138] dark:text-gray-100" style={{ fontFamily: "var(--font-poppins)" }}>
                 More
               </h2>
               <button
                 onClick={() => setShowMore(false)}
-                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400"
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400 dark:text-gray-500"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -132,11 +132,11 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                     className={cn(
                       "flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 active:scale-[0.97]",
                       active
-                        ? "bg-[#3A9B9F]/10 border-[#3A9B9F]/20 text-[#3A9B9F]"
-                        : "bg-gray-50 border-gray-100 text-gray-600 hover:bg-gray-100"
+                        ? "bg-[#3A9B9F]/10 border-[#3A9B9F]/20 text-[#3A9B9F] dark:bg-[#3A9B9F]/20 dark:border-[#3A9B9F]/30"
+                        : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#262626] dark:border-[#2A2A2A] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
                     )}
                   >
-                    <Icon className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400")} />
+                    <Icon className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
                     <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
                   </Link>
                 )
@@ -159,7 +159,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
 
       {/* Bottom Navigation Bar */}
       <nav
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#121212] border-t border-gray-200 dark:border-[#2A2A2A]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex items-stretch">
@@ -182,7 +182,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                   <Icon className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
                   {/* Unread dot on Inbox */}
                   {isInbox && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#FF8B66] text-[10px] font-bold text-white px-0.5">
+                    <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#25D366] text-[10px] font-bold text-white px-0.5">
                       {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
                   )}

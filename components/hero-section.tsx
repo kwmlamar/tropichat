@@ -20,6 +20,7 @@ import {
   MoreVertical,
   Video,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 // ─── Shared data ─────────────────────────────────────────────────────────────
 
@@ -88,7 +89,10 @@ const ChannelDot = ({ channel }: { channel: string }) => {
   }
   return (
     <span
-      className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ring-2 ring-white ${map[channel] ?? "bg-gray-400"}`}
+      className={cn(
+        "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ring-2 ring-white dark:ring-[#121212]",
+        map[channel] ?? "bg-gray-400"
+      )}
     />
   )
 }
@@ -97,9 +101,9 @@ const ChannelDot = ({ channel }: { channel: string }) => {
 
 function DesktopAppMockup() {
   return (
-    <div className="flex h-full w-full overflow-hidden bg-white font-sans text-[13px]">
+    <div className="flex h-full w-full overflow-hidden bg-white dark:bg-[#121212] font-sans text-[13px]">
       {/* Sidebar — collapsed icon rail */}
-      <div className="flex w-14 flex-col items-center gap-4 border-r border-slate-100 bg-[#213138] py-4">
+      <div className="flex w-14 flex-col items-center gap-4 border-r border-slate-100 dark:border-[#2A2A2A] bg-[#213138] dark:bg-[#0A0A0A] py-4">
         {/* Logo mark */}
         <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#3A9B9F]">
           <MessageCircle className="h-4 w-4 text-white" />
@@ -116,11 +120,11 @@ function DesktopAppMockup() {
       </div>
 
       {/* Conversation list */}
-      <div className="flex w-[220px] flex-col border-r border-slate-100 bg-white">
+      <div className="flex w-[220px] flex-col border-r border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#121212]">
         {/* Header */}
-        <div className="border-b border-slate-100 px-3 py-3">
-          <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-2.5 py-1.5">
-            <Search className="h-3.5 w-3.5 text-slate-400" />
+        <div className="border-b border-slate-100 dark:border-[#2A2A2A] px-3 py-3">
+          <div className="flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#262626] px-2.5 py-1.5">
+            <Search className="h-3.5 w-3.5 text-slate-400 dark:text-gray-500" />
             <span className="text-[11px] text-slate-400">Search conversations…</span>
           </div>
           {/* Tab pills */}
@@ -129,8 +133,8 @@ function DesktopAppMockup() {
               <button
                 key={tab}
                 className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold transition-colors ${i === 0
-                    ? "bg-[#213138] text-white"
-                    : "text-slate-500 hover:bg-slate-100"
+                    ? "bg-[#213138] dark:bg-[#3A9B9F] text-white"
+                    : "text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-[#262626]"
                   }`}
               >
                 {tab}
@@ -144,7 +148,7 @@ function DesktopAppMockup() {
           {conversations.map((c, i) => (
             <div
               key={i}
-              className={`flex cursor-pointer items-start gap-2.5 px-3 py-2.5 transition-colors ${i === 0 ? "bg-teal-50/60" : "hover:bg-slate-50"
+              className={`flex cursor-pointer items-start gap-2.5 px-3 py-2.5 transition-colors ${i === 0 ? "bg-teal-50/60 dark:bg-[#3A9B9F]/10" : "hover:bg-slate-50 dark:hover:bg-[#262626]"
                 }`}
             >
               <div className="relative mt-0.5 shrink-0">
@@ -157,12 +161,12 @@ function DesktopAppMockup() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className={`truncate font-semibold ${i === 0 ? "text-[#213138]" : "text-slate-700"} text-[11px]`}>
+                  <span className={`truncate font-semibold ${i === 0 ? "text-[#213138] dark:text-white" : "text-slate-700 dark:text-gray-300"} text-[11px]`}>
                     {c.name}
                   </span>
-                  <span className="ml-1 shrink-0 text-[9px] text-slate-400">{c.time}</span>
+                  <span className="ml-1 shrink-0 text-[9px] text-slate-400 dark:text-gray-500">{c.time}</span>
                 </div>
-                <p className="truncate text-[10px] text-slate-500">{c.preview}</p>
+                <p className="truncate text-[10px] text-slate-500 dark:text-gray-400">{c.preview}</p>
               </div>
               {c.unread > 0 && (
                 <div className="ml-1 mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#3A9B9F] text-[9px] font-bold text-white">
@@ -175,9 +179,9 @@ function DesktopAppMockup() {
       </div>
 
       {/* Chat panel */}
-      <div className="flex flex-1 flex-col bg-slate-50/40">
+      <div className="flex flex-1 flex-col bg-slate-50/40 dark:bg-white/[0.02]">
         {/* Chat header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-white px-5 py-3">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#121212] px-5 py-3">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold text-white">
@@ -186,13 +190,13 @@ function DesktopAppMockup() {
               <ChannelDot channel="wa" />
             </div>
             <div>
-              <p className="text-[12px] font-bold text-[#213138]">Maria Santos</p>
-              <p className="text-[10px] text-slate-400">via WhatsApp · Active now</p>
+              <p className="text-[12px] font-bold text-[#213138] dark:text-white">Maria Santos</p>
+              <p className="text-[10px] text-slate-400 dark:text-gray-500">via WhatsApp · Active now</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             {["VIP", "Payment Pending"].map((tag) => (
-              <span key={tag} className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[9px] font-semibold text-slate-500">
+              <span key={tag} className="rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-slate-50 dark:bg-[#262626] px-2 py-0.5 text-[9px] font-semibold text-slate-500 dark:text-gray-400">
                 {tag}
               </span>
             ))}
@@ -203,17 +207,17 @@ function DesktopAppMockup() {
         <div className="flex flex-1 flex-col justify-end gap-2 overflow-hidden px-5 py-4">
           {/* Date divider */}
           <div className="flex items-center gap-2">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-[9px] text-slate-400">Today</span>
-            <div className="h-px flex-1 bg-slate-200" />
+            <div className="h-px flex-1 bg-slate-200 dark:bg-[#2A2A2A]" />
+            <span className="text-[9px] text-slate-400 dark:text-gray-500">Today</span>
+            <div className="h-px flex-1 bg-slate-200 dark:bg-[#2A2A2A]" />
           </div>
 
           {/* Inbound */}
           <div className="flex items-end gap-2">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">MS</div>
-            <div className="max-w-[60%] rounded-2xl rounded-bl-sm bg-white px-3 py-2 shadow-sm ring-1 ring-slate-100">
-              <p className="text-[11px] text-slate-700">Hey, is the birthday cake ready for Saturday? We need it by 2 PM</p>
-              <p className="mt-1 text-[9px] text-slate-400">9:38 AM</p>
+            <div className="max-w-[60%] rounded-2xl rounded-bl-sm bg-white dark:bg-[#262626] px-3 py-2 shadow-sm ring-1 ring-slate-100 dark:ring-[#2A2A2A]">
+              <p className="text-[11px] text-slate-700 dark:text-gray-200">Hey, is the birthday cake ready for Saturday? We need it by 2 PM</p>
+              <p className="mt-1 text-[9px] text-slate-400 dark:text-gray-500">9:38 AM</p>
             </div>
           </div>
 
@@ -240,9 +244,9 @@ function DesktopAppMockup() {
         </div>
 
         {/* Input bar */}
-        <div className="border-t border-slate-100 bg-white px-4 py-3">
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-            <span className="flex-1 text-[11px] text-slate-400">Type a message…</span>
+        <div className="border-t border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#121212] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-[#2A2A2A] bg-slate-50 dark:bg-[#262626] px-3 py-2">
+            <span className="flex-1 text-[11px] text-slate-400 dark:text-gray-500">Type a message…</span>
             <button className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3A9B9F] transition-colors hover:bg-[#2F8488]">
               <Send className="h-3 w-3 text-white" />
             </button>
@@ -251,14 +255,14 @@ function DesktopAppMockup() {
       </div>
 
       {/* Contact detail panel */}
-      <div className="hidden w-[170px] flex-col border-l border-slate-100 bg-white xl:flex">
-        <div className="border-b border-slate-100 px-4 py-3">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Contact</p>
+      <div className="hidden w-[170px] flex-col border-l border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#121212] xl:flex">
+        <div className="border-b border-slate-100 dark:border-[#2A2A2A] px-4 py-3">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-gray-500">Contact</p>
         </div>
         <div className="flex flex-col items-center gap-2 px-4 pt-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">MS</div>
-          <p className="text-center text-[11px] font-bold text-[#213138]">Maria Santos</p>
-          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[9px] font-semibold text-amber-600">VIP Customer</span>
+          <p className="text-center text-[11px] font-bold text-[#213138] dark:text-white">Maria Santos</p>
+          <span className="rounded-full bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 text-[9px] font-semibold text-amber-600 dark:text-amber-500">VIP Customer</span>
         </div>
         <div className="mt-4 space-y-3 px-4">
           {[
@@ -267,8 +271,8 @@ function DesktopAppMockup() {
             { label: "Last seen", value: "Active now" },
           ].map((r) => (
             <div key={r.label}>
-              <p className="text-[9px] font-semibold uppercase text-slate-400">{r.label}</p>
-              <p className="text-[11px] font-semibold text-[#213138]">{r.value}</p>
+              <p className="text-[9px] font-semibold uppercase text-slate-400 dark:text-gray-500">{r.label}</p>
+              <p className="text-[11px] font-semibold text-[#213138] dark:text-gray-200">{r.value}</p>
             </div>
           ))}
         </div>
@@ -281,24 +285,24 @@ function DesktopAppMockup() {
 
 function MobileAppMockup() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-white font-sans text-[11px]">
+    <div className="flex h-full w-full flex-col overflow-hidden bg-white dark:bg-[#121212] font-sans text-[11px]">
       {/* Status bar */}
-      <div className="flex items-center justify-between bg-white px-4 pt-2 pb-1">
-        <span className="text-[10px] font-semibold text-[#213138]">9:41</span>
+      <div className="flex items-center justify-between bg-white dark:bg-[#121212] px-4 pt-2 pb-1">
+        <span className="text-[10px] font-semibold text-[#213138] dark:text-white">9:41</span>
         <div className="flex items-center gap-1">
           <div className="flex gap-0.5">
             {[3, 4, 4, 3].map((h, i) => (
-              <div key={i} className="w-1 rounded-sm bg-[#213138]" style={{ height: `${h * 2}px` }} />
+              <div key={i} className="w-1 rounded-sm bg-[#213138] dark:bg-white" style={{ height: `${h * 2}px` }} />
             ))}
           </div>
-          <div className="ml-0.5 h-2.5 w-4 rounded-sm border border-[#213138] p-0.5">
-            <div className="h-full w-[70%] rounded-[1px] bg-[#213138]" />
+          <div className="ml-0.5 h-2.5 w-4 rounded-sm border border-[#213138] dark:border-white p-0.5">
+            <div className="h-full w-[70%] rounded-[1px] bg-[#213138] dark:bg-white" />
           </div>
         </div>
       </div>
 
       {/* Chat header */}
-      <div className="flex items-center gap-2.5 border-b border-slate-100 px-3 py-2">
+      <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-[#2A2A2A] px-3 py-2">
         <button className="text-[#3A9B9F]">
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -309,8 +313,8 @@ function MobileAppMockup() {
           <ChannelDot channel="wa" />
         </div>
         <div className="flex-1">
-          <p className="text-[11px] font-bold text-[#213138]">Maria Santos</p>
-          <p className="text-[9px] text-slate-400">WhatsApp · Online</p>
+          <p className="text-[11px] font-bold text-[#213138] dark:text-white">Maria Santos</p>
+          <p className="text-[9px] text-slate-400 dark:text-gray-500">WhatsApp · Online</p>
         </div>
         <button className="text-slate-400">
           <Video className="h-4 w-4" />
@@ -321,19 +325,19 @@ function MobileAppMockup() {
       </div>
 
       {/* Messages */}
-      <div className="flex flex-1 flex-col justify-end gap-2 overflow-hidden bg-slate-50/50 px-3 py-3">
+      <div className="flex flex-1 flex-col justify-end gap-2 overflow-hidden bg-slate-50/50 dark:bg-white/[0.02] px-3 py-3">
         <div className="flex items-center gap-2">
-          <div className="h-px flex-1 bg-slate-200" />
-          <span className="text-[8px] text-slate-400">Today</span>
-          <div className="h-px flex-1 bg-slate-200" />
+          <div className="h-px flex-1 bg-slate-200 dark:bg-[#2A2A2A]" />
+          <span className="text-[8px] text-slate-400 dark:text-gray-500">Today</span>
+          <div className="h-px flex-1 bg-slate-200 dark:bg-[#2A2A2A]" />
         </div>
 
         {/* Inbound */}
         <div className="flex items-end gap-1.5">
           <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[7px] font-bold text-white">MS</div>
-          <div className="max-w-[75%] rounded-2xl rounded-bl-sm bg-white px-2.5 py-1.5 shadow-sm ring-1 ring-slate-100">
-            <p className="text-[10px] leading-relaxed text-slate-700">Is the birthday cake ready for Saturday? Need it by 2 PM!</p>
-            <p className="mt-0.5 text-[8px] text-slate-400">9:38 AM</p>
+          <div className="max-w-[75%] rounded-2xl rounded-bl-sm bg-white dark:bg-[#262626] px-2.5 py-1.5 shadow-sm ring-1 ring-slate-100 dark:ring-[#2A2A2A]">
+            <p className="text-[10px] leading-relaxed text-slate-700 dark:text-gray-200">Is the birthday cake ready for Saturday? Need it by 2 PM!</p>
+            <p className="mt-0.5 text-[8px] text-slate-400 dark:text-gray-500">9:38 AM</p>
           </div>
         </div>
 
@@ -359,9 +363,9 @@ function MobileAppMockup() {
       </div>
 
       {/* Input */}
-      <div className="border-t border-slate-100 bg-white px-3 py-2">
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
-          <span className="flex-1 text-[10px] text-slate-400">Message…</span>
+      <div className="border-t border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#121212] px-3 py-2">
+        <div className="flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-slate-50 dark:bg-[#262626] px-3 py-1.5">
+          <span className="flex-1 text-[10px] text-slate-400 dark:text-gray-500">Message…</span>
           <button className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3A9B9F]">
             <Send className="h-2.5 w-2.5 text-white" />
           </button>
@@ -380,15 +384,15 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden bg-white pt-32 pb-20 md:pt-40 md:pb-24">
+    <section className="relative overflow-hidden bg-white dark:bg-[#121212] pt-32 pb-20 md:pt-40 md:pb-24">
       {/* Background Rings & Glow */}
       <div className="absolute left-1/2 top-0 -z-10 h-[1200px] w-full -translate-x-1/2 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,transparent_20%,white_70%)] z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,transparent_20%,white_70%)] dark:bg-[radial-gradient(ellipse_at_top_center,transparent_20%,#121212_70%)] z-10" />
         <div className="absolute left-1/2 top-[10%] -translate-x-1/2 -translate-y-1/2">
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-slate-200/60"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-slate-200/60 dark:border-[#2A2A2A]"
               style={{ width: `${(i + 1) * 220}px`, height: `${(i + 1) * 220}px` }}
             />
           ))}
@@ -407,7 +411,7 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-800 shadow-sm transition-all hover:bg-teal-100"
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/10 px-4 py-1.5 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm transition-all hover:bg-teal-100 dark:hover:bg-teal-900/20"
         >
           <Sparkles className="h-4 w-4 text-[#3A9B9F]" />
           <span>#1 MULTI-CHANNEL INBOX</span>
@@ -418,7 +422,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
-          className="mb-6 max-w-4xl font-[family-name:var(--font-poppins)] text-5xl font-bold tracking-tight text-[#213138] md:text-6xl lg:text-7xl leading-[1.1]"
+          className="mb-6 max-w-4xl font-[family-name:var(--font-poppins)] text-5xl font-bold tracking-tight text-[#213138] dark:text-white md:text-6xl lg:text-7xl leading-[1.1]"
         >
           The best messaging system <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-[#2F8488]">
@@ -431,10 +435,10 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="mb-10 max-w-2xl font-[family-name:var(--font-inter)] text-lg text-slate-600 md:text-xl leading-relaxed"
+          className="mb-10 max-w-2xl font-[family-name:var(--font-inter)] text-lg text-slate-600 dark:text-gray-400 md:text-xl leading-relaxed"
         >
           Bring WhatsApp, Instagram, and Facebook Messenger into one delightful app.{" "}
-          <span className="font-medium text-slate-800">
+          <span className="font-medium text-slate-800 dark:text-gray-200">
             Work anywhere, across all devices.
           </span>
         </motion.p>
@@ -463,14 +467,14 @@ export function HeroSection() {
           className="relative mt-20 w-full max-w-5xl"
         >
           {/* ── Desktop / Tablet Frame ── */}
-          <div className="relative z-10 rounded-2xl border border-slate-200/80 bg-white p-2 shadow-[0_20px_80px_-15px_rgba(0,0,0,0.09)] sm:rounded-[2rem] sm:p-3">
-            <div className="overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 sm:rounded-2xl">
+          <div className="relative z-10 rounded-2xl border border-slate-200/80 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-2 shadow-[0_20px_80px_-15px_rgba(0,0,0,0.09)] sm:rounded-[2rem] sm:p-3">
+            <div className="overflow-hidden rounded-xl bg-white dark:bg-[#121212] ring-1 ring-slate-200 dark:ring-[#2A2A2A] sm:rounded-2xl">
               {/* Window chrome */}
-              <div className="flex h-9 items-center gap-2 border-b border-slate-100 bg-white px-4">
+              <div className="flex h-9 items-center gap-2 border-b border-slate-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-4">
                 <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
                 <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
                 <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                <div className="ml-3 flex-1 rounded-md bg-slate-100 px-3 py-1 text-[11px] text-slate-400">
+                <div className="ml-3 flex-1 rounded-md bg-slate-100 dark:bg-[#121212] px-3 py-1 text-[11px] text-slate-400 dark:text-gray-500">
                   app.tropichat.com
                 </div>
               </div>
@@ -483,11 +487,11 @@ export function HeroSection() {
 
           {/* ── Phone Frame ── */}
           <div className="absolute -bottom-10 -right-3 z-20 w-[30%] min-w-[130px] max-w-[230px] sm:-bottom-14 sm:-right-6 lg:-right-10">
-            <div className="relative rounded-[2rem] border-[3px] border-slate-300 bg-slate-800 p-1.5 shadow-[0_30px_80px_-10px_rgba(0,0,0,0.25)] sm:rounded-[2.5rem] sm:border-[4px] sm:p-2">
+            <div className="relative rounded-[2rem] border-[3px] border-slate-300 dark:border-white/20 bg-slate-800 p-1.5 shadow-[0_30px_80px_-10px_rgba(0,0,0,0.25)] sm:rounded-[2.5rem] sm:border-[4px] sm:p-2">
               {/* Dynamic island */}
               <div className="absolute left-1/2 top-3 z-10 h-3 w-[35%] -translate-x-1/2 rounded-full bg-slate-800 sm:top-3.5 sm:h-3.5" />
               {/* Screen */}
-              <div className="overflow-hidden rounded-[1.6rem] bg-white">
+              <div className="overflow-hidden rounded-[1.6rem] bg-white dark:bg-[#121212]">
                 <div className="h-[280px] sm:h-[380px] lg:h-[420px]">
                   <MobileAppMockup />
                 </div>
@@ -509,19 +513,19 @@ export function HeroSection() {
             INTEGRATES SEAMLESSLY WITH
           </p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale transition-all duration-500 hover:grayscale-0 hover:opacity-100">
-            <div className="flex items-center gap-2 font-semibold text-slate-700 text-lg md:text-xl transition-colors hover:text-[#25D366]">
+            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#25D366]">
               <MessageCircle className="h-6 w-6" />
               WhatsApp
             </div>
-            <div className="flex items-center gap-2 font-semibold text-slate-700 text-lg md:text-xl transition-colors hover:text-[#0084FF]">
+            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#0084FF]">
               <Facebook className="h-6 w-6" />
               Messenger
             </div>
-            <div className="flex items-center gap-2 font-semibold text-slate-700 text-lg md:text-xl transition-colors hover:text-[#E1306C]">
+            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#E1306C]">
               <Instagram className="h-6 w-6" />
               Instagram
             </div>
-            <div className="flex items-center gap-2 font-semibold text-slate-700 text-lg md:text-xl transition-colors hover:text-[#3A9B9F]">
+            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#3A9B9F]">
               <Phone className="h-6 w-6" />
               SMS
             </div>
