@@ -161,7 +161,7 @@ export default function BookingsPage() {
   // UI State
   const [isMobile, setIsMobile] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(today)
-  const [pageIndex, setPageIndex] = useState(0)
+  const [pageIndex, setPageIndex] = useState(Math.floor((today.getDate() - 1) / 12))
   const [selectedTime, setSelectedTime] = useState("10:00 AM")
   const [currCustomerId, setCurrCustomerId] = useState<string | null>(null)
 
@@ -321,14 +321,44 @@ export default function BookingsPage() {
                 const dayNum = date.getDate()
                 const dayName = DAY_NAMES[date.getDay()]
                 const isSelected = selectedDate.toDateString() === date.toDateString()
+                
+                const selectedStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                const dayBookingsCount = filtered.filter(b => b.booking_date === selectedStr).length
+
                 return (
-                  <motion.button key={idx} onClick={() => setSelectedDate(date)} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.02 }} className={cn("flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative flex-shrink-0", isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#1E1E1E] border-transparent dark:border-[#2A2A2A] text-[#213138] dark:text-gray-100 shadow-sm")}>
-                    <span className={cn("text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5", isSelected ? "text-white/60" : "text-gray-400 dark:text-gray-500")}>{dayName}</span>
-                    <span className={cn("text-3xl font-extrabold leading-tight", isSelected ? "text-white" : "text-[#213138] dark:text-white")}>{dayNum}</span>
+                  <motion.button 
+                    key={idx} 
+                    onClick={() => setSelectedDate(date)} 
+                    initial={{ opacity: 0, scale: 0.9 }} 
+                    animate={{ opacity: 1, scale: 1 }} 
+                    transition={{ delay: idx * 0.02 }} 
+                    className={cn(
+                      "flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative flex-shrink-0 group/card", 
+                      isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#1E1E1E] border-transparent dark:border-[#2A2A2A] text-[#213138] dark:text-gray-100 shadow-sm hover:border-[#3A9B9F]/30"
+                    )}
+                  >
+                    <span className={cn("text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5", isSelected ? "text-white/60" : "text-gray-400 dark:text-gray-500")}>
+                      {dayName}
+                    </span>
+                    <span className={cn("text-3xl font-extrabold leading-tight", isSelected ? "text-white" : "text-[#213138] dark:text-white")}>
+                      {dayNum}
+                    </span>
+                    
+                    {dayBookingsCount > 0 && (
+                      <div className={cn(
+                        "absolute top-3 right-3 h-5 min-w-[20px] px-1.5 rounded-full flex items-center justify-center text-[10px] font-black border",
+                        isSelected 
+                          ? "bg-white text-[#3A9B9F] border-white" 
+                          : "bg-[#3A9B9F] text-white border-transparent"
+                      )}>
+                        {dayBookingsCount}
+                      </div>
+                    )}
                   </motion.button>
                 )
               })}
             </div>
+            
             <div className="mb-2">
               <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
                 {timesList.map((t) => (
@@ -502,7 +532,13 @@ export default function BookingsPage() {
         </div>
       )}
 
-      <CreateBookingModal open={createOpen} onClose={() => setCreateOpen(false)} onCreated={() => { fetchBookings(); setCreateOpen(false) }} />
+      <CreateBookingModal 
+        open={createOpen} 
+        onClose={() => setCreateOpen(false)} 
+        onCreated={() => { fetchBookings(); setCreateOpen(false) }} 
+        initialDate={selectedDate.toISOString().split('T')[0]}
+        initialTime={selectedTime.includes(':') ? selectedTime : undefined}
+      />
       <BookingDetailsModal open={detailsOpen} booking={selectedBooking} onClose={() => { setDetailsOpen(false); setSelectedBooking(null) }} onUpdated={handleBookingUpdated} />
     </div>
   )

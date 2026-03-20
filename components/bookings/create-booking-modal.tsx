@@ -37,6 +37,8 @@ interface CreateBookingModalProps {
   }
   // Confirmation message send handler
   onSendConfirmation?: (message: string, conversationId: string) => void
+  initialDate?: string
+  initialTime?: string
 }
 
 const SERVICE_COLORS = [
@@ -50,14 +52,28 @@ export function CreateBookingModal({
   onCreated,
   prefill,
   onSendConfirmation,
+  initialDate,
+  initialTime,
 }: CreateBookingModalProps) {
+  const parseTimeStr = (t: string) => {
+    if (!t) return ''
+    const match = t.match(/(\d+):(\d+)\s*(AM|PM)/i)
+    if (!match) return t
+    let h = parseInt(match[1])
+    const m = match[2]
+    const ampm = match[3].toUpperCase()
+    if (ampm === 'PM' && h < 12) h += 12
+    if (ampm === 'AM' && h === 12) h = 0
+    return `${String(h).padStart(2, '0')}:${m}`
+  }
+
   const [services, setServices] = useState<BookingService[]>([])
   const [step, setStep] = useState<'form' | 'confirm' | 'done'>('form')
 
   // Form state
   const [serviceId, setServiceId] = useState('')
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
+  const [date, setDate] = useState(initialDate ?? '')
+  const [time, setTime] = useState(initialTime ? parseTimeStr(initialTime) : '')
   const [people, setPeople] = useState(1)
   const [customerName, setCustomerName] = useState(prefill?.customerName ?? '')
   const [customerPhone, setCustomerPhone] = useState(prefill?.customerPhone ?? '')
@@ -82,10 +98,13 @@ export function CreateBookingModal({
 
   // Pre-fill when prefill prop changes
   useEffect(() => {
-    if (prefill?.customerName) setCustomerName(prefill.customerName)
-    if (prefill?.customerPhone) setCustomerPhone(prefill.customerPhone)
     if (prefill?.customerEmail) setCustomerEmail(prefill.customerEmail)
   }, [prefill])
+
+  useEffect(() => {
+    if (initialDate) setDate(initialDate)
+    if (initialTime) setTime(parseTimeStr(initialTime))
+  }, [initialDate, initialTime])
 
   // Check availability whenever service/date/time/people change
   const doAvailabilityCheck = useCallback(async () => {
