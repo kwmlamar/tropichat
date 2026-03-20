@@ -397,7 +397,19 @@ export default function BookingsPage() {
             </div>
           </div>
           <div className="p-8 pb-10 bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm border-t border-gray-100/30 dark:border-[#2A2A2A]/30">
-            <Button onClick={() => setCreateOpen(true)} className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[24px] font-bold text-base shadow-xl shadow-teal-500/20 border-none transform active:scale-95 transition-all">Book Appointment</Button>
+            <Button 
+              onClick={() => {
+                if (isMobile) {
+                  const dateStr = selectedDate.toISOString().split('T')[0]
+                  router.push(`/dashboard/bookings/new?date=${dateStr}&time=${encodeURIComponent(selectedTime || '')}`)
+                } else {
+                  setCreateOpen(true)
+                }
+              }} 
+              className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-[24px] font-bold text-base shadow-xl shadow-teal-500/20 border-none transform active:scale-95 transition-all"
+            >
+              Book Appointment
+            </Button>
           </div>
         </div>
       ) : (
