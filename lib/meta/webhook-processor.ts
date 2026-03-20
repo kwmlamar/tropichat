@@ -241,11 +241,11 @@ export async function handleIncomingMessage(
   // 1. Find the connected account (include access_token for profile lookups)
   // For Instagram, recipient.id in the webhook may be the IGID OR the Facebook Page ID,
   // so we try both: first by channel_account_id, then by metadata->page_id.
-  let account: { id: string; user_id: string; access_token: string; metadata: unknown } | null = null
+  let account: { id: string; user_id: string; channel_account_id: string; access_token: string; metadata: unknown } | null = null
 
   const { data: directMatch } = await db
     .from('connected_accounts')
-    .select('id, user_id, access_token, metadata')
+    .select('id, user_id, channel_account_id, access_token, metadata')
     .eq('channel_type', event.channel_type)
     .eq('channel_account_id', event.account_id)
     .eq('is_active', true)
@@ -258,7 +258,7 @@ export async function handleIncomingMessage(
     console.log(`[Webhook:instagram] Direct match failed for ${event.account_id}, trying page_id fallback`)
     const { data: pageMatch } = await db
       .from('connected_accounts')
-      .select('id, user_id, access_token, metadata')
+      .select('id, user_id, channel_account_id, access_token, metadata')
       .eq('channel_type', 'instagram')
       .eq('is_active', true)
       .filter('metadata->>page_id', 'eq', event.account_id)
@@ -427,6 +427,7 @@ async function processAutomations(
   event: IncomingWebhookEvent
 ) {
   try {
+    console.log(`[Automations] Processing rules for user ${account.user_id}...`)
     // 1. Gate check: Verify user is not on free plan
     const { data: customer } = await db
       .from('customers')
@@ -434,7 +435,10 @@ async function processAutomations(
       .eq('id', account.user_id)
       .single()
 
+    console.log(`[Automations] Customer plan: ${customer?.plan || 'unknown'}`)
+
     if (!customer || customer.plan === 'free') {
+      console.log(`[Automations] Skipping: User is on ${customer?.plan || 'no'} plan`)
       return // Paywall enforced
     }
 
@@ -445,17 +449,22 @@ async function processAutomations(
       .eq('customer_id', account.user_id)
       .eq('is_enabled', true)
 
+    console.log(`[Automations] Found ${autoRules?.length || 0} enabled rules`)
+
     if (!autoRules || autoRules.length === 0) return
 
     // 3. Evaluate each rule
     for (const rule of autoRules) {
       let isMatch = false
-      const msgContent = event.message.content?.toLowerCase() || ''
+      const msgContent = event.message.content?.toLowerCase().trim() || ''
+      const ruleTrigger = rule.trigger_value?.toLowerCase().trim() || ''
+      
+      console.log(`[Automations] Evaluating rule "${rule.name}" against content: "${msgContent}" (Trigger: "${ruleTrigger}")`)
 
       if (rule.trigger_type === 'all_messages') {
         isMatch = true
       } else if (rule.trigger_type === 'keyword' && rule.trigger_value) {
-        if (msgContent.includes(rule.trigger_value.toLowerCase())) {
+        if (msgContent.includes(ruleTrigger)) {
           isMatch = true
         }
       } else if (rule.trigger_type === 'new_conversation') {
@@ -465,40 +474,45 @@ async function processAutomations(
 
       // If matched, execute action
       if (isMatch) {
-        console.log(`[Automations] Triggering rule ${rule.id} for conversation ${conversationId}`)
+        console.log(`[Automations] Triggering rule "${rule.name}" (${rule.id}) for conversation ${conversationId}`)
         
-        if (rule.action_type === 'send_message' && rule.action_value) {
-          // Send automated reply
-          const metaOptions = account.metadata as Record<string, any>
-          
-          await sendMessage({
-            channelType: event.channel_type,
-            accountId: account.channel_account_id || (metaOptions?.page_id) || '',
-            pageId: metaOptions?.page_id,
-            accessToken: metaOptions?.page_access_token || account.access_token,
-            recipientId: event.customer_id,
-            content: rule.action_value,
-            humanAgentTag: true
-          })
+        try {
+          if (rule.action_type === 'send_message' && rule.action_value) {
+            // Send automated reply
+            const metaOptions = account.metadata as Record<string, any>
+            
+            await sendMessage({
+              channelType: event.channel_type,
+              accountId: account.channel_account_id || (metaOptions?.page_id) || '',
+              pageId: metaOptions?.page_id,
+              accessToken: metaOptions?.page_access_token || account.access_token,
+              recipientId: event.customer_id,
+              content: rule.action_value,
+              humanAgentTag: true
+            })
 
-          // Log the automated outbound message back to the DB
-          await db.from('unified_messages').insert({
-            conversation_id: conversationId,
-            channel_message_id: `auto_${Date.now()}`,
-            sender_type: 'business',
-            content: rule.action_value,
-            message_type: 'text',
-            sent_at: new Date().toISOString(),
-            status: 'sent',
-            is_automated: true,
-            metadata: { automation_rule_id: rule.id }
-          })
+            // Log the automated outbound message back to the DB
+            await db.from('unified_messages').insert({
+              conversation_id: conversationId,
+              channel_message_id: `auto_${Date.now()}`,
+              sender_type: 'business',
+              content: rule.action_value,
+              message_type: 'text',
+              sent_at: new Date().toISOString(),
+              status: 'sent',
+              is_automated: true,
+              metadata: { automation_rule_id: rule.id }
+            })
+          }
+          
+          // Log the trigger count up
+          await db.from('automation_rules')
+            .update({ times_triggered: (rule.times_triggered || 0) + 1 })
+            .eq('id', rule.id)
+
+        } catch (execErr) {
+          console.error(`[Automations] Error executing rule ${rule.name}:`, execErr)
         }
-        
-        // Log the trigger count up
-        await db.from('automation_rules')
-          .update({ times_triggered: (rule.times_triggered || 0) + 1 })
-          .eq('id', rule.id)
 
         // Only process the first matching rule to avoid spam loops
         break 

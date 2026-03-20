@@ -39,11 +39,8 @@ export async function sendWhatsAppText(options: WhatsAppSendTextOptions): Promis
     text: { body, preview_url: previewUrl ?? false },
   }
 
-  // Add human_agent tag for extended 7-day response window
-  if (humanAgentTag) {
-    requestBody.messaging_type = 'MESSAGE_TAG'
-    requestBody.tag = 'HUMAN_AGENT'
-  }
+  // Note: WhatsApp Cloud API does not support HUMAN_AGENT tags like Instagram/Messenger.
+  // We ignore humanAgentTag here to avoid 400 Bad Request errors from Meta.
 
   return metaApiRequest<MetaSendResponse>({
     method: 'POST',

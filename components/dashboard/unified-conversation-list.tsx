@@ -184,7 +184,7 @@ export function UnifiedConversationList({
               {showArchived ? "Back to Chats" : "Archived"}
             </span>
             {showArchived && conversations.length > 0 && (
-              <span className="ml-auto text-[14px] font-medium text-[#25D366]">
+              <span className="ml-auto text-[14px] font-bold text-[#3A9B9F]">
                 {conversations.length}
               </span>
             )}
@@ -271,8 +271,8 @@ export function UnifiedConversationList({
                             {getConversationDisplayName(conversation)}
                           </span>
                           <span className={cn(
-                            "text-[12px] font-medium whitespace-nowrap",
-                            conversation.unread_count > 0 ? "text-[#25D366]" : "text-gray-400"
+                            "text-[12px] font-bold whitespace-nowrap",
+                            conversation.unread_count > 0 ? "text-[#3A9B9F]" : "text-gray-400"
                           )}>
                             {conversation.last_message_at
                               ? new Date(conversation.last_message_at).toLocaleDateString() === new Date().toLocaleDateString()
@@ -292,8 +292,8 @@ export function UnifiedConversationList({
  
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                              {conversation.unread_count > 0 && (
-                              <div className="h-5 min-w-[20px] rounded-full bg-[#25D366] flex items-center justify-center px-1.5">
-                                <span className="text-[11px] font-bold text-white leading-none">
+                              <div className="h-[22px] min-w-[22px] rounded-full bg-[#3A9B9F] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
+                                <span className="text-[10px] font-black text-white leading-none">
                                   {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
                                 </span>
                               </div>

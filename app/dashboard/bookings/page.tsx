@@ -17,6 +17,7 @@ import {
   List,
   Loader2,
   Plus,
+  Settings,
   Users,
   Zap,
   ArrowRight
@@ -162,6 +163,7 @@ export default function BookingsPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(today)
   const [pageIndex, setPageIndex] = useState(0)
   const [selectedTime, setSelectedTime] = useState("10:00 AM")
+  const [currCustomerId, setCurrCustomerId] = useState<string | null>(null)
 
   // Modals
   const [createOpen, setCreateOpen] = useState(false)
@@ -183,6 +185,7 @@ export default function BookingsPage() {
     const { data: customer } = await getCurrentCustomer()
     if (customer) {
       setCustomerPlan(customer.plan)
+      setCurrCustomerId(customer.id)
     }
 
     if (customer?.plan === "free") {
@@ -261,7 +264,7 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#F8FAFB] dark:bg-[#121212] relative overflow-hidden">
+    <div className="min-h-full flex flex-col bg-[#F8FAFB] dark:bg-[#121212] relative">
       {loading ? (
         <div className="flex flex-1 items-center justify-center h-full z-10 relative">
           <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" />
@@ -299,6 +302,11 @@ export default function BookingsPage() {
             <button onClick={handleMobileBack} className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
               <ArrowLeft className="h-5 w-5" />
             </button>
+            <Link href="/dashboard/bookings/availability">
+              <button className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
+                <Settings className="h-5 w-5" />
+              </button>
+            </Link>
           </div>
           <div className="flex items-center justify-between px-8 py-3">
             <h1 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 tracking-tight">{headerMonth}</h1>
@@ -417,13 +425,19 @@ export default function BookingsPage() {
                 </button>
               </div>
 
+              <Link href="/dashboard/bookings/availability">
+                <Button variant="outline" className="bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] text-gray-600 dark:text-gray-300 border-gray-100 dark:border-[#2A2A2A] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
+                  <Settings className="h-4 w-4 mr-2" /> Manage Services
+                </Button>
+              </Link>
+
               <Button
                 onClick={() => setCreateOpen(true)}
                 className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl px-6 h-11 font-bold shadow-lg shadow-[#3A9B9F]/20 active:scale-95 transition-all"
               >
                 New Booking
               </Button>
-              <Link href="/book-preview" target="_blank">
+              <Link href={currCustomerId ? `/book/${currCustomerId}` : "/book-preview"} target="_blank">
                 <Button variant="outline" className="bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] text-[#3A9B9F] border-gray-100 dark:border-[#2A2A2A] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
                   <ExternalLink className="h-4 w-4 mr-2" /> Share Link
                 </Button>
@@ -431,7 +445,7 @@ export default function BookingsPage() {
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 overflow-y-auto custom-scrollbar">
+          <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard 
@@ -464,10 +478,10 @@ export default function BookingsPage() {
                   <button onClick={() => { if(viewMonth === 11){ setViewYear(y=>y+1); setViewMonth(0) } else setViewMonth(m=>m+1) }} className="p-2 rounded-xl bg-white/80 dark:bg-[#262626] hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-[#2A2A2A] shadow-sm transition-colors"><ChevronRight className="h-5 w-5" /></button>
                 </div>
               </div>
-              <div className="flex-1 overflow-auto relative custom-scrollbar min-h-[500px]">
+              <div className="relative">
                 {loading ? <div className="flex items-center justify-center p-20"><Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" /></div> : (
                   <AnimatePresence mode="wait">
-                    <motion.div key={view + viewMonth + viewYear} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.3 }} className="h-full">
+                    <motion.div key={view + viewMonth + viewYear} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.3 }}>
                       {view === 'month' ? (
                         <MonthView 
                           calendarDays={calendarDays} 

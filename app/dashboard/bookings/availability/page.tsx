@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Plus, Pencil, Trash2, Clock, Users, DollarSign, ToggleLeft, ToggleRight, ChevronDown, ChevronUp, X, Check, Palette } from "lucide-react"
+import { Plus, Pencil, Trash2, Clock, Users, DollarSign, ToggleLeft, ToggleRight, ChevronDown, ChevronUp, X, Check, Palette, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 import {
   getServices, createService, updateService, deleteService,
   getAvailabilitySlots, createAvailabilitySlot, updateAvailabilitySlot, deleteAvailabilitySlot,
@@ -54,10 +55,10 @@ function ServiceForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-      <div className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-sm">
+      <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Service Name *</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-[#3A9B9F] mb-2 ml-1">Service Name *</label>
           <Input
             value={name}
             onChange={e => setName(e.target.value)}
@@ -66,13 +67,13 @@ function ServiceForm({
           />
         </div>
         <div className="col-span-2">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">Description</label>
           <textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="Short description of the tour…"
             rows={2}
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/40 focus:border-[#3A9B9F]"
+            className="w-full rounded-xl border border-gray-100 dark:border-[#2A2A2A] bg-gray-50 dark:bg-[#262626] px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all"
           />
         </div>
         <div>
@@ -156,92 +157,93 @@ function SlotForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 p-3 bg-blue-50 rounded-xl border border-blue-200 mt-2">
-      <p className="text-xs font-semibold text-blue-800">New Availability Slot</p>
+    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-[#F8FAFB] dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] mt-4 shadow-inner">
+      <p className="text-[10px] font-black uppercase tracking-widest text-[#3A9B9F]">New Availability Slot</p>
 
       {/* Recurring vs one-time */}
-      <div className="flex rounded-lg overflow-hidden border border-blue-200 w-fit">
+      <div className="flex bg-gray-100 dark:bg-[#1E1E1E] p-1 rounded-xl w-fit">
         <button
           type="button"
           onClick={() => setIsRecurring(true)}
-          className={cn("px-3 py-1.5 text-xs font-medium transition-colors",
-            isRecurring ? "bg-[#3A9B9F] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
+          className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all",
+            isRecurring ? "bg-[#3A9B9F] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           )}
         >
-          Weekly (recurring)
+          Weekly
         </button>
         <button
           type="button"
           onClick={() => setIsRecurring(false)}
-          className={cn("px-3 py-1.5 text-xs font-medium transition-colors",
-            !isRecurring ? "bg-[#3A9B9F] text-white" : "bg-white text-gray-600 hover:bg-gray-50"
+          className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all",
+            !isRecurring ? "bg-[#3A9B9F] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           )}
         >
-          One-time date
+          One-time
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         {isRecurring ? (
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Day of Week</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">Day of Week</label>
             <select
               value={dayOfWeek}
               onChange={e => setDayOfWeek(Number(e.target.value))}
-              className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/40"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all appearance-none"
             >
               {DAY_LABELS.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
           </div>
         ) : (
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">Date</label>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">Date</label>
             <input
               type="date"
               value={specificDate}
               onChange={e => setSpecificDate(e.target.value)}
               required={!isRecurring}
-              className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/40"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Max simultaneous bookings</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">Capacity</label>
           <Input
             type="number"
             min="1"
             value={maxBookings}
             onChange={e => setMaxBookings(e.target.value)}
+            className="h-12 rounded-xl"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Start time</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">Start</label>
           <input
             type="time"
             value={startTime}
             onChange={e => setStartTime(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/40"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">End time</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 ml-1">End</label>
           <input
             type="time"
             value={endTime}
             onChange={e => setEndTime(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/40"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
           />
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button type="submit" disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-xs h-8">
-          <Check className="h-3.5 w-3.5 mr-1" />
-          {saving ? 'Saving…' : 'Add Slot'}
+      <div className="flex gap-2 pt-2">
+        <Button type="submit" disabled={saving} className="flex-1 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl h-12 font-bold shadow-lg shadow-teal-500/10">
+          <Check className="h-4 w-4 mr-2" />
+          {saving ? 'Adding...' : 'Add Slot'}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="text-xs h-8">Cancel</Button>
+        <Button type="button" variant="outline" onClick={onCancel} className="bg-white dark:bg-[#1E1E1E] rounded-xl h-12 px-6 font-bold border-gray-100 dark:border-[#2A2A2A]">Cancel</Button>
       </div>
     </form>
   )
@@ -345,13 +347,18 @@ export default function AvailabilityPage() {
   }
 
   return (
-    <div className="h-full overflow-auto bg-gray-50">
-      <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="h-full bg-[#F8FAFB] dark:bg-[#121212] overflow-y-auto">
+      <div className="max-w-3xl mx-auto p-8 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Availability & Services</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Manage your tours and when they run</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard/bookings" className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-100 dark:border-[#2A2A2A] text-gray-400 hover:text-[#3A9B9F] transition-all">
+                <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <h1 className="text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)]">Services</h1>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Configure your tours and availability</p>
+            </div>
           </div>
           <Button
             onClick={() => setAddingService(true)}
@@ -388,15 +395,15 @@ export default function AvailabilityPage() {
               const serviceSlots = slotsForService(service.id)
 
               return (
-                <div key={service.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                <div key={service.id} className="bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-[#2A2A2A] overflow-hidden shadow-sm">
                   {/* Service header */}
                   <div className="flex items-center gap-3 px-4 py-3">
                     <span className="h-4 w-4 rounded-full shrink-0" style={{ backgroundColor: service.color }} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-semibold text-gray-900 text-sm">{service.name}</p>
+                        <p className="font-bold text-gray-900 dark:text-gray-100 text-sm tracking-tight">{service.name}</p>
                         {!service.active && (
-                          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Inactive</span>
+                          <span className="text-[9px] font-black uppercase tracking-widest bg-gray-100 dark:bg-[#262626] text-gray-400 dark:text-gray-500 px-2.5 py-1 rounded-lg">Inactive</span>
                         )}
                       </div>
                       <p className="text-xs text-gray-400">
@@ -408,7 +415,7 @@ export default function AvailabilityPage() {
                       {/* Active toggle */}
                       <button
                         onClick={() => handleToggleActive(service)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
                         title={service.active ? 'Deactivate' : 'Activate'}
                       >
                         {service.active
@@ -418,21 +425,21 @@ export default function AvailabilityPage() {
                       </button>
                       <button
                         onClick={() => setEditingServiceId(editing ? null : service.id)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
                         title="Edit"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteService(service)}
-                        className="p-1.5 rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500"
+                        className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-gray-400 hover:text-red-500"
                         title="Archive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setExpandedServiceId(expanded ? null : service.id)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
                       >
                         {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </button>
@@ -452,16 +459,16 @@ export default function AvailabilityPage() {
 
                   {/* Expanded: availability slots */}
                   {expanded && !editing && (
-                    <div className="border-t border-gray-100 px-4 py-3">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <div className="border-t border-gray-100 dark:border-[#2A2A2A] px-6 py-5 bg-gray-50/30 dark:bg-[#262626]/30">
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                           Availability Slots
                         </p>
                         <button
                           onClick={() => setAddingSlotForService(addingSlotForService === service.id ? null : service.id)}
-                          className="text-xs text-[#3A9B9F] font-medium hover:underline flex items-center gap-1"
+                          className="text-xs text-[#3A9B9F] font-bold hover:underline flex items-center gap-1.5 transition-all"
                         >
-                          <Plus className="h-3.5 w-3.5" />
+                          <Plus className="h-4 w-4" />
                           Add slot
                         </button>
                       </div>
@@ -485,8 +492,8 @@ export default function AvailabilityPage() {
                           <div
                             key={slot.id}
                             className={cn(
-                              "flex items-center gap-2 px-3 py-2 rounded-lg text-xs",
-                              slot.is_available ? "bg-gray-50" : "bg-red-50 opacity-70"
+                              "flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all",
+                              slot.is_available ? "bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-[#2A2A2A] text-gray-600 dark:text-gray-300 shadow-sm" : "bg-red-50/50 dark:bg-red-950/10 text-red-500/50 dark:text-red-500/30 line-through"
                             )}
                           >
                             <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />

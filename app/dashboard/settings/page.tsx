@@ -1140,14 +1140,19 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div>
                       <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">Monthly Cost</p>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">$59<span className="text-sm text-gray-500 font-normal">/mo</span></p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        {customer?.stripe_current_period_end ? "$29" : "$0"}
+                        <span className="text-sm text-gray-500 font-normal">/mo</span>
+                      </p>
                     </div>
                     <div>
-                      <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">Next Billing Date</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">
+                        {customer?.stripe_current_period_end ? "Next Billing Date" : "Account Status"}
+                      </p>
+                      <p className="text-lg font-semibold text-[#3A9B9F] dark:text-teal-400">
                         {customer?.stripe_current_period_end
                           ? new Date(customer.stripe_current_period_end).toLocaleDateString()
-                          : "Feb 15, 2024"
+                          : "Lifetime Founder's Pass"
                         }
                       </p>
                     </div>

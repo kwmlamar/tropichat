@@ -22,6 +22,21 @@ export interface BusinessHours {
   saturday?: { start: string; end: string; enabled: boolean }
   sunday?: { start: string; end: string; enabled: boolean }
 }
+// Business Profile table
+export interface BusinessProfile {
+  id: string
+  connected_account_id: string
+  business_name: string
+  business_description: string | null
+  business_category: string | null
+  website_url: string | null
+  business_address: string | null
+  business_hours: string | null
+  contact_phone: string | null
+  contact_email: string | null
+  profile_picture_url: string | null
+  updated_at: string
+}
 
 // Customer (Business) table
 export interface Customer {
