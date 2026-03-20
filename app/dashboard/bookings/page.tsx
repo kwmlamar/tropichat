@@ -17,7 +17,9 @@ import {
   List,
   Loader2,
   Plus,
-  Users
+  Users,
+  Zap,
+  ArrowRight
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -27,7 +29,7 @@ import { getBookings, getServices, formatBookingTime } from "@/lib/bookings"
 import { CreateBookingModal } from "@/components/bookings/create-booking-modal"
 import { BookingDetailsModal } from "@/components/bookings/booking-details-modal"
 import type { Booking, BookingService } from "@/types/bookings"
-import { getSupabase } from "@/lib/supabase"
+import { getSupabase, getCurrentCustomer } from "@/lib/supabase"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
 
@@ -57,7 +59,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 
 function StatCard({ title, val, icon: Icon, color }: { title: string, val: number, icon: any, color: string }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-xl p-5 rounded-3xl border border-white dark:border-[#2A2A2A] shadow-sm ring-1 ring-gray-100/50 dark:ring-white/5">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-xl p-5 rounded-3xl border border-gray-200 dark:border-[#2A2A2A] shadow-sm ring-1 ring-gray-100/50 dark:ring-white/5">
       <div className="flex items-center gap-3 mb-3">
         <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-[#262626]" style={{ color }}><Icon className="h-5 w-5" /></div>
         <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{title}</span>
@@ -153,6 +155,7 @@ export default function BookingsPage() {
   const [services, setServices] = useState<BookingService[]>([])
   const [loading, setLoading] = useState(true)
   const [filterService, setFilterService] = useState<string>('all')
+  const [customerPlan, setCustomerPlan] = useState<string>("free")
 
   // UI State
   const [isMobile, setIsMobile] = useState(false)
@@ -176,6 +179,17 @@ export default function BookingsPage() {
 
   const fetchBookings = useCallback(async () => {
     setLoading(true)
+    
+    const { data: customer } = await getCurrentCustomer()
+    if (customer) {
+      setCustomerPlan(customer.plan)
+    }
+
+    if (customer?.plan === "free") {
+      setLoading(false)
+      return
+    }
+
     const [{ data: b }, { data: s }] = await Promise.all([
       getBookings({ month: monthStr }),
       getServices(false),
@@ -248,7 +262,37 @@ export default function BookingsPage() {
 
   return (
     <div className="h-full flex flex-col bg-[#F8FAFB] dark:bg-[#121212] relative overflow-hidden">
-      {isMobile ? (
+      {loading ? (
+        <div className="flex flex-1 items-center justify-center h-full z-10 relative">
+          <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" />
+        </div>
+      ) : customerPlan === "free" ? (
+        <div className="flex flex-1 flex-col items-center justify-center p-6 sm:p-12 relative z-10 pt-20">
+          <div className="bg-white dark:bg-[#1E1E1E]/90 backdrop-blur-xl rounded-[2.5rem] border border-gray-100 dark:border-[#2A2A2A] p-8 md:p-14 text-center shadow-2xl max-w-lg w-full">
+            <div className="flex flex-col items-center">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-[#3A9B9F]/30 blur-3xl rounded-full scale-150" />
+                <div className="relative bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] w-24 h-24 rounded-[1.5rem] flex items-center justify-center shadow-lg transform -rotate-6">
+                  <Calendar className="h-10 w-10 text-white transform rotate-6" />
+                </div>
+              </div>
+              
+              <h3 className="text-3xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] tracking-tight mb-4">Bookings are a Professional Feature</h3>
+              <p className="text-[#475569] dark:text-gray-400 mb-10 text-[15px] leading-relaxed">
+                Unlock the integrated calendar to schedule appointments, manage services, and view your agenda seamlessly.
+              </p>
+              
+              <Button 
+                onClick={() => router.push('/dashboard/settings?tab=billing')}
+                className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl shadow-xl shadow-[#3A9B9F]/20 font-bold active:scale-[0.98] transition-all text-[15px]"
+              >
+                Upgrade to Professional
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : isMobile ? (
         /* Mobile Dashboard Layout */
         <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] dark:bg-[#121212] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
           <div className="flex items-center justify-between px-6 pt-6 pb-0">
@@ -263,14 +307,14 @@ export default function BookingsPage() {
               <button onClick={() => setPageIndex(p => p + 1)} className="p-1 px-2 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-lg text-gray-400 dark:text-gray-500 hover:text-navy-900 shadow-sm transition-all active:scale-95"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
-          <div className="px-6 flex-1 flex flex-col justify-start">
+          <div className="px-6 flex-1 flex flex-col justify-start overflow-y-auto pb-6 custom-scrollbar">
             <div className="grid grid-cols-3 gap-2.5 mb-6">
               {carouselDays.map((date, idx) => {
                 const dayNum = date.getDate()
                 const dayName = DAY_NAMES[date.getDay()]
                 const isSelected = selectedDate.toDateString() === date.toDateString()
                 return (
-                  <motion.button key={idx} onClick={() => setSelectedDate(date)} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.02 }} className={cn("flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative", isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#1E1E1E] border-transparent dark:border-[#2A2A2A] text-[#213138] dark:text-gray-100 shadow-sm")}>
+                  <motion.button key={idx} onClick={() => setSelectedDate(date)} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.02 }} className={cn("flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative flex-shrink-0", isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#1E1E1E] border-transparent dark:border-[#2A2A2A] text-[#213138] dark:text-gray-100 shadow-sm")}>
                     <span className={cn("text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5", isSelected ? "text-white/60" : "text-gray-400 dark:text-gray-500")}>{dayName}</span>
                     <span className={cn("text-3xl font-extrabold leading-tight", isSelected ? "text-white" : "text-[#213138] dark:text-white")}>{dayNum}</span>
                   </motion.button>
@@ -280,8 +324,37 @@ export default function BookingsPage() {
             <div className="mb-2">
               <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
                 {timesList.map((t) => (
-                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white dark:bg-[#1E1E1E] text-gray-400 dark:text-gray-500 border-gray-100 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#262626]")}>{t}</button>
+                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border shrink-0", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white dark:bg-[#1E1E1E] text-gray-400 dark:text-gray-500 border-gray-100 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#262626]")}>{t}</button>
                 ))}
+              </div>
+            </div>
+            <div className="mt-8">
+              <h3 className="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">
+                Bookings for {selectedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+              </h3>
+              <div className="grid gap-3">
+                {(() => {
+                  const selectedStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
+                  const dayBookings = filtered.filter(b => b.booking_date === selectedStr)
+                  if (dayBookings.length === 0) return <p className="text-sm text-gray-400 dark:text-gray-500 font-bold italic">No bookings on this day.</p>
+                  return dayBookings.map(b => (
+                    <motion.button key={b.id} onClick={() => handleBookingClick(b)} className="group w-full bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] p-4 flex items-center gap-4 shadow-sm text-left active:scale-95 transition-transform">
+                      <div className="relative shrink-0">
+                        <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.customer_name)}&background=random&color=fff`} className="border border-gray-100 dark:border-[#2A2A2A] h-10 w-10 shadow-sm" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-[#213138] dark:text-white truncate">{b.customer_name}</p>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5 truncate">{b.service?.name} · {b.number_of_people} Guests</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-black text-[#213138] dark:text-white">{formatBookingTime(b.booking_time)}</p>
+                        <Badge variant="outline" className={cn("mt-1 px-1.5 py-0 rounded-md border-none font-bold text-[8px] uppercase tracking-wider", b.status === 'confirmed' ? 'bg-teal-50 dark:bg-teal-900/20 text-[#3A9B9F]' : 'bg-coral-50 dark:bg-coral-900/20 text-[#FF8B66]')}>{b.status}</Badge>
+                      </div>
+                    </motion.button>
+                  ))
+                })()}
               </div>
             </div>
           </div>
@@ -358,7 +431,7 @@ export default function BookingsPage() {
             </div>
           </div>
 
-          <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 overflow-y-auto">
+          <div className="flex-1 min-h-0 p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 overflow-y-auto custom-scrollbar">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <StatCard 
