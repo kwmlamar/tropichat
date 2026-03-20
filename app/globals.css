@@ -383,17 +383,15 @@
 }
 
 [data-sonner-toast].tropichat-toast {
-  --success-bg: rgba(255, 255, 255, 0.8) !important;
-  --success-text: #213138 !important;
-  --success-border: rgba(58, 155, 159, 0.2) !important;
-  --error-bg: rgba(255, 255, 255, 0.8) !important;
-  --error-text: #213138 !important;
-  --error-border: rgba(255, 139, 102, 0.2) !important;
+  background: white !important;
+  color: #213138 !important;
+  border: 1px solid rgba(58, 155, 159, 0.2) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
 .dark [data-sonner-toast].tropichat-toast {
-  background: rgba(30, 30, 30, 0.9) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: #1E1E1E !important;
+  border-color: #2A2A2A !important;
   color: #FFFFFF !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
 }

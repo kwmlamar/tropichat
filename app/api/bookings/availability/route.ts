@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
       slot: null,
       bookedCount: bookedPeople,
       remaining,
-      message: 'No availability slot defined for this date/time.',
+      message: 'No availability slots defined for this day. Add a slot in Services > Service Details to enable bookings.',
     }
     return NextResponse.json({ data: result })
   }
