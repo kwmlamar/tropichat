@@ -186,7 +186,7 @@ export function UnifiedMessageThread({
     <div className="flex flex-col h-full bg-white dark:bg-[#121212] relative overflow-hidden h-[100dvh]">
 
       {/* Header */}
-      <div className="sticky top-0 z-30 flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] shadow-sm">
+      <div className="fixed lg:sticky top-0 left-0 right-0 lg:left-auto lg:right-auto z-30 flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] shadow-sm">
         <div className="h-[env(safe-area-inset-top)] w-full" />
         <div className="flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4">
           <div className="flex items-center gap-2 lg:gap-3">
@@ -256,7 +256,7 @@ export function UnifiedMessageThread({
     </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 relative z-10 scrollbar-hide overscroll-contain">
+      <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 pt-[72px] lg:pt-4 relative z-10 scrollbar-hide overscroll-contain">
         {loading && messages.length === 0 ? (
           <div className="space-y-4">
             <SkeletonMessage direction="inbound" />
