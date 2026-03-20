@@ -186,7 +186,7 @@ export function UnifiedMessageThread({
     <div className="flex flex-col h-full bg-white dark:bg-[#121212] relative overflow-hidden h-[100dvh]">
 
       {/* Header */}
-      <div className="flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] relative z-20 shadow-sm">
+      <div className="sticky top-0 z-30 flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] shadow-sm">
         <div className="h-[env(safe-area-inset-top)] w-full" />
         <div className="flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4">
           <div className="flex items-center gap-2 lg:gap-3">
