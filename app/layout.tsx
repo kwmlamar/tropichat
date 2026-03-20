@@ -97,6 +97,7 @@ export default function RootLayout({
           {children}
           <Toaster
             position="top-center"
+            theme="system"
             toastOptions={{
               className: "tropichat-toast",
               style: {
@@ -104,11 +105,7 @@ export default function RootLayout({
                 padding: "16px 20px",
                 fontSize: "0.9375rem",
                 fontWeight: "500",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
                 backdropFilter: "blur(12px)",
-                background: "rgba(255, 255, 255, 0.8)",
-                color: "#213138",
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.04)",
               },
             }}
           />

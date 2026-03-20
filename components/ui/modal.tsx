@@ -59,7 +59,7 @@ export function Modal({
       {/* Modal */}
       <div
         className={cn(
-          "relative z-50 w-full rounded-xl bg-white p-6 shadow-2xl",
+          "relative z-50 w-full rounded-xl bg-white dark:bg-[#1E1E1E] p-6 shadow-2xl border dark:border-[#2A2A2A]",
           "animate-in fade-in-0 zoom-in-95 duration-200",
           sizeClasses[size],
           className
@@ -68,7 +68,7 @@ export function Modal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+          className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-[#262626] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
@@ -77,10 +77,10 @@ export function Modal({
         {(title || description) && (
           <div className="mb-6">
             {title && (
-              <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
             )}
             {description && (
-              <p className="mt-1 text-sm text-gray-500">{description}</p>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
             )}
           </div>
         )}
@@ -101,7 +101,7 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
     <div
       className={cn(
-        "mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-4",
+        "mt-6 flex items-center justify-end gap-3 border-t border-gray-100 dark:border-[#2A2A2A] pt-4",
         className
       )}
     >

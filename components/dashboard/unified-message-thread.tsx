@@ -137,8 +137,7 @@ export function UnifiedMessageThread({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] p-8 text-center relative overflow-hidden">
         {/* Subtle background decoration */}
-        <div className="absolute inset-0 bg-dot-pattern opacity-10 dark:opacity-[0.05] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#3A9B9F]/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-5 dark:opacity-[0.02] pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -307,7 +306,7 @@ export function UnifiedMessageThread({
                           className={cn(
                             "max-w-[75%] rounded-[24px] px-[18px] py-[10px] transition-all",
                             isOutbound
-                              ? "bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/20"
+                              ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/10"
                               : "bg-slate-50 dark:bg-[#262626] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/60 dark:border-[#2A2A2A] shadow-sm"
                           )}
                         >

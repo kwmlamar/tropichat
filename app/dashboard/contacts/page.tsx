@@ -125,14 +125,14 @@ export default function ContactsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-full bg-mesh-gradient bg-noise">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-full bg-slate-50/50 dark:bg-none dark:bg-[#121212]">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-[#213138] font-[family-name:var(--font-poppins)]">
+          <h1 className="text-3xl font-bold tracking-tight text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">
             Contacts
           </h1>
-          <p className="text-gray-500 font-medium tracking-wide">
+          <p className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">
             Manage and view all your customer interactions in one place
           </p>
         </div>
@@ -142,9 +142,9 @@ export default function ContactsPage() {
             <Button
               variant="outline"
               onClick={handleExportContacts}
-              className="border-gray-200 hover:bg-gray-50 text-[#213138] rounded-xl hover-lift btn-press shadow-sm"
+              className="border-gray-200 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#262626] text-[#213138] dark:text-gray-100 rounded-xl hover-lift btn-press shadow-sm bg-white dark:bg-[#1E1E1E]"
             >
-              <Download className="h-4 w-4 mr-2 text-gray-500" />
+              <Download className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
               Export ({selectedContacts.length})
             </Button>
           )}
@@ -166,12 +166,12 @@ export default function ContactsPage() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="p-5 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100/50 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover-lift"
+            className="p-5 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-sm rounded-2xl border border-gray-100/50 dark:border-[#2A2A2A] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover-lift transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-gray-400">{stat.label}</div>
-                <div className="text-2xl font-bold text-[#213138] mt-1">
+                <div className="text-sm font-medium text-gray-400 dark:text-gray-500">{stat.label}</div>
+                <div className="text-2xl font-bold text-[#213138] dark:text-gray-100 mt-1">
                   {loading ? <Skeleton className="h-8 w-12" /> : stat.value}
                 </div>
               </div>
@@ -189,55 +189,55 @@ export default function ContactsPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-white/40 p-1.5 rounded-2xl border border-white/40 backdrop-blur-md shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6 bg-white/40 dark:bg-[#1E1E1E]/40 p-1.5 rounded-2xl border border-white/40 dark:border-[#2A2A2A] backdrop-blur-md shadow-sm">
         <div className="relative flex-1 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 group-focus-within:text-[#3A9B9F] transition-colors" />
           <Input
             placeholder="Search by name, phone, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-11 bg-white border-transparent focus:border-[#3A9B9F]/30 focus:ring-4 focus:ring-[#3A9B9F]/5 rounded-xl transition-all shadow-sm"
+            className="pl-11 h-11 bg-white dark:bg-[#262626] border-transparent dark:border-transparent focus:border-[#3A9B9F]/30 focus:ring-4 focus:ring-[#3A9B9F]/5 rounded-xl transition-all shadow-sm dark:text-white dark:placeholder:text-gray-500"
           />
         </div>
-        <Button variant="outline" className="h-11 px-5 border-transparent bg-white hover:bg-gray-50 rounded-xl shadow-sm hover-lift text-gray-600 font-medium">
-          <Filter className="h-4 w-4 mr-2 text-gray-400" />
+        <Button variant="outline" className="h-11 px-5 border-transparent bg-white dark:bg-[#262626] hover:bg-gray-50 dark:hover:bg-[#333333] rounded-xl shadow-sm hover-lift text-gray-600 dark:text-gray-300 font-medium">
+          <Filter className="h-4 w-4 mr-2 text-gray-400 dark:text-gray-500" />
           Filter Categories
         </Button>
       </div>
 
       {/* Contacts Table Container */}
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 dark:bg-[#262626] border-b border-gray-200 dark:border-[#2A2A2A]">
               <tr>
                 <th className="w-12 px-6 py-4">
                   <input
                     type="checkbox"
                     checked={selectedContacts.length === contacts.length && contacts.length > 0}
                     onChange={handleSelectAll}
-                    className="rounded border-gray-300 text-[#3A9B9F] focus:ring-[#3A9B9F] h-4 w-4 cursor-pointer"
+                    className="rounded border-gray-300 dark:border-[#2A2A2A] bg-white dark:bg-[#262626] text-[#3A9B9F] focus:ring-[#3A9B9F] h-4 w-4 cursor-pointer"
                   />
                 </th>
-                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em]">
+                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em]">
                   Contact info
                 </th>
-                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em]">
+                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em]">
                   Phone & Channel
                 </th>
-                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] hidden md:table-cell">
+                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em] hidden md:table-cell">
                   Last Active
                 </th>
-                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] hidden lg:table-cell">
+                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em] hidden lg:table-cell">
                   Messages
                 </th>
-                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] hidden lg:table-cell">
+                <th className="px-4 py-4 text-left text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em] hidden lg:table-cell">
                   Tags & Status
                 </th>
                 <th className="w-16 px-6 py-4 text-right"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 dark:divide-[#2A2A2A]">
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
@@ -275,12 +275,12 @@ export default function ContactsPage() {
                   <td colSpan={7} className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center">
                       <div className="rounded-full bg-gray-100 p-4 mb-4">
-                        <Phone className="h-8 w-8 text-gray-400" />
+                        <Phone className="h-8 w-8 text-gray-400 dark:text-gray-600" />
                       </div>
-                      <h3 className="font-medium text-gray-900 mb-1">
+                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">
                         No contacts found
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {searchQuery
                           ? "Try a different search term"
                           : "Contacts will appear here when customers message you"}
@@ -292,14 +292,14 @@ export default function ContactsPage() {
                 contacts.map((contact) => (
                   <tr
                     key={contact.id}
-                    className="group hover:bg-[#3A9B9F]/[0.02] transition-colors duration-200 border-b border-gray-50 last:border-0"
+                    className="group hover:bg-[#3A9B9F]/[0.02] dark:hover:bg-[#3A9B9F]/5 transition-colors duration-200 border-b border-gray-50 dark:border-[#2A2A2A]/20 last:border-0"
                   >
                     <td className="px-6 py-5">
                       <input
                         type="checkbox"
                         checked={selectedContacts.includes(contact.id)}
                         onChange={() => handleSelectContact(contact.id)}
-                        className="rounded border-gray-300 text-[#3A9B9F] focus:ring-[#3A9B9F] h-4 w-4 cursor-pointer"
+                        className="rounded border-gray-300 dark:border-[#2A2A2A] bg-white dark:bg-[#262626] text-[#3A9B9F] focus:ring-[#3A9B9F] h-4 w-4 cursor-pointer"
                       />
                     </td>
                     <td className="px-4 py-5">
@@ -309,28 +309,28 @@ export default function ContactsPage() {
                             src={contact.avatar_url ?? undefined}
                             fallback={contact.name || contact.phone_number || contact.channel_id || "?"}
                             size="md"
-                            className="ring-2 ring-white shadow-sm"
+                            className="ring-2 ring-white dark:ring-[#1E1E1E] shadow-sm"
                           />
                           <div className={cn(
-                            "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white ring-1 ring-gray-100",
+                            "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-[#1E1E1E] ring-1 ring-gray-100 dark:ring-[#2A2A2A]",
                             contact.last_message_at && (new Date().getTime() - new Date(contact.last_message_at).getTime() < 3600000 * 24)
                               ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"
-                              : "bg-gray-300"
+                              : "bg-gray-300 dark:bg-gray-600"
                           )} title={contact.last_message_at ? "Recently active" : "Inactive"} />
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <p className="font-semibold text-[#213138] truncate text-sm">
+                            <p className="font-semibold text-[#213138] dark:text-gray-100 truncate text-sm">
                               {contact.name || "Unknown Customer"}
                             </p>
                             {contact.is_blocked && (
-                              <Badge variant="danger" className="py-0 px-1 text-[10px] leading-tight bg-red-50 text-red-500 border-red-100">
+                              <Badge variant="danger" className="py-0 px-1 text-[10px] leading-tight bg-red-50 dark:bg-rose-900/20 text-red-500 dark:text-rose-400 border-red-100 dark:border-rose-900/50">
                                 Blocked
                               </Badge>
                             )}
                           </div>
                           {contact.email && (
-                            <p className="text-xs text-gray-500 truncate mt-0.5">
+                            <p className="text-xs text-gray-500 dark:text-gray-500 truncate mt-0.5">
                               {contact.email}
                             </p>
                           )}
@@ -351,9 +351,9 @@ export default function ContactsPage() {
                               contact.channel_type === 'instagram' ? <Instagram className="h-3 w-3" /> :
                                 <Phone className="h-3 w-3" />}
                         </div>
-                        <span className="text-sm font-medium text-[#213138]">
+                        <span className="text-sm font-medium text-[#213138] dark:text-gray-100">
                           {contact.phone_number || (
-                            <span className="text-gray-400 italic text-xs">
+                            <span className="text-gray-400 dark:text-gray-600 italic text-xs">
                               {contact.channel_type ? (contact.channel_type.charAt(0).toUpperCase() + contact.channel_type.slice(1)) : 'Unknown'}
                             </span>
                           )}
@@ -362,20 +362,20 @@ export default function ContactsPage() {
                     </td>
                     <td className="px-4 py-5 hidden md:table-cell">
                       <div className="flex flex-col">
-                        <span className="text-sm text-[#213138] font-medium">
+                        <span className="text-sm text-[#213138] dark:text-gray-100 font-medium">
                           {contact.last_message_at
                             ? formatDistanceToNow(contact.last_message_at)
                             : "Never"}
                         </span>
                         {contact.last_message_at && (
-                          <span className="text-[10px] text-gray-400">
+                          <span className="text-[10px] text-gray-400 dark:text-gray-500">
                             {formatDate(contact.last_message_at)}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-5 hidden lg:table-cell">
-                      <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-50 border border-gray-100 text-xs font-semibold text-[#213138]">
+                      <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] text-xs font-semibold text-[#213138] dark:text-gray-100">
                         {(contact.total_messages_sent || 0) +
                           (contact.total_messages_received || 0)}
                       </div>
@@ -383,12 +383,12 @@ export default function ContactsPage() {
                     <td className="px-4 py-5 hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1.5 slice-tags">
                         {contact.tags?.slice(0, 2).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="bg-white border-gray-100 text-gray-600 shadow-sm text-[10px] px-2 py-0">
+                          <Badge key={tag} variant="secondary" className="bg-white dark:bg-[#333333] border-gray-100 dark:border-[#2A2A2A] text-gray-600 dark:text-gray-300 shadow-sm text-[10px] px-2 py-0">
                             {tag}
                           </Badge>
                         ))}
                         {(contact.tags?.length || 0) > 2 && (
-                          <Badge variant="outline" className="border-gray-100 text-gray-400 text-[10px] px-1.5 py-0">
+                          <Badge variant="outline" className="border-gray-100 dark:border-[#2A2A2A] text-gray-400 dark:text-gray-500 text-[10px] px-1.5 py-0">
                             +{contact.tags!.length - 2}
                           </Badge>
                         )}
@@ -398,7 +398,7 @@ export default function ContactsPage() {
                       <Dropdown
                         align="right"
                         trigger={
-                          <button className="p-2 rounded-xl text-gray-400 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/5 transition-all outline-none">
+                          <button className="p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/5 transition-all outline-none">
                             <MoreVertical className="h-5 w-5" />
                           </button>
                         }
@@ -447,24 +447,24 @@ export default function ContactsPage() {
         {editingContact && (
           <div className="space-y-4">
             <div>
-              <Label>Name</Label>
+              <Label className="dark:text-gray-300">Name</Label>
               <Input
                 value={editingContact.name || ""}
                 onChange={(e) =>
                   setEditingContact({ ...editingContact, name: e.target.value })
                 }
-                className="mt-1"
+                className="mt-1 dark:bg-[#121212] dark:border-[#2A2A2A] dark:text-white"
               />
             </div>
             <div>
-              <Label>Email</Label>
+              <Label className="dark:text-gray-300">Email</Label>
               <Input
                 type="email"
                 value={editingContact.email || ""}
                 onChange={(e) =>
                   setEditingContact({ ...editingContact, email: e.target.value })
                 }
-                className="mt-1"
+                className="mt-1 dark:bg-[#121212] dark:border-[#2A2A2A] dark:text-white"
               />
             </div>
             <ModalFooter>

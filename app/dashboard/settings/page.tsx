@@ -38,7 +38,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { ChannelIcon } from "@/components/dashboard/channel-icon"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { getCurrentCustomer, updateCustomer, changePassword } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, updateCustomer, changePassword } from "@/lib/supabase"
 import {
   getMetaStatus,
   initiateMetaConnect,
@@ -141,6 +141,11 @@ export default function SettingsPage() {
   const [pushLoading, setPushLoading] = useState(false)
   const [pushSupported, setPushSupported] = useState(true)
 
+  // Billing state
+  const [billingLoading, setBillingLoading] = useState(false)
+  const [contactsCount, setContactsCount] = useState(0)
+  const [messagesCount, setMessagesCount] = useState(0)
+
   useEffect(() => {
     setPushSupported(isPushSupported())
     setPushEnabled(getNotificationPermission() === 'granted')
@@ -163,6 +168,14 @@ export default function SettingsPage() {
         setBusinessHours(data.business_hours || defaultBusinessHours)
         setAutoReplyEnabled(data.auto_reply_enabled)
         setAutoReplyMessage(data.auto_reply_message || "")
+
+        // Fetch usage
+        const { getWorkspaceUsage } = await import('@/lib/supabase')
+        const usage = await getWorkspaceUsage()
+        if (!usage.error) {
+          setContactsCount(usage.contactsCount)
+          setMessagesCount(usage.messagesCount)
+        }
       }
 
       setLoading(false)
@@ -398,6 +411,60 @@ export default function SettingsPage() {
         [field]: value,
       },
     }))
+  }
+
+  const handleUpgrade = async () => {
+    setBillingLoading(true)
+    try {
+      const { session } = await getSession()
+
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({
+          // In production, this pulls the LIVE price ID from Vercel ENV. In local, it pulls the TEST price ID from .env.local
+          priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || "price_1TCscVRkoM3tY8Ak7wio2Jd3"
+        })
+      })
+
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        toast.error(data.error || "Failed to initiate checkout")
+      }
+    } catch (e) {
+      toast.error("An error occurred during checkout")
+    }
+    setBillingLoading(false)
+  }
+
+  const handleManageBilling = async () => {
+    setBillingLoading(true)
+    try {
+      const { session } = await getSession()
+
+      const res = await fetch("/api/stripe/portal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        }
+      })
+
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        toast.error(data.error || "Failed to load billing portal")
+      }
+    } catch (e) {
+      toast.error("An error occurred loading the billing portal")
+    }
+    setBillingLoading(false)
   }
 
   if (loading) {
@@ -982,16 +1049,16 @@ export default function SettingsPage() {
                   <div className="flex-1 pr-4">
                     <p className="font-semibold text-gray-900 dark:text-gray-100">System Alerts</p>
                     <p className="text-sm text-[#475569] dark:text-gray-400 mt-1">
-                      {pushSupported 
+                      {pushSupported
                         ? "Get notified of new messages from WhatsApp, Instagram, and Facebook Messenger directly on your device's lock screen."
                         : "Push notifications are not supported on this browser. Please use a modern browser like Chrome, Safari, or Edge."}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
                     {pushLoading && <Loader2 className="h-4 w-4 animate-spin text-[#3A9B9F]" />}
-                    <Switch 
-                      disabled={!pushSupported || pushLoading} 
-                      checked={pushEnabled} 
+                    <Switch
+                      disabled={!pushSupported || pushLoading}
+                      checked={pushEnabled}
                       onCheckedChange={handleTogglePush}
                     />
                   </div>
@@ -1033,7 +1100,21 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100 dark:border-[#2A2A2A]">
                   <div>
                     <h5 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">TropiChat {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}</h5>
-                    <p className="text-sm text-[#475569] dark:text-gray-400 mt-1">{customer?.plan === "free" ? "You are currently exploring the 14-day free trial." : "Your workspace is growing efficiently."}</p>
+                    <p className="text-sm text-[#475569] dark:text-gray-400 mt-1">
+                      {customer?.plan === "free" ? (
+                        (() => {
+                          const created = new Date(customer?.created_at || new Date())
+                          const trialEnd = new Date(created.getTime() + 14 * 24 * 60 * 60 * 1000)
+                          const diffTime = Math.max(0, trialEnd.getTime() - new Date().getTime())
+                          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+                          return diffDays > 0 
+                            ? `You have ${diffDays} day${diffDays === 1 ? '' : 's'} left in your 14-day free trial.` 
+                            : "Your 14-day free trial has expired."
+                        })()
+                      ) : (
+                        "Your workspace is growing efficiently."
+                      )}
+                    </p>
                   </div>
                   <Badge variant={customer?.plan === "free" ? "secondary" : "success"} className="px-3 py-1">
                     {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}
@@ -1046,7 +1127,12 @@ export default function SettingsPage() {
                       <h6 className="font-semibold text-emerald-900 dark:text-emerald-400">Ready to level up?</h6>
                       <p className="text-sm text-emerald-700 dark:text-emerald-500 mt-1">Upgrade to Professional to unlock team management and advanced integrations.</p>
                     </div>
-                    <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm">
+                    <Button
+                      className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm"
+                      onClick={handleUpgrade}
+                      disabled={billingLoading}
+                    >
+                      {billingLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                       Upgrade Now
                     </Button>
                   </div>
@@ -1058,14 +1144,19 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">Next Billing Date</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Feb 15, 2024</p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        {customer?.stripe_current_period_end
+                          ? new Date(customer.stripe_current_period_end).toLocaleDateString()
+                          : "Feb 15, 2024"
+                        }
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="h-px bg-gray-100" />
+            <div className="h-px bg-gray-100 dark:bg-[#2A2A2A]" />
 
             {/* Usage */}
             <div>
@@ -1077,17 +1168,17 @@ export default function SettingsPage() {
                 <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-sm text-gray-900 dark:text-gray-100">Contacts</span>
-                    <span className="text-sm font-semibold text-[#3A9B9F]">127 / 500</span>
+                    <span className="text-sm font-semibold text-[#3A9B9F]">{contactsCount} / 500</span>
                   </div>
                   <div className="w-full bg-gray-100 dark:bg-[#262626] rounded-full h-2.5 overflow-hidden">
-                    <div className="bg-[#3A9B9F] h-full rounded-full transition-all" style={{ width: "25%" }} />
+                    <div className="bg-[#3A9B9F] h-full rounded-full transition-all" style={{ width: `${Math.min((contactsCount / 500) * 100, 100)}%` }} />
                   </div>
                   <p className="text-xs text-[#475569] dark:text-gray-500 mt-3">Active unique clients</p>
                 </div>
                 <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-sm text-gray-900 dark:text-gray-100">Messages</span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">1,234</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{messagesCount.toLocaleString()}</span>
                   </div>
                   <div className="w-full bg-emerald-50 dark:bg-emerald-900/10 rounded-full h-2.5 overflow-hidden">
                     <div className="bg-emerald-400 h-full rounded-full transition-all" style={{ width: "100%" }} />
@@ -1097,29 +1188,38 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="h-px bg-gray-100" />
+            <div className="h-px bg-gray-100 dark:bg-[#2A2A2A]" />
 
             {/* Payment Method */}
-            <div>
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100">Payment Method</h4>
-                <p className="text-xs text-[#475569] dark:text-gray-400">The card charged for your monthly subscription</p>
-              </div>
-              <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-5 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] rounded-xl w-14 h-10 flex items-center justify-center">
-                    <CreditCard className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">•••• •••• •••• 4242</p>
-                    <p className="text-xs text-[#475569] dark:text-gray-500 mt-0.5">Expires 12/25</p>
-                  </div>
+            {customer?.plan !== "free" && customer?.stripe_customer_id && (
+              <div>
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100">Manage Billing</h4>
+                  <p className="text-xs text-[#475569] dark:text-gray-400">Update payment methods, view invoices, or cancel your subscription</p>
                 </div>
-                <Button variant="outline" size="sm" className="rounded-xl border-gray-200 dark:border-[#3A3A3A] shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#262626] hover:bg-gray-50 dark:hover:bg-[#333333]">
-                  Update
-                </Button>
+                <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-5 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] rounded-xl w-14 h-10 flex items-center justify-center">
+                      <CreditCard className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">Stripe Customer Portal</p>
+                      <p className="text-xs text-[#475569] dark:text-gray-500 mt-0.5">Securely manage your billing info</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleManageBilling}
+                    disabled={billingLoading}
+                    className="rounded-xl border-gray-200 dark:border-[#3A3A3A] shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#262626] hover:bg-gray-50 dark:hover:bg-[#333333]"
+                  >
+                    {billingLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ExternalLink className="h-4 w-4 mr-2" />}
+                    Portal
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
 
           </TabsContent>
         </Tabs>

@@ -40,6 +40,10 @@ export interface Customer {
   whatsapp_business_id: string | null
   facebook_id: string | null
   avatar_url: string | null
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  stripe_price_id: string | null
+  stripe_current_period_end: string | null
   created_at: string
   updated_at: string
 }

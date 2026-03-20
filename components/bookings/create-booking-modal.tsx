@@ -188,27 +188,26 @@ export function CreateBookingModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-lg max-h-[90vh] overflow-hidden border border-white/60 flex flex-col"
+          className="relative bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-lg max-h-[90vh] overflow-hidden border border-white/60 dark:border-[#2A2A2A] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 relative overflow-hidden shrink-0">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#2A2A2A]/50 relative overflow-hidden shrink-0">
             <div className="relative z-10">
-              <h2 className="text-2xl font-extrabold text-[#213138] leading-tight font-[family-name:var(--font-poppins)]">
+              <h2 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)]">
                 {step === 'done' ? 'Success!' : step === 'confirm' ? 'Final Check' : 'New Booking'}
               </h2>
               {step === 'form' && (
-                <p className="text-sm text-gray-500 font-medium mt-1">Fill in the tour details below</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Fill in the tour details below</p>
               )}
             </div>
             <button
               onClick={handleClose}
-              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 hover:bg-white text-gray-400 hover:text-navy-900 transition-all border border-gray-100 shadow-sm"
+              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm"
             >
               <X className="h-5 w-5" />
             </button>
 
-            {/* Subtle Header Gradient */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 blur-3xl rounded-full" />
+
           </div>
 
           {/* ---- FORM STEP ---- */}
@@ -216,12 +215,12 @@ export function CreateBookingModal({
             <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
               {/* Service */}
               <div>
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-3 ml-1">
+                <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-3 ml-1">
                   Select Service <span className="text-coral-500">*</span>
                 </label>
                 {services.length === 0 ? (
-                  <div className="p-4 rounded-2xl bg-gray-50 border border-dashed border-gray-200 text-center">
-                    <p className="text-sm text-gray-400 italic font-medium">No active services. Add one in Availability settings.</p>
+                  <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-dashed border-gray-200 dark:border-[#2A2A2A] text-center">
+                    <p className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">No active services. Add one in Availability settings.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-2.5">
@@ -232,8 +231,8 @@ export function CreateBookingModal({
                         className={cn(
                           "flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 group hover-lift",
                           serviceId === s.id
-                            ? "border-[#3A9B9F] bg-teal-50/30 ring-1 ring-[#3A9B9F]/20 shadow-lg shadow-teal-500/5 scale-[1.01]"
-                            : "border-gray-100 bg-white/50 hover:border-gray-200 hover:bg-white"
+                            ? "border-[#3A9B9F] bg-teal-50/30 dark:bg-[#3A9B9F]/10 ring-1 ring-[#3A9B9F]/20 shadow-lg shadow-teal-500/5 scale-[1.01]"
+                            : "border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 hover:border-gray-200 dark:hover:border-[#333333] hover:bg-white dark:hover:bg-[#2A2A2A]"
                         )}
                       >
                         <div
@@ -243,8 +242,8 @@ export function CreateBookingModal({
                           <CalendarDays className="h-5 w-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="font-bold text-[#213138] text-sm group-hover:text-[#3A9B9F] transition-colors">{s.name}</p>
-                          <p className="text-[11px] text-gray-500 font-bold mt-0.5 uppercase tracking-wider opacity-80">
+                          <p className="font-bold text-[#213138] dark:text-gray-100 text-sm group-hover:text-[#3A9B9F] transition-colors">{s.name}</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 font-bold mt-0.5 uppercase tracking-wider opacity-80">
                             {s.duration_minutes} min · max {s.max_capacity} Guests
                             {s.price ? ` · $${s.price}` : ''}
                           </p>
@@ -263,7 +262,7 @@ export function CreateBookingModal({
               {/* Date & Time */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-2.5 ml-1">
+                  <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1">
                     Tour Date <span className="text-coral-500">*</span>
                   </label>
                   <div className="relative group">
@@ -273,12 +272,12 @@ export function CreateBookingModal({
                       value={date}
                       onChange={e => setDate(e.target.value)}
                       min={new Date().toISOString().slice(0, 10)}
-                      className="w-full rounded-2xl bg-white/50 border border-gray-100 hover:border-gray-200 focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                      className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-2.5 ml-1">
+                  <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1">
                     Tour Time <span className="text-coral-500">*</span>
                   </label>
                   <div className="relative group">
@@ -287,7 +286,7 @@ export function CreateBookingModal({
                       type="time"
                       value={time}
                       onChange={e => setTime(e.target.value)}
-                      className="w-full rounded-2xl bg-white/50 border border-gray-100 hover:border-gray-200 focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                      className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                     />
                   </div>
                 </div>
@@ -303,10 +302,10 @@ export function CreateBookingModal({
                     className={cn(
                       "flex items-center gap-3 px-4 py-3.5 rounded-2xl text-xs font-bold transition-all border",
                       checkingAvail
-                        ? "bg-gray-50/50 text-gray-500 border-gray-100"
+                        ? "bg-gray-50/50 dark:bg-[#262626]/50 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-[#2A2A2A]"
                         : availability?.available
-                          ? "bg-teal-50/50 text-[#3A9B9F] border-teal-100/50 shadow-sm shadow-teal-500/5"
-                          : "bg-coral-50/50 text-[#FF8B66] border-coral-100/50 shadow-sm shadow-coral-500/5"
+                          ? "bg-teal-50/50 dark:bg-teal-900/10 text-[#3A9B9F] border-teal-100/50 dark:border-teal-900/20 shadow-sm shadow-teal-500/5"
+                          : "bg-coral-50/50 dark:bg-coral-900/10 text-[#FF8B66] border-coral-100/50 dark:border-coral-900/20 shadow-sm shadow-coral-500/5"
                     )}
                   >
                     <div className="shrink-0">
@@ -331,35 +330,35 @@ export function CreateBookingModal({
 
               {/* Group Size */}
               <div>
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-3 ml-1">
+                <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-3 ml-1">
                   Group Size <span className="text-coral-500">*</span>
                 </label>
-                <div className="flex items-center gap-6 bg-white/50 border border-gray-100 p-3 rounded-2xl shadow-sm">
+                <div className="flex items-center gap-6 bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] p-3 rounded-2xl shadow-sm">
                   <div className="flex items-center gap-3 ml-2">
-                    <div className="h-9 w-9 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center">
+                    <div className="h-9 w-9 rounded-xl bg-gray-50 dark:bg-[#333333] text-gray-400 dark:text-gray-500 flex items-center justify-center">
                       <Users className="h-4 w-4" />
                     </div>
-                    <span className="text-xs font-bold text-gray-500">People</span>
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400">People</span>
                   </div>
 
                   <div className="flex-1 flex justify-center items-center gap-6">
                     <button
                       onClick={() => setPeople(Math.max(1, people - 1))}
-                      className="h-10 w-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#213138] hover:bg-gray-50 hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                      className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#2A2A2A] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
                     >
                       −
                     </button>
-                    <span className="text-2xl font-black text-[#213138] w-10 text-center font-[family-name:var(--font-poppins)]">{people}</span>
+                    <span className="text-2xl font-black text-[#213138] dark:text-white w-10 text-center font-[family-name:var(--font-poppins)]">{people}</span>
                     <button
                       onClick={() => setPeople(Math.min(selectedService?.max_capacity ?? 99, people + 1))}
-                      className="h-10 w-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#213138] hover:bg-gray-50 hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                      className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#2A2A2A] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
                     >
                       +
                     </button>
                   </div>
 
                   {selectedService && (
-                    <div className="mr-3 px-3 py-1 bg-gray-50 rounded-lg text-[9px] font-black text-gray-400 uppercase tracking-widest border border-gray-100">
+                    <div className="mr-3 px-3 py-1 bg-gray-50 dark:bg-[#333333] rounded-lg text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest border border-gray-100 dark:border-[#2A2A2A]">
                       Max {selectedService.max_capacity}
                     </div>
                   )}
@@ -368,7 +367,7 @@ export function CreateBookingModal({
 
               {/* Customer info */}
               <div className="pt-4 space-y-4">
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] ml-1 mb-2">
+                <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] ml-1 mb-2">
                   Customer Information
                 </label>
                 <div className="grid gap-3">
@@ -378,7 +377,7 @@ export function CreateBookingModal({
                       placeholder="Full Name"
                       value={customerName}
                       onChange={e => setCustomerName(e.target.value)}
-                      className="rounded-2xl border-gray-100 bg-white/50 pl-11 h-12 font-bold text-sm focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                      className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -388,7 +387,7 @@ export function CreateBookingModal({
                         placeholder="Phone"
                         value={customerPhone}
                         onChange={e => setCustomerPhone(e.target.value)}
-                        className="rounded-2xl border-gray-100 bg-white/50 pl-11 h-12 font-bold text-sm focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                        className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                       />
                     </div>
                     <div className="relative group">
@@ -398,7 +397,7 @@ export function CreateBookingModal({
                         placeholder="Email"
                         value={customerEmail}
                         onChange={e => setCustomerEmail(e.target.value)}
-                        className="rounded-2xl border-gray-100 bg-white/50 pl-11 h-12 font-bold text-sm focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                        className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                       />
                     </div>
                   </div>
@@ -407,7 +406,7 @@ export function CreateBookingModal({
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] ml-1 mb-2.5">
+                <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] ml-1 mb-2.5">
                   Internal Notes
                 </label>
                 <textarea
@@ -415,16 +414,16 @@ export function CreateBookingModal({
                   onChange={e => setNotes(e.target.value)}
                   placeholder="Special requests, dietary requirements, etc."
                   rows={3}
-                  className="w-full rounded-2xl border border-gray-100 bg-white/50 px-4 py-3 text-sm font-medium resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-sm"
+                  className="w-full rounded-2xl border border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 px-4 py-3 text-sm font-medium dark:text-gray-200 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-sm"
                 />
               </div>
 
               {/* Actions */}
-              <div className="flex gap-4 pt-4 border-t border-gray-100/50">
+              <div className="flex gap-4 pt-4 border-t border-gray-100/50 dark:border-[#2A2A2A]/50">
                 <Button
                   variant="ghost"
                   onClick={handleClose}
-                  className="flex-1 h-12 font-bold text-gray-500 hover:text-navy-900 rounded-2xl transition-all"
+                  className="flex-1 h-12 font-bold text-gray-500 dark:text-gray-400 hover:text-navy-900 dark:hover:text-white rounded-2xl transition-all"
                 >
                   Cancel
                 </Button>
@@ -445,11 +444,7 @@ export function CreateBookingModal({
             <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
               {/* Summary Card */}
               <div className="rounded-[24px] bg-navy-900 text-white p-6 shadow-xl relative overflow-hidden group">
-                {/* Background Glow */}
-                <div
-                  className="absolute top-0 right-0 w-32 h-32 blur-[60px] rounded-full opacity-30 transition-opacity group-hover:opacity-50"
-                  style={{ backgroundColor: selectedService.color }}
-                />
+
 
                 <div className="relative z-10 flex items-center justify-between mb-6">
                   <div className="flex items-center gap-4">
@@ -502,7 +497,7 @@ export function CreateBookingModal({
               {/* Confirmation message */}
               {prefill?.conversationId && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.15em] mb-3 ml-1">
+                  <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-3 ml-1">
                     Auto-Confirmation Message
                   </label>
                   <div className="relative">
@@ -510,7 +505,7 @@ export function CreateBookingModal({
                       value={confirmationMsg}
                       onChange={e => setConfirmationMsg(e.target.value)}
                       rows={4}
-                      className="w-full rounded-[24px] border border-gray-100 bg-gray-50/50 px-5 py-4 text-xs font-medium leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-inner"
+                      className="w-full rounded-[24px] border border-gray-100 dark:border-[#2A2A2A] bg-gray-50/50 dark:bg-[#121212]/50 px-5 py-4 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-inner"
                     />
                     <div className="absolute top-4 right-4 text-[#3A9B9F]">
                       <FileText className="h-4 w-4 opacity-40" />
@@ -535,7 +530,7 @@ export function CreateBookingModal({
                     onClick={() => handleCreateBooking(false)}
                     disabled={submitting}
                     variant="ghost"
-                    className="w-full h-12 font-bold text-gray-500 hover:text-navy-900 rounded-2xl"
+                    className="w-full h-12 font-bold text-gray-500 dark:text-gray-400 hover:text-navy-900 dark:hover:text-white rounded-2xl"
                   >
                     Create without sending message
                   </Button>
@@ -543,7 +538,7 @@ export function CreateBookingModal({
 
                 <button
                   onClick={() => setStep('form')}
-                  className="text-xs font-bold text-gray-400 hover:text-[#3A9B9F] transition-all flex items-center justify-center gap-2 pt-2 uppercase tracking-widest"
+                  className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] dark:hover:text-[#3A9B9F] transition-all flex items-center justify-center gap-2 pt-2 uppercase tracking-widest"
                 >
                   <ChevronLeft className="h-3 w-3" />
                   Back to Details
@@ -561,16 +556,16 @@ export function CreateBookingModal({
                 transition={{ type: "spring", damping: 12, stiffness: 200 }}
                 className="mx-auto h-24 w-24 rounded-[32px] bg-teal-500 text-white flex items-center justify-center shadow-2xl shadow-teal-500/40 rotate-6"
               >
-                <Check className="h-10 w-10" />
+                   <Check className="h-10 w-10" />
               </motion.div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-extrabold text-[#213138] font-[family-name:var(--font-poppins)]">All Signed Up!</h3>
-                <p className="text-sm text-gray-500 font-medium max-w-[240px] mx-auto leading-relaxed">
+                <h3 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">All Signed Up!</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-[240px] mx-auto leading-relaxed">
                   Tour for <span className="text-[#3A9B9F] font-bold">{createdBooking.customer_name}</span> has been successfully logged.
                 </p>
               </div>
 
-              <div className="p-4 rounded-[24px] bg-gray-50 border border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-loose">
+              <div className="p-4 rounded-[24px] bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-[#2A2A2A] text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-loose">
                 {new Date(createdBooking.booking_date + 'T12:00:00').toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
@@ -580,7 +575,7 @@ export function CreateBookingModal({
 
               <Button
                 onClick={handleClose}
-                className="w-full h-12 bg-[#213138] hover:bg-black text-white rounded-2xl font-bold transition-all hover-lift border-none"
+                className="w-full h-12 bg-[#213138] dark:bg-white dark:text-[#213138] hover:bg-black dark:hover:bg-gray-100 text-white rounded-2xl font-bold transition-all hover-lift border-none"
               >
                 Back to Dashboard
               </Button>

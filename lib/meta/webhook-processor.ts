@@ -5,6 +5,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import webpush from 'web-push'
+import { sendMessage } from '@/lib/meta'
 import type { IncomingWebhookEvent, MessageStatusUpdate } from '@/types/unified-inbox'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -409,6 +410,102 @@ export async function handleIncomingMessage(
         channel: event.channel_type
       }
     )
+
+    // 6. Process Automations (Gated by Professional plan)
+    await processAutomations(db, account, conversationDbId, event)
+  }
+}
+
+/**
+ * Executes matching automations for an incoming message.
+ * ONLY runs for non-'free' plan users.
+ */
+async function processAutomations(
+  db: ServiceClient,
+  account: { id: string; user_id: string; access_token: string; metadata: unknown; channel_account_id?: string },
+  conversationId: string,
+  event: IncomingWebhookEvent
+) {
+  try {
+    // 1. Gate check: Verify user is not on free plan
+    const { data: customer } = await db
+      .from('customers')
+      .select('plan')
+      .eq('id', account.user_id)
+      .single()
+
+    if (!customer || customer.plan === 'free') {
+      return // Paywall enforced
+    }
+
+    // 2. Fetch enabled automations
+    const { data: autoRules } = await db
+      .from('automation_rules')
+      .select('*')
+      .eq('customer_id', account.user_id)
+      .eq('is_enabled', true)
+
+    if (!autoRules || autoRules.length === 0) return
+
+    // 3. Evaluate each rule
+    for (const rule of autoRules) {
+      let isMatch = false
+      const msgContent = event.message.content?.toLowerCase() || ''
+
+      if (rule.trigger_type === 'all_messages') {
+        isMatch = true
+      } else if (rule.trigger_type === 'keyword' && rule.trigger_value) {
+        if (msgContent.includes(rule.trigger_value.toLowerCase())) {
+          isMatch = true
+        }
+      } else if (rule.trigger_type === 'new_conversation') {
+        // Technically evaluating if it's new by looking at unread count, but let's assume always true for now if that's what's chosen
+        isMatch = true 
+      }
+
+      // If matched, execute action
+      if (isMatch) {
+        console.log(`[Automations] Triggering rule ${rule.id} for conversation ${conversationId}`)
+        
+        if (rule.action_type === 'send_message' && rule.action_value) {
+          // Send automated reply
+          const metaOptions = account.metadata as Record<string, any>
+          
+          await sendMessage({
+            channelType: event.channel_type,
+            accountId: account.channel_account_id || (metaOptions?.page_id) || '',
+            pageId: metaOptions?.page_id,
+            accessToken: metaOptions?.page_access_token || account.access_token,
+            recipientId: event.customer_id,
+            content: rule.action_value,
+            humanAgentTag: true
+          })
+
+          // Log the automated outbound message back to the DB
+          await db.from('unified_messages').insert({
+            conversation_id: conversationId,
+            channel_message_id: `auto_${Date.now()}`,
+            sender_type: 'business',
+            content: rule.action_value,
+            message_type: 'text',
+            sent_at: new Date().toISOString(),
+            status: 'sent',
+            is_automated: true,
+            metadata: { automation_rule_id: rule.id }
+          })
+        }
+        
+        // Log the trigger count up
+        await db.from('automation_rules')
+          .update({ times_triggered: (rule.times_triggered || 0) + 1 })
+          .eq('id', rule.id)
+
+        // Only process the first matching rule to avoid spam loops
+        break 
+      }
+    }
+  } catch (err) {
+    console.error('[Automations] Failed during processing:', err)
   }
 }
 

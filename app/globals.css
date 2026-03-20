@@ -391,6 +391,21 @@
   --error-border: rgba(255, 139, 102, 0.2) !important;
 }
 
+.dark [data-sonner-toast].tropichat-toast {
+  background: rgba(30, 30, 30, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .tropichat-toast [data-title] {
+  color: #FFFFFF !important;
+}
+
+.dark .tropichat-toast [data-description] {
+  color: #B3B3B3 !important;
+}
+
 .tropichat-toast [data-icon] {
   margin-right: 12px !important;
 }

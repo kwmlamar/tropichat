@@ -28,8 +28,8 @@ const typeConfig = {
   },
   system: {
     icon: AlertCircle,
-    color: "text-gray-500",
-    bg: "bg-gray-100",
+    color: "text-gray-500 dark:text-gray-400",
+    bg: "bg-gray-100 dark:bg-[#262626]",
   },
 }
 
@@ -41,8 +41,8 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
     <button
       onClick={() => onClick(notification)}
       className={cn(
-        "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50",
-        !notification.read && "bg-[#3A9B9F]/[0.03]"
+        "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-[#262626]",
+        !notification.read && "bg-[#3A9B9F]/[0.03] dark:bg-[#3A9B9F]/5"
       )}
     >
       {/* Icon */}
@@ -53,7 +53,7 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p className={cn("text-sm leading-snug", !notification.read ? "font-semibold text-gray-900" : "text-gray-700")}>
+          <p className={cn("text-sm leading-snug", !notification.read ? "font-semibold text-gray-900 dark:text-gray-100" : "text-gray-700 dark:text-gray-300")}>
             {notification.title}
           </p>
           {!notification.read && (

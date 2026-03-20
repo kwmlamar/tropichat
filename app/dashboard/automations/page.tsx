@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   ArrowRight,
   Plus,
@@ -30,6 +31,7 @@ import {
   createAutomation,
   updateAutomation,
   deleteAutomation,
+  getCurrentCustomer,
 } from "@/lib/supabase"
 import { formatDistanceToNow, cn } from "@/lib/utils"
 import { toast } from "sonner"
@@ -56,11 +58,24 @@ export default function AutomationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingAutomation, setEditingAutomation] = useState<Partial<AutomationRule> | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [customerPlan, setCustomerPlan] = useState<string>("free")
+  const router = useRouter()
 
-  // Fetch automations
+  // Fetch automations & customer plan
   useEffect(() => {
-    async function fetchAutomations() {
+    async function fetchData() {
       setLoading(true)
+      
+      const { data: customer } = await getCurrentCustomer()
+      if (customer) {
+        setCustomerPlan(customer.plan)
+      }
+
+      if (customer?.plan === "free") {
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await getAutomations()
 
       if (error) {
@@ -72,7 +87,7 @@ export default function AutomationsPage() {
       setLoading(false)
     }
 
-    fetchAutomations()
+    fetchData()
   }, [])
 
   const handleCreateAutomation = () => {
@@ -212,14 +227,14 @@ export default function AutomationsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-full bg-mesh-gradient bg-noise">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen xl:min-h-[calc(100vh-80px)] bg-slate-50/50 dark:bg-none dark:bg-[#121212]">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-[#213138] font-[family-name:var(--font-poppins)]">
+          <h1 className="text-3xl font-bold tracking-tight text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">
             Automations
           </h1>
-          <p className="text-gray-500 font-medium tracking-wide">
+          <p className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">
             Create powerful workflows to automate your customer communication
           </p>
         </div>
@@ -233,20 +248,49 @@ export default function AutomationsPage() {
         </Button>
       </div>
 
-      {/* Quick Stats Banner? Or just go straight to cards */}
+      {/* Paywall Check */}
+      {!loading && customerPlan === "free" && (
+        <div className="bg-white/40 dark:bg-[#1E1E1E]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#2A2A2A] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10">
+          <div className="flex flex-col items-center max-w-sm mx-auto">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-[#FF8B66]/20 blur-2xl rounded-full" />
+              <div className="relative bg-gradient-to-br from-[#FF8B66] to-[#e87a55] w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6">
+                <Zap className="h-10 w-10 text-white transform rotate-6" />
+              </div>
+            </div>
+            
+            <h3 className="text-2xl font-bold text-[#213138] dark:text-white mb-3">Automations are a Professional Feature</h3>
+            <p className="text-slate-500 dark:text-gray-400 mb-8 leading-relaxed">
+              Unlock powerful workflows to auto-reply to customers, route conversations, and trigger campaigns while you sleep.
+            </p>
+            
+            <Button 
+              className="w-full bg-[#213138] dark:bg-[#3A9B9F] hover:bg-slate-800 dark:hover:bg-[#2F8488] text-white rounded-xl shadow-md font-semibold h-12"
+              onClick={() => router.push('/dashboard/settings?tab=billing')}
+            >
+              Upgrade to Professional
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!loading && customerPlan !== "free" && (
+        <>
+          {/* Quick Stats Banner */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {[
           { label: "Active Automations", value: automations.filter(a => a.is_enabled).length, icon: Zap, color: "teal" },
           { label: "Total Triggers", value: automations.reduce((acc, a) => acc + (a.times_triggered || 0), 0), icon: MessageSquare, color: "coral" },
           { label: "Hours Saved", value: Math.floor(automations.reduce((acc, a) => acc + (a.times_triggered || 0), 0) * 0.1), icon: Clock, color: "teal" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white/60 border border-white/40 backdrop-blur-sm p-4 rounded-2xl flex items-center gap-4 shadow-sm">
-            <div className={cn("p-2.5 rounded-xl", stat.color === 'teal' ? "bg-[#3A9B9F]/10 text-[#3A9B9F]" : "bg-[#FF8B66]/10 text-[#FF8B66]")}>
+          <div key={i} className="bg-white/60 dark:bg-[#1E1E1E]/60 border border-white/40 dark:border-[#2A2A2A] backdrop-blur-sm p-4 rounded-2xl flex items-center gap-4 shadow-sm">
+            <div className={cn("p-2.5 rounded-xl", stat.color === 'teal' ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:text-teal-400" : "bg-[#FF8B66]/10 text-[#FF8B66] dark:text-coral-400")}>
               <stat.icon className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-400">{stat.label}</div>
-              <div className="text-xl font-black text-[#213138] mt-0.5">
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">{stat.label}</div>
+              <div className="text-xl font-black text-[#213138] dark:text-gray-100 mt-0.5">
                 {loading ? <Skeleton className="h-6 w-12" /> : stat.value}
               </div>
             </div>
@@ -260,7 +304,7 @@ export default function AutomationsPage() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl border border-gray-200 p-6"
+              className="bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-[#2A2A2A] p-6"
             >
               <div className="flex items-center gap-4">
                 <Skeleton className="h-10 w-10 rounded-lg" />
@@ -274,16 +318,16 @@ export default function AutomationsPage() {
           ))}
         </div>
       ) : automations.length === 0 ? (
-        <div className="bg-white/40 backdrop-blur-md rounded-3xl border border-white p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover-lift transition-all">
+        <div className="bg-white/40 dark:bg-[#1E1E1E]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#2A2A2A] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover-lift transition-all">
           <div className="flex flex-col items-center max-w-sm mx-auto">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-2xl rounded-full" />
-              <div className="relative rounded-3xl bg-white p-6 shadow-xl border border-gray-50 transform group-hover:scale-110 transition-transform">
-                <Zap className="h-12 w-12 text-[#3A9B9F]" />
+              <div className="relative rounded-3xl bg-white dark:bg-[#262626] p-6 shadow-xl border border-gray-50 dark:border-[#2A2A2A] transform group-hover:scale-110 transition-transform">
+                <Zap className="h-12 w-12 text-[#3A9B9F] dark:text-teal-400" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-[#213138] mb-2 font-[family-name:var(--font-poppins)]">Ready to automate?</h3>
-            <p className="text-gray-500 mb-8 leading-relaxed">
+            <h3 className="text-xl font-bold text-[#213138] dark:text-gray-100 mb-2 font-[family-name:var(--font-poppins)]">Ready to automate?</h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
               Automations help you handle common requests instantly, keeping your response time low and your customers happy.
             </p>
             <Button
@@ -301,8 +345,8 @@ export default function AutomationsPage() {
             <div
               key={automation.id}
               className={cn(
-                "group bg-white rounded-3xl border border-gray-100 p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover-lift",
-                !automation.is_enabled && "bg-gray-50/50 border-transparent shadow-none grayscale-[0.5]"
+                "group bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-[#2A2A2A] p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover-lift",
+                !automation.is_enabled && "bg-gray-50/50 dark:bg-[#1E1E1E]/50 border-transparent dark:border-transparent shadow-none grayscale-[0.5]"
               )}
             >
               <div className="flex flex-col h-full">
@@ -312,14 +356,14 @@ export default function AutomationsPage() {
                       className={cn(
                         "rounded-2xl p-3.5 transition-colors duration-300",
                         automation.is_enabled
-                          ? "bg-[#3A9B9F]/10 text-[#3A9B9F] shadow-[0_4px_12px_rgba(58,155,159,0.1)]"
-                          : "bg-gray-200 text-gray-500"
+                          ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:text-teal-400 shadow-[0_4px_12px_rgba(58,155,159,0.1)]"
+                          : "bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                       )}
                     >
                       {getTriggerIcon(automation.trigger_type)}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-bold text-lg text-[#213138] group-hover:text-[#3A9B9F] transition-colors truncate">
+                      <h3 className="font-bold text-lg text-[#213138] dark:text-gray-100 group-hover:text-[#3A9B9F] dark:group-hover:text-teal-400 transition-colors truncate">
                         {automation.name}
                       </h3>
                       <div className="flex items-center gap-2 mt-0.5">
@@ -351,7 +395,7 @@ export default function AutomationsPage() {
                     <Dropdown
                       align="right"
                       trigger={
-                        <button className="p-2 rounded-xl text-gray-400 hover:text-[#3A9B9F] hover:bg-[#3A9B9F]/5 transition-all outline-none">
+                        <button className="p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] dark:hover:text-teal-400 hover:bg-[#3A9B9F]/5 dark:hover:bg-[#3A9B9F]/10 transition-all outline-none">
                           <MoreVertical className="h-5 w-5" />
                         </button>
                       }
@@ -375,24 +419,24 @@ export default function AutomationsPage() {
                 </div>
 
                 {/* Workflow Visualization */}
-                <div className="mt-auto bg-gray-50/50 rounded-2xl p-4 border border-gray-100/50 flex flex-col gap-3 group-hover:bg-white transition-colors duration-300">
+                <div className="mt-auto bg-gray-50/50 dark:bg-[#262626]/50 rounded-2xl p-4 border border-gray-100/50 dark:border-[#2A2A2A]/50 flex flex-col gap-3 group-hover:bg-white dark:group-hover:bg-[#2A2A2A] transition-colors duration-300">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-400 text-xs font-bold border border-gray-100 shadow-sm">IF</div>
+                    <div className="w-8 h-8 rounded-full bg-white dark:bg-[#333] flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs font-bold border border-gray-100 dark:border-[#444] shadow-sm">IF</div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Trigger</p>
-                      <p className="text-sm font-medium text-[#213138] truncate uppercase">
+                      <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">Trigger</p>
+                      <p className="text-sm font-medium text-[#213138] dark:text-gray-200 truncate uppercase">
                         {getTriggerLabel(automation.trigger_type, automation.trigger_value)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="ml-4 h-4 border-l-2 border-dashed border-gray-200" />
+                  <div className="ml-4 h-4 border-l-2 border-dashed border-gray-200 dark:border-gray-700" />
 
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-[#3A9B9F] flex items-center justify-center text-white text-xs font-bold shadow-[0_4px_12px_rgba(58,155,159,0.3)]">THEN</div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Action</p>
-                      <p className="text-sm font-medium text-[#213138] truncate capitalize">
+                      <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">Action</p>
+                      <p className="text-sm font-medium text-[#213138] dark:text-gray-200 truncate capitalize">
                         {getActionLabel(automation.action_type, automation.action_value)}
                       </p>
                     </div>
@@ -400,7 +444,7 @@ export default function AutomationsPage() {
                 </div>
 
                 {automation.last_triggered_at && (
-                  <div className="mt-4 flex items-center gap-2 text-[10px] text-gray-400 font-medium px-1">
+                  <div className="mt-4 flex items-center gap-2 text-[10px] text-gray-400 dark:text-gray-500 font-medium px-1">
                     <Clock className="h-3 w-3" />
                     Last executed {formatDistanceToNow(automation.last_triggered_at)} ago
                   </div>
@@ -560,6 +604,8 @@ export default function AutomationsPage() {
           </div>
         )}
       </Modal>
+        </>
+      )}
     </div>
   )
 }

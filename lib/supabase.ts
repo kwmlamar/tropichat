@@ -640,6 +640,38 @@ export async function getUnreadConversationCount(): Promise<{ count: number; err
   return { count: count || 0, error: error?.message || null }
 }
 
+// ==================== WORKSPACE USAGE ====================
+
+export async function getWorkspaceUsage(): Promise<{ contactsCount: number, messagesCount: number, error: string | null }> {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) {
+    return { contactsCount: 0, messagesCount: 0, error: 'Not authenticated' }
+  }
+
+  const { count: contactsCount, error: contactsError } = await client
+    .from('contacts')
+    .select('*', { count: 'exact', head: true })
+    .eq('customer_id', user.id)
+
+  // Because messages belong to conversations, and conversations belong to customer
+  // we do an inner join but supabase JS doesn't support aggregate count across joins easily.
+  // We can just rely on unified_messages if they have customer_id or count all messages from conversations.
+  // Wait, unified_messages doesn't have customer_id directly. It is linked to conversations.
+  // We can just query `messages` table which appears to have customer_id since `getAnalytics` uses .from('messages').eq('customer_id', user.id)
+  const { count: messagesCount, error: messagesError } = await client
+    .from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('customer_id', user.id)
+
+  return { 
+    contactsCount: contactsCount || 0, 
+    messagesCount: messagesCount || 0, 
+    error: contactsError?.message || messagesError?.message || null 
+  }
+}
+
 // ==================== NOTIFICATION FUNCTIONS ====================
 
 export async function getNotifications(

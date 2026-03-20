@@ -181,21 +181,21 @@ export default function TemplatesPage() {
     switch (status) {
       case "APPROVED":
         return (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 text-[10px] font-black uppercase tracking-widest border border-teal-500/20">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-black uppercase tracking-widest border border-teal-500/20">
             <CheckCircle className="h-3 w-3" />
             Approved
           </div>
         )
       case "PENDING":
         return (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-500/10 text-coral-600 text-[10px] font-black uppercase tracking-widest border border-coral-500/20">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-500/10 text-coral-600 dark:text-coral-400 text-[10px] font-black uppercase tracking-widest border border-coral-500/20">
             <Clock className="h-3 w-3" />
             Pending
           </div>
         )
       case "REJECTED":
         return (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-500/20">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest border border-red-500/20">
             <XCircle className="h-3 w-3" />
             Rejected
           </div>
@@ -217,7 +217,7 @@ export default function TemplatesPage() {
   // Not connected state
   if (!loading && whatsappConnected === false) {
     return (
-      <div className="p-8 space-y-8 min-h-[calc(100vh-100px)] relative overflow-hidden">
+      <div className="p-8 space-y-8 min-h-[calc(100vh-100px)] relative overflow-hidden bg-white dark:bg-[#121212]">
         {/* Decorative Background Elements */}
         <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-teal-500/5 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] bg-coral-500/5 blur-[100px] rounded-full" />
@@ -226,15 +226,15 @@ export default function TemplatesPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center justify-center h-24 w-24 rounded-[32px] bg-white shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white mb-8"
+            className="inline-flex items-center justify-center h-24 w-24 rounded-[32px] bg-white dark:bg-[#1E1E1E] shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-white dark:border-[#2A2A2A] mb-8"
           >
             <AlertTriangle className="h-10 w-10 text-coral-500" />
           </motion.div>
 
-          <h1 className="text-4xl font-extrabold text-[#213138] leading-tight mb-4 font-[family-name:var(--font-poppins)] tracking-tight">
+          <h1 className="text-4xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight mb-4 font-[family-name:var(--font-poppins)] tracking-tight">
             WhatsApp Not Connected
           </h1>
-          <p className="text-lg text-gray-500 mb-10 leading-relaxed font-medium">
+          <p className="text-lg text-gray-500 dark:text-gray-400 mb-10 leading-relaxed font-medium">
             Connect your Meta account with WhatsApp Business permissions to manage message templates.
             Templates are synced directly with Meta's API.
           </p>
@@ -252,22 +252,22 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div className="p-8 space-y-8 relative min-h-[calc(100vh-80px)] overflow-x-hidden">
+    <div className="p-8 space-y-8 relative min-h-[calc(100vh-80px)] overflow-x-hidden bg-white dark:bg-[#121212]">
       {/* Dynamic Background */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/[0.03] blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-coral-500/[0.03] blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/[0.03] dark:bg-teal-500/[0.01] blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-coral-500/[0.03] dark:bg-coral-500/[0.01] blur-[100px] rounded-full pointer-events-none" />
 
       {/* Header Section */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-gray-100/50">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-gray-100 dark:border-[#2A2A2A]/50">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 text-[10px] font-black uppercase tracking-widest mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-500 text-[10px] font-black uppercase tracking-widest mb-3">
             <MessageSquare className="h-3 w-3" />
             Meta Integration
           </div>
-          <h1 className="text-4xl font-extrabold text-[#213138] leading-tight font-[family-name:var(--font-poppins)] tracking-tight">
+          <h1 className="text-4xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)] tracking-tight">
             WhatsApp Templates
           </h1>
-          <p className="text-gray-500 mt-2 font-medium">
+          <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">
             Standardized messages for marketing, utility, and authentication.
           </p>
         </div>
@@ -277,7 +277,7 @@ export default function TemplatesPage() {
             variant="outline"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="h-12 px-6 rounded-2xl border-gray-200 bg-white/50 backdrop-blur-sm hover:bg-white text-gray-600 font-bold transition-all hover:shadow-md active:scale-95 disabled:opacity-50"
+            className="h-12 px-6 rounded-2xl border-gray-200 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm hover:bg-white dark:hover:bg-[#262626] text-gray-600 dark:text-gray-300 font-bold transition-all hover:shadow-md active:scale-95 disabled:opacity-50"
           >
             <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
             Sync from Meta
@@ -296,17 +296,17 @@ export default function TemplatesPage() {
       <div className="relative z-10 flex flex-col xl:flex-row gap-4">
         <div className="relative flex-1 group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400 group-focus-within:text-teal-500 transition-colors" />
+            <Search className="h-5 w-5 text-gray-400 dark:text-gray-500 group-focus-within:text-teal-500 transition-colors" />
           </div>
           <Input
             placeholder="Search templates by name or content..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-14 pl-12 pr-4 bg-white/70 backdrop-blur-md rounded-2xl border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all text-gray-900 font-medium placeholder:text-gray-400"
+            className="h-14 pl-12 pr-4 bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-md rounded-2xl border-gray-100 dark:border-[#2A2A2A] shadow-[0_4px_20px_rgba(0,0,0,0.03)] focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all text-gray-900 dark:text-gray-100 font-medium placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
 
-        <div className="flex bg-gray-100/50 backdrop-blur-sm p-1.5 rounded-2xl border border-gray-200/50 self-start">
+        <div className="flex bg-gray-100/50 dark:bg-[#1E1E1E] backdrop-blur-sm p-1.5 rounded-2xl border border-gray-200/50 dark:border-[#2A2A2A] self-start">
           {statusFilters.map((filter) => (
             <button
               key={filter.value}
@@ -314,15 +314,15 @@ export default function TemplatesPage() {
               className={cn(
                 "px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative",
                 statusFilter === filter.value
-                  ? "bg-white text-navy-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-white/50"
+                  ? "bg-white dark:bg-[#262626] text-navy-900 dark:text-white shadow-sm"
+                  : "text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-white/5"
               )}
             >
               {filter.label}
               {statusFilter === filter.value && (
                 <motion.div
                   layoutId="activeFilter"
-                  className="absolute inset-0 rounded-xl border border-gray-100 pointer-events-none"
+                  className="absolute inset-0 rounded-xl border border-gray-100 dark:border-white/10 pointer-events-none"
                   initial={false}
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
@@ -338,7 +338,7 @@ export default function TemplatesPage() {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="bg-white/50 backdrop-blur-sm rounded-3xl border border-white p-8 shadow-sm flex flex-col h-[280px]"
+              className="bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm rounded-3xl border border-white dark:border-[#2A2A2A] p-8 shadow-sm flex flex-col h-[280px]"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="space-y-2 flex-1">
@@ -359,14 +359,14 @@ export default function TemplatesPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/50 backdrop-blur-xl rounded-[40px] border border-white p-20 text-center shadow-[0_32px_64px_rgba(0,0,0,0.06)]"
+          className="bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-xl rounded-[40px] border border-white dark:border-[#2A2A2A] p-20 text-center shadow-[0_32px_64px_rgba(0,0,0,0.06)]"
         >
           <div className="flex flex-col items-center max-w-sm mx-auto">
-            <div className="h-24 w-24 rounded-full bg-gray-50 flex items-center justify-center mb-8 border border-gray-100">
-              <FileText className="h-10 w-10 text-gray-300" />
+            <div className="h-24 w-24 rounded-full bg-gray-50 dark:bg-[#262626] flex items-center justify-center mb-8 border border-gray-100 dark:border-[#2A2A2A]">
+              <FileText className="h-10 w-10 text-gray-300 dark:text-gray-600" />
             </div>
-            <h3 className="text-2xl font-black text-[#213138] mb-3">No Templates Found</h3>
-            <p className="text-gray-500 font-medium mb-10">
+            <h3 className="text-2xl font-black text-[#213138] dark:text-gray-100 mb-3">No Templates Found</h3>
+            <p className="text-gray-500 dark:text-gray-400 font-medium mb-10">
               {searchQuery
                 ? "We couldn't find any templates matching your search criteria."
                 : "Your template library is empty. Start by creating your first standardized message."}
@@ -391,21 +391,21 @@ export default function TemplatesPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="group relative bg-white/70 backdrop-blur-xl rounded-[32px] border border-white p-8 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_48px_rgba(0,0,0,0.08)] transition-all flex flex-col h-full hover:-translate-y-1"
+                className="group relative bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-xl rounded-[32px] border border-white dark:border-[#2A2A2A] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.04)] hover:shadow-[0_24px_48px_rgba(0,0,0,0.08)] transition-all flex flex-col h-full hover:-translate-y-1"
               >
                 {/* Card Header */}
                 <div className="flex items-start justify-between mb-6">
                   <div className="min-w-0 pr-4">
-                    <h3 className="text-lg font-extrabold text-[#213138] truncate group-hover:text-teal-600 transition-colors">
+                    <h3 className="text-lg font-extrabold text-[#213138] dark:text-gray-100 truncate group-hover:text-teal-600 transition-colors">
                       {template.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1.5">
-                      <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                         <Tag className="h-3 w-3" />
                         {template.category}
                       </div>
-                      <span className="h-1 w-1 rounded-full bg-gray-200" />
-                      <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <span className="h-1 w-1 rounded-full bg-gray-200 dark:bg-[#2A2A2A]" />
+                      <div className="flex items-center gap-1 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                         <Globe className="h-3 w-3" />
                         {template.language}
                       </div>
@@ -415,7 +415,7 @@ export default function TemplatesPage() {
                   <Dropdown
                     align="right"
                     trigger={
-                      <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-gray-50/50 border border-gray-100 text-gray-400 hover:text-navy-900 hover:bg-white transition-all">
+                      <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-gray-50/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white hover:bg-white dark:hover:bg-[#333333] transition-all">
                         <MoreVertical className="h-5 w-5" />
                       </button>
                     }
@@ -442,11 +442,11 @@ export default function TemplatesPage() {
 
                 {/* Message Preview (Bubble Style) */}
                 <div className="flex-1 relative mb-6">
-                  <div className="absolute inset-0 bg-teal-50/30 rounded-2xl -z-10 group-hover:bg-teal-50/50 transition-colors" />
+                  <div className="absolute inset-0 bg-teal-50/30 dark:bg-[#262626]/30 rounded-2xl -z-10 group-hover:bg-teal-50/50 dark:group-hover:bg-[#262626]/50 transition-colors" />
                   <div className="p-4 h-full flex flex-col">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-700 leading-relaxed line-clamp-4">
-                        {getBodyText(template) || <span className="text-gray-400 italic">No body text content</span>}
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-4">
+                        {getBodyText(template) || <span className="text-gray-400 dark:text-gray-600 italic">No body text content</span>}
                       </p>
                     </div>
 
@@ -483,14 +483,14 @@ export default function TemplatesPage() {
       >
         <div className="space-y-4">
           <div>
-            <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Unique Template Name*</Label>
+            <Label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Unique Template Name*</Label>
             <Input
               value={newName}
               onChange={(e) => setNewName(e.target.value.toLowerCase().replace(/\s/g, '_'))}
               placeholder="e.g., promotional_offer_july"
-              className="mt-2 h-12 bg-white border-gray-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-sm transition-all"
+              className="mt-2 h-12 bg-white dark:bg-[#121212] border-gray-100 dark:border-[#2A2A2A] rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-sm transition-all dark:text-white dark:placeholder:text-gray-500"
             />
-            <p className="text-[11px] text-gray-400 mt-2 ml-1 flex items-center gap-1.5">
+            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2 ml-1 flex items-center gap-1.5">
               <Info className="h-3 w-3" />
               Lowercase, numbers, and underscores only.
             </p>
@@ -498,38 +498,38 @@ export default function TemplatesPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Category*</Label>
+              <Label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Category*</Label>
               <SimpleSelect
                 value={newCategory}
                 onValueChange={setNewCategory}
                 options={categoryOptions}
-                className="mt-2 h-12 bg-white border-gray-100 rounded-2xl shadow-sm"
+                className="mt-2 h-12 bg-white dark:bg-[#121212] border-gray-100 dark:border-[#2A2A2A] rounded-2xl shadow-sm"
               />
             </div>
             <div>
-              <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Language*</Label>
+              <Label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Language*</Label>
               <SimpleSelect
                 value={newLanguage}
                 onValueChange={setNewLanguage}
                 options={languageOptions}
-                className="mt-2 h-12 bg-white border-gray-100 rounded-2xl shadow-sm"
+                className="mt-2 h-12 bg-white dark:bg-[#121212] border-gray-100 dark:border-[#2A2A2A] rounded-2xl shadow-sm"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Content Body*</Label>
+            <Label className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Content Body*</Label>
             <Textarea
               value={newBody}
               onChange={(e) => setNewBody(e.target.value)}
               placeholder="Draft your message... Use {{1}} for variables."
-              className="mt-2 min-h-[140px] bg-white border-gray-100 rounded-2xl p-4 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-sm resize-none transition-all"
+              className="mt-2 min-h-[140px] bg-white dark:bg-[#121212] border-gray-100 dark:border-[#2A2A2A] rounded-2xl p-4 focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-sm resize-none transition-all dark:text-white dark:placeholder:text-gray-500"
             />
             <div className="flex items-center gap-3 mt-3 ml-1">
-              <div className="px-2 py-0.5 rounded bg-amber-50 text-[10px] font-bold text-amber-600 border border-amber-100">
+              <div className="px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-900/20 text-[10px] font-bold text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50">
                 Variable Hint: {"{{1}}"}
               </div>
-              <p className="text-[11px] text-gray-400 uppercase tracking-tight font-bold">Requires Meta review</p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 uppercase tracking-tight font-bold">Requires Meta review</p>
             </div>
           </div>
 
@@ -546,19 +546,19 @@ export default function TemplatesPage() {
                   <div className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
                   Live Mobile Preview
                 </Label>
-                <div className="bg-[#DCF8C6]/40 backdrop-blur-sm rounded-[24px_24px_24px_4px] p-6 border border-[#DCF8C6]/50 shadow-[0_8px_32px_rgba(37,211,102,0.06)] relative max-w-[90%]">
-                  <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                <div className="bg-[#DCF8C6]/40 dark:bg-[#262626]/40 backdrop-blur-sm rounded-[24px_24px_24px_4px] p-6 border border-[#DCF8C6]/50 dark:border-[#2A2A2A] shadow-[0_8px_32px_rgba(37,211,102,0.06)] relative max-w-[90%]">
+                  <p className="text-sm text-gray-800 dark:text-gray-100 whitespace-pre-wrap leading-relaxed">
                     {newBody.split(/(\{\{\d+\}\})/).map((part, i) =>
                       part.match(/\{\{\d+\}\}/) ? (
-                        <span key={i} className="bg-teal-500/10 text-teal-700 font-bold px-1.5 py-0.5 rounded border border-teal-500/20 mx-0.5">
+                        <span key={i} className="bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 font-bold px-1.5 py-0.5 rounded border border-teal-500/20 dark:border-teal-500/40 mx-0.5">
                           {part}
                         </span>
                       ) : part
                     )}
                   </p>
                   <div className="mt-4 flex items-center justify-end gap-1.5">
-                    <span className="text-[9px] font-bold text-gray-400/80 uppercase tracking-tighter">12:00 PM</span>
-                    <CheckCircle className="h-3 w-3 text-teal-400" />
+                    <span className="text-[9px] font-bold text-gray-400/80 dark:text-gray-500/80 uppercase tracking-tighter">12:00 PM</span>
+                    <CheckCircle className="h-3 w-3 text-teal-400 dark:text-teal-500" />
                   </div>
                 </div>
               </motion.div>
@@ -569,7 +569,7 @@ export default function TemplatesPage() {
             <Button
               variant="ghost"
               onClick={() => setIsModalOpen(false)}
-              className="h-12 px-6 rounded-xl font-bold text-gray-400 hover:text-navy-900 hover:bg-gray-50 flex-1 sm:flex-none"
+              className="h-12 px-6 rounded-xl font-bold text-gray-400 hover:text-navy-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-[#262626] flex-1 sm:flex-none"
             >
               Discard Draft
             </Button>

@@ -133,7 +133,7 @@ export default function SignupPage() {
   const anyLoading = isLoading || oauthLoading !== null
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB] dark:bg-[#0A0A0A]">
       {/* Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#3A9B9F]/10 blur-[120px] rounded-full" />
@@ -143,7 +143,7 @@ export default function SignupPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-6xl bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
+        className="w-full max-w-6xl bg-white dark:bg-[#1E1E1E] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-[#2A2A2A] overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
       >
         {/* Left Side - Form */}
         <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center overflow-y-auto max-h-[90vh] lg:max-h-[unset]">
@@ -161,20 +161,20 @@ export default function SignupPage() {
           </div>
 
           <div className="mb-10">
-            <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF8B66]/10 shadow-sm ring-1 ring-[#FF8B66]/20">
+            <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF8B66]/10 dark:bg-[#FF8B66]/20 shadow-sm ring-1 ring-[#FF8B66]/20 dark:ring-[#FF8B66]/30">
               <UserPlus className="h-7 w-7 text-[#FF8B66]" />
             </div>
-            <h1 className="text-3xl font-bold text-[#213138] font-[family-name:var(--font-poppins)]">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
               Create your account!
             </h1>
-            <p className="text-slate-500 mt-2">
+            <p className="text-slate-500 dark:text-gray-400 mt-2">
               Start your 14-day free trial and join TropiChat today!
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="businessName" className="text-sm font-semibold text-slate-700">Business Name</Label>
+              <Label htmlFor="businessName" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Business Name</Label>
               <div className="relative group">
                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
@@ -183,7 +183,7 @@ export default function SignupPage() {
                   placeholder="Your Business Name"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 focus-visible:ring-[#3A9B9F] bg-slate-50/50"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
                   required
                 />
               </div>
@@ -191,7 +191,7 @@ export default function SignupPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-semibold text-slate-700">Email</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
@@ -200,13 +200,13 @@ export default function SignupPage() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-12 h-14 rounded-2xl border-slate-200 focus-visible:ring-[#3A9B9F] bg-slate-50/50"
+                    className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
                     required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700">Password</Label>
+                <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
@@ -215,7 +215,7 @@ export default function SignupPage() {
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 focus-visible:ring-[#3A9B9F] bg-slate-50/50"
+                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
                     required
                     minLength={8}
                   />
@@ -231,7 +231,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" title="Confirm Password" className="text-sm font-semibold text-slate-700">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" title="Confirm Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Confirm Password</Label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
@@ -240,7 +240,7 @@ export default function SignupPage() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 focus-visible:ring-[#3A9B9F] bg-slate-50/50"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
                   required
                 />
               </div>
@@ -261,7 +261,7 @@ export default function SignupPage() {
               )}
             </Button>
 
-            <p className="text-[10px] text-center text-slate-400 mt-2">
+            <p className="text-[10px] text-center text-slate-400 dark:text-gray-500 mt-2">
               By signing up, you agree to our{" "}
               <Link href="/terms" className="text-[#3A9B9F] font-semibold hover:underline">Terms</Link> and{" "}
               <Link href="/privacy" className="text-[#3A9B9F] font-semibold hover:underline">Privacy Policy</Link>.
@@ -271,10 +271,10 @@ export default function SignupPage() {
           <div className="mt-8">
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-100" />
+                <div className="w-full border-t border-slate-100 dark:border-[#2A2A2A]" />
               </div>
-              <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">
-                <span className="bg-white px-4">Or sign up with</span>
+              <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-gray-500">
+                <span className="bg-white dark:bg-[#1E1E1E] px-4">Or sign up with</span>
               </div>
             </div>
 
@@ -282,26 +282,26 @@ export default function SignupPage() {
               <Button
                 variant="outline"
                 onClick={() => handleOAuth("google")}
-                className="h-12 rounded-2xl border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
                 <GoogleIcon className="h-5 w-5" />
               </Button>
               <Button
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
-                <AppleIcon className="h-5 w-5" />
+                <AppleIcon className="h-5 w-5 dark:text-white text-black" />
               </Button>
               <Button
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
                 <MicrosoftIcon className="h-5 w-5" />
               </Button>
             </div>
           </div>
 
-          <p className="mt-8 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm text-slate-500 dark:text-gray-400">
             Already have an account?{" "}
             <Link
               href="/login"
@@ -329,7 +329,7 @@ export default function SignupPage() {
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
               {/* Central Logo Orb */}
-              <div className="absolute z-20 w-20 h-20 rounded-[2.1rem] bg-white flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.3)] ring-4 ring-[#213138]">
+              <div className="absolute z-20 w-20 h-20 rounded-[2.1rem] bg-white dark:bg-[#162228] flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.3)] ring-4 ring-[#213138] dark:ring-white/5">
                 <div className="w-18 h-18 relative">
                   <Image
                     src="/tropichat-logo.png"
@@ -352,7 +352,7 @@ export default function SignupPage() {
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 className="absolute w-44 h-44"
               >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 p-1.5">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-1.5">
                   <WhatsAppBrandIcon className="w-full h-full" />
                 </div>
               </motion.div>
@@ -363,10 +363,10 @@ export default function SignupPage() {
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute w-72 h-72"
               >
-                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 p-2">
+                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
                   <InstagramBrandIcon className="w-full h-full" />
                 </div>
-                <div className="absolute top-[85.4%] left-[14.6%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 p-2">
+                <div className="absolute top-[85.4%] left-[14.6%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
                   <MessengerBrandIcon className="w-full h-full" />
                 </div>
               </motion.div>
@@ -376,10 +376,10 @@ export default function SignupPage() {
                 transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
                 className="absolute w-[380px] h-[380px]"
               >
-                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100">
+                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <CheckCircle2 className="w-7 h-7 text-[#3A9B9F]" />
                 </div>
-                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-xl bg-white shadow-xl flex flex-col items-center justify-center -rotate-[inherit] ring-1 ring-slate-100">
+                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex flex-col items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <span className="text-[8px] font-bold text-slate-400 uppercase">Tags</span>
                   <div className="flex gap-1 mt-1">
                     <div className="w-2 h-2 rounded-full bg-teal-400 shadow-sm shadow-teal-400/50" />

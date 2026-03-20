@@ -7,65 +7,42 @@ import { Check, Zap, ArrowRight } from "lucide-react"
 
 const plans = [
   {
-    name: "Starter",
-    description: "Perfect for solo entrepreneurs",
-    monthlyPrice: 39,
-    annualPrice: 31,
+    name: "Free",
+    description: "Perfect for getting started",
+    monthlyPrice: 0,
+    annualPrice: 0,
     period: "month",
-    priceContext: "Less than $1.30/day",
+    priceContext: "Free forever",
     features: [
-      "Single user account",
-      "WhatsApp + Instagram + Facebook Messenger",
-      "Unlimited conversations",
-      "Contact management with tags & labels",
-      "Quick reply templates",
-      "Basic automations",
-      "Email support",
+      "1 User limit",
+      "Unified Inbox (WhatsApp, IG, Messenger)",
+      "Standard chat & manual replies",
+      "Basic contact management",
+      "Community support",
     ],
-    cta: "Start Free Trial",
+    cta: "Start for Free",
     popular: false,
     variant: "default" as const,
   },
   {
-    name: "Pro",
-    description: "For growing businesses with a team",
-    monthlyPrice: 79,
-    annualPrice: 63,
+    name: "Professional",
+    description: "Founding Member Lifetime Deal",
+    monthlyPrice: 29,
+    annualPrice: 29,
     period: "month",
-    priceContext: "Everything your team needs",
+    priceContext: "Lifetime pricing for first 10 users",
     features: [
-      "Everything in Starter, plus:",
-      "Up to 3 team members",
-      "Advanced automations & workflows",
-      "Message templates library",
-      "Booking system integration",
-      "Team collaboration tools",
-      "Analytics & reporting",
-      "Priority support",
+      "Everything in Free, plus:",
+      "Up to 3 Team Members",
+      "Advanced Automations & Workflows",
+      "Broadcasts & Mass Messaging",
+      "Detailed Analytics & Reports",
+      "Priority VIP Support",
+      "Lock in this price forever",
     ],
-    cta: "Start Free Trial",
+    cta: "Claim Lifetime Deal",
     popular: true,
     variant: "popular" as const,
-  },
-  {
-    name: "Enterprise",
-    description: "For large teams & custom needs",
-    monthlyPrice: null,
-    annualPrice: null,
-    period: "month",
-    priceContext: "Starting at $150/month",
-    features: [
-      "Everything in Pro, plus:",
-      "Unlimited team members",
-      "Custom integrations",
-      "Dedicated account manager",
-      "API access",
-      "Custom training",
-      "SLA guarantee",
-    ],
-    cta: "Contact Us",
-    popular: false,
-    variant: "enterprise" as const,
   },
 ]
 
@@ -96,9 +73,8 @@ export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
-  const scrollToWaitlist = () => {
-    const waitlistSection = document.getElementById("waitlist")
-    waitlistSection?.scrollIntoView({ behavior: "smooth" })
+  const handleSignup = () => {
+    window.location.href = "/signup"
   }
 
   return (
@@ -188,7 +164,7 @@ export function PricingSection() {
                 </p>
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                   {[
-                    "All Starter features included",
+                    "All Free features included",
                     "Locked-in pricing, never increases",
                     "Priority feature requests",
                     "Direct founder support",
@@ -211,7 +187,7 @@ export function PricingSection() {
                   <div className="text-xs font-semibold text-[#FF8B66] mt-1">locked in forever</div>
                 </div>
                 <Button
-                  onClick={scrollToWaitlist}
+                  onClick={handleSignup}
                   className="w-full rounded-full bg-[#FF8B66] text-white hover:bg-[#e87a55] font-semibold h-11 text-sm shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   Lock in $29/month
@@ -223,7 +199,7 @@ export function PricingSection() {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="mx-auto grid max-w-5xl gap-5 md:grid-cols-3 mb-10">
+        <div className="mx-auto grid max-w-3xl gap-5 md:grid-cols-2 mb-10">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -291,7 +267,7 @@ export function PricingSection() {
               </ul>
 
               <Button
-                onClick={plan.name === "Enterprise" ? undefined : scrollToWaitlist}
+                onClick={plan.name === "Enterprise" ? undefined : handleSignup}
                 className={`w-full rounded-full h-11 text-sm font-semibold transition-all duration-300 ${plan.popular
                      ? "bg-[#3A9B9F] text-white hover:bg-[#2F8488] shadow-sm hover:shadow-md"
                     : plan.name === "Enterprise"

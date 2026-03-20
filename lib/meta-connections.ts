@@ -312,3 +312,107 @@ export async function fetchFacebookPages(): Promise<{
     return { data: [], error: 'Failed to connect to server' }
   }
 }
+
+// ==================== INSTAGRAM ACCOUNTS ====================
+
+export interface InstagramAccount {
+  id: string
+  name: string
+  username: string
+  profile_picture_url: string | null
+  follower_count: number
+  is_connected: boolean
+}
+
+export async function fetchInstagramAccounts(): Promise<{
+  data: InstagramAccount[]
+  error: string | null
+}> {
+  const token = await getAccessToken()
+  if (!token) return { data: [], error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/instagram-accounts', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = await res.json()
+    if (!res.ok) return { data: [], error: data.error || 'Failed to fetch Instagram accounts' }
+    return { data: data.accounts || [], error: null }
+  } catch {
+    return { data: [], error: 'Failed to connect to server' }
+  }
+}
+
+export async function selectInstagramAccount(account: {
+  accountId: string
+  accountName?: string
+  profilePictureUrl?: string
+  username?: string
+}): Promise<{ error: string | null }> {
+  const token = await getAccessToken()
+  if (!token) return { error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/instagram-accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(account),
+    })
+    const data = await res.json()
+    if (!res.ok) return { error: data.error || 'Failed to connect Instagram account' }
+    return { error: null }
+  } catch {
+    return { error: 'Failed to connect to server' }
+  }
+}
+
+// ==================== WHATSAPP PHONE NUMBERS ====================
+
+export interface WhatsAppPhoneNumber {
+  id: string
+  display_number: string
+  verified_name: string
+  quality_rating: string | null
+  is_connected: boolean
+}
+
+export async function fetchWhatsAppNumbers(): Promise<{
+  data: WhatsAppPhoneNumber[]
+  error: string | null
+}> {
+  const token = await getAccessToken()
+  if (!token) return { data: [], error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/whatsapp-numbers', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = await res.json()
+    if (!res.ok) return { data: [], error: data.error || 'Failed to fetch WhatsApp numbers' }
+    return { data: data.numbers || [], error: null }
+  } catch {
+    return { data: [], error: 'Failed to connect to server' }
+  }
+}
+
+export async function selectWhatsAppNumber(number: {
+  phoneNumberId: string
+  displayNumber?: string
+  verifiedName?: string
+}): Promise<{ error: string | null }> {
+  const token = await getAccessToken()
+  if (!token) return { error: 'Not authenticated' }
+
+  try {
+    const res = await fetch('/api/meta/whatsapp-numbers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(number),
+    })
+    const data = await res.json()
+    if (!res.ok) return { error: data.error || 'Failed to switch WhatsApp number' }
+    return { error: null }
+  } catch {
+    return { error: 'Failed to connect to server' }
+  }
+}

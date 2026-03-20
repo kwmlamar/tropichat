@@ -5,7 +5,6 @@ import { SolutionSection } from "@/components/solution-section"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { SocialProofSection } from "@/components/social-proof-section"
 import { PricingSection } from "@/components/pricing-section"
-import { WaitlistSection } from "@/components/waitlist-section"
 import { Footer } from "@/components/footer"
 
 // testing 
@@ -29,7 +28,6 @@ export default function Home() {
         <section id="pricing">
           <PricingSection />
         </section>
-        <WaitlistSection />
         <Footer />
       </main>
     </>
