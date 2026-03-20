@@ -295,7 +295,7 @@ export default function BookingsPage() {
       ) : isMobile ? (
         /* Mobile Dashboard Layout */
         <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] dark:bg-[#121212] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
-          <div className="flex items-center justify-between px-6 pt-6 pb-0">
+          <div className="flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-0">
             <button onClick={handleMobileBack} className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
               <ArrowLeft className="h-5 w-5" />
             </button>
