@@ -256,7 +256,7 @@ export function UnifiedMessageThread({
     </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 relative z-10 scrollbar-hide overscroll-contain">
+      <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 relative z-10 scrollbar-hide overscroll-contain">
         {loading && messages.length === 0 ? (
           <div className="space-y-4">
             <SkeletonMessage direction="inbound" />
@@ -292,7 +292,6 @@ export function UnifiedMessageThread({
                     const isOutbound = message.sender_type === "business"
                     const mediaUrl = message.metadata?.media_url as string | undefined
                     const mediaMime = message.metadata?.media_mime_type as string | undefined
-                    const hasHumanAgentTag = message.metadata?.human_agent_tag === true
 
                     return (
                       <div
@@ -304,10 +303,10 @@ export function UnifiedMessageThread({
                       >
                         <div
                           className={cn(
-                            "max-w-[75%] rounded-[24px] px-[18px] py-[10px] transition-all",
+                            "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 transition-all",
                             isOutbound
-                              ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/10"
-                              : "bg-slate-50 dark:bg-[#262626] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/60 dark:border-[#2A2A2A] shadow-sm"
+                              ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-sm"
+                              : "bg-slate-100 dark:bg-[#262626] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#2A2A2A] shadow-sm"
                           )}
                         >
 
@@ -354,7 +353,7 @@ export function UnifiedMessageThread({
 
                           {/* Message content */}
                           {message.content && (
-                            <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit drop-shadow-sm">
+                            <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit">
                               {message.content}
                             </p>
                           )}
@@ -374,7 +373,7 @@ export function UnifiedMessageThread({
                           {/* Footer: time + status */}
                           <div
                             className={cn(
-                              "flex items-center gap-1 mt-1 text-xs",
+                              "flex items-center gap-1 mt-1 text-[10px]",
                               isOutbound
                                 ? "text-white/70 justify-end"
                                 : "text-gray-500"
@@ -396,9 +395,9 @@ export function UnifiedMessageThread({
         )}
       </div>
 
-      {/* Message Input Area (Anchored to bottom) */}
+      {/* Message Input Area (Improved for Mobile) */}
       <div className="flex-shrink-0 bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-[#2A2A2A] relative z-20 pb-safe">
-        <div className="p-2 lg:p-3 flex items-end gap-2 lg:pb-3">
+        <div className="p-2 lg:p-3 flex items-end gap-2">
         <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>
@@ -438,7 +437,6 @@ export function UnifiedMessageThread({
           </div>
         )}
       </div>
-      <div className="h-[env(safe-area-inset-bottom)] w-full bg-white dark:bg-[#121212]" />
     </div>
   </div>
 )

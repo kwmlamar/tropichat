@@ -427,15 +427,22 @@ async function processAutomations(
   event: IncomingWebhookEvent
 ) {
   try {
-    console.log(`[Automations] Processing rules for user ${account.user_id}...`)
+    console.log(`[Automations] DEBUG: Checking rules for user ${account.user_id}`)
+    console.log(`[Automations] DEBUG: Incoming content: "${event.message.content}"`)
+
     // 1. Gate check: Verify user is not on free plan
-    const { data: customer } = await db
+    const { data: customer, error: custError } = await db
       .from('customers')
       .select('plan')
       .eq('id', account.user_id)
       .single()
 
-    console.log(`[Automations] Customer plan: ${customer?.plan || 'unknown'}`)
+    if (custError) {
+      console.error(`[Automations] Error fetching customer:`, custError)
+      return
+    }
+
+    console.log(`[Automations] DEBUG: Customer plan: ${customer?.plan || 'unknown'}`)
 
     if (!customer || customer.plan === 'free') {
       console.log(`[Automations] Skipping: User is on ${customer?.plan || 'no'} plan`)
@@ -443,23 +450,28 @@ async function processAutomations(
     }
 
     // 2. Fetch enabled automations
-    const { data: autoRules } = await db
+    const { data: autoRules, error: rulesError } = await db
       .from('automation_rules')
       .select('*')
       .eq('customer_id', account.user_id)
       .eq('is_enabled', true)
 
-    console.log(`[Automations] Found ${autoRules?.length || 0} enabled rules`)
+    if (rulesError) {
+      console.error(`[Automations] Error fetching rules:`, rulesError)
+      return
+    }
+
+    console.log(`[Automations] DEBUG: Found ${autoRules?.length || 0} enabled rules for user`)
 
     if (!autoRules || autoRules.length === 0) return
 
     // 3. Evaluate each rule
     for (const rule of autoRules) {
       let isMatch = false
-      const msgContent = event.message.content?.toLowerCase().trim() || ''
-      const ruleTrigger = rule.trigger_value?.toLowerCase().trim() || ''
+      const msgContent = (event.message.content || '').toLowerCase().trim()
+      const ruleTrigger = (rule.trigger_value || '').toLowerCase().trim()
       
-      console.log(`[Automations] Evaluating rule "${rule.name}" against content: "${msgContent}" (Trigger: "${ruleTrigger}")`)
+      console.log(`[Automations] DEBUG: Comparing "${msgContent}" to "${ruleTrigger}" (Type: ${rule.trigger_type})`)
 
       if (rule.trigger_type === 'all_messages') {
         isMatch = true
@@ -488,7 +500,7 @@ async function processAutomations(
               accessToken: metaOptions?.page_access_token || account.access_token,
               recipientId: event.customer_id,
               content: rule.action_value,
-              humanAgentTag: true
+              // No humanAgentTag for automated responses
             })
 
             // Log the automated outbound message back to the DB
