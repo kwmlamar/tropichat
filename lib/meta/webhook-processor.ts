@@ -500,14 +500,19 @@ async function processAutomations(
               message_type: 'text',
               sent_at: new Date().toISOString(),
               status: 'sent',
-              is_automated: true,
-              metadata: { automation_rule_id: rule.id }
+              metadata: { 
+                automation_rule_id: rule.id,
+                is_automated: true 
+              }
             })
           }
           
           // Log the trigger count up
           await db.from('automation_rules')
-            .update({ times_triggered: (rule.times_triggered || 0) + 1 })
+            .update({ 
+              times_triggered: (rule.times_triggered || 0) + 1,
+              last_triggered_at: new Date().toISOString()
+            })
             .eq('id', rule.id)
 
         } catch (execErr) {
