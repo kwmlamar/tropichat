@@ -36,6 +36,7 @@ function ServiceForm({
   const [duration, setDuration] = useState(String(initial?.duration_minutes ?? 60))
   const [capacity, setCapacity] = useState(String(initial?.max_capacity ?? 10))
   const [price, setPrice] = useState(initial?.price != null ? String(initial.price) : '')
+  const [priceType, setPriceType] = useState<'per_person' | 'fixed'>(initial?.price_type ?? 'per_person')
   const [color, setColor] = useState(initial?.color ?? '#3A9B9F')
   const [saving, setSaving] = useState(false)
 
@@ -49,6 +50,7 @@ function ServiceForm({
       duration_minutes: parseInt(duration),
       max_capacity: parseInt(capacity),
       price: price ? parseFloat(price) : undefined,
+      price_type: priceType,
       color,
     })
     setSaving(false)
@@ -88,7 +90,17 @@ function ServiceForm({
           <label className="block text-xs font-medium text-gray-600 mb-1">
             <DollarSign className="h-3 w-3 inline" /> Price (display only)
           </label>
-          <Input type="number" min="0" step="0.01" placeholder="0.00" value={price} onChange={e => setPrice(e.target.value)} />
+          <div className="flex gap-2">
+            <Input type="number" min="0" step="0.01" placeholder="0.00" value={price} onChange={e => setPrice(e.target.value)} className="flex-1" />
+            <select
+              value={priceType}
+              onChange={e => setPriceType(e.target.value as 'per_person' | 'fixed')}
+              className="rounded-xl border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/20"
+            >
+              <option value="per_person">/ person</option>
+              <option value="fixed">fixed total</option>
+            </select>
+          </div>
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -408,7 +420,7 @@ export default function AvailabilityPage() {
                       </div>
                       <p className="text-xs text-gray-400">
                         {service.duration_minutes} min · max {service.max_capacity} people
-                        {service.price ? ` · $${service.price}/person` : ''}
+                        {service.price ? ` · $${service.price}${service.price_type === 'per_person' ? '/person' : ' total'}` : ''}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">

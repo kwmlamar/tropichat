@@ -461,8 +461,14 @@ export function CreateBookingModal({
                   </div>
                   {selectedService.price && (
                     <div className="text-right">
-                      <p className="text-2xl font-black tracking-tighter">${(selectedService.price * people).toFixed(0)}</p>
-                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">TOTAL AMOUNT</p>
+                      <p className="text-2xl font-black tracking-tighter">
+                        ${selectedService.price_type === 'per_person' 
+                          ? (selectedService.price * people).toFixed(0) 
+                          : selectedService.price.toFixed(0)}
+                      </p>
+                      <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                        TOTAL ({selectedService.price_type === 'per_person' ? `${people} guests` : 'fixed'})
+                      </p>
                     </div>
                   )}
                 </div>

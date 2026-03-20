@@ -14,6 +14,7 @@ export interface BookingService {
   duration_minutes: number
   max_capacity: number
   price: number | null
+  price_type: 'per_person' | 'fixed'
   color: string
   active: boolean
   created_at: string
@@ -64,6 +65,7 @@ export interface CreateServiceInput {
   duration_minutes: number
   max_capacity: number
   price?: number
+  price_type?: 'per_person' | 'fixed'
   color?: string
 }
 

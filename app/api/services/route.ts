@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body: CreateServiceInput = await req.json()
-  const { name, description, duration_minutes, max_capacity, price, color } = body
+  const { name, description, duration_minutes, max_capacity, price, price_type, color } = body
 
   if (!name || !duration_minutes || !max_capacity) {
     return NextResponse.json({ error: 'name, duration_minutes and max_capacity are required' }, { status: 400 })
@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
       duration_minutes,
       max_capacity,
       price: price ?? null,
+      price_type: price_type ?? 'per_person',
       color: color ?? '#3A9B9F',
     })
     .select()
