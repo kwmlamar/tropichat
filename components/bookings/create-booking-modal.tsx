@@ -443,7 +443,7 @@ export function CreateBookingModal({
           {step === 'confirm' && selectedService && (
             <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
               {/* Summary Card */}
-              <div className="rounded-[24px] bg-navy-900 text-white p-6 shadow-xl relative overflow-hidden group">
+              <div className="rounded-[24px] bg-[#213138] text-white p-6 shadow-xl relative overflow-hidden group">
 
 
                 <div className="relative z-10 flex items-center justify-between mb-6">
