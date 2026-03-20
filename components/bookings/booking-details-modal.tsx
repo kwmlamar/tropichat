@@ -175,18 +175,20 @@ export function BookingDetailsModal({
 
             {/* Pricing Highlight */}
             {service?.price && (
-              <div className="rounded-3xl bg-navy-900 p-6 text-white relative overflow-hidden group shadow-xl">
+              <div className="rounded-3xl bg-[#213138] p-6 text-white relative overflow-hidden group shadow-xl">
 
                 <div className="relative z-10 flex justify-between items-end">
                   <div>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-1">Estimated Total</p>
                     <p className="text-3xl font-black tracking-tighter">
-                      ${(service.price * booking.number_of_people).toFixed(2)}
+                      ${service.price_type === 'per_person' 
+                        ? (service.price * booking.number_of_people).toFixed(2) 
+                        : service.price.toFixed(2)}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                      ${service.price} PER GUEST
+                      ${service.price} {service.price_type === 'per_person' ? 'PER GUEST' : 'TOTAL (FIXED)'}
                     </p>
                   </div>
                 </div>
