@@ -16,9 +16,8 @@ export function isPushSupported() {
   return typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window
 }
 
-/** Get current notification permission state */
 export function getNotificationPermission(): NotificationPermission {
-  return typeof window !== 'undefined' ? Notification.permission : 'default'
+  return (typeof window !== 'undefined' && 'Notification' in window) ? Notification.permission : 'default'
 }
 
 /** Base64 to Uint8Array helper for VAPID key */
