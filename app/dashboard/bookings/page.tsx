@@ -302,9 +302,9 @@ export default function BookingsPage() {
           </div>
           <div className="flex items-center justify-between px-8 py-3">
             <h1 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 tracking-tight">{headerMonth}</h1>
-            <div className="flex gap-2">
-              <button onClick={() => setPageIndex(p => p - 1)} className="p-1 px-2 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-lg text-gray-400 dark:text-gray-500 hover:text-navy-900 shadow-sm transition-all active:scale-95"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPageIndex(p => p + 1)} className="p-1 px-2 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-lg text-gray-400 dark:text-gray-500 hover:text-navy-900 shadow-sm transition-all active:scale-95"><ChevronRight className="h-4 w-4" /></button>
+            <div className="flex gap-3">
+              <button onClick={() => setPageIndex(p => p - 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronLeft className="h-5 w-5" /></button>
+              <button onClick={() => setPageIndex(p => p + 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronRight className="h-5 w-5" /></button>
             </div>
           </div>
           <div className="px-6 flex-1 flex flex-col justify-start overflow-y-auto pb-6 custom-scrollbar">
