@@ -180,21 +180,24 @@ export function CreateBookingForm({
     <div className={cn("flex flex-col w-full", isPage ? "min-h-screen bg-[#F8FAFB] dark:bg-[#121212]" : "max-h-[80vh]")}>
       {/* Header (only for page) */}
       {isPage && (
-        <div className="flex items-center justify-between px-8 py-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] border-b border-gray-100/50 dark:border-[#2A2A2A]/50 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-xl sticky top-0 z-10">
-          <div>
-            <h2 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)]">
+        <div className="flex items-center px-6 py-4 pt-[calc(env(safe-area-inset-top)+1rem)] border-b border-gray-100/50 dark:border-[#2A2A2A]/50 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-xl sticky top-0 z-10 gap-4">
+          <button
+            onClick={handleClose}
+            className="p-2.5 rounded-full bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-500 hover:text-navy-900 transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm shrink-0"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)] truncate">
               {step === 'done' ? 'Success!' : step === 'confirm' ? 'Final Check' : 'New Booking'}
             </h2>
             {step === 'form' && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Fill in the tour details below</p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider mt-0.5 opacity-80">Tour Details</p>
             )}
           </div>
-          <button
-            onClick={handleClose}
-            className="p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm"
-          >
-            <X className="h-5 w-5" />
-          </button>
+
+          <div className="w-10" /> {/* Spacer for symmetry */}
         </div>
       )}
 
