@@ -86,7 +86,6 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
     router.push("/login")
   }
 
-  if (pathname === "/dashboard/bookings") return null
 
   return (
     <>
