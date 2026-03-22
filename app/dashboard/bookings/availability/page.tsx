@@ -274,6 +274,12 @@ export default function AvailabilityPage() {
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null)
   const [expandedServiceId, setExpandedServiceId] = useState<string | null>(null)
   const [addingSlotForService, setAddingSlotForService] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check(); window.addEventListener("resize", check); return () => window.removeEventListener("resize", check)
+  }, [])
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
@@ -377,8 +383,9 @@ export default function AvailabilityPage() {
   }
 
   return (
-    <div className="h-full bg-[#F8FAFB] dark:bg-black overflow-y-auto">
-      <div className="max-w-3xl mx-auto p-5 pt-[calc(env(safe-area-inset-top)+2rem)] md:p-8 space-y-6 md:space-y-8">
+    <div className="h-full bg-[#F8FAFB] dark:bg-black flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-5 pt-[calc(env(safe-area-inset-top)+2rem)] md:p-8 space-y-6 md:space-y-8">
+        <div className="max-w-3xl mx-auto space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -395,7 +402,7 @@ export default function AvailabilityPage() {
           </div>
           <Button
             onClick={() => setAddingService(true)}
-            className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white"
+            className="hidden md:flex bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl"
           >
             <Plus className="h-4 w-4 mr-1.5" />
             Add Service
@@ -560,7 +567,26 @@ export default function AvailabilityPage() {
             })}
           </div>
         )}
+        </div>
       </div>
+
+      {isMobile && (
+        <div className="p-4 safe-area-bottom border-t border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0A0A0A] mt-auto">
+          <button 
+            onClick={() => {
+              setAddingService(true)
+              setTimeout(() => {
+                const form = document.querySelector('form')
+                form?.scrollIntoView({ behavior: 'smooth' })
+              }, 100)
+            }}
+            className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl font-bold text-[14px] shadow-lg shadow-teal-500/10 flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
+          >
+            <Plus className="h-4 w-4" />
+            Add Service
+          </button>
+        </div>
+      )}
     </div>
   )
 }
