@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   getServices, createService, updateService, deleteService,
   getAvailabilitySlots, createAvailabilitySlot, updateAvailabilitySlot, deleteAvailabilitySlot,
@@ -358,18 +359,38 @@ export default function AvailabilityPage() {
     return `${d} · ${t(slot.start_time)} – ${t(slot.end_time)}`
   }
 
+  const router = useRouter()
+
+  useEffect(() => {
+    document.body.classList.add("bottom-nav-hidden")
+    return () => {
+      document.body.classList.remove("bottom-nav-hidden")
+    }
+  }, [])
+
+  const handleBack = () => {
+    if (window.history.length > 2) {
+      router.back()
+    } else {
+      router.push('/dashboard/bookings')
+    }
+  }
+
   return (
     <div className="h-full bg-[#F8FAFB] dark:bg-[#121212] overflow-y-auto">
-      <div className="max-w-3xl mx-auto p-8 space-y-8">
+      <div className="max-w-3xl mx-auto p-5 pt-[calc(env(safe-area-inset-top)+2rem)] md:p-8 space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard/bookings" className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-100 dark:border-[#2A2A2A] text-gray-400 hover:text-[#3A9B9F] transition-all">
+            <button 
+              onClick={handleBack}
+              className="h-10 w-10 flex shrink-0 items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-100 dark:border-[#2A2A2A] text-gray-400 hover:text-[#3A9B9F] transition-all"
+            >
                 <ArrowLeft className="h-5 w-5" />
-            </Link>
+            </button>
             <div>
-              <h1 className="text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)]">Services</h1>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Configure your tours and availability</p>
+              <h1 className="text-[26px] md:text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)] leading-none mb-1">Services</h1>
+              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">Configure your tours and availability</p>
             </div>
           </div>
           <Button

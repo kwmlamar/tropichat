@@ -430,7 +430,8 @@
 }
 
 /* Utilities for hiding bottom nav in mobile chat view */
-body.mobile-chat-open .bottom-nav-container {
+body.mobile-chat-open .bottom-nav-container,
+body.bottom-nav-hidden .bottom-nav-container {
   display: none !important;
 }
 
