@@ -267,7 +267,22 @@ export default function BookingsPage() {
     <div className="min-h-full flex flex-col bg-transparent relative">
       {loading ? (
         <div className="flex flex-1 items-center justify-center h-full z-10 relative">
-          <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" />
+          <div className="flex flex-col items-center justify-center relative">
+            <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+            <div className="relative w-20 h-20 mb-6">
+              <div className="absolute inset-0 rounded-[1.5rem] bg-white dark:bg-[#1E1E1E] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
+              <img 
+                src="/tropichat-logo.png" 
+                alt="TropiChat" 
+                className="absolute inset-0 w-full h-full object-contain p-3 drop-shadow-md animate-[pulse_2s_ease-in-out_infinite]"
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#3A9B9F] animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#FF8B66] animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#3A9B9F] animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+          </div>
         </div>
       ) : customerPlan === "free" ? (
         <div className="flex flex-1 flex-col items-center justify-center p-6 sm:p-12 relative z-10 pt-20">
