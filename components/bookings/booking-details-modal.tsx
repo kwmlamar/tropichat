@@ -111,10 +111,10 @@ export function BookingDetailsModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-md max-h-[90vh] overflow-hidden border border-white/60 dark:border-[#2A2A2A] flex flex-col"
+          className="relative bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-md max-h-[90vh] overflow-hidden border border-white/60 dark:border-[#222222] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#2A2A2A]/50 relative overflow-hidden shrink-0">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#222222]/50 relative overflow-hidden shrink-0">
             <div className="relative z-10 flex items-center gap-4">
               {service && (
                 <div
@@ -138,7 +138,7 @@ export function BookingDetailsModal({
             </div>
             <button
               onClick={onClose}
-              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm"
+              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#222222] shadow-sm"
             >
               <X className="h-5 w-5" />
             </button>
@@ -149,7 +149,7 @@ export function BookingDetailsModal({
           <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] p-3 text-center transition-transform hover:scale-[1.02]">
+              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
                 <CalendarDays className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Date</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100 leading-tight">
@@ -159,14 +159,14 @@ export function BookingDetailsModal({
                   })}
                 </p>
               </div>
-              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] p-3 text-center transition-transform hover:scale-[1.02]">
+              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
                 <Clock className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Time</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">
                   {formatBookingTime(booking.booking_time)}
                 </p>
               </div>
-              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] p-3 text-center transition-transform hover:scale-[1.02]">
+              <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
                 <Users className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Size</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">{booking.number_of_people}</p>
@@ -196,7 +196,7 @@ export function BookingDetailsModal({
             )}
 
             {/* Customer Card */}
-            <div className="rounded-3xl border border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 p-5 space-y-4 shadow-sm">
+            <div className="rounded-3xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 p-5 space-y-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-[#3A9B9F] flex items-center justify-center font-bold text-sm shadow-inner shadow-teal-500/5">
                   {booking.customer_name.charAt(0)}
@@ -253,7 +253,7 @@ export function BookingDetailsModal({
                     value={confirmMsg}
                     onChange={e => setConfirmMsg(e.target.value)}
                     rows={4}
-                    className="w-full rounded-2xl border border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#121212]/50 px-4 py-3 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-inner"
+                    className="w-full rounded-2xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-black/50 px-4 py-3 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 shadow-inner"
                   />
                   <Button
                     onClick={handleSendConfirmMsg}
@@ -280,7 +280,7 @@ export function BookingDetailsModal({
               )}
 
               {!showConfirmMsg && booking.conversation_id && onSendMessage && (
-                <Button variant="outline" onClick={handleShowConfirmMsg} className="w-full border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400">
+                <Button variant="outline" onClick={handleShowConfirmMsg} className="w-full border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] text-gray-600 dark:text-gray-400">
                   <Send className="h-4 w-4 mr-1.5" />
                   Send Confirmation Message
                 </Button>
@@ -290,7 +290,7 @@ export function BookingDetailsModal({
                 <Button
                   variant="outline"
                   onClick={() => { onGoToConversation(booking.conversation_id!); onClose() }}
-                  className="w-full border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400"
+                  className="w-full border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] text-gray-600 dark:text-gray-400"
                 >
                   <ExternalLink className="h-4 w-4 mr-1.5" />
                   Go to Conversation

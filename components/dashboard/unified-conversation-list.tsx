@@ -62,12 +62,12 @@ export function UnifiedConversationList({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#121212] lg:border-r border-gray-200 dark:border-[#2A2A2A] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-black lg:border-r border-gray-200 dark:border-[#222222] relative overflow-hidden">
 
       {/* Mobile Sticky Top Header (Fixed at the very top) */}
       <div className={cn(
         "lg:hidden fixed top-0 left-0 right-0 z-30 px-6 pt-[calc(env(safe-area-inset-top)+0.5rem)] pb-2 transition-all duration-300 bg-transparent",
-        isScrolled ? "bg-white/95 dark:bg-[#121212]/95 backdrop-blur-md border-b border-gray-100 dark:border-[#2A2A2A] shadow-sm" : "border-b border-transparent"
+        isScrolled ? "bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-[#222222] shadow-sm" : "border-b border-transparent"
       )}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -115,14 +115,14 @@ export function UnifiedConversationList({
         </div>
 
         {/* Desktop Header Content (Kept hidden on mobile now as we have the scrollable one) */}
-        <div className="hidden lg:flex p-4 border-b border-gray-200 dark:border-[#2A2A2A] items-center gap-2 relative z-10">
+        <div className="hidden lg:flex p-4 border-b border-gray-200 dark:border-[#222222] items-center gap-2 relative z-10">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
             <Input
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="pl-9 bg-gray-100/50 dark:bg-[#262626] border-transparent dark:border-[#2A2A2A] hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-white dark:focus:bg-[#121212] focus:border-gray-200 dark:focus:border-[#3A9B9F] focus:ring-0 transition-all rounded-xl dark:text-white dark:placeholder:text-gray-500"
+              className="pl-9 bg-gray-100/50 dark:bg-[#111111] border-transparent dark:border-[#222222] hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-white dark:focus:bg-black focus:border-gray-200 dark:focus:border-[#3A9B9F] focus:ring-0 transition-all rounded-xl dark:text-white dark:placeholder:text-gray-500"
             />
           </div>
           <button
@@ -141,7 +141,7 @@ export function UnifiedConversationList({
 
         {/* Horizontal Filter Tabs (Part of scrollable area on mobile) */}
         {!showArchived && (
-          <div className="px-6 py-3 lg:border-b border-gray-100 dark:border-[#2A2A2A] flex items-center overflow-x-auto no-scrollbar gap-5">
+          <div className="px-6 py-3 lg:border-b border-gray-100 dark:border-[#222222] flex items-center overflow-x-auto no-scrollbar gap-5">
             {channelFilters.map((filter) => {
               const isActive = currentChannelFilter === filter.value
               return (
@@ -158,7 +158,7 @@ export function UnifiedConversationList({
                   {isActive && (
                     <motion.div
                       layoutId="active-tab"
-                      className="absolute inset-0 bg-white dark:bg-[#1E1E1E] rounded-xl -z-10 shadow-[0_2px_12px_rgba(58,155,159,0.15)] border border-white/50 dark:border-[#2A2A2A]"
+                      className="absolute inset-0 bg-white dark:bg-[#0A0A0A] rounded-xl -z-10 shadow-[0_2px_12px_rgba(58,155,159,0.15)] border border-white/50 dark:border-[#222222]"
                       style={{ padding: '0 16px', margin: '0 -16px' }}
                     />
                   )}
@@ -175,7 +175,7 @@ export function UnifiedConversationList({
         {!loading && !searchQuery && (
           <button 
             onClick={onToggleArchived}
-            className="w-full flex items-center gap-6 py-3 px-6 text-left hover:bg-gray-50 dark:hover:bg-[#1E1E1E] transition-colors group"
+            className="w-full flex items-center gap-6 py-3 px-6 text-left hover:bg-gray-50 dark:hover:bg-[#0A0A0A] transition-colors group"
           >
             <div className="flex-shrink-0 w-8 flex justify-center">
               <ArchiveX className="h-5 w-5 text-gray-400 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200" strokeWidth={1.5} />
@@ -198,7 +198,7 @@ export function UnifiedConversationList({
         )}>
           {conversations.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center pt-20">
-              <div className="rounded-full bg-gray-100 dark:bg-[#262626] p-4 mb-4">
+              <div className="rounded-full bg-gray-100 dark:bg-[#111111] p-4 mb-4">
                 <Inbox className="h-8 w-8 text-gray-400 dark:text-gray-500" />
               </div>
               <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
@@ -247,8 +247,8 @@ export function UnifiedConversationList({
                       <button
                         onClick={() => onSelect(conversation)}
                         className={cn(
-                          "w-full flex items-center gap-4 py-3.5 px-6 text-left transition-all relative border-b border-gray-100 dark:border-[#2A2A2A]/20 active:bg-gray-100 dark:active:bg-[#1F1F1F]",
-                          selectedId === conversation.id ? "bg-gray-50 dark:bg-[#1E1E1E]" : "bg-white dark:bg-[#121212]"
+                          "w-full flex items-center gap-4 py-3.5 px-6 text-left transition-all relative border-b border-gray-100 dark:border-[#222222]/20 active:bg-gray-100 dark:active:bg-[#1F1F1F]",
+                          selectedId === conversation.id ? "bg-gray-50 dark:bg-[#0A0A0A]" : "bg-white dark:bg-black"
                         )}
                       >
                       {/* Avatar with unread indicator dot like WhatsApp image */}

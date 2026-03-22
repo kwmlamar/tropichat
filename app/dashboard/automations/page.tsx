@@ -250,7 +250,7 @@ export default function AutomationsPage() {
 
       {/* Paywall Check */}
       {!loading && customerPlan === "free" && (
-        <div className="bg-white/40 dark:bg-[#1E1E1E]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#2A2A2A] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10">
+        <div className="bg-white/40 dark:bg-[#0A0A0A]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#222222] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10">
           <div className="flex flex-col items-center max-w-sm mx-auto">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-[#FF8B66]/20 blur-2xl rounded-full" />
@@ -284,7 +284,7 @@ export default function AutomationsPage() {
           { label: "Total Triggers", value: automations.reduce((acc, a) => acc + (a.times_triggered || 0), 0), icon: MessageSquare, color: "coral" },
           { label: "Hours Saved", value: Math.floor(automations.reduce((acc, a) => acc + (a.times_triggered || 0), 0) * 0.1), icon: Clock, color: "teal" },
         ].map((stat, i) => (
-          <div key={i} className="bg-white/60 dark:bg-[#1E1E1E]/60 border border-white/40 dark:border-[#2A2A2A] backdrop-blur-sm p-4 rounded-2xl flex items-center gap-4 shadow-sm">
+          <div key={i} className="bg-white/60 dark:bg-[#0A0A0A]/60 border border-white/40 dark:border-[#222222] backdrop-blur-sm p-4 rounded-2xl flex items-center gap-4 shadow-sm">
             <div className={cn("p-2.5 rounded-xl", stat.color === 'teal' ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:text-teal-400" : "bg-[#FF8B66]/10 text-[#FF8B66] dark:text-coral-400")}>
               <stat.icon className="h-5 w-5" />
             </div>
@@ -304,7 +304,7 @@ export default function AutomationsPage() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-[#2A2A2A] p-6"
+              className="bg-white dark:bg-[#0A0A0A] rounded-xl border border-gray-200 dark:border-[#222222] p-6"
             >
               <div className="flex items-center gap-4">
                 <Skeleton className="h-10 w-10 rounded-lg" />
@@ -318,11 +318,11 @@ export default function AutomationsPage() {
           ))}
         </div>
       ) : automations.length === 0 ? (
-        <div className="bg-white/40 dark:bg-[#1E1E1E]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#2A2A2A] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover-lift transition-all">
+        <div className="bg-white/40 dark:bg-[#0A0A0A]/40 backdrop-blur-md rounded-3xl border border-white dark:border-[#222222] p-12 text-center shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover-lift transition-all">
           <div className="flex flex-col items-center max-w-sm mx-auto">
             <div className="relative mb-6">
               <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-2xl rounded-full" />
-              <div className="relative rounded-3xl bg-white dark:bg-[#262626] p-6 shadow-xl border border-gray-50 dark:border-[#2A2A2A] transform group-hover:scale-110 transition-transform">
+              <div className="relative rounded-3xl bg-white dark:bg-[#111111] p-6 shadow-xl border border-gray-50 dark:border-[#222222] transform group-hover:scale-110 transition-transform">
                 <Zap className="h-12 w-12 text-[#3A9B9F] dark:text-teal-400" />
               </div>
             </div>
@@ -345,8 +345,8 @@ export default function AutomationsPage() {
             <div
               key={automation.id}
               className={cn(
-                "group bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-[#2A2A2A] p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover-lift",
-                !automation.is_enabled && "bg-gray-50/50 dark:bg-[#1E1E1E]/50 border-transparent dark:border-transparent shadow-none grayscale-[0.5]"
+                "group bg-white dark:bg-[#0A0A0A] rounded-3xl border border-gray-100 dark:border-[#222222] p-6 transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover-lift",
+                !automation.is_enabled && "bg-gray-50/50 dark:bg-[#0A0A0A]/50 border-transparent dark:border-transparent shadow-none grayscale-[0.5]"
               )}
             >
               <div className="flex flex-col h-full">
@@ -419,7 +419,7 @@ export default function AutomationsPage() {
                 </div>
 
                 {/* Workflow Visualization */}
-                <div className="mt-auto bg-gray-50/50 dark:bg-[#262626]/50 rounded-2xl p-4 border border-gray-100/50 dark:border-[#2A2A2A]/50 flex flex-col gap-3 group-hover:bg-white dark:group-hover:bg-[#2A2A2A] transition-colors duration-300">
+                <div className="mt-auto bg-gray-50/50 dark:bg-[#111111]/50 rounded-2xl p-4 border border-gray-100/50 dark:border-[#222222]/50 flex flex-col gap-3 group-hover:bg-white dark:group-hover:bg-[#222222] transition-colors duration-300">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-white dark:bg-[#333] flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs font-bold border border-gray-100 dark:border-[#444] shadow-sm">IF</div>
                     <div className="flex-1 min-w-0">

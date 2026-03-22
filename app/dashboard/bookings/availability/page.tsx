@@ -58,7 +58,7 @@ function ServiceForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-sm">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
           <label className="block text-[10px] font-black uppercase tracking-widest text-[#3A9B9F] mb-2 ml-1">Service Name *</label>
@@ -76,7 +76,7 @@ function ServiceForm({
             onChange={e => setDescription(e.target.value)}
             placeholder="Short description of the tour…"
             rows={2}
-            className="w-full rounded-xl border border-gray-100 dark:border-[#2A2A2A] bg-gray-50 dark:bg-[#262626] px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all"
+            className="w-full rounded-xl border border-gray-100 dark:border-[#222222] bg-gray-50 dark:bg-[#111111] px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all"
           />
         </div>
         <div>
@@ -96,7 +96,7 @@ function ServiceForm({
             <select
               value={priceType}
               onChange={e => setPriceType(e.target.value as 'per_person' | 'fixed')}
-              className="rounded-xl border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/20"
+              className="rounded-xl border border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/20"
             >
               <option value="per_person">/ person</option>
               <option value="fixed">fixed total</option>
@@ -170,11 +170,11 @@ function SlotForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-[#F8FAFB] dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] mt-4 shadow-inner">
+    <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-[#F8FAFB] dark:bg-black rounded-2xl border border-gray-100 dark:border-[#222222] mt-4 shadow-inner">
       <p className="text-[10px] font-black uppercase tracking-widest text-[#3A9B9F]">New Availability Slot</p>
 
       {/* Recurring vs one-time */}
-      <div className="flex bg-gray-100 dark:bg-[#1E1E1E] p-1 rounded-xl w-fit">
+      <div className="flex bg-gray-100 dark:bg-[#0A0A0A] p-1 rounded-xl w-fit">
         <button
           type="button"
           onClick={() => setIsRecurring(true)}
@@ -202,7 +202,7 @@ function SlotForm({
             <select
               value={dayOfWeek}
               onChange={e => setDayOfWeek(Number(e.target.value))}
-              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all appearance-none"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all appearance-none"
             >
               {DAY_LABELS.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
@@ -215,7 +215,7 @@ function SlotForm({
               value={specificDate}
               onChange={e => setSpecificDate(e.target.value)}
               required={!isRecurring}
-              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
             />
           </div>
         )}
@@ -237,7 +237,7 @@ function SlotForm({
             type="time"
             value={startTime}
             onChange={e => setStartTime(e.target.value)}
-            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
           />
         </div>
         <div>
@@ -246,7 +246,7 @@ function SlotForm({
             type="time"
             value={endTime}
             onChange={e => setEndTime(e.target.value)}
-            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#2A2A2A] px-4 text-sm font-bold bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
           />
         </div>
       </div>
@@ -256,7 +256,7 @@ function SlotForm({
           <Check className="h-4 w-4 mr-2" />
           {saving ? 'Adding...' : 'Add Slot'}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="bg-white dark:bg-[#1E1E1E] rounded-xl h-12 px-6 font-bold border-gray-100 dark:border-[#2A2A2A]">Cancel</Button>
+        <Button type="button" variant="outline" onClick={onCancel} className="bg-white dark:bg-[#0A0A0A] rounded-xl h-12 px-6 font-bold border-gray-100 dark:border-[#222222]">Cancel</Button>
       </div>
     </form>
   )
@@ -377,14 +377,14 @@ export default function AvailabilityPage() {
   }
 
   return (
-    <div className="h-full bg-[#F8FAFB] dark:bg-[#121212] overflow-y-auto">
+    <div className="h-full bg-[#F8FAFB] dark:bg-black overflow-y-auto">
       <div className="max-w-3xl mx-auto p-5 pt-[calc(env(safe-area-inset-top)+2rem)] md:p-8 space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <button 
               onClick={handleBack}
-              className="h-10 w-10 flex shrink-0 items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-100 dark:border-[#2A2A2A] text-gray-400 hover:text-[#3A9B9F] transition-all"
+              className="h-10 w-10 flex shrink-0 items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-xl border border-gray-100 dark:border-[#222222] text-gray-400 hover:text-[#3A9B9F] transition-all"
             >
                 <ArrowLeft className="h-5 w-5" />
             </button>
@@ -428,7 +428,7 @@ export default function AvailabilityPage() {
               const serviceSlots = slotsForService(service.id)
 
               return (
-                <div key={service.id} className="bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-100 dark:border-[#2A2A2A] overflow-hidden shadow-sm">
+                <div key={service.id} className="bg-white dark:bg-[#0A0A0A] rounded-3xl border border-gray-100 dark:border-[#222222] overflow-hidden shadow-sm">
                   {/* Service header */}
                   <div className="flex items-center gap-3 px-4 py-3">
                     <span className="h-4 w-4 rounded-full shrink-0" style={{ backgroundColor: service.color }} />
@@ -436,7 +436,7 @@ export default function AvailabilityPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-bold text-gray-900 dark:text-gray-100 text-sm tracking-tight">{service.name}</p>
                         {!service.active && (
-                          <span className="text-[9px] font-black uppercase tracking-widest bg-gray-100 dark:bg-[#262626] text-gray-400 dark:text-gray-500 px-2.5 py-1 rounded-lg">Inactive</span>
+                          <span className="text-[9px] font-black uppercase tracking-widest bg-gray-100 dark:bg-[#111111] text-gray-400 dark:text-gray-500 px-2.5 py-1 rounded-lg">Inactive</span>
                         )}
                       </div>
                       <p className="text-xs text-gray-400">
@@ -448,7 +448,7 @@ export default function AvailabilityPage() {
                       {/* Active toggle */}
                       <button
                         onClick={() => handleToggleActive(service)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors text-gray-400"
                         title={service.active ? 'Deactivate' : 'Activate'}
                       >
                         {service.active
@@ -458,7 +458,7 @@ export default function AvailabilityPage() {
                       </button>
                       <button
                         onClick={() => setEditingServiceId(editing ? null : service.id)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors text-gray-400"
                         title="Edit"
                       >
                         <Pencil className="h-4 w-4" />
@@ -472,7 +472,7 @@ export default function AvailabilityPage() {
                       </button>
                       <button
                         onClick={() => setExpandedServiceId(expanded ? null : service.id)}
-                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors text-gray-400"
+                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors text-gray-400"
                       >
                         {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                       </button>
@@ -492,7 +492,7 @@ export default function AvailabilityPage() {
 
                   {/* Expanded: availability slots */}
                   {expanded && !editing && (
-                    <div className="border-t border-gray-100 dark:border-[#2A2A2A] px-6 py-5 bg-gray-50/30 dark:bg-[#262626]/30">
+                    <div className="border-t border-gray-100 dark:border-[#222222] px-6 py-5 bg-gray-50/30 dark:bg-[#111111]/30">
                       <div className="flex items-center justify-between mb-4">
                         <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                           Availability Slots
@@ -526,7 +526,7 @@ export default function AvailabilityPage() {
                             key={slot.id}
                             className={cn(
                               "flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all",
-                              slot.is_available ? "bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-[#2A2A2A] text-gray-600 dark:text-gray-300 shadow-sm" : "bg-red-50/50 dark:bg-red-950/10 text-red-500/50 dark:text-red-500/30 line-through"
+                              slot.is_available ? "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] text-gray-600 dark:text-gray-300 shadow-sm" : "bg-red-50/50 dark:bg-red-950/10 text-red-500/50 dark:text-red-500/30 line-through"
                             )}
                           >
                             <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />

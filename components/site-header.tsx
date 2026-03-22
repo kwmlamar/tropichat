@@ -36,7 +36,7 @@ export function SiteHeader() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-white/80 dark:bg-[#121212]/80 backdrop-blur-lg shadow-sm border-b border-gray-100 dark:border-[#2A2A2A]"
+          ? "bg-white/80 dark:bg-black/80 backdrop-blur-lg shadow-sm border-b border-gray-100 dark:border-[#222222]"
           : "bg-transparent"
           }`}
       >
@@ -74,7 +74,7 @@ export function SiteHeader() {
               <Button
                 variant="ghost"
                 asChild
-                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#262626]"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#111111]"
               >
                 <Link href="/login">Log In</Link>
               </Button>
@@ -112,23 +112,23 @@ export function SiteHeader() {
             transition={{ duration: 0.2 }}
             className="fixed inset-x-0 top-20 z-40 md:hidden"
           >
-            <div className="bg-white/95 dark:bg-[#121212]/95 backdrop-blur-lg border-b border-gray-200 dark:border-[#2A2A2A] shadow-lg">
+            <div className="bg-white/95 dark:bg-black/95 backdrop-blur-lg border-b border-gray-200 dark:border-[#222222] shadow-lg">
               <div className="container mx-auto px-4 py-4">
                 <nav className="flex flex-col gap-1">
                   {navLinks.map((link) => (
                     <button
                       key={link.href}
                       onClick={() => scrollToSection(link.href)}
-                      className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#262626] rounded-lg transition-colors"
+                      className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#111111] rounded-lg transition-colors"
                     >
                       {link.label}
                     </button>
                   ))}
-                  <hr className="my-2 border-gray-200 dark:border-[#2A2A2A]" />
+                  <hr className="my-2 border-gray-200 dark:border-[#222222]" />
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#262626] rounded-lg transition-colors"
+                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#111111] rounded-lg transition-colors"
                   >
                     Log In
                   </Link>

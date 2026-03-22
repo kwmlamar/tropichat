@@ -79,8 +79,8 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
       className={cn(
         "w-full group text-left rounded-[24px] border-2 transition-all p-5 relative overflow-hidden",
         isSelected
-          ? "border-[#3A9B9F] bg-white dark:bg-[#1E1E1E] shadow-[0_8px_32px_rgba(58,155,159,0.10)] ring-1 ring-[#3A9B9F]"
-          : "border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm hover:border-gray-200 dark:hover:border-gray-700 hover:bg-white dark:hover:bg-[#262626] dark:hover:shadow-none"
+          ? "border-[#3A9B9F] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_32px_rgba(58,155,159,0.10)] ring-1 ring-[#3A9B9F]"
+          : "border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-sm hover:border-gray-200 dark:hover:border-gray-700 hover:bg-white dark:hover:bg-[#111111] dark:hover:shadow-none"
       )}
     >
       {/* Selected left accent bar */}
@@ -125,7 +125,7 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
 function NotConnectedState({ channel, onSetup }: { channel: string; onSetup: () => void }) {
   return (
     <div className="py-8 text-center flex flex-col items-center gap-4">
-      <div className="h-14 w-14 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] flex items-center justify-center">
+      <div className="h-14 w-14 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] flex items-center justify-center">
         <AlertTriangle className="h-6 w-6 text-amber-400" />
       </div>
       <div>
@@ -137,7 +137,7 @@ function NotConnectedState({ channel, onSetup }: { channel: string; onSetup: () 
       <Button
         variant="outline"
         onClick={onSetup}
-        className="h-10 px-5 rounded-xl border-gray-200 dark:border-[#2A2A2A] bg-white dark:bg-transparent text-gray-600 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-[#262626] text-sm"
+        className="h-10 px-5 rounded-xl border-gray-200 dark:border-[#222222] bg-white dark:bg-transparent text-gray-600 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-[#111111] text-sm"
       >
         <Link2 className="h-4 w-4 mr-2" />
         Go to Integrations
@@ -278,7 +278,7 @@ export default function PageSelectionPage() {
     state.selectedId !== null && !state.items.find((i) => i.id === state.selectedId)?.is_connected
 
   const SkeletonCard = () => (
-    <div className="rounded-[24px] border border-gray-100 dark:border-[#2A2A2A] p-5 flex items-center gap-4 bg-white/50 dark:bg-[#1E1E1E]/50">
+    <div className="rounded-[24px] border border-gray-100 dark:border-[#222222] p-5 flex items-center gap-4 bg-white/50 dark:bg-[#0A0A0A]/50">
       <Skeleton className="h-5 w-5 rounded-full" />
       <Skeleton className="h-12 w-12 rounded-xl" />
       <div className="flex-1 space-y-2">
@@ -289,7 +289,7 @@ export default function PageSelectionPage() {
   )
 
   return (
-    <div className="relative min-h-full p-6 md:p-8 overflow-y-auto bg-white dark:bg-[#121212]">
+    <div className="relative min-h-full p-6 md:p-8 overflow-y-auto bg-white dark:bg-black">
       {/* Subtle background */}
       <div className="fixed inset-0 pointer-events-none -z-10">
         <div className="absolute top-[5%] right-[5%] w-[600px] h-[600px] bg-[#3A9B9F]/5 dark:bg-[#3A9B9F]/2 blur-[150px] rounded-full" />
@@ -313,7 +313,7 @@ export default function PageSelectionPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="rounded-[28px] border border-gray-100 dark:border-[#2A2A2A] bg-white/60 dark:bg-[#1E1E1E]/60 backdrop-blur-sm overflow-hidden"
+            className="rounded-[28px] border border-gray-100 dark:border-[#222222] bg-white/60 dark:bg-[#0A0A0A]/60 backdrop-blur-sm overflow-hidden"
           >
             {/* Section Header */}
             <button
@@ -351,7 +351,7 @@ export default function PageSelectionPage() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-6 space-y-3">
-                    <div className="h-px bg-gray-100 dark:bg-[#2A2A2A] mb-4" />
+                    <div className="h-px bg-gray-100 dark:bg-[#222222] mb-4" />
                     {messenger.loading ? (
                       <><SkeletonCard /><SkeletonCard /></>
                     ) : !messenger.connected ? (
@@ -364,7 +364,7 @@ export default function PageSelectionPage() {
                           onClick={() => setMessenger((s) => ({ ...s, selectedId: page.id }))}
                           avatar={
                             <Avatar src={page.profile_picture_url} fallback={page.name} size="md"
-                              className="h-12 w-12 border-2 border-white dark:border-[#1E1E1E] ring-1 ring-gray-100 dark:ring-[#2A2A2A] rounded-xl" />
+                              className="h-12 w-12 border-2 border-white dark:border-[#0A0A0A] ring-1 ring-gray-100 dark:ring-[#222222] rounded-xl" />
                           }
                           title={page.name}
                           subtitle={`${page.follower_count.toLocaleString()} followers · ${page.category}`}
@@ -401,7 +401,7 @@ export default function PageSelectionPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-[28px] border border-gray-100 dark:border-[#2A2A2A] bg-white/60 dark:bg-[#1E1E1E]/60 backdrop-blur-sm overflow-hidden"
+            className="rounded-[28px] border border-gray-100 dark:border-[#222222] bg-white/60 dark:bg-[#0A0A0A]/60 backdrop-blur-sm overflow-hidden"
           >
             <button
               onClick={() => setInstagram((s) => ({ ...s, open: !s.open }))}
@@ -438,7 +438,7 @@ export default function PageSelectionPage() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-6 space-y-3">
-                    <div className="h-px bg-gray-100 dark:bg-[#2A2A2A] mb-4" />
+                    <div className="h-px bg-gray-100 dark:bg-[#222222] mb-4" />
                     {instagram.loading ? (
                       <><SkeletonCard /><SkeletonCard /></>
                     ) : !instagram.connected ? (
@@ -451,7 +451,7 @@ export default function PageSelectionPage() {
                           onClick={() => setInstagram((s) => ({ ...s, selectedId: account.id }))}
                           avatar={
                             <Avatar src={account.profile_picture_url} fallback={account.name} size="md"
-                              className="h-12 w-12 border-2 border-white dark:border-[#1E1E1E] ring-1 ring-gray-100 dark:ring-[#2A2A2A] rounded-xl" />
+                              className="h-12 w-12 border-2 border-white dark:border-[#0A0A0A] ring-1 ring-gray-100 dark:ring-[#222222] rounded-xl" />
                           }
                           title={account.name}
                           subtitle={`${account.username} · ${account.follower_count.toLocaleString()} followers`}
@@ -488,7 +488,7 @@ export default function PageSelectionPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="rounded-[28px] border border-gray-100 dark:border-[#2A2A2A] bg-white/60 dark:bg-[#1E1E1E]/60 backdrop-blur-sm overflow-hidden"
+            className="rounded-[28px] border border-gray-100 dark:border-[#222222] bg-white/60 dark:bg-[#0A0A0A]/60 backdrop-blur-sm overflow-hidden"
           >
             <button
               onClick={() => setWhatsapp((s) => ({ ...s, open: !s.open }))}
@@ -525,7 +525,7 @@ export default function PageSelectionPage() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-6 space-y-3">
-                    <div className="h-px bg-gray-100 dark:bg-[#2A2A2A] mb-4" />
+                    <div className="h-px bg-gray-100 dark:bg-[#222222] mb-4" />
                     {whatsapp.loading ? (
                       <><SkeletonCard /><SkeletonCard /></>
                     ) : !whatsapp.connected ? (
@@ -541,7 +541,7 @@ export default function PageSelectionPage() {
                               "h-12 w-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0 transition-all",
                               whatsapp.selectedId === number.id
                                 ? "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-900/30 text-green-600 dark:text-green-400"
-                                : "bg-gray-50 dark:bg-[#262626] border-gray-100 dark:border-[#2A2A2A] text-gray-400 dark:text-gray-500"
+                                : "bg-gray-50 dark:bg-[#111111] border-gray-100 dark:border-[#222222] text-gray-400 dark:text-gray-500"
                             )}>
                               <Phone className="h-5 w-5" />
                             </div>

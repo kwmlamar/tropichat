@@ -74,10 +74,10 @@ export function CreateBookingModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-lg max-h-[90vh] overflow-hidden border border-white/60 dark:border-[#2A2A2A] flex flex-col"
+          className="relative bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[32px] shadow-[0_32px_64px_rgba(0,0,0,0.1)] w-full max-w-lg max-h-[90vh] overflow-hidden border border-white/60 dark:border-[#222222] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#2A2A2A]/50 relative overflow-hidden shrink-0">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#222222]/50 relative overflow-hidden shrink-0">
             <div className="relative z-10">
               <h2 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)]">
                 New Booking
@@ -86,7 +86,7 @@ export function CreateBookingModal({
             </div>
             <button
               onClick={onClose}
-              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm"
+              className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#222222] shadow-sm"
             >
               <X className="h-5 w-5" />
             </button>

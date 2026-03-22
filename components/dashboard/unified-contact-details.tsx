@@ -31,7 +31,7 @@ export function UnifiedContactDetails({
 }: UnifiedContactDetailsProps) {
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] border-l border-gray-100 dark:border-[#2A2A2A] p-8 text-center">
+      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black border-l border-gray-100 dark:border-[#222222] p-8 text-center">
         <div className="rounded-full bg-gray-50 dark:bg-white/5 p-4 mb-4">
           <User className="h-8 w-8 text-gray-300 dark:text-gray-600" />
         </div>
@@ -61,9 +61,9 @@ export function UnifiedContactDetails({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#121212] overflow-y-auto border-l border-gray-100 dark:border-[#2A2A2A]">
+    <div className="flex flex-col h-full bg-white dark:bg-black overflow-y-auto border-l border-gray-100 dark:border-[#222222]">
       {/* Contact Header */}
-      <div className="p-6 border-b border-gray-100 dark:border-[#2A2A2A] text-center">
+      <div className="p-6 border-b border-gray-100 dark:border-[#222222] text-center">
         <div className="relative inline-block">
           <Avatar
             src={conversation.customer_avatar_url}
@@ -166,7 +166,7 @@ export function UnifiedContactDetails({
         </div>
 
         {/* Actions */}
-        <div className="pt-4 border-t border-gray-100 dark:border-[#2A2A2A] space-y-2">
+        <div className="pt-4 border-t border-gray-100 dark:border-[#222222] space-y-2">
           {onArchive && (
             <Button
               variant="outline"

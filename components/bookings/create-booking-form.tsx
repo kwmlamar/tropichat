@@ -177,13 +177,13 @@ export function CreateBookingForm({
   }
 
   return (
-    <div className={cn("flex flex-col w-full", isPage ? "min-h-screen bg-[#F8FAFB] dark:bg-[#121212]" : "max-h-[80vh]")}>
+    <div className={cn("flex flex-col w-full", isPage ? "min-h-screen bg-[#F8FAFB] dark:bg-black" : "max-h-[80vh]")}>
       {/* Header (only for page) */}
       {isPage && (
-        <div className="flex items-center px-6 py-4 pt-[calc(env(safe-area-inset-top)+1rem)] border-b border-gray-100/50 dark:border-[#2A2A2A]/50 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-xl sticky top-0 z-10 gap-4">
+        <div className="flex items-center px-6 py-4 pt-[calc(env(safe-area-inset-top)+1rem)] border-b border-gray-100/50 dark:border-[#222222]/50 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-xl sticky top-0 z-10 gap-4">
           <button
             onClick={handleClose}
-            className="p-2.5 rounded-full bg-gray-50/50 dark:bg-[#262626]/50 hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-500 hover:text-navy-900 transition-all border border-gray-100 dark:border-[#2A2A2A] shadow-sm shrink-0"
+            className="p-2.5 rounded-full bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-500 hover:text-navy-900 transition-all border border-gray-100 dark:border-[#222222] shadow-sm shrink-0"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -210,7 +210,7 @@ export function CreateBookingForm({
               Select Service <span className="text-coral-500">*</span>
             </label>
             {services.length === 0 ? (
-              <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-dashed border-gray-200 dark:border-[#2A2A2A] text-center">
+              <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-dashed border-gray-200 dark:border-[#222222] text-center">
                 <p className="text-sm text-gray-400 dark:text-gray-500 italic font-medium">No active services. Add one in Availability settings.</p>
               </div>
             ) : (
@@ -223,7 +223,7 @@ export function CreateBookingForm({
                       "flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 group hover-lift",
                       serviceId === s.id
                         ? "border-[#3A9B9F] bg-teal-50/30 dark:bg-[#3A9B9F]/10 ring-1 ring-[#3A9B9F]/20 shadow-lg shadow-teal-500/5 scale-[1.01]"
-                        : "border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 hover:border-gray-200 dark:hover:border-[#333333] hover:bg-white dark:hover:bg-[#2A2A2A]"
+                        : "border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 hover:border-gray-200 dark:hover:border-[#333333] hover:bg-white dark:hover:bg-[#222222]"
                     )}
                   >
                     <div
@@ -263,7 +263,7 @@ export function CreateBookingForm({
                   value={date}
                   onChange={e => setDate(e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                 />
               </div>
             </div>
@@ -277,7 +277,7 @@ export function CreateBookingForm({
                   type="time"
                   value={time}
                   onChange={e => setTime(e.target.value)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                 />
               </div>
             </div>
@@ -293,7 +293,7 @@ export function CreateBookingForm({
                 className={cn(
                   "flex items-center gap-3 px-4 py-3.5 rounded-2xl text-xs font-bold transition-all border",
                   checkingAvail
-                    ? "bg-gray-50/50 dark:bg-[#262626]/50 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-[#2A2A2A]"
+                    ? "bg-gray-50/50 dark:bg-[#111111]/50 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-[#222222]"
                     : availability?.available
                       ? "bg-teal-50/50 dark:bg-teal-900/10 text-[#3A9B9F] border-teal-100/50 dark:border-teal-900/20 shadow-sm shadow-teal-500/5"
                       : "bg-coral-50/50 dark:bg-coral-900/10 text-[#FF8B66] border-coral-100/50 dark:border-coral-900/20 shadow-sm shadow-coral-500/5"
@@ -324,7 +324,7 @@ export function CreateBookingForm({
             <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-3 ml-1">
               Group Size <span className="text-coral-500">*</span>
             </label>
-            <div className="flex items-center gap-6 bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] p-3 rounded-2xl shadow-sm">
+            <div className="flex items-center gap-6 bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 rounded-2xl shadow-sm">
               <div className="flex items-center gap-3 ml-2">
                 <div className="h-9 w-9 rounded-xl bg-gray-50 dark:bg-[#333333] text-gray-400 dark:text-gray-500 flex items-center justify-center">
                   <Users className="h-4 w-4" />
@@ -335,21 +335,21 @@ export function CreateBookingForm({
               <div className="flex-1 flex justify-center items-center gap-6">
                 <button
                   onClick={() => setPeople(Math.max(1, people - 1))}
-                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#2A2A2A] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
                 >
                   −
                 </button>
                 <span className="text-2xl font-black text-[#213138] dark:text-white w-10 text-center font-[family-name:var(--font-poppins)]">{people}</span>
                 <button
                   onClick={() => setPeople(Math.min(selectedService?.max_capacity ?? 99, people + 1))}
-                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#2A2A2A] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#2A2A2A] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
                 >
                   +
                 </button>
               </div>
 
               {selectedService && (
-                <div className="mr-3 px-3 py-1 bg-gray-50 dark:bg-[#333333] rounded-lg text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest border border-gray-100 dark:border-[#2A2A2A]">
+                <div className="mr-3 px-3 py-1 bg-gray-50 dark:bg-[#333333] rounded-lg text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest border border-gray-100 dark:border-[#222222]">
                   Max {selectedService.max_capacity}
                 </div>
               )}
@@ -368,7 +368,7 @@ export function CreateBookingForm({
                   placeholder="Full Name"
                   value={customerName}
                   onChange={e => setCustomerName(e.target.value)}
-                  className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                  className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -378,7 +378,7 @@ export function CreateBookingForm({
                     placeholder="Phone"
                     value={customerPhone}
                     onChange={e => setCustomerPhone(e.target.value)}
-                    className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                   />
                 </div>
                 <div className="relative group">
@@ -388,7 +388,7 @@ export function CreateBookingForm({
                     placeholder="Email"
                     value={customerEmail}
                     onChange={e => setCustomerEmail(e.target.value)}
-                    className="rounded-2xl border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
                   />
                 </div>
               </div>
@@ -405,13 +405,13 @@ export function CreateBookingForm({
               onChange={e => setNotes(e.target.value)}
               placeholder="Special requests, dietary requirements, etc."
               rows={3}
-              className="w-full rounded-2xl border border-gray-100 dark:border-[#2A2A2A] bg-white/50 dark:bg-[#262626]/50 px-4 py-3 text-sm font-medium dark:text-gray-200 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-sm"
+              className="w-full rounded-2xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 px-4 py-3 text-sm font-medium dark:text-gray-200 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-sm"
             />
           </div>
 
           {/* Actions (Desktop/Modal style) */}
           {!isPage && (
-          <div className="flex gap-4 pt-4 border-t border-gray-100/50 dark:border-[#2A2A2A]/50">
+          <div className="flex gap-4 pt-4 border-t border-gray-100/50 dark:border-[#222222]/50">
             <Button
               variant="ghost"
               onClick={handleClose}
@@ -432,7 +432,7 @@ export function CreateBookingForm({
 
           {/* Sticky Action for Page */}
           {isPage && (
-            <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-xl border-t border-gray-100 dark:border-[#2A2A2A] z-20">
+            <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-xl border-t border-gray-100 dark:border-[#222222] z-20">
               <Button
                 onClick={handleProceedToConfirm}
                 disabled={!serviceId || !date || !time || !customerName || !people}
@@ -516,7 +516,7 @@ export function CreateBookingForm({
                   value={confirmationMsg}
                   onChange={e => setConfirmationMsg(e.target.value)}
                   rows={4}
-                  className="w-full rounded-[24px] border border-gray-100 dark:border-[#2A2A2A] bg-gray-50/50 dark:bg-[#121212]/50 px-5 py-4 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-inner"
+                  className="w-full rounded-[24px] border border-gray-100 dark:border-[#222222] bg-gray-50/50 dark:bg-black/50 px-5 py-4 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-inner"
                 />
               </div>
             </motion.div>
@@ -573,7 +573,7 @@ export function CreateBookingForm({
             </p>
           </div>
 
-          <div className="p-4 rounded-[24px] bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-[#2A2A2A] text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-loose">
+          <div className="p-4 rounded-[24px] bg-gray-50 dark:bg-black border border-gray-100 dark:border-[#222222] text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-loose">
             {new Date(createdBooking.booking_date + 'T12:00:00').toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',

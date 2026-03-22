@@ -438,7 +438,7 @@ export default function InboxPage() {
         className={cn(
           "flex-1 min-w-0",
           selectedConversation ? "flex" : "hidden md:flex",
-          !selectedConversation ? "bg-gray-50 dark:bg-[#121212]" : ""
+          !selectedConversation ? "bg-gray-50 dark:bg-black" : ""
         )}
       >
         <div className="flex flex-col w-full h-full">

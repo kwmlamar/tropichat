@@ -60,9 +60,9 @@ function getFirstDayOfMonth(year: number, month: number) {
 
 function StatCard({ title, val, icon: Icon, color }: { title: string, val: number, icon: any, color: string }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 dark:bg-[#1E1E1E]/70 backdrop-blur-xl p-5 rounded-3xl border border-gray-200 dark:border-[#2A2A2A] shadow-sm ring-1 ring-gray-100/50 dark:ring-white/5">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 dark:bg-[#0A0A0A]/70 backdrop-blur-xl p-5 rounded-3xl border border-gray-200 dark:border-[#222222] shadow-sm ring-1 ring-gray-100/50 dark:ring-white/5">
       <div className="flex items-center gap-3 mb-3">
-        <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-[#262626]" style={{ color }}><Icon className="h-5 w-5" /></div>
+        <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111]" style={{ color }}><Icon className="h-5 w-5" /></div>
         <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{title}</span>
       </div>
       <p className="text-3xl font-extrabold text-[#213138] dark:text-gray-100">{val}</p>
@@ -82,7 +82,7 @@ function MonthView({ calendarDays, dayNames, bookingsForDay, isToday, onBookingC
           const dayBookings = bookingsForDay(day)
           const today = isToday(day)
           return (
-            <div key={idx} className={cn("min-h-[110px] rounded-2xl border transition-all duration-300 group overflow-hidden relative", today ? "border-[#3A9B9F] bg-[#3A9B9F]/5 dark:bg-[#3A9B9F]/10 ring-1 ring-[#3A9B9F]/20 shadow-md shadow-teal-500/5" : "border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E]")}>
+            <div key={idx} className={cn("min-h-[110px] rounded-2xl border transition-all duration-300 group overflow-hidden relative", today ? "border-[#3A9B9F] bg-[#3A9B9F]/5 dark:bg-[#3A9B9F]/10 ring-1 ring-[#3A9B9F]/20 shadow-md shadow-teal-500/5" : "border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A]")}>
               <div className="p-3">
                 <div className={cn("h-7 w-7 rounded-xl flex items-center justify-center text-xs font-bold mb-2 transition-all", today ? "bg-[#3A9B9F] text-white" : "text-gray-400 dark:text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300")}>{day}</div>
                 <div className="space-y-1.5">
@@ -113,12 +113,12 @@ function ListView({ bookings, onBookingClick }: any) {
     <div className="p-8 space-y-8 max-w-4xl mx-auto pb-12">
       {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([date, dayBookings]) => (
         <div key={date}>
-          <div className="sticky top-0 z-10 bg-white/40 dark:bg-[#121212]/40 backdrop-blur-md py-4 mb-4 border-b border-gray-100/50 dark:border-[#2A2A2A]/50">
+          <div className="sticky top-0 z-10 bg-white/40 dark:bg-black/40 backdrop-blur-md py-4 mb-4 border-b border-gray-100/50 dark:border-[#222222]/50">
             <h3 className="text-xs font-black text-[#3A9B9F] uppercase tracking-[0.2em]">{new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
           </div>
           <div className="grid gap-3">
             {dayBookings.map((b) => (
-              <motion.button key={b.id} onClick={() => onBookingClick(b)} className="group w-full bg-white/80 dark:bg-[#1E1E1E]/80 hover:bg-white dark:hover:bg-[#262626] rounded-[24px] border border-gray-100 dark:border-[#2A2A2A] p-5 flex items-center gap-6 shadow-sm hover:translate-y-0.5 transition-all text-left">
+              <motion.button key={b.id} onClick={() => onBookingClick(b)} className="group w-full bg-white/80 dark:bg-[#0A0A0A]/80 hover:bg-white dark:hover:bg-[#111111] rounded-[24px] border border-gray-100 dark:border-[#222222] p-5 flex items-center gap-6 shadow-sm hover:translate-y-0.5 transition-all text-left">
                 <div className="relative shrink-0">
                   <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.customer_name)}&background=random&color=fff`} size="lg" className="border-2 border-white shadow-sm" />
                 </div>
@@ -270,7 +270,7 @@ export default function BookingsPage() {
           <div className="flex flex-col items-center justify-center relative">
             <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-3xl rounded-full scale-150 animate-pulse" />
             <div className="relative w-20 h-20 mb-6">
-              <div className="absolute inset-0 rounded-[1.5rem] bg-white dark:bg-[#1E1E1E] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
+              <div className="absolute inset-0 rounded-[1.5rem] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
               <img 
                 src="/tropichat-logo.png" 
                 alt="TropiChat" 
@@ -286,7 +286,7 @@ export default function BookingsPage() {
         </div>
       ) : customerPlan === "free" ? (
         <div className="flex flex-1 flex-col items-center justify-center p-6 sm:p-12 relative z-10 pt-20">
-          <div className="bg-white dark:bg-[#1E1E1E]/90 backdrop-blur-xl rounded-[2.5rem] border border-gray-100 dark:border-[#2A2A2A] p-8 md:p-14 text-center shadow-2xl max-w-lg w-full">
+          <div className="bg-white dark:bg-[#0A0A0A]/90 backdrop-blur-xl rounded-[2.5rem] border border-gray-100 dark:border-[#222222] p-8 md:p-14 text-center shadow-2xl max-w-lg w-full">
             <div className="flex flex-col items-center">
               <div className="relative mb-8">
                 <div className="absolute inset-0 bg-[#3A9B9F]/30 blur-3xl rounded-full scale-150" />
@@ -312,13 +312,13 @@ export default function BookingsPage() {
         </div>
       ) : isMobile ? (
         /* Mobile Dashboard Layout */
-        <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] dark:bg-[#121212] font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex flex-col bg-[#F5F7FA] dark:bg-black font-[family-name:var(--font-plus-jakarta)] overflow-hidden">
           <div className="flex items-center justify-between px-6 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-0">
-            <button onClick={handleMobileBack} className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
+            <button onClick={handleMobileBack} className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-sm border border-gray-100 dark:border-[#222222] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
               <ArrowLeft className="h-5 w-5" />
             </button>
             <Link href="/dashboard/bookings/availability">
-              <button className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
+              <button className="h-10 w-10 flex items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-2xl shadow-sm border border-gray-100 dark:border-[#222222] text-gray-500 dark:text-gray-400 active:scale-90 transition-transform">
                 <Settings className="h-5 w-5" />
               </button>
             </Link>
@@ -326,8 +326,8 @@ export default function BookingsPage() {
           <div className="flex items-center justify-between px-8 py-3">
             <h1 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 tracking-tight">{headerMonth}</h1>
             <div className="flex gap-3">
-              <button onClick={() => setPageIndex(p => p - 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronLeft className="h-5 w-5" /></button>
-              <button onClick={() => setPageIndex(p => p + 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronRight className="h-5 w-5" /></button>
+              <button onClick={() => setPageIndex(p => p - 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronLeft className="h-5 w-5" /></button>
+              <button onClick={() => setPageIndex(p => p + 1)} className="p-2.5 px-3.5 border border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] rounded-xl text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] shadow-sm transition-all active:scale-95"><ChevronRight className="h-5 w-5" /></button>
             </div>
           </div>
           <div className="px-6 flex-1 flex flex-col justify-start overflow-y-auto pb-6 custom-scrollbar">
@@ -349,7 +349,7 @@ export default function BookingsPage() {
                     transition={{ delay: idx * 0.02 }} 
                     className={cn(
                       "flex flex-col items-start justify-center p-4 rounded-[28px] border transition-all h-28 relative flex-shrink-0 group/card", 
-                      isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#1E1E1E] border-transparent dark:border-[#2A2A2A] text-[#213138] dark:text-gray-100 shadow-sm hover:border-[#3A9B9F]/30"
+                      isSelected ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-xl shadow-teal-500/10 z-10" : "bg-white dark:bg-[#0A0A0A] border-transparent dark:border-[#222222] text-[#213138] dark:text-gray-100 shadow-sm hover:border-[#3A9B9F]/30"
                     )}
                   >
                     <span className={cn("text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5", isSelected ? "text-white/60" : "text-gray-400 dark:text-gray-500")}>
@@ -377,7 +377,7 @@ export default function BookingsPage() {
             <div className="mb-2">
               <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
                 {timesList.map((t) => (
-                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border shrink-0", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white dark:bg-[#1E1E1E] text-gray-400 dark:text-gray-500 border-gray-100 dark:border-[#2A2A2A] hover:bg-gray-50 dark:hover:bg-[#262626]")}>{t}</button>
+                  <button key={t} onClick={() => setSelectedTime(t)} className={cn("px-5 py-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all border shrink-0", selectedTime === t ? "bg-[#3A9B9F] text-white border-[#3A9B9F] shadow-lg shadow-teal-500/10" : "bg-white dark:bg-[#0A0A0A] text-gray-400 dark:text-gray-500 border-gray-100 dark:border-[#222222] hover:bg-gray-50 dark:hover:bg-[#111111]")}>{t}</button>
                 ))}
               </div>
             </div>
@@ -391,9 +391,9 @@ export default function BookingsPage() {
                   const dayBookings = filtered.filter(b => b.booking_date === selectedStr)
                   if (dayBookings.length === 0) return <p className="text-sm text-gray-400 dark:text-gray-500 font-bold italic">No bookings on this day.</p>
                   return dayBookings.map(b => (
-                    <motion.button key={b.id} onClick={() => handleBookingClick(b)} className="group w-full bg-white dark:bg-[#1E1E1E] rounded-2xl border border-gray-100 dark:border-[#2A2A2A] p-4 flex items-center gap-4 shadow-sm text-left active:scale-95 transition-transform">
+                    <motion.button key={b.id} onClick={() => handleBookingClick(b)} className="group w-full bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] p-4 flex items-center gap-4 shadow-sm text-left active:scale-95 transition-transform">
                       <div className="relative shrink-0">
-                        <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.customer_name)}&background=random&color=fff`} className="border border-gray-100 dark:border-[#2A2A2A] h-10 w-10 shadow-sm" />
+                        <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.customer_name)}&background=random&color=fff`} className="border border-gray-100 dark:border-[#222222] h-10 w-10 shadow-sm" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -411,7 +411,7 @@ export default function BookingsPage() {
               </div>
             </div>
           </div>
-          <div className="p-8 pb-10 bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm border-t border-gray-100/30 dark:border-[#2A2A2A]/30">
+          <div className="p-8 pb-10 bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-sm border-t border-gray-100/30 dark:border-[#222222]/30">
             <Button 
               onClick={() => {
                 if (isMobile) {
@@ -430,7 +430,7 @@ export default function BookingsPage() {
       ) : (
         /* Desktop Dashboard Layout */
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="relative z-10 bg-white dark:bg-[#1E1E1E]/70 backdrop-blur-xl border-b border-gray-100 dark:border-[#2A2A2A] px-8 py-6 flex items-center justify-between gap-6 flex-wrap">
+          <div className="relative z-10 bg-white dark:bg-[#0A0A0A]/70 backdrop-blur-xl border-b border-gray-100 dark:border-[#222222] px-8 py-6 flex items-center justify-between gap-6 flex-wrap">
             <div>
               <h1 className="text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)] mb-1">Bookings</h1>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Manage and track your tour reservations globally</p>
@@ -443,7 +443,7 @@ export default function BookingsPage() {
                 <select 
                   value={filterService}
                   onChange={e => setFilterService(e.target.value)}
-                  className="pl-9 pr-10 py-2.5 bg-gray-50/50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] rounded-xl text-xs font-bold text-gray-600 dark:text-gray-300 focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all cursor-pointer appearance-none shadow-sm hover:bg-white dark:hover:bg-[#2A2A2A]"
+                  className="pl-9 pr-10 py-2.5 bg-gray-50/50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] rounded-xl text-xs font-bold text-gray-600 dark:text-gray-300 focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all cursor-pointer appearance-none shadow-sm hover:bg-white dark:hover:bg-[#222222]"
                 >
                   <option value="all">All Services</option>
                   {services.map(s => (
@@ -455,9 +455,9 @@ export default function BookingsPage() {
                 </div>
               </div>
 
-              <div className="h-10 w-[1px] bg-gray-100 dark:bg-[#2A2A2A] mx-1" />
+              <div className="h-10 w-[1px] bg-gray-100 dark:bg-[#222222] mx-1" />
 
-              <div className="flex bg-gray-100 dark:bg-[#121212] p-1 rounded-xl shadow-inner border border-gray-100 dark:border-[#2A2A2A]">
+              <div className="flex bg-gray-100 dark:bg-black p-1 rounded-xl shadow-inner border border-gray-100 dark:border-[#222222]">
                 <button
                   onClick={() => setView('month')}
                   className={cn(
@@ -483,7 +483,7 @@ export default function BookingsPage() {
               </div>
 
               <Link href="/dashboard/bookings/availability">
-                <Button variant="outline" className="bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] text-gray-600 dark:text-gray-300 border-gray-100 dark:border-[#2A2A2A] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
+                <Button variant="outline" className="bg-white dark:bg-[#0A0A0A] hover:bg-gray-50 dark:hover:bg-[#111111] text-gray-600 dark:text-gray-300 border-gray-100 dark:border-[#222222] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
                   <Settings className="h-4 w-4 mr-2" /> Manage Services
                 </Button>
               </Link>
@@ -495,7 +495,7 @@ export default function BookingsPage() {
                 New Booking
               </Button>
               <Link href={currCustomerId ? `/book/${currCustomerId}` : "/book-preview"} target="_blank">
-                <Button variant="outline" className="bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] text-[#3A9B9F] border-gray-100 dark:border-[#2A2A2A] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
+                <Button variant="outline" className="bg-white dark:bg-[#0A0A0A] hover:bg-gray-50 dark:hover:bg-[#111111] text-[#3A9B9F] border-gray-100 dark:border-[#222222] rounded-xl px-4 h-11 font-bold shadow-sm transition-all">
                   <ExternalLink className="h-4 w-4 mr-2" /> Share Link
                 </Button>
               </Link>
@@ -526,13 +526,13 @@ export default function BookingsPage() {
             </div>
 
             {/* View Area */}
-            <div className="bg-white dark:bg-[#1E1E1E]/40 backdrop-blur-xl rounded-[32px] border border-gray-100 dark:border-[#2A2A2A] shadow-xl shadow-navy-900/5 overflow-hidden">
-              <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 dark:border-[#2A2A2A]">
+            <div className="bg-white dark:bg-[#0A0A0A]/40 backdrop-blur-xl rounded-[32px] border border-gray-100 dark:border-[#222222] shadow-xl shadow-navy-900/5 overflow-hidden">
+              <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 dark:border-[#222222]">
                 <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">{MONTH_NAMES[viewMonth]} <span className="text-gray-300 dark:text-gray-600 font-medium ml-1">{viewYear}</span></h2>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => { if(viewMonth === 0){ setViewYear(y=>y-1); setViewMonth(11) } else setViewMonth(m=>m-1) }} className="p-2 rounded-xl bg-white/80 dark:bg-[#262626] hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-[#2A2A2A] shadow-sm transition-colors"><ChevronLeft className="h-5 w-5" /></button>
+                  <button onClick={() => { if(viewMonth === 0){ setViewYear(y=>y-1); setViewMonth(11) } else setViewMonth(m=>m-1) }} className="p-2 rounded-xl bg-white/80 dark:bg-[#111111] hover:bg-white dark:hover:bg-[#222222] text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-[#222222] shadow-sm transition-colors"><ChevronLeft className="h-5 w-5" /></button>
                   <button onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()) }} className="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-500 hover:text-[#3A9B9F] dark:hover:text-[#3A9B9F] transition-colors">Today</button>
-                  <button onClick={() => { if(viewMonth === 11){ setViewYear(y=>y+1); setViewMonth(0) } else setViewMonth(m=>m+1) }} className="p-2 rounded-xl bg-white/80 dark:bg-[#262626] hover:bg-white dark:hover:bg-[#2A2A2A] text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-[#2A2A2A] shadow-sm transition-colors"><ChevronRight className="h-5 w-5" /></button>
+                  <button onClick={() => { if(viewMonth === 11){ setViewYear(y=>y+1); setViewMonth(0) } else setViewMonth(m=>m+1) }} className="p-2 rounded-xl bg-white/80 dark:bg-[#111111] hover:bg-white dark:hover:bg-[#222222] text-gray-600 dark:text-gray-400 border border-gray-100 dark:border-[#222222] shadow-sm transition-colors"><ChevronRight className="h-5 w-5" /></button>
                 </div>
               </div>
               <div className="relative">

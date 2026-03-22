@@ -33,10 +33,10 @@ export function NotificationDropdown({
   return (
     <div
       ref={ref}
-      className="absolute left-0 top-full z-[9999] mt-2 w-80 overflow-hidden rounded-xl bg-white dark:bg-[#1E1E1E] shadow-xl ring-1 ring-black/5 dark:ring-white/10 border dark:border-[#2A2A2A] sm:w-96"
+      className="absolute left-0 top-full z-[9999] mt-2 w-80 overflow-hidden rounded-xl bg-white dark:bg-[#0A0A0A] shadow-xl ring-1 ring-black/5 dark:ring-white/10 border dark:border-[#222222] sm:w-96"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#2A2A2A] px-4 py-3">
+      <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#222222] px-4 py-3">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
           {unreadCount > 0 && (
@@ -64,14 +64,14 @@ export function NotificationDropdown({
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
-            <div className="mb-3 rounded-full bg-gray-100 dark:bg-[#262626] p-3">
+            <div className="mb-3 rounded-full bg-gray-100 dark:bg-[#111111] p-3">
               <Bell className="h-6 w-6 text-gray-400 dark:text-gray-500" />
             </div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">All caught up!</p>
             <p className="mt-1 text-xs text-gray-500">No notifications yet</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50 dark:divide-[#2A2A2A]">
+          <div className="divide-y divide-gray-50 dark:divide-[#222222]">
             {notifications.map((notification) => (
               <NotificationItem
                 key={notification.id}

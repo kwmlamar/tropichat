@@ -72,8 +72,8 @@ const cardVariant = {
 
 export function SolutionSection() {
   return (
-    <section className="relative bg-white dark:bg-[#121212] py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
+    <section className="relative bg-white dark:bg-black py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -111,7 +111,7 @@ export function SolutionSection() {
             <motion.div
               key={index}
               variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
             >
               {/* Top gradient accent bar */}
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`} />
@@ -160,7 +160,7 @@ export function SolutionSection() {
           <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-slate-400 dark:text-gray-500">
             Real Results From Caribbean Businesses
           </p>
-          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 dark:border-[#2A2A2A] bg-gradient-to-br from-teal-50/60 to-white dark:from-[#262626] dark:to-[#262626] p-6 md:grid-cols-4 md:p-10">
+          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 dark:border-[#222222] bg-gradient-to-br from-teal-50/60 to-white dark:from-[#111111] dark:to-[#111111] p-6 md:grid-cols-4 md:p-10">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
                 <div className="mb-1 text-4xl font-bold text-[#3A9B9F]">{stat.value}</div>

@@ -79,7 +79,7 @@ export function PricingSection() {
 
   return (
     <section className="relative bg-[#F8FAFB] dark:bg-[#0A0A0A] py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -90,7 +90,7 @@ export function PricingSection() {
           transition={{ duration: 0.6 }}
           className="mb-10 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
             Pricing
           </div>
           <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
@@ -104,7 +104,7 @@ export function PricingSection() {
           </p>
 
           {/* Monthly / Annual Toggle */}
-          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-1 shadow-sm">
+          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-1 shadow-sm">
             <button
               onClick={() => setIsAnnual(false)}
               className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${!isAnnual
@@ -208,8 +208,8 @@ export function PricingSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className={`relative overflow-hidden rounded-2xl p-8 transition-all duration-300 hover:shadow-lg ${plan.popular
-                  ? "border-2 border-[#3A9B9F] bg-white dark:bg-[#1E1E1E] shadow-[0_8px_40px_rgba(58,155,159,0.15)] md:scale-[1.03]"
-                  : "border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
+                  ? "border-2 border-[#3A9B9F] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_40px_rgba(58,155,159,0.15)] md:scale-[1.03]"
+                  : "border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
                 }`}
             >
               {plan.popular && (
@@ -272,7 +272,7 @@ export function PricingSection() {
                      ? "bg-[#3A9B9F] text-white hover:bg-[#2F8488] shadow-sm hover:shadow-md"
                     : plan.name === "Enterprise"
                       ? "bg-[#213138] dark:bg-[#3A9B9F] text-white hover:bg-slate-800 dark:hover:bg-[#2F8488]"
-                      : "border border-slate-300 dark:border-[#2A2A2A] bg-white dark:bg-[#262626] text-slate-700 dark:text-gray-200 hover:border-[#3A9B9F] hover:text-[#3A9B9F]"
+                      : "border border-slate-300 dark:border-[#222222] bg-white dark:bg-[#111111] text-slate-700 dark:text-gray-200 hover:border-[#3A9B9F] hover:text-[#3A9B9F]"
                   }`}
               >
                 {plan.cta}
@@ -319,7 +319,7 @@ export function PricingSection() {
             {faqItems.map((faq, i) => (
                <div
                 key={i}
-                className="overflow-hidden rounded-xl border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] shadow-[0_1px_6px_rgba(0,0,0,0.03)]"
+                className="overflow-hidden rounded-xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] shadow-[0_1px_6px_rgba(0,0,0,0.03)]"
               >
                  <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}

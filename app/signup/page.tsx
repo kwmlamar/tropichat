@@ -143,7 +143,7 @@ export default function SignupPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-6xl bg-white dark:bg-[#1E1E1E] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-[#2A2A2A] overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
+        className="w-full max-w-6xl bg-white dark:bg-[#0A0A0A] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-[#222222] overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
       >
         {/* Left Side - Form */}
         <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center overflow-y-auto max-h-[90vh] lg:max-h-[unset]">
@@ -183,7 +183,7 @@ export default function SignupPage() {
                   placeholder="Your Business Name"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
                   required
                 />
               </div>
@@ -200,7 +200,7 @@ export default function SignupPage() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
+                    className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
                     required
                   />
                 </div>
@@ -215,7 +215,7 @@ export default function SignupPage() {
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
+                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
                     required
                     minLength={8}
                   />
@@ -240,7 +240,7 @@ export default function SignupPage() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#2A2A2A] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
                   required
                 />
               </div>
@@ -271,10 +271,10 @@ export default function SignupPage() {
           <div className="mt-8">
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-100 dark:border-[#2A2A2A]" />
+                <div className="w-full border-t border-slate-100 dark:border-[#222222]" />
               </div>
               <div className="relative flex justify-center text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400 dark:text-gray-500">
-                <span className="bg-white dark:bg-[#1E1E1E] px-4">Or sign up with</span>
+                <span className="bg-white dark:bg-[#0A0A0A] px-4">Or sign up with</span>
               </div>
             </div>
 
@@ -282,19 +282,19 @@ export default function SignupPage() {
               <Button
                 variant="outline"
                 onClick={() => handleOAuth("google")}
-                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
                 <GoogleIcon className="h-5 w-5" />
               </Button>
               <Button
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
                 <AppleIcon className="h-5 w-5 dark:text-white text-black" />
               </Button>
               <Button
                 variant="outline"
-                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#2A2A2A] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
+                className="h-12 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all"
               >
                 <MicrosoftIcon className="h-5 w-5" />
               </Button>

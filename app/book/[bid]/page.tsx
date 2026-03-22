@@ -118,7 +118,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#121212]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
         <Loader2 className="h-10 w-10 animate-spin text-[#3A9B9F]" />
       </div>
     )
@@ -126,7 +126,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
   if (services.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#121212] p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black p-8 text-center">
         <div className="max-w-md">
             <h1 className="text-2xl font-bold mb-4">No Services Found</h1>
             <p className="text-gray-500 mb-8">This business hasn't set up any bookable services yet.</p>
@@ -138,7 +138,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
   // Reuse the logic from preview but simplified for real data
   const MobileLayout = () => (
-    <div className="flex flex-col min-h-screen bg-[#F5F7FA] dark:bg-[#121212] font-[family-name:var(--font-plus-jakarta)] px-6 pt-12 pb-24 max-w-md mx-auto relative">
+    <div className="flex flex-col min-h-screen bg-[#F5F7FA] dark:bg-black font-[family-name:var(--font-plus-jakarta)] px-6 pt-12 pb-24 max-w-md mx-auto relative">
       <h1 className="text-2xl font-extrabold text-[#213138] dark:text-white mb-8">
         {businessProfile?.business_name || "Book Appointment"}
       </h1>
@@ -154,7 +154,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                     onClick={() => setSelectedService(s)}
                     className={cn(
                         "p-4 rounded-[24px] border text-left transition-all",
-                        selectedService?.id === s.id ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg" : "bg-white dark:bg-[#1E1E1E] border-transparent"
+                        selectedService?.id === s.id ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg" : "bg-white dark:bg-[#0A0A0A] border-transparent"
                     )}
                 >
                     <p className="font-bold text-sm">{s.name}</p>
@@ -170,17 +170,17 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
              <input 
                 type="date" 
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full p-4 rounded-2xl bg-white dark:bg-[#1E1E1E] border-none shadow-sm font-bold text-sm"
+                className="w-full p-4 rounded-2xl bg-white dark:bg-[#0A0A0A] border-none shadow-sm font-bold text-sm"
              />
              <input 
                 type="time" 
                 onChange={(e) => setSelectedTime(e.target.value)}
-                className="w-full p-4 rounded-2xl bg-white dark:bg-[#1E1E1E] border-none shadow-sm font-bold text-sm"
+                className="w-full p-4 rounded-2xl bg-white dark:bg-[#0A0A0A] border-none shadow-sm font-bold text-sm"
              />
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#F5F7FA] dark:from-[#121212] to-transparent z-20 max-w-md mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#F5F7FA] dark:from-black to-transparent z-20 max-w-md mx-auto">
         <Button 
           onClick={handleComplete}
           disabled={bookingLoading || !selectedDate || !selectedTime}
@@ -193,7 +193,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
   )
 
   const DesktopLayout = () => (
-    <div className="min-h-screen bg-[#F8FAFB] dark:bg-[#121212] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFB] dark:bg-black flex flex-col font-sans">
        <div className="max-w-6xl mx-auto w-full px-8 py-12 flex-1 flex flex-col lg:flex-row gap-12">
           <div className="flex-1 space-y-12">
              <div className="flex items-center gap-4">
@@ -226,7 +226,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                      key={s.id} 
                      onClick={() => setSelectedService(s)}
                      className={cn(
-                       "relative rounded-[32px] p-8 border transition-all text-left bg-white dark:bg-[#1E1E1E] group",
+                       "relative rounded-[32px] p-8 border transition-all text-left bg-white dark:bg-[#0A0A0A] group",
                        selectedService?.id === s.id ? "border-[#3A9B9F] ring-4 ring-[#3A9B9F]/10 shadow-lg" : "border-gray-100 dark:border-gray-800"
                      )}
                    >
@@ -247,10 +247,10 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
           </div>
 
           <div className="w-full lg:w-[420px] shrink-0">
-             <div className="bg-white dark:bg-[#1E1E1E] rounded-[40px] shadow-2xl border border-gray-100 dark:border-gray-800 p-8 sticky top-12">
+             <div className="bg-white dark:bg-[#0A0A0A] rounded-[40px] shadow-2xl border border-gray-100 dark:border-gray-800 p-8 sticky top-12">
                    <h3 className="text-xl font-bold text-[#213138] dark:text-white mb-8">Schedule Booking</h3>
                    <div className="space-y-6">
-                      <div className="p-4 rounded-2xl bg-[#F8FAFB] dark:bg-[#262626] border border-gray-100 dark:border-gray-800 flex items-center gap-4">
+                      <div className="p-4 rounded-2xl bg-[#F8FAFB] dark:bg-[#111111] border border-gray-100 dark:border-gray-800 flex items-center gap-4">
                          <div className="h-12 w-12 bg-[#213138] rounded-xl flex items-center justify-center text-[#3A9B9F] shrink-0">
                             <CalendarDays className="h-6 w-6" />
                          </div>
@@ -263,11 +263,11 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                       <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Date</label>
-                            <input type="date" onChange={(e) => setSelectedDate(e.target.value)} className="w-full h-12 rounded-xl bg-white dark:bg-[#262626] border border-gray-100 dark:border-gray-800 px-4 text-xs font-bold" />
+                            <input type="date" onChange={(e) => setSelectedDate(e.target.value)} className="w-full h-12 rounded-xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-gray-800 px-4 text-xs font-bold" />
                          </div>
                          <div className="space-y-2">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Time</label>
-                            <input type="time" onChange={(e) => setSelectedTime(e.target.value)} className="w-full h-12 rounded-xl bg-white dark:bg-[#262626] border border-gray-100 dark:border-gray-800 px-4 text-xs font-bold" />
+                            <input type="time" onChange={(e) => setSelectedTime(e.target.value)} className="w-full h-12 rounded-xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-gray-800 px-4 text-xs font-bold" />
                          </div>
                       </div>
 
@@ -288,7 +288,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
   if (isDone) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#121212] flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-white dark:bg-black flex flex-col items-center justify-center p-6 text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-[#3A9B9F] rounded-[32px] flex items-center justify-center text-white mb-8">
           <Check className="h-12 w-12" />
         </motion.div>

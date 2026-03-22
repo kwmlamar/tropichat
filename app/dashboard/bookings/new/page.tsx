@@ -12,7 +12,7 @@ export default function NewBookingPage() {
   const initialTime = searchParams.get('time') || undefined
 
   return (
-    <div className="fixed inset-0 z-[200] bg-[#F8FAFB] dark:bg-[#121212] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-[200] bg-[#F8FAFB] dark:bg-black flex flex-col overflow-hidden">
       <CreateBookingForm 
         isPage={true}
         onClose={() => router.back()}

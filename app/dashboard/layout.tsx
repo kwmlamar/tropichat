@@ -37,11 +37,11 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#121212]">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
         <div className="flex flex-col items-center justify-center relative">
           <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-3xl rounded-full scale-150 animate-pulse" />
           <div className="relative w-24 h-24 mb-6">
-            <div className="absolute inset-0 rounded-[2rem] bg-white dark:bg-[#1E1E1E] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
+            <div className="absolute inset-0 rounded-[2rem] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
             <img 
               src="/tropichat-logo.png" 
               alt="TropiChat" 
@@ -59,7 +59,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="h-screen h-[100dvh] bg-gray-50 dark:bg-[#121212] flex overflow-hidden">
+    <div className="h-screen h-[100dvh] bg-gray-50 dark:bg-black flex overflow-hidden">
       <Sidebar customer={customer} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
       {/* Main content */}

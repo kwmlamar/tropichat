@@ -135,7 +135,7 @@ export function UnifiedMessageThread({
   // Modern Welcome Empty state
   if (!conversation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-[#121212] p-8 text-center relative overflow-hidden">
+      <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black p-8 text-center relative overflow-hidden">
         {/* Subtle background decoration */}
         <div className="absolute inset-0 bg-dot-pattern opacity-5 dark:opacity-[0.02] pointer-events-none" />
 
@@ -145,10 +145,10 @@ export function UnifiedMessageThread({
           transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
           className="relative z-10 max-w-lg w-full"
         >
-          <div className="bg-white/40 dark:bg-[#1A1A1A]/40 backdrop-blur-xl rounded-[40px] border border-gray-100/50 dark:border-[#2A2A2A]/50 p-12 shadow-2xl shadow-sky-900/5 dark:shadow-black/20">
+          <div className="bg-white/40 dark:bg-[#1A1A1A]/40 backdrop-blur-xl rounded-[40px] border border-gray-100/50 dark:border-[#222222]/50 p-12 shadow-2xl shadow-sky-900/5 dark:shadow-black/20">
             <div className="mb-10 relative">
               <div className="relative inline-block">
-                <div className="relative rounded-full bg-white dark:bg-[#262626]/50 p-8 shadow-2xl shadow-teal-500/20 dark:shadow-[#3A9B9F]/20 border border-teal-50/50 dark:border-[#3A9B9F]/20">
+                <div className="relative rounded-full bg-white dark:bg-[#111111]/50 p-8 shadow-2xl shadow-teal-500/20 dark:shadow-[#3A9B9F]/20 border border-teal-50/50 dark:border-[#3A9B9F]/20">
                   <Image
                     src="/tropichat-logo.png"
                     alt="TropiChat"
@@ -169,7 +169,7 @@ export function UnifiedMessageThread({
               Choose a customer from the list to start chatting. Your responses will be sent via their original platform.
             </p>
 
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-100 dark:border-[#2A2A2A] transition-all hover:bg-white dark:hover:bg-[#333333]">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] transition-all hover:bg-white dark:hover:bg-[#333333]">
               <div className="p-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F]">
                 <Inbox className="h-4 w-4" />
               </div>
@@ -183,10 +183,10 @@ export function UnifiedMessageThread({
 
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#121212] relative overflow-hidden h-[100dvh]">
+    <div className="flex flex-col h-full bg-white dark:bg-black relative overflow-hidden h-[100dvh]">
 
       {/* Header */}
-      <div className="fixed lg:sticky top-0 left-0 right-0 lg:left-auto lg:right-auto z-30 flex-shrink-0 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-[#2A2A2A] shadow-sm">
+      <div className="fixed lg:sticky top-0 left-0 right-0 lg:left-auto lg:right-auto z-30 flex-shrink-0 bg-white dark:bg-black border-b border-gray-100 dark:border-[#222222] shadow-sm">
         <div className="h-[env(safe-area-inset-top)] w-full" />
         <div className="flex items-center justify-between px-4 lg:px-6 py-2.5 lg:py-4">
           <div className="flex items-center gap-2 lg:gap-3">
@@ -282,7 +282,7 @@ export function UnifiedMessageThread({
             {groupedMessages.map((group) => (
               <div key={group.date}>
                 <div className="flex items-center justify-center my-4">
-                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#262626] rounded-full text-xs text-gray-500 dark:text-gray-400">
+                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#111111] rounded-full text-xs text-gray-500 dark:text-gray-400">
                     {formatDateDivider(group.date)}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ export function UnifiedMessageThread({
                             "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 transition-all",
                             isOutbound
                               ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-sm"
-                              : "bg-slate-100 dark:bg-[#262626] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#2A2A2A] shadow-sm"
+                              : "bg-slate-100 dark:bg-[#111111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#222222] shadow-sm"
                           )}
                         >
 
@@ -396,13 +396,13 @@ export function UnifiedMessageThread({
       </div>
 
       {/* Message Input Area (Improved for Mobile) */}
-      <div className="flex-shrink-0 bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-[#2A2A2A] relative z-20 pb-safe">
+      <div className="flex-shrink-0 bg-white dark:bg-black border-t border-gray-100 dark:border-[#222222] relative z-20 pb-safe">
         <div className="p-2 lg:p-3 flex items-end gap-2">
         <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors shrink-0 mb-0.5">
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>
 
-        <div className="flex-1 bg-white dark:bg-[#262626] rounded-3xl border border-gray-300/60 dark:border-[#2A2A2A] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
+        <div className="flex-1 bg-white dark:bg-[#111111] rounded-3xl border border-gray-300/60 dark:border-[#222222] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
           <Textarea
             ref={textareaRef}
             placeholder=""

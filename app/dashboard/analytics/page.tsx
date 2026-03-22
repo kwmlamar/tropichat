@@ -296,7 +296,7 @@ export default function AnalyticsPage() {
             </p>
           </div>
 
-          <div className="bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-xl p-1.5 rounded-[20px] border border-white dark:border-[#2A2A2A] shadow-sm flex gap-1 ring-1 ring-black/5">
+          <div className="bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-xl p-1.5 rounded-[20px] border border-white dark:border-[#222222] shadow-sm flex gap-1 ring-1 ring-black/5">
             {[
               { value: "7d", label: "7D" },
               { value: "30d", label: "30D" },
@@ -309,7 +309,7 @@ export default function AnalyticsPage() {
                   "px-6 py-2.5 text-xs font-bold rounded-[14px] transition-all duration-300",
                   dateRange === option.value
                     ? "bg-[#213138] dark:bg-[#3A9B9F] text-white shadow-lg shadow-navy-900/20"
-                    : "text-gray-500 hover:text-[#213138] dark:hover:text-white hover:bg-white dark:hover:bg-[#262626]"
+                    : "text-gray-500 hover:text-[#213138] dark:hover:text-white hover:bg-white dark:hover:bg-[#111111]"
                 )}
               >
                 {option.label}
@@ -327,7 +327,7 @@ export default function AnalyticsPage() {
         >
           {loading
             ? Array(4).fill(0).map((_, i) => (
-              <div key={i} className="h-32 bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-md rounded-[32px] border border-white dark:border-[#2A2A2A] animate-pulse" />
+              <div key={i} className="h-32 bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-md rounded-[32px] border border-white dark:border-[#222222] animate-pulse" />
             ))
             : metrics.map((metric, i) => (
               <motion.div
@@ -335,7 +335,7 @@ export default function AnalyticsPage() {
                 initial={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[32px] border border-white dark:border-[#2A2A2A] p-7 shadow-[0_8px_30px_rgba(0,0,0,0.02)] ring-1 ring-black/5 relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-[#3A9B9F]/5"
+                className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[32px] border border-white dark:border-[#222222] p-7 shadow-[0_8px_30px_rgba(0,0,0,0.02)] ring-1 ring-black/5 relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-[#3A9B9F]/5"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className={cn("p-3 rounded-2xl text-white shadow-lg", i % 2 === 0 ? "bg-[#3A9B9F]" : "bg-[#FF8B66]")}>
@@ -369,7 +369,7 @@ export default function AnalyticsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#2A2A2A] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
           >
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -391,7 +391,7 @@ export default function AnalyticsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#2A2A2A] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
           >
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -427,7 +427,7 @@ export default function AnalyticsPage() {
         >
           <motion.div
             variants={itemVariants}
-            className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#2A2A2A] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5 flex items-center gap-10 group"
+            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5 flex items-center gap-10 group"
           >
             <div className="relative">
               <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-2xl rounded-full scale-150 animate-pulse" />
@@ -446,7 +446,7 @@ export default function AnalyticsPage() {
 
           <motion.div
             variants={itemVariants}
-            className="bg-white/80 dark:bg-[#1E1E1E]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#2A2A2A] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
           >
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] tracking-tight">Prime Interaction Slots</h3>

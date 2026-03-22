@@ -76,8 +76,8 @@ const item = {
 
 export function SocialProofSection() {
   return (
-    <section className="relative bg-white dark:bg-[#121212] py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
+    <section className="relative bg-white dark:bg-black py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -115,7 +115,7 @@ export function SocialProofSection() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
+              className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
             >
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3A9B9F] to-teal-400 rounded-t-2xl" />
             <div className="mb-6 flex items-center gap-3">
@@ -139,7 +139,7 @@ export function SocialProofSection() {
                    <motion.div
                     key={index}
                     variants={item}
-                    className="flex items-start gap-4 rounded-xl bg-slate-50 dark:bg-[#262626] p-4 transition-colors hover:bg-teal-50/60 dark:hover:bg-teal-900/20 cursor-default"
+                    className="flex items-start gap-4 rounded-xl bg-slate-50 dark:bg-[#111111] p-4 transition-colors hover:bg-teal-50/60 dark:hover:bg-teal-900/20 cursor-default"
                   >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-100/70">
                       <Icon className="h-4 w-4 text-[#3A9B9F]" />
@@ -160,7 +160,7 @@ export function SocialProofSection() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
+              className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
             >
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FF8B66] to-amber-400 rounded-t-2xl" />
             <div className="mb-6 flex items-center gap-3">
@@ -182,7 +182,7 @@ export function SocialProofSection() {
                    <motion.div
                     key={index}
                     variants={item}
-                    className="flex items-start gap-4 rounded-xl bg-slate-50 dark:bg-[#262626] p-4 transition-colors hover:bg-orange-50/60 dark:hover:bg-orange-900/20 cursor-default"
+                    className="flex items-start gap-4 rounded-xl bg-slate-50 dark:bg-[#111111] p-4 transition-colors hover:bg-orange-50/60 dark:hover:bg-orange-900/20 cursor-default"
                   >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-orange-100/70">
                       <Icon className="h-4 w-4 text-[#FF8B66]" />
@@ -205,7 +205,7 @@ export function SocialProofSection() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="text-center"
         >
-          <div className="mx-auto max-w-xl overflow-hidden rounded-2xl bg-gradient-to-br from-[#213138] to-[#2F8488] dark:from-[#0A0A0A] dark:to-[#2A2A2A] p-8 shadow-xl border border-transparent dark:border-[#2A2A2A]">
+          <div className="mx-auto max-w-xl overflow-hidden rounded-2xl bg-gradient-to-br from-[#213138] to-[#2F8488] dark:from-[#0A0A0A] dark:to-[#222222] p-8 shadow-xl border border-transparent dark:border-[#222222]">
             <p className="mb-1 text-xs font-bold uppercase tracking-widest text-teal-300">
               Limited Early Access
             </p>
@@ -239,7 +239,7 @@ export function SocialProofSection() {
             const Icon = t.icon
             return (
               <div key={i} className="flex flex-col items-center text-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-[#262626] shadow-sm ring-1 ring-slate-200 dark:ring-[#2A2A2A]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-[#111111] shadow-sm ring-1 ring-slate-200 dark:ring-[#222222]">
                   <Icon className="h-5 w-5 text-[#3A9B9F]" />
                 </div>
                  <div className="font-semibold text-[#213138] dark:text-white text-sm">{t.label}</div>

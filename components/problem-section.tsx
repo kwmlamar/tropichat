@@ -67,7 +67,7 @@ export function ProblemSection() {
   return (
     <section className="relative bg-[#F8FAFB] dark:bg-[#0A0A0A] py-24 md:py-32 overflow-hidden">
       {/* Subtle top divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#2A2A2A] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -78,7 +78,7 @@ export function ProblemSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
             Sound familiar?
           </div>
           <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
@@ -105,7 +105,7 @@ export function ProblemSection() {
             <motion.div
               key={index}
               variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
             >
               {/* Subtle background gradient */}
               <div className={`absolute inset-0 -z-0 bg-gradient-to-br ${problem.accent} opacity-40 transition-opacity duration-300 group-hover:opacity-70`} />
@@ -141,7 +141,7 @@ export function ProblemSection() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="mt-16 text-center"
         >
-          <div className="inline-block rounded-2xl border border-slate-200 dark:border-[#2A2A2A] bg-white dark:bg-[#1E1E1E] px-8 py-6 shadow-sm">
+          <div className="inline-block rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-8 py-6 shadow-sm">
             <p className="text-xl font-bold text-[#213138] dark:text-white">
               You're losing <span className="text-red-500"> $2,000+ </span> every month to messaging chaos.
             </p>

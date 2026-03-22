@@ -93,10 +93,10 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
       <div className={cn("flex shrink-0 items-center pt-8 pb-6", collapsed ? "justify-center px-3" : "px-5")}>
         <div className={cn(
           "flex items-center w-full transition-all duration-200",
-          collapsed ? "justify-center" : "p-2 -m-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-[#262626]/50 cursor-default group"
+          collapsed ? "justify-center" : "p-2 -m-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-[#111111]/50 cursor-default group"
         )}>
           <div className={cn(
-            "shrink-0 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] transition-all duration-300",
+            "shrink-0 flex items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-xl shadow-sm border border-gray-100 dark:border-[#222222] transition-all duration-300",
             collapsed ? "h-10 w-10" : "h-10 w-10 group-hover:scale-105"
           )}>
             <Image
@@ -139,7 +139,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                 collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5",
                 active
                   ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
               )}
               title={collapsed ? item.label : undefined}
             >
@@ -191,7 +191,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         <button
           onClick={() => setIsCollapsed(!collapsed)}
           className={cn(
-            "hidden lg:flex items-center rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100 w-full",
+            "hidden lg:flex items-center rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left"
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -209,7 +209,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
             isActive("/dashboard/settings")
               ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
-              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#262626] dark:hover:text-gray-100"
+              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
           )}
           title={collapsed ? "Settings" : undefined}
         >
@@ -222,11 +222,11 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           align="left"
           side="top"
           trigger={
-            <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#262626] transition-colors overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-[#2A2A2A]", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
+            <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-[#222222]", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
               <Avatar
                 fallback={customer?.business_name || "User"}
                 size="sm"
-                className="shrink-0 ring-2 ring-white dark:ring-[#2A2A2A]"
+                className="shrink-0 ring-2 ring-white dark:ring-[#222222]"
               />
               {!collapsed && (
                 <>
@@ -265,7 +265,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
       {/* Mobile navigation is handled by MobileBottomNav in the layout */}
 
       {/* Desktop Sidebar */}
-      <div className={cn("hidden lg:flex lg:flex-col lg:min-h-0 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-[#F9FAFB] lg:border-r lg:border-gray-200 dark:lg:bg-[#121212] dark:lg:border-[#2A2A2A] transition-all duration-300", isCollapsed ? "lg:w-20" : "lg:w-72")}>
+      <div className={cn("hidden lg:flex lg:flex-col lg:min-h-0 lg:fixed lg:inset-y-0 lg:z-50 lg:bg-[#F9FAFB] lg:border-r lg:border-gray-200 dark:lg:bg-black dark:lg:border-[#222222] transition-all duration-300", isCollapsed ? "lg:w-20" : "lg:w-72")}>
         <SidebarContent collapsed={isCollapsed} />
       </div>
     </>

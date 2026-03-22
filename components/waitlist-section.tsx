@@ -79,7 +79,7 @@ export function WaitlistSection() {
     return (
       <section
         id="waitlist"
-        className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-[#121212] py-24 md:py-32"
+        className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-black py-24 md:py-32"
       >
         <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
@@ -114,7 +114,7 @@ export function WaitlistSection() {
   return (
     <section
       id="waitlist"
-      className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-[#121212] py-24 md:py-32"
+      className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-black py-24 md:py-32"
     >
       {/* Background glow */}
       <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
@@ -155,7 +155,7 @@ export function WaitlistSection() {
           >
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="rounded-2xl bg-white dark:bg-[#1E1E1E] p-8 shadow-[0_32px_80px_rgba(0,0,0,0.3)] md:p-10 border border-transparent dark:border-[#2A2A2A]"
+              className="rounded-2xl bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_32px_80px_rgba(0,0,0,0.3)] md:p-10 border border-transparent dark:border-[#222222]"
             >
               <div className="space-y-5">
                 {/* Name & Email row */}
@@ -168,7 +168,7 @@ export function WaitlistSection() {
                       id="name"
                       placeholder="Your full name"
                       {...register("name")}
-                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                     {errors.name && (
                       <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
@@ -183,7 +183,7 @@ export function WaitlistSection() {
                       type="email"
                       placeholder="your@email.com"
                       {...register("email")}
-                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                     {errors.email && (
                       <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
@@ -201,7 +201,7 @@ export function WaitlistSection() {
                       onValueChange={(value) => setValue("business_type", value)}
                       value={businessType}
                     >
-                      <SelectTrigger className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus:ring-[#3A9B9F] dark:text-white">
+                      <SelectTrigger className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus:ring-[#3A9B9F] dark:text-white">
                         <SelectValue placeholder="Select business type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -225,7 +225,7 @@ export function WaitlistSection() {
                       type="tel"
                       placeholder="+1 (242) 555-0123"
                       {...register("phone")}
-                      className="rounded-xl border-slate-200 dark:border-[#2A2A2A] dark:bg-[#262626] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
                     />
                   </div>
                 </div>
