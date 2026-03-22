@@ -267,7 +267,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="relative min-h-screen p-8 overflow-y-auto bg-gray-50/30 dark:bg-[#0D0D0D]">
+    <div className="relative min-h-screen p-8 overflow-y-auto bg-transparent">
       {/* Decorative Orbs */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[10%] left-[10%] w-[600px] h-[600px] bg-[#3A9B9F]/5 blur-[120px] rounded-full animate-float-slow" />

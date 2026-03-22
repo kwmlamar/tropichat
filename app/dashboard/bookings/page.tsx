@@ -264,7 +264,7 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="min-h-full flex flex-col bg-[#F8FAFB] dark:bg-[#121212] relative">
+    <div className="min-h-full flex flex-col bg-transparent relative">
       {loading ? (
         <div className="flex flex-1 items-center justify-center h-full z-10 relative">
           <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" />

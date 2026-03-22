@@ -125,7 +125,7 @@ export default function ContactsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-full bg-slate-50/50 dark:bg-none dark:bg-[#121212]">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-full bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div className="space-y-1">

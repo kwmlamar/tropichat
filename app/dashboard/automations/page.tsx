@@ -227,7 +227,7 @@ export default function AutomationsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 min-h-screen xl:min-h-[calc(100vh-80px)] bg-slate-50/50 dark:bg-none dark:bg-[#121212]">
+    <div className="p-4 sm:p-6 lg:p-8 min-h-screen xl:min-h-[calc(100vh-80px)] bg-transparent">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
         <div className="space-y-1">
