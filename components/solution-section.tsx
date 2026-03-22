@@ -111,40 +111,32 @@ export function SolutionSection() {
             <motion.div
               key={index}
               variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/50 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 dark:hover:border-[#333333] cursor-default flex flex-col justify-between"
             >
-              {/* Top gradient accent bar */}
-              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl`} />
+              <div>
+                {/* Badge */}
+                {feature.badge && (
+                  <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-gray-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+                    {feature.badge}
+                  </div>
+                )}
 
-              {/* Badge */}
-              {feature.badge && (
-                <div className={`mb-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${feature.badgeStyle}`}>
-                  <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70 animate-pulse" />
-                  {feature.badge}
-                </div>
-              )}
+                 {/* Title */}
+                <h3 className="mb-2 text-xl font-bold text-[#213138] dark:text-white leading-snug">
+                  {feature.title}
+                </h3>
 
-              {/* Icon */}
-              <div className={`mb-5 inline-flex rounded-2xl ${feature.iconBg} p-4 transition-transform duration-300 group-hover:scale-105`}>
-                <div className={`rounded-xl bg-gradient-to-br ${feature.gradient} p-2.5`}>
-                  <feature.icon className="h-5 w-5 text-white" />
-                </div>
+                {/* Outcome */}
+                <p className="mb-6 text-sm font-semibold text-[#3A9B9F]">
+                  {feature.outcome}
+                </p>
+
+                 {/* Description */}
+                <p className="text-slate-500 dark:text-gray-400 leading-relaxed text-[15px]">
+                  {feature.description}
+                </p>
               </div>
-
-               {/* Title */}
-              <h3 className="mb-2 text-xl font-bold text-[#213138] dark:text-white leading-snug">
-                {feature.title}
-              </h3>
-
-              {/* Outcome */}
-              <p className="mb-3 text-sm font-semibold text-[#3A9B9F]">
-                {feature.outcome}
-              </p>
-
-               {/* Description */}
-              <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-[15px]">
-                {feature.description}
-              </p>
             </motion.div>
           ))}
         </motion.div>

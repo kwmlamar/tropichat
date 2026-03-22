@@ -69,10 +69,7 @@ export function HowItWorksSection() {
 
         {/* Steps — Horizontal on desktop */}
         <div className="relative mx-auto max-w-5xl">
-           {/* Connector line (desktop only) */}
-          <div className="absolute top-14 left-[16.66%] right-[16.66%] hidden h-px bg-gradient-to-r from-teal-200 via-violet-200 to-orange-200 dark:opacity-20 md:block" />
-
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-12 md:gap-8 md:grid-cols-3">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -82,28 +79,16 @@ export function HowItWorksSection() {
                 transition={{ delay: index * 0.15, duration: 0.55 }}
                 className="group flex flex-col items-center text-center"
               >
-                {/* Number + Icon stack */}
-                <div className="relative mb-6">
-                  {/* Step circle */}
-                  <motion.div
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className={`flex h-28 w-28 items-center justify-center rounded-full ${step.bgColor} dark:bg-[#111111] ring-8 ${step.ringColor} dark:ring-[#222222] shadow-md transition-shadow duration-300 group-hover:shadow-xl`}
-                  >
-                    <step.icon className={`h-12 w-12 ${step.color}`} />
-                  </motion.div>
-                  {/* Step number badge */}
-                   <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white dark:bg-[#0A0A0A] shadow-md ring-2 ring-slate-200 dark:ring-[#222222] text-xs font-bold text-slate-500 dark:text-gray-400 select-none">
-                    {step.number}
-                  </div>
+                {/* Number Badge */}
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#222222] text-sm font-bold text-slate-600 dark:text-gray-300 select-none shadow-sm">
+                  {step.number}
                 </div>
 
                 {/* Content */}
-                <div className={`mb-3 h-1 w-10 rounded-full ${step.barColor} opacity-60`} />
                  <h3 className="mb-3 text-xl font-bold text-[#213138] dark:text-white">
                   {step.title}
                 </h3>
-                 <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-[15px]">
+                 <p className="text-slate-500 dark:text-gray-400 leading-relaxed text-[15px]">
                   {step.description}
                 </p>
               </motion.div>

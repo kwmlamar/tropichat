@@ -79,9 +79,8 @@ export function WaitlistSection() {
     return (
       <section
         id="waitlist"
-        className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-black py-24 md:py-32"
+        className="relative overflow-hidden bg-[#213138] dark:bg-[#000000] py-24 md:py-32 border-t border-slate-800 dark:border-[#222222]"
       >
-        <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -114,11 +113,8 @@ export function WaitlistSection() {
   return (
     <section
       id="waitlist"
-      className="relative overflow-hidden bg-gradient-to-br from-[#213138] to-[#1a4a50] dark:from-[#0A0A0A] dark:to-black py-24 md:py-32"
+      className="relative overflow-hidden bg-[#213138] dark:bg-[#000000] py-24 md:py-32 border-t border-slate-800 dark:border-[#222222]"
     >
-      {/* Background glow */}
-      <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[#3A9B9F]/20 blur-3xl pointer-events-none" />
-      <div className="absolute -right-40 bottom-0 h-80 w-80 rounded-full bg-[#FF8B66]/10 blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="mx-auto max-w-3xl">

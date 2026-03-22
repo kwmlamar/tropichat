@@ -137,62 +137,35 @@ export function PricingSection() {
           transition={{ duration: 0.5 }}
           className="mx-auto max-w-4xl mb-10"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-[#FF8B66]/50 dark:border-[#FF8B66]/30 bg-gradient-to-r from-[#FF8B66]/10 via-orange-50 to-[#FF8B66]/10 dark:from-[#FF8B66]/5 dark:via-transparent dark:to-[#FF8B66]/5 p-6 md:px-8 md:py-7 shadow-sm">
-            {/* Pulsing badge */}
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-[#FF8B66] px-3 py-1.5 text-xs font-bold text-white shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
-              </span>
-              ONLY 7 SPOTS LEFT
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center gap-6 pr-24 md:pr-0">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-6 md:px-8 md:py-7 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex-1">
-                <div className="mb-1 flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-[#FF8B66]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#FF8B66]">
-                    First 10 Customers Only
-                  </span>
+                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#FF8B66]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF8B66] animate-pulse" />
+                  ONLY 7 SPOTS LEFT
                 </div>
-                <h3 className="text-xl font-bold text-[#213138] dark:text-white mb-1">
-                  Lock in $29/month — Forever
+                <h3 className="text-xl font-bold text-[#213138] dark:text-white mb-2">
+                  First 10 Customers Only: Lock in $29/month
                 </h3>
-                <p className="text-slate-600 dark:text-gray-400 text-sm">
-                  <span className="font-semibold text-[#FF8B66]">Save $10/month forever</span>{" "}
-                  (normally $39/month). Price never increases, even as we add features.
+                <p className="text-slate-500 dark:text-gray-400 text-sm max-w-lg leading-relaxed">
+                  Save $10/month forever. Your price will never increase, even as we add new features. Includes all priority integrations.
                 </p>
-                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                  {[
-                    "All Free features included",
-                    "Locked-in pricing, never increases",
-                    "Priority feature requests",
-                    "Direct founder support",
-                  ].map((perk, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-slate-700 dark:text-gray-300">
-                      <Check className="h-4 w-4 flex-shrink-0 text-[#FF8B66]" />
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
               </div>
 
-              <div className="flex flex-col items-center gap-3 md:min-w-[200px]">
-                <div className="text-center">
-                  <div className="text-sm text-slate-400 line-through">$39/month</div>
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-bold text-[#213138] dark:text-white">$29</span>
+              <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
+                <div className="text-left md:text-right">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-[#213138] dark:text-white">$29</span>
                     <span className="text-slate-500">/mo</span>
                   </div>
-                  <div className="text-xs font-semibold text-[#FF8B66] mt-1">locked in forever</div>
+                  <div className="text-xs font-semibold text-[#FF8B66] mt-1">Locked in forever</div>
                 </div>
                 <Button
                   onClick={handleSignup}
-                  className="w-full rounded-full bg-[#FF8B66] text-white hover:bg-[#e87a55] font-semibold h-11 text-sm shadow-sm hover:shadow-md transition-all duration-300"
+                  className="rounded-full bg-[#FF8B66] text-white hover:bg-[#e87a55] font-semibold h-10 px-6 text-sm shadow-sm transition-all duration-300"
                 >
-                  Lock in $29/month
+                  Claim Offer
                 </Button>
-                <p className="text-xs text-slate-400 text-center">14-day free trial · No credit card</p>
               </div>
             </div>
           </div>
@@ -207,22 +180,22 @@ export function PricingSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`relative overflow-hidden rounded-2xl p-8 transition-all duration-300 hover:shadow-lg ${plan.popular
-                  ? "border-2 border-[#3A9B9F] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_40px_rgba(58,155,159,0.15)] md:scale-[1.03]"
-                  : "border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] shadow-[0_2px_16px_rgba(0,0,0,0.04)]"
+              className={`relative flex flex-col overflow-hidden rounded-2xl p-8 transition-all duration-300 hover:shadow-lg ${plan.popular
+                  ? "border border-[#3A9B9F] bg-white dark:bg-[#0A0A0A] shadow-sm md:scale-[1.02] z-10"
+                  : "border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] shadow-sm"
                 }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3A9B9F] to-teal-400" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-[#3A9B9F]" />
               )}
               {plan.popular && (
-                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-teal-100 px-3 py-1 text-xs font-bold text-teal-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
+                <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#3A9B9F]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
                   MOST POPULAR
                 </div>
               )}
 
-               <div className="mb-5">
+               <div className="mb-5 flex-1">
                 <h3 className="text-xl font-bold text-[#213138] dark:text-white">{plan.name}</h3>
                 <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">{plan.description}</p>
               </div>

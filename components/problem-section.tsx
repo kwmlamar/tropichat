@@ -105,29 +105,23 @@ export function ProblemSection() {
             <motion.div
               key={index}
               variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-1 cursor-default"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200/50 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 dark:hover:border-[#333333] cursor-default flex flex-col justify-between"
             >
-              {/* Subtle background gradient */}
-              <div className={`absolute inset-0 -z-0 bg-gradient-to-br ${problem.accent} opacity-40 transition-opacity duration-300 group-hover:opacity-70`} />
-
-              <div className="relative z-10">
-                {/* Icon */}
-                <div className={`mb-5 inline-flex rounded-xl ${problem.iconBg} p-3.5 transition-transform duration-300 group-hover:scale-105`}>
-                  <problem.icon className={`h-6 w-6 ${problem.iconColor}`} />
-                </div>
-
+              <div>
                 {/* Title */}
-                <h3 className="mb-3 text-lg font-semibold text-[#213138] dark:text-white leading-snug">
+                <h3 className="mb-3 text-lg font-bold text-[#213138] dark:text-white leading-snug">
                   {problem.title}
                 </h3>
-
+  
                 {/* Description */}
-                <p className="mb-5 text-slate-600 dark:text-gray-400 leading-relaxed text-[15px]">{problem.description}</p>
+                <p className="mb-8 text-slate-500 dark:text-gray-400 leading-relaxed text-[15px]">
+                  {problem.description}
+                </p>
+              </div>
 
-                {/* Stat pill */}
-                <div className={`inline-flex items-center rounded-lg px-3.5 py-1.5 text-sm font-semibold ${problem.statColor}`}>
-                  {problem.stat}
-                </div>
+              {/* Minimalist Stat */}
+              <div className="pt-4 border-t border-slate-100 dark:border-[#111111] font-semibold text-sm text-slate-900 dark:text-white">
+                {problem.stat}
               </div>
             </motion.div>
           ))}
