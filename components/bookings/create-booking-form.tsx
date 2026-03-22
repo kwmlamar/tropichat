@@ -251,33 +251,33 @@ export function CreateBookingForm({
           </div>
 
           {/* Date & Time */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="min-w-0">
+              <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1 truncate">
                 Tour Date <span className="text-coral-500">*</span>
               </label>
-              <div className="relative group">
-                <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+              <div className="relative group min-w-0">
+                <CalendarDays className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
                 <input
                   type="date"
                   value={date}
                   onChange={e => setDate(e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1">
+            <div className="min-w-0">
+              <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-2.5 ml-1 truncate">
                 Tour Time <span className="text-coral-500">*</span>
               </label>
-              <div className="relative group">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+              <div className="relative group min-w-0">
+                <Clock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
                 <input
                   type="time"
                   value={time}
                   onChange={e => setTime(e.target.value)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-11 pr-4 py-3.5 text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#262626]/50 border border-gray-100 dark:border-[#2A2A2A] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
                 />
               </div>
             </div>
