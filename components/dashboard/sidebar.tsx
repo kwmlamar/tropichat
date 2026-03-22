@@ -89,24 +89,38 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
 
   const SidebarContent = ({ collapsed }: { collapsed: boolean }) => (
     <>
-      {/* Workspace Header */}
-      <div className={cn("flex shrink-0 items-center pt-6 pb-4", collapsed ? "justify-center px-2" : "gap-3 px-4")}>
-        <Image
-          src="/tropichat-logo.png"
-          alt="TropiChat"
-          width={80}
-          height={80}
-          unoptimized
-          className={cn("shrink-0 object-contain transition-all duration-300", collapsed ? "h-11 w-11" : "h-20 w-20")}
-        />
-        {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">
-              {customer?.business_name || "TropiChat"}
-            </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">Workspace</p>
+      {/* Workspace Header - Modernized */}
+      <div className={cn("flex shrink-0 items-center pt-8 pb-6", collapsed ? "justify-center px-3" : "px-5")}>
+        <div className={cn(
+          "flex items-center w-full transition-all duration-200",
+          !collapsed && "p-2 -m-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-[#262626]/50 cursor-default group"
+        )}>
+          <div className={cn(
+            "shrink-0 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] transition-all duration-300",
+            collapsed ? "h-10 w-10" : "h-10 w-10 group-hover:scale-105"
+          )}>
+            <Image
+              src="/tropichat-logo.png"
+              alt="TropiChat"
+              width={40}
+              height={40}
+              unoptimized
+              className="h-7 w-7 object-contain"
+            />
           </div>
-        )}
+          
+          {!collapsed && (
+            <div className="min-w-0 flex-1 ml-3.5">
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13.5px] font-black text-[#213138] dark:text-gray-100 truncate tracking-tight font-[family-name:var(--font-poppins)]">
+                  {customer?.business_name || "TropiChat"}
+                </p>
+                <ChevronDown className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-0.5 opacity-80">Workspace</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Navigation - scrollable so footer stays visible */}
