@@ -4,21 +4,20 @@ import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import {
-  MessageCircle,
+import { 
+  ChatCircleDots,
   Users,
   FileText,
-  Zap,
-  BarChart3,
-  Settings,
-  LogOut,
-  ChevronDown,
-  FileStack,
-  CalendarDays,
-  PanelLeftClose,
-  PanelLeftOpen,
+  Lightning,
+  ChartBar,
+  GearSix,
+  SignOut,
+  CaretDown,
+  Stack,
+  CalendarBlank,
+  Columns,
   Crown,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -35,13 +34,13 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Chats", icon: MessageCircle },
-  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays },
+  { href: "/dashboard", label: "Chats", icon: ChatCircleDots },
+  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
-  { href: "/dashboard/page-selection", label: "Page Selection", icon: FileStack },
-  { href: "/dashboard/automations", label: "Automations", icon: Zap },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dashboard/page-selection", label: "Page Selection", icon: Stack },
+  { href: "/dashboard/automations", label: "Automations", icon: Lightning },
+  { href: "/dashboard/analytics", label: "Analytics", icon: ChartBar },
 ]
 
 export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps) {
@@ -115,7 +114,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                 <p className="text-[13.5px] font-black text-[#213138] dark:text-gray-100 truncate tracking-tight font-[family-name:var(--font-poppins)]">
                   {customer?.business_name || "TropiChat"}
                 </p>
-                <ChevronDown className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <CaretDown weight="bold" className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-0.5 opacity-80">Workspace</p>
             </div>
@@ -143,7 +142,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5 w-5")} />
+              <Icon weight={active ? "bold" : "light"} className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -163,7 +162,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         <div className="mx-4 mb-4 flex-shrink-0">
           <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 border border-orange-200/50 dark:border-orange-500/20 p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <Crown className="h-4 w-4 text-[#FF8B66]" />
+              <Crown weight="duotone" className="h-4 w-4 text-[#FF8B66]" />
               <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Upgrade to Pro</span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
@@ -196,7 +195,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <PanelLeftOpen className="shrink-0 h-6 w-6 text-gray-400 dark:text-gray-500" /> : <PanelLeftClose className="shrink-0 h-5 w-5 text-gray-400 dark:text-gray-500" />}
+          <Columns weight="light" className={cn("shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5", "text-gray-400 dark:text-gray-500")} />
           {!collapsed && <span>Collapse</span>}
         </button>
 
@@ -213,7 +212,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <Settings className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5 w-5")} />
+          <GearSix weight={isActive("/dashboard/settings") ? "bold" : "light"} className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 
@@ -235,21 +234,21 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                       {customer?.contact_email || "Loading..."}
                     </p>
                   </div>
-                  <ChevronDown className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
+                  <CaretDown weight="bold" className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
                 </>
               )}
             </button>
           }
         >
           <DropdownItem
-            icon={<Settings className="h-4 w-4" />}
+            icon={<GearSix weight="bold" className="h-4 w-4" />}
             onClick={() => router.push("/dashboard/settings")}
           >
             Settings
           </DropdownItem>
           <DropdownSeparator />
           <DropdownItem
-            icon={<LogOut className="h-4 w-4" />}
+            icon={<SignOut weight="bold" className="h-4 w-4" />}
             onClick={handleSignOut}
             destructive
           >

@@ -3,19 +3,18 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  MessageCircle,
+  ChatCircleDots,
   Users,
-  CalendarDays,
-  Settings,
+  CalendarBlank,
   User,
-  LayoutGrid,
+  SquaresFour,
   FileText,
-  Zap,
-  BarChart3,
-  FileStack,
-  LogOut,
+  Lightning,
+  ChartBar,
+  Stack,
+  SignOut,
   X,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useCallback } from "react"
 import { getUnreadConversationCount, subscribeToConversations, signOut } from "@/lib/supabase"
@@ -24,8 +23,8 @@ import type { Customer } from "@/types/database"
 
 // Primary tabs displayed in the bottom bar
 const primaryTabs = [
-  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays, exact: false },
-  { href: "/dashboard", label: "Chats", icon: MessageCircle, exact: true },
+  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank, exact: false },
+  { href: "/dashboard", label: "Chats", icon: ChatCircleDots, exact: true },
   { href: "/dashboard/settings", label: "Profile", icon: User, exact: false },
 ]
 
@@ -33,9 +32,9 @@ const primaryTabs = [
 const moreItems = [
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
   { href: "/dashboard/templates", label: "Templates", icon: FileText },
-  { href: "/dashboard/automations", label: "Automations", icon: Zap },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/page-selection", label: "Page Selection", icon: FileStack },
+  { href: "/dashboard/automations", label: "Automations", icon: Lightning },
+  { href: "/dashboard/analytics", label: "Analytics", icon: ChartBar },
+  { href: "/dashboard/page-selection", label: "Page Selection", icon: Stack },
 ]
 
 interface MobileBottomNavProps {
@@ -135,7 +134,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                         : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
                     )}
                   >
-                    <Icon className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
+                    <Icon weight={active ? "fill" : "light"} className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
                     <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
                   </Link>
                 )
@@ -148,7 +147,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                 onClick={handleSignOut}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
               >
-                <LogOut className="h-4 w-4" />
+                <SignOut weight="bold" className="h-4 w-4" />
                 Sign out
               </button>
             </div>
@@ -178,7 +177,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                 )}
               >
                 <div className="relative">
-                  <Icon className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
+                  <Icon weight={active ? "fill" : "light"} className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
                   {/* Unread dot on Inbox */}
                   {isInbox && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#25D366] text-[10px] font-bold text-white px-0.5">
@@ -205,7 +204,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
               isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400"
             )}
           >
-            <LayoutGrid className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")} />
+            <SquaresFour weight={isMoreActive || showMore ? "fill" : "light"} className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")} />
             <span className={cn("text-[10px] font-medium tracking-wide", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")}>
               More
             </span>
