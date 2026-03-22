@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/tropichat-logo.png", type: "image/png", sizes: "32x32" },
-      { url: "/tropichat-logo.png", type: "image/png", sizes: "192x192" },
+      { url: "/tropichat-icon-dark-192.png", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/tropichat-logo.png",
+    apple: "/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,
