@@ -1,100 +1,119 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import {
-  MessageSquare,
-  TrendingUp,
-  Users,
-  Clock,
-  ArrowUpRight,
-  ArrowDownRight,
-  Calendar,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getAnalytics } from "@/lib/supabase"
 import { toast } from "sonner"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
-// Simple chart components (in production, use recharts or similar)
-function SimpleBarChart({ data, height = 240 }: { data: { label: string; value: number }[]; height?: number }) {
-  const maxValue = Math.max(...data.map(d => d.value), 1)
+// ─── Bar Chart ─────────────────────────────────────────────────────────────────
+// Design system: inactive bars bg-slate-100 dark:bg-[#1E1E1E], latest bar teal.
+// Slim gaps, rounded-t-sm tops, muted axis labels — light + dark.
+function BarChart({
+  data,
+  height = 160,
+}: {
+  data: { label: string; value: number }[]
+  height?: number
+}) {
+  const maxValue = Math.max(...data.map((d) => d.value), 1)
+  const latestIndex = data.length - 1
 
   return (
-    <div className="flex items-end justify-between gap-3 pt-6" style={{ height }}>
-      {data.map((item, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-3 h-full group">
-          <div className="flex-1 w-full flex flex-col justify-end">
-            <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: `${(item.value / maxValue) * 100}%` }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: i * 0.05 }}
-              className="w-full bg-[#3A9B9F]/10 rounded-t-xl transition-all relative overflow-hidden group-hover:bg-[#3A9B9F]/20"
-              style={{
-                minHeight: item.value > 0 ? 4 : 0,
-              }}
-            >
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-[#3A9B9F] to-[#3A9B9F]/80 rounded-t-xl"
+    <div className="flex items-end gap-1.5" style={{ height }}>
+      {data.map((item, i) => {
+        const pct = (item.value / maxValue) * 100
+        const isLatest = i === latestIndex
+        return (
+          <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full group">
+            <div className="flex-1 w-full flex flex-col justify-end">
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: `${Math.max(pct, item.value > 0 ? 4 : 0)}%` }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: i * 0.04 }}
+                className={cn(
+                  "w-full rounded-t-sm transition-colors duration-200",
+                  isLatest
+                    ? "bg-[#3A9B9F]"
+                    : "bg-slate-100 dark:bg-[#1E1E1E] group-hover:bg-slate-200 dark:group-hover:bg-[#2A2A2A]"
+                )}
               />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-1 bg-white/20 rounded-full mt-1 blur-[1px]" />
-            </motion.div>
+            </div>
+            <span className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-wider font-medium">
+              {item.label}
+            </span>
           </div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate w-full text-center group-hover:text-[#3A9B9F] transition-colors">
-            {item.label}
-          </span>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
 
-function SimplePieChart({ data }: { data: { label: string; value: number; color: string }[] }) {
-  const total = data.reduce((sum, d) => sum + d.value, 0)
+// ─── Donut Chart ───────────────────────────────────────────────────────────────
+// Design system: teal / coral / neutral segments. Track adapts to mode.
+// Center: number only. Legend: small dots + text.
+function DonutChart({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[]
+}) {
+  const total = data.reduce((s, d) => s + d.value, 0)
+  const r = 38
+  const circ = 2 * Math.PI * r
+  let offset = 0
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="relative w-32 h-32">
-        <svg viewBox="0 0 100 100" className="transform -rotate-90">
-          {data.reduce<{ offset: number; elements: React.ReactNode[] }>(
-            (acc, item, i) => {
-              const percentage = total > 0 ? (item.value / total) * 100 : 0
-              const circumference = 2 * Math.PI * 40
-
-              acc.elements.push(
-                <circle
-                  key={i}
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="transparent"
-                  stroke={item.color}
-                  strokeWidth="20"
-                  strokeDasharray={`${(percentage / 100) * circumference} ${circumference}`}
-                  strokeDashoffset={-acc.offset}
-                />
-              )
-              acc.offset += (percentage / 100) * circumference
-              return acc
-            },
-            { offset: 0, elements: [] }
-          ).elements}
+    <div className="flex items-center gap-8">
+      <div className="relative w-24 h-24 shrink-0">
+        <svg viewBox="0 0 100 100" className="-rotate-90 w-full h-full">
+          {/* track — light: slate-200, dark: #1A1A1A */}
+          <circle
+            cx="50"
+            cy="50"
+            r={r}
+            fill="transparent"
+            stroke="currentColor"
+            strokeWidth="12"
+            className="text-slate-200 dark:text-[#1A1A1A]"
+          />
+          {data.map((item, i) => {
+            const pct = total > 0 ? item.value / total : 0
+            const dash = pct * circ
+            const el = (
+              <circle
+                key={i}
+                cx="50"
+                cy="50"
+                r={r}
+                fill="transparent"
+                stroke={item.color}
+                strokeWidth="12"
+                strokeDasharray={`${dash} ${circ}`}
+                strokeDashoffset={-offset}
+                strokeLinecap="butt"
+              />
+            )
+            offset += dash
+            return el
+          })}
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-gray-900">{total}</span>
+          <span className="text-xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+            {total}
+          </span>
         </div>
       </div>
-      <div className="space-y-2">
+
+      <div className="space-y-2.5">
         {data.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="text-sm text-gray-600">
-              {item.label}: {item.value}
+          <div key={i} className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+            <span className="text-[13px] text-gray-500 dark:text-[#A3A3A3]">
+              {item.label}
+            </span>
+            <span className="text-[13px] font-semibold text-gray-900 dark:text-white tabular-nums ml-auto pl-4">
+              {item.value}
             </span>
           </div>
         ))}
@@ -103,6 +122,7 @@ function SimplePieChart({ data }: { data: { label: string; value: number; color:
   )
 }
 
+// ─── Page ──────────────────────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [dateRange, setDateRange] = useState("7d")
@@ -116,369 +136,270 @@ export default function AnalyticsPage() {
     conversations: { status: string; created_at: string }[]
   } | null>(null)
 
-  // Calculate date range
   const { startDate, endDate } = useMemo(() => {
     const end = new Date()
     const start = new Date()
-
     switch (dateRange) {
-      case "7d":
-        start.setDate(start.getDate() - 7)
-        break
-      case "30d":
-        start.setDate(start.getDate() - 30)
-        break
-      case "90d":
-        start.setDate(start.getDate() - 90)
-        break
-      default:
-        start.setDate(start.getDate() - 7)
+      case "7d":  start.setDate(start.getDate() - 7);  break
+      case "30d": start.setDate(start.getDate() - 30); break
+      case "90d": start.setDate(start.getDate() - 90); break
     }
-
-    return {
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
-    }
+    return { startDate: start.toISOString(), endDate: end.toISOString() }
   }, [dateRange])
 
-  // Fetch analytics
   useEffect(() => {
     async function fetchAnalytics() {
       setLoading(true)
       const { data, error } = await getAnalytics(startDate, endDate)
-
-      if (error) {
-        toast.error("Failed to load analytics")
-      } else {
-        setAnalyticsData(data)
-      }
-
+      if (error) toast.error("Failed to load analytics")
+      else setAnalyticsData(data)
       setLoading(false)
     }
-
     fetchAnalytics()
   }, [startDate, endDate])
 
-  // Process data for charts
+  // Build daily bar chart data
   const dailyMessages = useMemo(() => {
-    if (!analyticsData?.messages) return []
-
-    const days: Record<string, number> = {}
     const numDays = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90
-
-    // Initialize all days
+    const days: Record<string, number> = {}
     for (let i = numDays - 1; i >= 0; i--) {
-      const date = new Date()
-      date.setDate(date.getDate() - i)
-      const key = date.toLocaleDateString("en-US", { weekday: "short" })
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      const key = d.toLocaleDateString("en-US", {
+        weekday: numDays <= 7 ? "short" : undefined,
+        month: numDays > 7 ? "numeric" : undefined,
+        day: numDays > 7 ? "numeric" : undefined,
+      })
       days[key] = 0
     }
-
-    // Count messages per day
-    analyticsData.messages.forEach((msg) => {
-      const date = new Date(msg.sent_at)
-      const key = date.toLocaleDateString("en-US", { weekday: "short" })
-      if (days[key] !== undefined) {
-        days[key]++
-      }
+    analyticsData?.messages.forEach((msg) => {
+      const key = new Date(msg.sent_at).toLocaleDateString("en-US", {
+        weekday: numDays <= 7 ? "short" : undefined,
+        month: numDays > 7 ? "numeric" : undefined,
+        day: numDays > 7 ? "numeric" : undefined,
+      })
+      if (days[key] !== undefined) days[key]++
     })
-
     return Object.entries(days).map(([label, value]) => ({ label, value }))
   }, [analyticsData, dateRange])
 
-  const conversationsByStatus = useMemo(() => {
-    if (!analyticsData?.conversations) {
-      return [
-        { label: "Open", value: 0, color: "#22C55E" },
-        { label: "Pending", value: 0, color: "#F59E0B" },
-        { label: "Resolved", value: 0, color: "#6B7280" },
-      ]
-    }
-
-    const statusCount: Record<string, number> = {
-      open: 0,
-      pending: 0,
-      resolved: 0,
-    }
-
-    analyticsData.conversations.forEach((conv) => {
-      if (statusCount[conv.status] !== undefined) {
-        statusCount[conv.status]++
-      }
+  const conversationSegments = useMemo(() => {
+    const counts = { open: 0, pending: 0, resolved: 0 }
+    analyticsData?.conversations.forEach((c) => {
+      if (c.status in counts) counts[c.status as keyof typeof counts]++
     })
-
     return [
-      { label: "Open", value: statusCount.open, color: "#22C55E" },
-      { label: "Pending", value: statusCount.pending, color: "#F59E0B" },
-      { label: "Resolved", value: statusCount.resolved, color: "#6B7280" },
+      { label: "Open",     value: counts.open,     color: "#3A9B9F" },
+      { label: "Pending",  value: counts.pending,  color: "#FF8B66" },
+      // neutral: visible in both light (#D1D5DB) and dark (#333333) would need JS-side
+      // using a mid-gray that works in both modes
+      { label: "Resolved", value: counts.resolved, color: "#9CA3AF" },
     ]
   }, [analyticsData])
 
   const metrics = [
-    {
-      label: "Sent",
-      value: analyticsData?.messagesSent || 0,
-      icon: MessageSquare,
-      change: "+12%",
-      positive: true,
-      color: "#3A9B9F",
-      bg: "bg-teal-50/50"
-    },
-    {
-      label: "Received",
-      value: analyticsData?.messagesReceived || 0,
-      icon: MessageSquare,
-      change: "+8%",
-      positive: true,
-      color: "#FF8B66",
-      bg: "bg-coral-50/50"
-    },
-    {
-      label: "Conversations",
-      value: analyticsData?.totalConversations || 0,
-      icon: TrendingUp,
-      change: "+15%",
-      positive: true,
-      color: "#3A9B9F",
-      bg: "bg-teal-50/50"
-    },
-    {
-      label: "Contacts",
-      value: analyticsData?.activeContacts || 0,
-      icon: Users,
-      change: "+5%",
-      positive: true,
-      color: "#FF8B66",
-      bg: "bg-coral-50/50"
-    },
+    { label: "Messages Sent",     value: analyticsData?.messagesSent      ?? 0, delta: "+12%", accent: "#3A9B9F" },
+    { label: "Messages Received", value: analyticsData?.messagesReceived  ?? 0, delta: "+8%",  accent: "#FF8B66" },
+    { label: "Conversations",     value: analyticsData?.totalConversations ?? 0, delta: "+15%", accent: "#3A9B9F" },
+    { label: "Active Contacts",   value: analyticsData?.activeContacts    ?? 0, delta: "+5%",  accent: "#FF8B66" },
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  }
+  const peakHours = [
+    { time: "9:00 AM – 10:00 AM", count: 45, pct: 90 },
+    { time: "2:00 PM – 3:00 PM",  count: 38, pct: 76 },
+    { time: "5:00 PM – 6:00 PM",  count: 32, pct: 64 },
+  ]
 
   return (
-    <div className="relative min-h-screen p-8 overflow-y-auto bg-transparent">
-      {/* Decorative Orbs */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[10%] left-[10%] w-[600px] h-[600px] bg-[#3A9B9F]/5 blur-[120px] rounded-full animate-float-slow" />
-        <div className="absolute bottom-[10%] right-[10%] w-[600px] h-[600px] bg-[#FF8B66]/5 blur-[120px] rounded-full animate-float" />
-      </div>
+    <div className="min-h-screen p-8 overflow-y-auto">
+      <div className="max-w-7xl mx-auto space-y-8">
 
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* ── Header ──────────────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-6"
         >
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-xl bg-[#3A9B9F]/10 text-[#3A9B9F]">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-[#3A9B9F]">Market Performance</p>
-            </div>
-            <h1 className="text-4xl font-extrabold text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)]">
-              Analytics Overview
-            </h1>
-            <p className="text-gray-500 text-lg mt-2 font-medium">
-              Real-time insights for your Caribbean business ecosystem.
+            <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              Analytics
             </p>
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+              Overview
+            </h1>
           </div>
 
-          <div className="bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-xl p-1.5 rounded-[20px] border border-white dark:border-[#222222] shadow-sm flex gap-1 ring-1 ring-black/5">
+          {/* Segmented date control — light: bg-gray-100 white active / dark: bg-[#111] #1C1C1C active */}
+          <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-[#1C1C1C]">
             {[
-              { value: "7d", label: "7D" },
+              { value: "7d",  label: "7D"  },
               { value: "30d", label: "30D" },
               { value: "90d", label: "90D" },
-            ].map((option) => (
+            ].map((opt) => (
               <button
-                key={option.value}
-                onClick={() => setDateRange(option.value)}
+                key={opt.value}
+                onClick={() => setDateRange(opt.value)}
                 className={cn(
-                  "px-6 py-2.5 text-xs font-bold rounded-[14px] transition-all duration-300",
-                  dateRange === option.value
-                    ? "bg-[#213138] dark:bg-[#3A9B9F] text-white shadow-lg shadow-navy-900/20"
-                    : "text-gray-500 hover:text-[#213138] dark:hover:text-white hover:bg-white dark:hover:bg-[#111111]"
+                  "px-5 py-2 text-xs font-semibold rounded-lg transition-all duration-200",
+                  dateRange === opt.value
+                    ? "bg-white dark:bg-[#1C1C1C] text-gray-900 dark:text-white shadow-sm dark:shadow-none"
+                    : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]"
                 )}
               >
-                {option.label}
+                {opt.label}
               </button>
             ))}
           </div>
         </motion.div>
 
-        {/* Metrics Grid */}
+        {/* ── Metric Cards ────────────────────────────────────────────────── */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.06 }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
         >
           {loading
             ? Array(4).fill(0).map((_, i) => (
-              <div key={i} className="h-32 bg-white/50 dark:bg-[#0A0A0A]/50 backdrop-blur-md rounded-[32px] border border-white dark:border-[#222222] animate-pulse" />
-            ))
-            : metrics.map((metric, i) => (
-              <motion.div
-                key={metric.label}
-                initial={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[32px] border border-white dark:border-[#222222] p-7 shadow-[0_8px_30px_rgba(0,0,0,0.02)] ring-1 ring-black/5 relative overflow-hidden group transition-all hover:shadow-xl hover:shadow-[#3A9B9F]/5"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={cn("p-3 rounded-2xl text-white shadow-lg", i % 2 === 0 ? "bg-[#3A9B9F]" : "bg-[#FF8B66]")}>
-                    <metric.icon className="h-5 w-5" />
-                  </div>
-                  <div className={cn(
-                    "flex items-center text-xs font-bold px-2.5 py-1 rounded-full",
-                    metric.positive ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
-                  )}>
-                    {metric.change}
-                  </div>
+                <div
+                  key={i}
+                  className="h-28 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl animate-pulse"
+                />
+              ))
+            : metrics.map((m) => (
+                <div
+                  key={m.label}
+                  className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 relative overflow-hidden"
+                  style={{ borderLeftColor: m.accent, borderLeftWidth: 2 }}
+                >
+                  <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-3">
+                    {m.label}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+                    {m.value.toLocaleString()}
+                  </p>
+                  <p className="text-[12px] font-medium mt-2 text-[#3A9B9F]">
+                    {m.delta}
+                  </p>
                 </div>
-
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{metric.label}</p>
-                <h3 className="text-3xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">
-                  {metric.value.toLocaleString()}
-                </h3>
-
-                {/* Subtle underline gradient */}
-                <div className={cn(
-                  "absolute bottom-0 left-0 right-0 h-1 transition-opacity opacity-0 group-hover:opacity-100",
-                  i % 2 === 0 ? "bg-[#3A9B9F]" : "bg-[#FF8B66]"
-                )} />
-              </motion.div>
-            ))}
+              ))}
         </motion.div>
 
-        {/* Main Charts */}
-        <div className="grid gap-8 lg:grid-cols-2 mb-10">
+        {/* ── Charts ──────────────────────────────────────────────────────── */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Bar chart */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+            transition={{ duration: 0.4, delay: 0.12 }}
+            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
           >
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-xl font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">Message Volume</h3>
-                <p className="text-sm text-gray-400 font-medium tracking-tight mt-1">Daily engagement trends across Bahamas & Caribbean</p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-teal-50 flex items-center justify-center">
-                <ArrowUpRight className="h-5 w-5 text-[#3A9B9F]" />
-              </div>
+            <div className="mb-6">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+                Message Volume
+              </h2>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">
+                Daily activity across channels
+              </p>
             </div>
             {loading ? (
-              <Skeleton className="h-[240px] w-full rounded-2xl" />
+              <Skeleton className="h-40 w-full bg-slate-100 dark:bg-[#1A1A1A] rounded-lg" />
             ) : (
-              <SimpleBarChart data={dailyMessages} />
+              <BarChart data={dailyMessages} height={160} />
             )}
           </motion.div>
 
+          {/* Donut chart */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
+            transition={{ duration: 0.4, delay: 0.18 }}
+            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
           >
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-xl font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">Conversion Funnel</h3>
-                <p className="text-sm text-gray-400 font-medium tracking-tight mt-1">Status distribution of unified conversations</p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-coral-50 flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#FF8B66]" />
-              </div>
+            <div className="mb-6">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+                Conversations
+              </h2>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">
+                Status breakdown
+              </p>
             </div>
             {loading ? (
-              <div className="flex items-center gap-10 h-[240px]">
-                <Skeleton className="h-40 w-40 rounded-full" />
-                <div className="space-y-4 flex-1">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
+              <div className="flex items-center gap-8">
+                <Skeleton className="w-24 h-24 rounded-full bg-slate-100 dark:bg-[#1A1A1A] shrink-0" />
+                <div className="space-y-3 flex-1">
+                  <Skeleton className="h-3 w-full bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+                  <Skeleton className="h-3 w-3/4 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+                  <Skeleton className="h-3 w-1/2 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[240px]">
-                <SimplePieChart data={conversationsByStatus} />
-              </div>
+              <DonutChart data={conversationSegments} />
             )}
           </motion.div>
         </div>
 
-        {/* Secondary Stats */}
+        {/* ── Bottom Row ──────────────────────────────────────────────────── */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid gap-8 md:grid-cols-2"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.24 }}
+          className="grid lg:grid-cols-3 gap-6"
         >
-          <motion.div
-            variants={itemVariants}
-            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5 flex items-center gap-10 group"
+          {/* Avg response time — typographic hero, no icon */}
+          <div
+            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-8 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 flex flex-col justify-between"
+            style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
           >
-            <div className="relative">
-              <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-2xl rounded-full scale-150 animate-pulse" />
-              <div className="relative h-24 w-24 rounded-[32px] bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] flex items-center justify-center shadow-xl shadow-teal-500/20 rotate-3 group-hover:rotate-0 transition-transform">
-                <Clock className="h-10 w-10 text-white" />
-              </div>
-            </div>
+            <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-4">
+              Avg. Response Time
+            </p>
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Responsiveness</p>
-              <h3 className="text-4xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] mb-1">
-                2.5 <span className="text-lg">min</span>
-              </h3>
-              <p className="text-sm font-medium text-gray-500">Average time to Bahamas first response</p>
+              <p className="text-5xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums leading-none">
+                2.5
+                <span className="text-xl font-medium text-gray-400 dark:text-[#525252] ml-1.5">min</span>
+              </p>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-3">
+                First response to a new conversation
+              </p>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={itemVariants}
-            className="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-2xl rounded-[40px] border border-white dark:border-[#222222] p-10 shadow-[0_8px_40px_rgba(0,0,0,0.03)] ring-1 ring-black/5"
-          >
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] tracking-tight">Prime Interaction Slots</h3>
-              <Calendar className="h-5 w-5 text-coral-500" />
+          {/* Peak hours */}
+          <div className="lg:col-span-2 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200">
+            <div className="mb-6">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+                Peak Hours
+              </h2>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">
+                Highest engagement windows
+              </p>
             </div>
-            <div className="space-y-4">
-              {[
-                { hour: "9:00 AM - 10:00 AM", messages: 45, color: "#3A9B9F" },
-                { hour: "2:00 PM - 3:00 PM", messages: 38, color: "#FF8B66" },
-                { hour: "5:00 PM - 6:00 PM", messages: 32, color: "#3A9B9F" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between group cursor-default">
-                  <span className="text-sm font-bold text-gray-500 group-hover:text-[#213138] transition-colors">{item.hour}</span>
-                  <div className="flex items-center gap-4">
-                    <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner ring-1 ring-black/5">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(item.messages / 50) * 100}%` }}
-                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 + (i * 0.1) }}
-                        className="h-full rounded-full shadow-lg"
-                        style={{ backgroundColor: item.color }}
-                      />
-                    </div>
-                    <span className="text-sm font-black text-[#213138] dark:text-gray-100 w-8">
-                      {item.messages}
-                    </span>
+            <div className="space-y-5">
+              {peakHours.map((item, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <span className="text-[13px] text-gray-500 dark:text-[#A3A3A3] w-36 shrink-0">
+                    {item.time}
+                  </span>
+                  <div className="flex-1 h-1.5 bg-slate-100 dark:bg-[#1A1A1A] rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${item.pct}%` }}
+                      transition={{ duration: 1, ease: "easeOut", delay: 0.4 + i * 0.1 }}
+                      className="h-full bg-[#3A9B9F] rounded-full"
+                    />
                   </div>
+                  <span className="text-[13px] font-semibold text-gray-900 dark:text-white tabular-nums w-8 text-right">
+                    {item.count}
+                  </span>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </motion.div>
+
       </div>
     </div>
   )

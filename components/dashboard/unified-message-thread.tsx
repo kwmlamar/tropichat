@@ -278,11 +278,11 @@ export function UnifiedMessageThread({
               </div>
             )}
 
-            {/* Messages grouped by date */}
+            {/* Date divider */}
             {groupedMessages.map((group) => (
               <div key={group.date}>
                 <div className="flex items-center justify-center my-4">
-                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#111111] rounded-full text-xs text-gray-500 dark:text-gray-400">
+                  <span className="px-3 py-1 bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#1C1C1C] rounded-full text-[11px] font-medium text-gray-500 dark:text-[#525252]">
                     {formatDateDivider(group.date)}
                   </span>
                 </div>
@@ -306,7 +306,7 @@ export function UnifiedMessageThread({
                             "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 transition-all",
                             isOutbound
                               ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-sm"
-                              : "bg-slate-100 dark:bg-[#111111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#222222] shadow-sm"
+                              : "bg-slate-100 dark:bg-[#111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#1C1C1C] shadow-sm"
                           )}
                         >
 
@@ -402,7 +402,7 @@ export function UnifiedMessageThread({
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" strokeWidth={1.5} />
         </button>
 
-        <div className="flex-1 bg-white dark:bg-[#111111] rounded-3xl border border-gray-300/60 dark:border-[#222222] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
+        <div className="flex-1 bg-white dark:bg-[#0C0C0C] rounded-3xl border border-gray-300/60 dark:border-[#1C1C1C] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
           <Textarea
             ref={textareaRef}
             placeholder=""
