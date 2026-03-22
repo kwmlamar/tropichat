@@ -1,7 +1,16 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Inbox, Shield, ArchiveX, Bell, Plus, MoreVertical, Camera } from "lucide-react"
+import { 
+  MagnifyingGlass as Search, 
+  Tray as Inbox, 
+  Shield, 
+  Archive, 
+  Bell, 
+  Plus, 
+  DotsThreeVertical as MoreVertical, 
+  Camera 
+} from "@phosphor-icons/react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -72,7 +81,7 @@ export function UnifiedConversationList({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button className="h-9 w-9 flex items-center justify-center -ml-2 text-[#213138] dark:text-gray-100">
-              <MoreVertical className="h-6 w-6 rotate-90" />
+              <MoreVertical weight="bold" className="h-6 w-6 rotate-90" />
             </button>
           </div>
           
@@ -85,10 +94,10 @@ export function UnifiedConversationList({
  
           <div className="flex items-center gap-5">
             <button className="text-[#213138] dark:text-gray-100">
-              <Camera className="h-6 w-6" strokeWidth={1.5} />
+              <Camera weight="bold" className="h-6 w-6" />
             </button>
             <button className="h-8 w-8 bg-[#3A9B9F] flex items-center justify-center text-white rounded-full">
-              <Plus className="h-5 w-5" strokeWidth={3} />
+              <Plus weight="bold" className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -104,7 +113,7 @@ export function UnifiedConversationList({
         {/* Mobile Search Bar (Directly below Title) */}
         <div className="lg:hidden px-6 pb-2">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-500 dark:text-gray-500" />
+            <Search weight="regular" className="absolute left-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-500 dark:text-gray-500" />
             <Input
               placeholder="Ask Meta AI or Search"
               value={searchQuery}
@@ -117,7 +126,7 @@ export function UnifiedConversationList({
         {/* Desktop Header Content */}
         <div className="hidden lg:flex p-4 border-b border-gray-200 dark:border-[#1C1C1C] items-center gap-2 relative z-10">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Search weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <Input
               placeholder="Search conversations..."
               value={searchQuery}
@@ -135,7 +144,7 @@ export function UnifiedConversationList({
                 : "hover:bg-gray-100 dark:hover:bg-[#1A1A1A] text-gray-400 dark:text-[#525252]"
             )}
           >
-            <ArchiveX className="h-4 w-4" />
+            <Archive weight="regular" className="h-4 w-4" />
           </button>
         </div>
 
@@ -166,7 +175,7 @@ export function UnifiedConversationList({
               )
             })}
             <button className="hidden lg:flex ml-auto flex-shrink-0 w-8 h-8 items-center justify-center text-gray-400 hover:text-[#3A9B9F] transition-colors rounded-xl hover:bg-gray-50 dark:hover:bg-[#111]">
-              <Plus className="w-5 h-5" />
+              <Plus weight="bold" className="w-5 h-5" />
             </button>
           </div>
         )}
@@ -178,7 +187,7 @@ export function UnifiedConversationList({
             className="w-full flex items-center gap-6 py-3 px-6 text-left hover:bg-gray-50 dark:hover:bg-[#0C0C0C] transition-colors group border-b border-gray-100 dark:border-[#1C1C1C]/50"
           >
             <div className="flex-shrink-0 w-8 flex justify-center">
-              <ArchiveX className="h-5 w-5 text-gray-400 dark:text-[#525252] group-hover:text-[#3A9B9F] transition-colors" strokeWidth={1.5} />
+              <Archive weight="bold" className="h-5 w-5 text-gray-400 dark:text-[#525252] group-hover:text-[#3A9B9F] transition-colors" />
             </div>
             <span className="text-[16px] font-semibold text-gray-900 dark:text-white">
               {showArchived ? "Back to Chats" : "Archived"}
@@ -199,7 +208,7 @@ export function UnifiedConversationList({
           {conversations.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center pt-20">
               <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mb-4">
-                <Inbox className="h-5 w-5 text-[#3A9B9F]" />
+                <Inbox weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
               </div>
               <h3 className="text-[14px] font-semibold text-gray-900 dark:text-white mb-1">
                 {showArchived ? "No archived conversations" : "No conversations"}

@@ -4,15 +4,15 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   Plus,
-  Zap,
-  MoreVertical,
-  Edit2,
-  Trash2,
-  MessageSquare,
+  Lightning as Zap,
+  DotsThreeVertical as MoreVertical,
+  PencilSimple as Edit2,
+  Trash as Trash2,
+  ChatCircleDots as MessageSquare,
   Clock,
   User,
   ArrowRight,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
@@ -53,11 +53,11 @@ const actionOptions = [
 function TriggerIcon({ type }: { type: TriggerType }) {
   const cls = "h-4 w-4"
   switch (type) {
-    case "keyword":          return <MessageSquare className={cls} />
-    case "new_conversation": return <User          className={cls} />
+    case "keyword":          return <MessageSquare weight="bold" className={cls} />
+    case "new_conversation": return <User          weight="bold" className={cls} />
     case "business_hours":
-    case "after_hours":      return <Clock         className={cls} />
-    default:                 return <Zap           className={cls} />
+    case "after_hours":      return <Clock         weight="bold" className={cls} />
+    default:                 return <Zap           weight="bold" className={cls} />
   }
 }
 
@@ -146,15 +146,15 @@ function AutomationCard({
             align="right"
             trigger={
               <button className="p-1.5 rounded-lg text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1C1C1C] transition-colors duration-200 outline-none">
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical weight="bold" className="h-4 w-4" />
               </button>
             }
           >
-            <DropdownItem icon={<Edit2 className="h-4 w-4" />} onClick={onEdit}>
+            <DropdownItem icon={<Edit2 weight="bold" className="h-4 w-4" />} onClick={onEdit}>
               Edit
             </DropdownItem>
             <DropdownSeparator />
-            <DropdownItem icon={<Trash2 className="h-4 w-4" />} destructive onClick={onDelete}>
+            <DropdownItem icon={<Trash2 weight="bold" className="h-4 w-4" />} destructive onClick={onDelete}>
               Delete
             </DropdownItem>
           </Dropdown>
@@ -208,7 +208,7 @@ function AutomationCard({
       {/* Last run */}
       {automation.last_triggered_at && (
         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-[#1C1C1C] flex items-center gap-1.5">
-          <Clock className="h-3 w-3 text-gray-300 dark:text-[#333]" />
+          <Clock weight="regular" className="h-3 w-3 text-gray-300 dark:text-[#333]" />
           <span className="text-[11px] text-gray-400 dark:text-[#525252]">
             Last run {formatDistanceToNow(automation.last_triggered_at)} ago
           </span>
@@ -317,7 +317,7 @@ export default function AutomationsPage() {
               onClick={handleCreateAutomation}
               className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 self-start sm:self-auto"
             >
-              <Plus className="h-4 w-4" />
+              <Plus weight="bold" className="h-4 w-4" />
               New Automation
             </button>
           )}
@@ -347,7 +347,7 @@ export default function AutomationsPage() {
                 className="flex items-center gap-2 px-6 py-2.5 bg-[#213138] dark:bg-[#3A9B9F] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
               >
                 Upgrade to Professional
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight weight="bold" className="h-4 w-4" />
               </button>
             </div>
           </motion.div>
@@ -432,7 +432,7 @@ export default function AutomationsPage() {
                     onClick={handleCreateAutomation}
                     className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus weight="bold" className="h-4 w-4" />
                     Create your first automation
                   </button>
                 </div>

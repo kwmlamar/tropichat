@@ -5,7 +5,17 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { Mail, Lock, Eye, EyeOff, Loader2, MessageCircle, Instagram, Facebook, CheckCircle2 } from "lucide-react"
+import { 
+  Envelope as Mail, 
+  Lock, 
+  Eye, 
+  EyeSlash as EyeOff, 
+  CircleNotch as Loader2, 
+  ChatCircle as MessageCircle, 
+  InstagramLogo as Instagram, 
+  FacebookLogo as Facebook, 
+  CheckCircle 
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -149,7 +159,7 @@ export default function LoginPage() {
 
           <div className="mb-10">
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10 shadow-sm ring-1 ring-teal-100 dark:ring-teal-500/20">
-              <Lock className="h-7 w-7 text-[#3A9B9F]" />
+              <Lock weight="bold" className="h-7 w-7 text-[#3A9B9F]" />
             </div>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
               Login to your account!
@@ -163,7 +173,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
                   id="email"
                   type="email"
@@ -179,7 +189,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -194,7 +204,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? <EyeOff weight="bold" className="h-5 w-5" /> : <Eye weight="bold" className="h-5 w-5" />}
                 </button>
               </div>
             </div>
@@ -224,7 +234,7 @@ export default function LoginPage() {
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 weight="bold" className="h-5 w-5 animate-spin" />
                   Signing in...
                 </span>
               ) : (
@@ -344,7 +354,7 @@ export default function LoginPage() {
                 className="absolute w-[380px] h-[380px]"
               >
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle2 className="w-7 h-7 text-[#3A9B9F]" />
+                  <CheckCircle weight="bold" className="w-7 h-7 text-[#3A9B9F]" />
                 </div>
                 <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <div className="flex flex-col items-center">

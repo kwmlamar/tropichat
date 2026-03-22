@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
+import { List as Menu, X } from "@phosphor-icons/react"
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -93,9 +93,9 @@ export function SiteHeader() {
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
+                <X weight="bold" className="h-6 w-6" />
               ) : (
-                <Menu className="h-6 w-6" />
+                <Menu weight="bold" className="h-6 w-6" />
               )}
             </button>
           </div>

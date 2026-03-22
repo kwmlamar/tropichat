@@ -5,19 +5,19 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
   Phone,
-  Mail,
+  Envelope as Mail,
   FileText,
-  CalendarDays,
+  CalendarBlank as CalendarDays,
   Clock,
   Users,
-  AlertTriangle,
-  ExternalLink,
-  Send,
-  CheckCircle2,
-  Trash2,
-  MessageSquare,
-  Loader2
-} from "lucide-react"
+  Warning as AlertTriangle,
+  ArrowSquareOut as ExternalLink,
+  PaperPlaneRight as Send,
+  CheckCircle as CheckCircle2,
+  Trash as Trash2,
+  ChatCircleDots as MessageSquare,
+  CircleNotch as Loader2
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { cancelBooking, updateBooking, formatBookingDate, formatBookingTime, generateConfirmationMessage } from "@/lib/bookings"
@@ -121,7 +121,7 @@ export function BookingDetailsModal({
                   className="h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0"
                   style={{ backgroundColor: service.color }}
                 >
-                  <CalendarDays className="h-6 w-6" />
+                  <CalendarDays weight="bold" className="h-6 w-6" />
                 </div>
               )}
               <div>
@@ -140,7 +140,7 @@ export function BookingDetailsModal({
               onClick={onClose}
               className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#222222] shadow-sm"
             >
-              <X className="h-5 w-5" />
+              <X weight="bold" className="h-5 w-5" />
             </button>
 
 
@@ -150,7 +150,7 @@ export function BookingDetailsModal({
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <CalendarDays className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <CalendarDays weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Date</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100 leading-tight">
                   {new Date(booking.booking_date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -160,14 +160,14 @@ export function BookingDetailsModal({
                 </p>
               </div>
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <Clock className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <Clock weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Time</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">
                   {formatBookingTime(booking.booking_time)}
                 </p>
               </div>
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <Users className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <Users weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Size</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">{booking.number_of_people}</p>
               </div>
@@ -210,13 +210,13 @@ export function BookingDetailsModal({
               <div className="grid grid-cols-1 gap-3 pt-2">
                 {booking.customer_phone && (
                   <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gray-50/50 dark:bg-[#333333]/50 hover:bg-gray-50 dark:hover:bg-[#333333] transition-colors">
-                    <Phone className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    <Phone weight="bold" className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                     <p className="text-xs font-bold text-gray-600 dark:text-gray-400">{booking.customer_phone}</p>
                   </div>
                 )}
                 {booking.customer_email && (
                   <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gray-50/50 dark:bg-[#333333]/50 hover:bg-gray-50 dark:hover:bg-[#333333] transition-colors">
-                    <Mail className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    <Mail weight="bold" className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                     <p className="text-xs font-bold text-gray-600 dark:text-gray-400 truncate">{booking.customer_email}</p>
                   </div>
                 )}
@@ -227,7 +227,7 @@ export function BookingDetailsModal({
             {booking.notes && (
               <div className="rounded-3xl bg-teal-50/30 dark:bg-teal-900/10 border border-teal-100/50 dark:border-teal-900/20 p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <FileText className="h-4 w-4 text-[#3A9B9F] opacity-60" />
+                  <FileText weight="bold" className="h-4 w-4 text-[#3A9B9F] opacity-60" />
                   <p className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-widest">Internal Notes</p>
                 </div>
                 <p className="text-xs font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">"{booking.notes}"</p>
@@ -260,7 +260,7 @@ export function BookingDetailsModal({
                     className="w-full h-11 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
                     disabled={!booking.conversation_id}
                   >
-                    <Send className="h-4 w-4 mr-2" />
+                    <Send weight="bold" className="h-4 w-4 mr-2" />
                     Deliver Message
                   </Button>
                 </motion.div>
@@ -281,7 +281,7 @@ export function BookingDetailsModal({
 
               {!showConfirmMsg && booking.conversation_id && onSendMessage && (
                 <Button variant="outline" onClick={handleShowConfirmMsg} className="w-full border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] text-gray-600 dark:text-gray-400">
-                  <Send className="h-4 w-4 mr-1.5" />
+                  <Send weight="bold" className="h-4 w-4 mr-1.5" />
                   Send Confirmation Message
                 </Button>
               )}
@@ -292,7 +292,7 @@ export function BookingDetailsModal({
                   onClick={() => { onGoToConversation(booking.conversation_id!); onClose() }}
                   className="w-full border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] text-gray-600 dark:text-gray-400"
                 >
-                  <ExternalLink className="h-4 w-4 mr-1.5" />
+                  <ExternalLink weight="bold" className="h-4 w-4 mr-1.5" />
                   Go to Conversation
                 </Button>
               )}

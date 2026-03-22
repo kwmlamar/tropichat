@@ -1,8 +1,7 @@
 "use client"
 
-import { MessageSquare, UserPlus, Bell, AlertCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { formatDistanceToNow } from "@/lib/utils"
+import { ChatCircleDots as MessageSquare, UserPlus, Bell, WarningCircle as AlertCircle } from "@phosphor-icons/react"
+import { cn, formatDistanceToNow } from "@/lib/utils"
 import type { Notification } from "@/types/database"
 
 interface NotificationItemProps {
@@ -47,7 +46,7 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
     >
       {/* Icon */}
       <div className={cn("mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", config.bg)}>
-        <Icon className={cn("h-4 w-4", config.color)} />
+        <Icon weight="bold" className={cn("h-4 w-4", config.color)} />
       </div>
 
       {/* Content */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Bell } from "lucide-react"
+import { Bell } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import {
@@ -101,7 +101,7 @@ export function NotificationBell({ customerId }: NotificationBellProps) {
             : "text-gray-400 hover:bg-white/10 hover:text-white"
         )}
       >
-        <Bell className="h-5 w-5" />
+        <Bell weight="bold" className="h-5 w-5" />
         {unreadCount > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#FF8B66] px-1 text-[10px] font-bold text-white">
             {unreadCount > 99 ? "99+" : unreadCount}

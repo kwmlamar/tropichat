@@ -1,7 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, Search, Download, MoreVertical, Phone, Tag } from "lucide-react"
+import { 
+  User, 
+  MagnifyingGlass as Search, 
+  DownloadSimple as Download, 
+  DotsThreeVertical as MoreVertical, 
+  Phone, 
+  Tag 
+} from "@phosphor-icons/react"
 import { Avatar } from "@/components/ui/avatar"
 import { Modal, ModalFooter } from "@/components/ui/modal"
 import { Label } from "@/components/ui/label"
@@ -105,8 +112,8 @@ export default function ContactsPage() {
           </div>
           {selectedContacts.length > 0 && (
             <button onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200">
-              <Download className="h-3.5 w-3.5" />Export ({selectedContacts.length})
+              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200 shadow-sm active:scale-95">
+              <Download weight="bold" className="h-3.5 w-3.5 text-[#3A9B9F]" />Export ({selectedContacts.length})
             </button>
           )}
         </motion.div>
@@ -126,7 +133,7 @@ export default function ContactsPage() {
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.10 }}>
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Search weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input type="text" placeholder="Search by name, phone, or email…" value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200" />
@@ -165,7 +172,7 @@ export default function ContactsPage() {
                   </tr>
                 )) : contacts.length === 0 ? (
                   <tr><td colSpan={7} className="py-16 text-center">
-                    <User className="h-8 w-8 text-gray-300 dark:text-[#333] mx-auto mb-3" />
+                    <User weight="bold" className="h-8 w-8 text-gray-200 dark:text-[#1A1A1A] mx-auto mb-3" />
                     <p className="text-[14px] text-gray-500 dark:text-[#525252]">
                       {searchQuery ? "No contacts match that search" : "Contacts appear when customers message you"}
                     </p>
@@ -221,11 +228,11 @@ export default function ContactsPage() {
                     <td className="px-4 py-4 text-right">
                       <Dropdown align="right" trigger={
                         <button className="p-1.5 rounded-lg text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1C1C1C] transition-colors duration-200 outline-none opacity-0 group-hover:opacity-100">
-                          <MoreVertical className="h-4 w-4" />
+                          <MoreVertical weight="bold" className="h-4 w-4" />
                         </button>
                       }>
-                        <DropdownItem icon={<Phone className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
-                        <DropdownItem icon={<Tag className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
+                        <DropdownItem icon={<Phone weight="regular" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
+                        <DropdownItem icon={<Tag weight="regular" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem onClick={() => handleBlock(contact)}>{contact.is_blocked ? "Unblock" : "Block"}</DropdownItem>
                       </Dropdown>

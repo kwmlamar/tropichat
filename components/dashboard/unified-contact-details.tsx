@@ -2,12 +2,12 @@
 
 import {
   User,
-  Calendar,
-  MessageSquare,
+  CalendarBlank as Calendar,
+  ChatCircleDots as MessageSquare,
   Archive,
   Hash,
-  ExternalLink,
-} from "lucide-react"
+  ArrowSquareOut as ExternalLink,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -33,7 +33,7 @@ export function UnifiedContactDetails({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black border-l border-gray-100 dark:border-[#1C1C1C] p-8 text-center">
         <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mb-4">
-          <User className="h-5 w-5 text-[#3A9B9F]" />
+          <User weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
         </div>
         <h3 className="text-[14px] font-semibold text-gray-900 dark:text-white mb-1">No contact selected</h3>
         <p className="text-[13px] text-gray-400 dark:text-[#525252]">
@@ -92,7 +92,7 @@ export function UnifiedContactDetails({
         {/* Customer ID */}
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-gray-100 dark:bg-[#111] p-2 flex-shrink-0">
-            <Hash className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Hash weight="regular" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
           </div>
           <div className="min-w-0">
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium">
@@ -112,7 +112,7 @@ export function UnifiedContactDetails({
         {conversation.connected_account && (
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-gray-100 dark:bg-[#111] p-2 flex-shrink-0">
-              <ExternalLink className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+              <ExternalLink weight="regular" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
             </div>
             <div className="min-w-0">
               <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium">Connected Account</p>
@@ -139,7 +139,7 @@ export function UnifiedContactDetails({
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-gray-50 dark:bg-[#0C0C0C] rounded-xl border border-gray-100 dark:border-[#1C1C1C] p-3">
               <div className="flex items-center gap-1.5 mb-1">
-                <Calendar className="h-3 w-3 text-gray-400 dark:text-[#525252]" />
+                <Calendar weight="regular" className="h-3 w-3 text-gray-400 dark:text-[#525252]" />
                 <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-wide font-medium">First Message</p>
               </div>
               <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
@@ -150,7 +150,7 @@ export function UnifiedContactDetails({
             </div>
             <div className="bg-gray-50 dark:bg-[#0C0C0C] rounded-xl border border-gray-100 dark:border-[#1C1C1C] p-3">
               <div className="flex items-center gap-1.5 mb-1">
-                <MessageSquare className="h-3 w-3 text-gray-400 dark:text-[#525252]" />
+                 <MessageSquare weight="regular" className="h-3 w-3 text-gray-400 dark:text-[#525252]" />
                 <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-wide font-medium">Messages</p>
               </div>
               <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
@@ -174,7 +174,7 @@ export function UnifiedContactDetails({
               size="sm"
               onClick={onArchive}
             >
-              <Archive className="h-4 w-4 mr-2" />
+              <Archive weight="bold" className="h-4 w-4 mr-2" />
               {conversation.is_archived ? "Unarchive conversation" : "Archive conversation"}
             </Button>
           )}

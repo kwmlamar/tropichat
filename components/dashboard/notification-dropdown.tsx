@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { CheckCheck, Bell } from "lucide-react"
+import { Checks as CheckCheck, Bell } from "@phosphor-icons/react"
 import { useOnClickOutside } from "@/lib/hooks"
 import { NotificationItem } from "./notification-item"
 import type { Notification } from "@/types/database"
@@ -50,7 +50,7 @@ export function NotificationDropdown({
             onClick={onMarkAllRead}
             className="flex items-center gap-1 text-xs font-medium text-[#3A9B9F] hover:text-[#2F8488] transition-colors"
           >
-            <CheckCheck className="h-3.5 w-3.5" />
+            <CheckCheck weight="bold" className="h-3.5 w-3.5" />
             Mark all read
           </button>
         )}
@@ -65,7 +65,7 @@ export function NotificationDropdown({
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <div className="mb-3 rounded-full bg-gray-100 dark:bg-[#111111] p-3">
-              <Bell className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+              <Bell weight="regular" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
             </div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">All caught up!</p>
             <p className="mt-1 text-xs text-gray-500">No notifications yet</p>

@@ -3,23 +3,23 @@
 import { useState, useEffect } from "react"
 import {
   Plus,
-  Search,
+  MagnifyingGlass as Search,
   FileText,
-  MoreVertical,
-  Trash2,
+  DotsThreeVertical as MoreVertical,
+  Trash,
   Copy,
   Clock,
   CheckCircle,
   XCircle,
-  Loader2,
-  RefreshCw,
-  AlertTriangle,
-  Link2,
-  MessageSquare,
+  CircleNotch,
+  ArrowsClockwise as RefreshCw,
+  Warning as AlertTriangle,
+  Link as Link2,
+  ChatCircleDots as MessageSquare,
   Globe,
   Tag,
   Info,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
@@ -229,7 +229,7 @@ export default function TemplatesPage() {
               onClick={handleCreateTemplate}
               className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200"
             >
-              <Plus className="h-4 w-4" />
+              <Plus weight="bold" className="h-4 w-4" />
               New Template
             </button>
           </div>
@@ -244,7 +244,7 @@ export default function TemplatesPage() {
         >
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Search weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input
               type="text"
               placeholder="Search by name or content…"
@@ -306,7 +306,7 @@ export default function TemplatesPage() {
                   onClick={handleCreateTemplate}
                   className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus weight="bold" className="h-4 w-4" />
                   Create Template
                 </button>
               )}
@@ -366,7 +366,7 @@ export default function TemplatesPage() {
                         </DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem
-                          icon={<Trash2 className="h-4 w-4" />}
+                          icon={<Trash weight="regular" className="h-4 w-4" />}
                           destructive
                           onClick={() => handleDeleteTemplate(template.name)}
                         >
@@ -487,7 +487,7 @@ export default function TemplatesPage() {
               onClick={handleSaveTemplate}
               disabled={isSaving}
             >
-              {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Submitting…</> : "Submit for Review"}
+              {isSaving ? <><CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />Submitting…</> : "Submit for Review"}
             </Button>
           </ModalFooter>
         </div>

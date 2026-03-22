@@ -3,23 +3,23 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
-  Sparkles,
-  Facebook,
-  Instagram,
-  MessageCircle,
+  Sparkle as Sparkles,
+  FacebookLogo as Facebook,
+  InstagramLogo as Instagram,
+  ChatCircleDots as MessageCircle,
   Phone,
-  Search,
-  Settings,
+  MagnifyingGlass as Search,
+  Gear as Settings,
   Users,
   Tag,
-  CheckCheck,
+  Checks as CheckCheck,
   Circle,
-  LayoutDashboard,
-  Send,
-  ChevronLeft,
-  MoreVertical,
-  Video,
-} from "lucide-react"
+  SquaresFour as LayoutDashboard,
+  PaperPlaneRight as Send,
+  CaretLeft as ChevronLeft,
+  DotsThreeVertical as MoreVertical,
+  VideoCamera as Video,
+} from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 // ─── Shared data ─────────────────────────────────────────────────────────────
@@ -106,7 +106,7 @@ function DesktopAppMockup() {
       <div className="flex w-14 flex-col items-center gap-4 border-r border-slate-100 dark:border-[#222222] bg-[#213138] dark:bg-[#0A0A0A] py-4">
         {/* Logo mark */}
         <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#3A9B9F]">
-          <MessageCircle className="h-4 w-4 text-white" />
+          <MessageCircle weight="bold" className="h-4 w-4 text-white" />
         </div>
         {[LayoutDashboard, Users, Tag, Settings].map((Icon, i) => (
           <button
@@ -114,7 +114,7 @@ function DesktopAppMockup() {
             className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${i === 0 ? "bg-[#3A9B9F]/20 text-[#3A9B9F]" : "text-slate-400 hover:bg-white/10 hover:text-white"
               }`}
           >
-            <Icon className="h-4 w-4" />
+            <Icon weight="bold" className="h-4 w-4" />
           </button>
         ))}
       </div>
@@ -124,7 +124,7 @@ function DesktopAppMockup() {
         {/* Header */}
         <div className="border-b border-slate-100 dark:border-[#222222] px-3 py-3">
           <div className="flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#111111] px-2.5 py-1.5">
-            <Search className="h-3.5 w-3.5 text-slate-400 dark:text-gray-500" />
+            <Search weight="bold" className="h-3.5 w-3.5 text-slate-400 dark:text-gray-500" />
             <span className="text-[11px] text-slate-400">Search conversations…</span>
           </div>
           {/* Tab pills */}
@@ -227,7 +227,7 @@ function DesktopAppMockup() {
               <p className="text-[11px] text-white">Hi Maria! Yes, your order is confirmed for Saturday at 2 PM. We'll have it ready for pickup! 🎂</p>
               <div className="mt-1 flex items-center justify-end gap-1">
                 <p className="text-[9px] text-white/70">9:41 AM</p>
-                <CheckCheck className="h-3 w-3 text-white/70" />
+                <CheckCheck weight="bold" className="h-3 w-3 text-white/70" />
               </div>
             </div>
           </div>
@@ -236,9 +236,9 @@ function DesktopAppMockup() {
           <div className="flex items-end gap-2">
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">MS</div>
             <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm bg-white px-3 py-2 shadow-sm ring-1 ring-slate-100">
-              <Circle className="h-1.5 w-1.5 animate-bounce fill-slate-400 text-slate-400" style={{ animationDelay: "0ms" }} />
-              <Circle className="h-1.5 w-1.5 animate-bounce fill-slate-400 text-slate-400" style={{ animationDelay: "150ms" }} />
-              <Circle className="h-1.5 w-1.5 animate-bounce fill-slate-400 text-slate-400" style={{ animationDelay: "300ms" }} />
+              <Circle weight="fill" className="h-1.5 w-1.5 animate-bounce text-slate-400" style={{ animationDelay: "0ms" }} />
+              <Circle weight="fill" className="h-1.5 w-1.5 animate-bounce text-slate-400" style={{ animationDelay: "150ms" }} />
+              <Circle weight="fill" className="h-1.5 w-1.5 animate-bounce text-slate-400" style={{ animationDelay: "300ms" }} />
             </div>
           </div>
         </div>
@@ -248,7 +248,7 @@ function DesktopAppMockup() {
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-2">
             <span className="flex-1 text-[11px] text-slate-400 dark:text-gray-500">Type a message…</span>
             <button className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3A9B9F] transition-colors hover:bg-[#2F8488]">
-              <Send className="h-3 w-3 text-white" />
+              <Send weight="bold" className="h-3 w-3 text-white" />
             </button>
           </div>
         </div>
@@ -304,7 +304,7 @@ function MobileAppMockup() {
       {/* Chat header */}
       <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-[#222222] px-3 py-2">
         <button className="text-[#3A9B9F]">
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft weight="bold" className="h-4 w-4" />
         </button>
         <div className="relative">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white">
@@ -317,10 +317,10 @@ function MobileAppMockup() {
           <p className="text-[9px] text-slate-400 dark:text-gray-500">WhatsApp · Online</p>
         </div>
         <button className="text-slate-400">
-          <Video className="h-4 w-4" />
+          <Video weight="bold" className="h-4 w-4" />
         </button>
         <button className="text-slate-400">
-          <MoreVertical className="h-4 w-4" />
+          <MoreVertical weight="bold" className="h-4 w-4" />
         </button>
       </div>
 
@@ -347,7 +347,7 @@ function MobileAppMockup() {
             <p className="text-[10px] leading-relaxed text-white">Hi Maria! Yes, confirmed for Saturday 2 PM. Ready for pickup!</p>
             <div className="mt-0.5 flex items-center justify-end gap-1">
               <p className="text-[8px] text-white/70">9:41 AM</p>
-              <CheckCheck className="h-2.5 w-2.5 text-white/70" />
+              <CheckCheck weight="bold" className="h-2.5 w-2.5 text-white/70" />
             </div>
           </div>
         </div>
@@ -367,7 +367,7 @@ function MobileAppMockup() {
         <div className="flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-1.5">
           <span className="flex-1 text-[10px] text-slate-400 dark:text-gray-500">Message…</span>
           <button className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3A9B9F]">
-            <Send className="h-2.5 w-2.5 text-white" />
+            <Send weight="bold" className="h-2.5 w-2.5 text-white" />
           </button>
         </div>
       </div>
@@ -413,7 +413,7 @@ export function HeroSection() {
           transition={{ duration: 0.5 }}
           className="mb-8 inline-flex items-center gap-2 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/10 px-4 py-1.5 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm transition-all hover:bg-teal-100 dark:hover:bg-teal-900/20"
         >
-          <Sparkles className="h-4 w-4 text-[#3A9B9F]" />
+          <Sparkles weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
           <span>#1 MULTI-CHANNEL INBOX</span>
         </motion.div>
 
@@ -514,19 +514,19 @@ export function HeroSection() {
           </p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale transition-all duration-500 hover:grayscale-0 hover:opacity-100">
             <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#25D366]">
-              <MessageCircle className="h-6 w-6" />
+              <MessageCircle weight="bold" className="h-6 w-6" />
               WhatsApp
             </div>
             <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#0084FF]">
-              <Facebook className="h-6 w-6" />
+              <Facebook weight="bold" className="h-6 w-6" />
               Messenger
             </div>
             <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#E1306C]">
-              <Instagram className="h-6 w-6" />
+              <Instagram weight="bold" className="h-6 w-6" />
               Instagram
             </div>
             <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#3A9B9F]">
-              <Phone className="h-6 w-6" />
+              <Phone weight="bold" className="h-6 w-6" />
               SMS
             </div>
           </div>

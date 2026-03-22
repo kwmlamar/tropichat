@@ -5,25 +5,25 @@ import { useSearchParams, useRouter } from "next/navigation"
 import {
   User,
   Clock,
-  MessageSquare,
+  ChatCircleDots,
   Users,
   CreditCard,
   Key,
-  Save,
-  Loader2,
-  Link2,
+  FloppyDisk,
+  CircleNotch,
+  Link,
   CheckCircle,
   XCircle,
-  ExternalLink,
-  Unplug,
-  Building2,
+  ArrowSquareOut,
+  Plug,
+  Buildings,
   MapPin,
   Phone,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
+  SignOut,
+  CaretLeft,
+  CaretRight,
   Bell,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -511,7 +511,7 @@ export default function SettingsPage() {
             {businessName || "Your Business"}
           </h2>
           <p className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-[#525252] mt-1">
-            <MapPin className="h-3 w-3 text-[#3A9B9F]" />
+            <MapPin weight="regular" className="h-3 w-3 text-[#3A9B9F]" />
             {timezone.split('/')[1]?.replace('_', ' ') || "Local"}
           </p>
         </div>
@@ -520,7 +520,7 @@ export default function SettingsPage() {
           {/* Auto-Reply toggle */}
           <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <MessageSquare className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+              <ChatCircleDots weight="regular" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
               <span className="text-[14px] font-medium text-gray-900 dark:text-white">Auto-Reply Mode</span>
             </div>
             <Switch
@@ -540,8 +540,8 @@ export default function SettingsPage() {
               <MobileTabLink icon={User} label="Profile" onClick={() => handleMobileNav('profile')} />
               <MobileTabLink icon={Clock} label="Business Hours" onClick={() => handleMobileNav('hours')} />
               <MobileTabLink icon={Users} label="Team" onClick={() => handleMobileNav('team')} />
-              <MobileTabLink icon={Link2} label="Integrations" onClick={() => handleMobileNav('integrations')} />
-              <MobileTabLink icon={Building2} label="WhatsApp Profile" onClick={() => handleMobileNav('whatsapp')} />
+              <MobileTabLink icon={Link} label="Integrations" onClick={() => handleMobileNav('integrations')} />
+              <MobileTabLink icon={Buildings} label="WhatsApp Profile" onClick={() => handleMobileNav('whatsapp')} />
               <MobileTabLink icon={Bell} label="Notifications" onClick={() => handleMobileNav('notifications')} />
               <MobileTabLink icon={CreditCard} label="Billing & Plan" onClick={() => handleMobileNav('billing')} />
             </div>
@@ -561,7 +561,7 @@ export default function SettingsPage() {
             }}
             className="h-10 w-10 bg-white dark:bg-[#0A0A0A] rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-[#222222] transition-transform active:scale-95"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <CaretLeft weight="bold" className="h-5 w-5" />
           </button>
           <h1 className="text-[22px] font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] tracking-tight">
             Settings
@@ -585,47 +585,130 @@ export default function SettingsPage() {
           }
         }}>
           <TabsList className="hidden lg:flex mb-8 p-1 bg-gray-100 dark:bg-black rounded-xl w-fit gap-0.5 border border-gray-200 dark:border-[#1C1C1C]">
-            <TabsTrigger value="profile" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><User className="h-3.5 w-3.5 mr-1.5" />Profile</TabsTrigger>
-            <TabsTrigger value="hours" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><Clock className="h-3.5 w-3.5 mr-1.5" />Hours</TabsTrigger>
-            <TabsTrigger value="autoreply" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><MessageSquare className="h-3.5 w-3.5 mr-1.5" />Replies</TabsTrigger>
-            <TabsTrigger value="team" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><Users className="h-3.5 w-3.5 mr-1.5" />Team</TabsTrigger>
-            <TabsTrigger value="integrations" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><Link2 className="h-3.5 w-3.5 mr-1.5" />Channels</TabsTrigger>
-            <TabsTrigger value="notifications" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><Bell className="h-3.5 w-3.5 mr-1.5" />Alerts</TabsTrigger>
-            <TabsTrigger value="whatsapp" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><Building2 className="h-3.5 w-3.5 mr-1.5" />WA Profile</TabsTrigger>
-            <TabsTrigger value="billing" className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"><CreditCard className="h-3.5 w-3.5 mr-1.5" />Billing</TabsTrigger>
+            <TabsTrigger
+              value="profile"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <User weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="hours"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <Clock weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Hours
+            </TabsTrigger>
+            <TabsTrigger
+              value="autoreply"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <ChatCircleDots weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Replies
+            </TabsTrigger>
+            <TabsTrigger
+              value="team"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <Users weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Team
+            </TabsTrigger>
+            <TabsTrigger
+              value="integrations"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <Link weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Channels
+            </TabsTrigger>
+            <TabsTrigger
+              value="notifications"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <Bell weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Alerts
+            </TabsTrigger>
+            <TabsTrigger
+              value="whatsapp"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <Buildings weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              WA Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="billing"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+            >
+              <CreditCard weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              Billing
+            </TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-10 pb-12">
             {/* Profile Details */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Personal Details</p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">Manage your primary account information and contact details</p>
+              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                Personal Details
+              </p>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                Manage your primary account information and contact details
+              </p>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <Label htmlFor="businessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Name</Label>
-                    <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                    <Label htmlFor="businessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Business Name
+                    </Label>
+                    <Input
+                      id="businessName"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Contact Email</Label>
-                    <Input id="email" type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Contact Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <Label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</Label>
-                    <Input id="phone" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="+1 (242) 555-0123" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                    <Label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="+1 (242) 555-0123"
+                      className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                    />
                   </div>
                   <div>
-                    <Label htmlFor="timezone" className="text-sm font-medium text-gray-700 dark:text-gray-300">Timezone</Label>
+                    <Label htmlFor="timezone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Timezone
+                    </Label>
                     <SimpleSelect value={timezone} onValueChange={setTimezone} options={timezones} className="mt-1.5" />
                   </div>
                 </div>
               </div>
               <div className="flex items-center justify-end mt-6">
-                <Button onClick={handleSaveProfile} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
-                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Button
+                  onClick={handleSaveProfile}
+                  disabled={saving}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                >
+                  {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Changes
                 </Button>
               </div>
@@ -635,21 +718,48 @@ export default function SettingsPage() {
 
             {/* Change Password */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#525252] dark:bg-[#333] inline-block" />Change Password</p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">Ensure your account is using a long, random password to stay secure</p>
+              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#525252] dark:bg-[#333] inline-block" />
+                Change Password
+              </p>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                Ensure your account is using a long, random password to stay secure
+              </p>
               <div className="space-y-5 max-w-md">
                 <div>
-                  <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">New Password</Label>
-                  <Input id="newPassword" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Enter new password" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                  <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    New Password
+                  </Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                  />
                 </div>
                 <div>
-                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</Label>
-                  <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirm New Password
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                  />
                 </div>
               </div>
               <div className="mt-6">
-                <Button onClick={handleChangePassword} disabled={savingPassword || !newPassword || !confirmPassword} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
-                  {savingPassword && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={savingPassword || !newPassword || !confirmPassword}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                >
+                  {savingPassword && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Update Password
                 </Button>
               </div>
@@ -660,25 +770,50 @@ export default function SettingsPage() {
           <TabsContent value="hours" className="pb-12">
             <div className="space-y-8">
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Business Hours</p>
-                <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">Set your standard hours. Auto-replies use these to determine working state.</p>
+                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                  <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                  Business Hours
+                </p>
+                <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                  Set your standard hours. Auto-replies use these to determine working state.
+                </p>
 
                 <div className="bg-white dark:bg-[#0C0C0C] rounded-2xl border border-gray-200 dark:border-[#1C1C1C] overflow-hidden">
                   <div className="divide-y divide-gray-100 dark:divide-[#1C1C1C]">
                     {days.map((day) => (
-                      <div key={day} className="flex items-center justify-between sm:justify-start gap-4 p-4 hover:bg-gray-50 dark:hover:bg-[#111] transition-colors">
+                      <div
+                        key={day}
+                        className="flex items-center justify-between sm:justify-start gap-4 p-4 hover:bg-gray-50 dark:hover:bg-[#111] transition-colors"
+                      >
                         <div className="w-14">
-                          <Switch checked={businessHours[day]?.enabled || false} onCheckedChange={(checked) => updateDayHours(day, "enabled", checked)} />
+                          <Switch
+                            checked={businessHours[day]?.enabled || false}
+                            onCheckedChange={(checked) => updateDayHours(day, "enabled", checked)}
+                          />
                         </div>
-                        <span className="w-24 text-[13px] font-medium text-gray-900 dark:text-white capitalize">{day}</span>
+                        <span className="w-24 text-[13px] font-medium text-gray-900 dark:text-white capitalize">
+                          {day}
+                        </span>
                         {businessHours[day]?.enabled ? (
                           <div className="flex items-center gap-2 flex-1 sm:flex-none">
-                            <Input type="time" value={businessHours[day]?.start || "09:00"} onChange={(e) => updateDayHours(day, "start", e.target.value)} className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9" />
+                            <Input
+                              type="time"
+                              value={businessHours[day]?.start || "09:00"}
+                              onChange={(e) => updateDayHours(day, "start", e.target.value)}
+                              className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9"
+                            />
                             <span className="text-[12px] text-gray-400 dark:text-[#525252]">to</span>
-                            <Input type="time" value={businessHours[day]?.end || "17:00"} onChange={(e) => updateDayHours(day, "end", e.target.value)} className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9" />
+                            <Input
+                              type="time"
+                              value={businessHours[day]?.end || "17:00"}
+                              onChange={(e) => updateDayHours(day, "end", e.target.value)}
+                              className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9"
+                            />
                           </div>
                         ) : (
-                          <span className="text-[13px] text-gray-400 dark:text-[#525252] italic py-1.5">Closed</span>
+                          <span className="text-[13px] text-gray-400 dark:text-[#525252] italic py-1.5">
+                            Closed
+                          </span>
                         )}
                       </div>
                     ))}
@@ -687,8 +822,12 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex items-center justify-end">
-                <Button onClick={handleSaveBusinessHours} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
-                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Button
+                  onClick={handleSaveBusinessHours}
+                  disabled={saving}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                >
+                  {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Business Hours
                 </Button>
               </div>
@@ -701,15 +840,22 @@ export default function SettingsPage() {
               <div>
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <div>
-                    <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Auto-Reply</p>
-                    <p className="text-[13px] text-gray-500 dark:text-[#525252]">Automatically respond to messages outside of business hours</p>
+                    <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                      Auto-Reply
+                    </p>
+                    <p className="text-[13px] text-gray-500 dark:text-[#525252]">
+                      Automatically respond to messages outside of business hours
+                    </p>
                   </div>
                   <Switch checked={autoReplyEnabled} onCheckedChange={setAutoReplyEnabled} />
                 </div>
 
                 {autoReplyEnabled && (
                   <div className="bg-white dark:bg-[#0C0C0C] p-6 rounded-2xl border border-gray-200 dark:border-[#1C1C1C]">
-                    <Label htmlFor="autoReplyMessage" className="text-[13px] font-medium text-gray-700 dark:text-[#A3A3A3]">Offline Message</Label>
+                    <Label htmlFor="autoReplyMessage" className="text-[13px] font-medium text-gray-700 dark:text-[#A3A3A3]">
+                      Offline Message
+                    </Label>
                     <Textarea
                       id="autoReplyMessage"
                       value={autoReplyMessage}
@@ -717,14 +863,20 @@ export default function SettingsPage() {
                       placeholder="Thanks for reaching out! We'll get back to you as soon as possible."
                       className="mt-2 min-h-[140px] rounded-xl border-gray-200 dark:border-[#1C1C1C] resize-none bg-gray-50 dark:bg-[#111] dark:text-white"
                     />
-                    <p className="text-[12px] text-gray-400 dark:text-[#525252] mt-2">Sent instantly when you are outside business hours.</p>
+                    <p className="text-[12px] text-gray-400 dark:text-[#525252] mt-2">
+                      Sent instantly when you are outside business hours.
+                    </p>
                   </div>
                 )}
               </div>
 
               <div className="flex items-center justify-end">
-                <Button onClick={handleSaveAutoReply} disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
-                  {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Button
+                  onClick={handleSaveAutoReply}
+                  disabled={saving}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                >
+                  {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Auto-Reply Settings
                 </Button>
               </div>
@@ -733,11 +885,16 @@ export default function SettingsPage() {
 
           {/* Team Tab */}
           <TabsContent value="team" className="pb-12">
-            <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center" style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}>
+            <div
+              className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
+              style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+            >
               <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mx-auto mb-5">
-                <Users className="h-5 w-5 text-[#3A9B9F]" />
+                <Users weight="regular" className="h-5 w-5 text-[#3A9B9F]" />
               </div>
-              <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">Team Management</h3>
+              <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+                Team Management
+              </h3>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
                 Invite team members to help manage customer conversations across all channels.
               </p>
@@ -749,12 +906,19 @@ export default function SettingsPage() {
 
           {/* Integrations Tab */}
           <TabsContent value="integrations" className="space-y-10 pb-12">
-
             {/* Connect Meta — clean card, no dark hero */}
-            <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6" style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}>
+            <div
+              className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+              style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+            >
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Meta Business Platform</p>
-                <h3 className="text-[18px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-1">Connect your channels</h3>
+                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                  <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                  Meta Business Platform
+                </p>
+                <h3 className="text-[18px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-1">
+                  Connect your channels
+                </h3>
                 <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-md leading-relaxed">
                   Link WhatsApp Business, Instagram, and Messenger in one OAuth flow.
                 </p>
@@ -765,22 +929,32 @@ export default function SettingsPage() {
                 className="shrink-0 h-10 px-6 bg-[#3A9B9F] hover:bg-[#2F8488] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-95"
               >
                 {connecting ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Redirecting...</>
+                  <>
+                    <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />
+                    Redirecting...
+                  </>
                 ) : (
                   <>Connect with Meta</>
                 )}
               </Button>
             </div>
 
-
             {/* Channel Cards */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Connected Channels</p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-5">Each channel connects independently. Disconnect them individually at any time.</p>
+              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                Connected Channels
+              </p>
+              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-5">
+                Each channel connects independently. Disconnect them individually at any time.
+              </p>
               {metaLoading ? (
                 <div className="grid gap-4 md:grid-cols-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="rounded-2xl border border-gray-100 dark:border-[#222222] p-6 bg-white dark:bg-[#0A0A0A] shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                    <div
+                      key={i}
+                      className="rounded-2xl border border-gray-100 dark:border-[#222222] p-6 bg-white dark:bg-[#0A0A0A] shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
+                    >
                       <Skeleton className="h-10 w-10 rounded-xl mb-4" />
                       <Skeleton className="h-5 w-28 mb-2" />
                       <Skeleton className="h-4 w-40 mb-6" />
@@ -790,120 +964,252 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <div className="grid gap-4 md:grid-cols-3">
-                  <ChannelCard channel="whatsapp" label="WhatsApp Business" color="#25D366"
+                  <ChannelCard
+                    channel="whatsapp"
+                    label="WhatsApp Business"
+                    color="#25D366"
                     icon={<ChannelIcon channel="whatsapp" size="xl" />}
-                    status={metaStatus?.whatsapp} disconnecting={disconnecting === "whatsapp"} onDisconnect={() => handleDisconnectChannel("whatsapp")} />
-                  <ChannelCard channel="instagram" label="Instagram" color="#E4405F"
+                    status={metaStatus?.whatsapp}
+                    disconnecting={disconnecting === "whatsapp"}
+                    onDisconnect={() => handleDisconnectChannel("whatsapp")}
+                  />
+                  <ChannelCard
+                    channel="instagram"
+                    label="Instagram"
+                    color="#E4405F"
                     icon={<ChannelIcon channel="instagram" size="xl" />}
-                    status={metaStatus?.instagram} disconnecting={disconnecting === "instagram"} onDisconnect={() => handleDisconnectChannel("instagram")} />
-                  <ChannelCard channel="messenger" label="Messenger" color="#0084FF"
+                    status={metaStatus?.instagram}
+                    disconnecting={disconnecting === "instagram"}
+                    onDisconnect={() => handleDisconnectChannel("instagram")}
+                  />
+                  <ChannelCard
+                    channel="messenger"
+                    label="Messenger"
+                    color="#0084FF"
                     icon={<ChannelIcon channel="messenger" size="xl" />}
-                    status={metaStatus?.messenger} disconnecting={disconnecting === "messenger"} onDisconnect={() => handleDisconnectChannel("messenger")} />
+                    status={metaStatus?.messenger}
+                    disconnecting={disconnecting === "messenger"}
+                    onDisconnect={() => handleDisconnectChannel("messenger")}
+                  />
                 </div>
               )}
             </div>
 
             {/* Connected Account Details */}
-            {metaStatus && (metaStatus.instagram?.connected || metaStatus.whatsapp?.connected || metaStatus.messenger?.connected) && (
-              <div>
-                <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Connected Accounts</p>
-                <div className="space-y-2">
-                  {metaStatus.instagram?.connected && (
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
-                      <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-[13px] flex-shrink-0">{metaStatus.instagram.account_name?.[0] || "I"}</div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate">{(metaStatus.instagram.metadata as Record<string, string>)?.ig_username || metaStatus.instagram.account_name || "Instagram"}</p>
-                        <p className="text-[11px] text-gray-400 dark:text-[#525252]">Instagram · ID: {metaStatus.instagram.account_id?.slice(0, 8)}…{metaStatus.instagram.account_id?.slice(-4)}</p>
+            {metaStatus &&
+              (metaStatus.instagram?.connected ||
+                metaStatus.whatsapp?.connected ||
+                metaStatus.messenger?.connected) && (
+                <div>
+                  <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
+                  <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                    Connected Accounts
+                  </p>
+                  <div className="space-y-2">
+                    {metaStatus.instagram?.connected && (
+                      <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
+                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-[13px] flex-shrink-0">
+                          {metaStatus.instagram.account_name?.[0] || "I"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate">
+                            {(metaStatus.instagram.metadata as Record<string, string>)?.ig_username ||
+                              metaStatus.instagram.account_name ||
+                              "Instagram"}
+                          </p>
+                          <p className="text-[11px] text-gray-400 dark:text-[#525252]">
+                            Instagram · ID: {metaStatus.instagram.account_id?.slice(0, 8)}…
+                            {metaStatus.instagram.account_id?.slice(-4)}
+                          </p>
+                        </div>
+                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                          Active
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">Active</span>
-                    </div>
-                  )}
-                  {metaStatus.whatsapp?.connected && (
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
-                      <div className="h-9 w-9 rounded-xl bg-[#25D366] flex items-center justify-center text-white flex-shrink-0"><svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-gray-900 dark:text-white">{metaStatus.whatsapp.account_name || "WhatsApp Business"}</p>
-                        {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && <p className="text-[11px] text-gray-400 dark:text-[#525252]">{(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}</p>}
+                    )}
+                    {metaStatus.whatsapp?.connected && (
+                      <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
+                        <div className="h-9 w-9 rounded-xl bg-[#25D366] flex items-center justify-center text-white flex-shrink-0">
+                          <svg
+                            className="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
+                            {metaStatus.whatsapp.account_name || "WhatsApp Business"}
+                          </p>
+                          {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && (
+                            <p className="text-[11px] text-gray-400 dark:text-[#525252]">
+                              {(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}
+                            </p>
+                          )}
+                        </div>
+                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                          Active
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">Active</span>
-                    </div>
-                  )}
-                  {metaStatus.messenger?.connected && (
-                    <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
-                      <div className="h-9 w-9 rounded-xl bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0"><svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z" /></svg></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-gray-900 dark:text-white">{metaStatus.messenger.account_name || "Messenger"}</p>
+                    )}
+                    {metaStatus.messenger?.connected && (
+                      <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
+                        <div className="h-9 w-9 rounded-xl bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0">
+                          <svg
+                            className="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
+                            {metaStatus.messenger.account_name || "Messenger"}
+                          </p>
+                        </div>
+                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                          Active
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">Active</span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Webhook strip */}
             <div>
               <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] animate-pulse inline-block" />Webhook Status</p>
+              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] animate-pulse inline-block" />
+                Webhook Status
+              </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3" style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}>
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">Status</p>
-                  <div className="flex items-center gap-1.5"><div className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" /><p className="text-[13px] font-semibold text-gray-900 dark:text-white">Active</p></div>
+                <div
+                  className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3"
+                  style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+                >
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                    Status
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+                    <p className="text-[13px] font-semibold text-gray-900 dark:text-white">Active</p>
+                  </div>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">Endpoint</p>
-                  <code className="text-[11px] font-mono text-gray-700 dark:text-[#A3A3A3]">/api/webhooks/meta</code>
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                    Endpoint
+                  </p>
+                  <code className="text-[11px] font-mono text-gray-700 dark:text-[#A3A3A3]">
+                    /api/webhooks/meta
+                  </code>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">Verification</p>
-                  <div className="flex items-center gap-1 text-[#3A9B9F]"><CheckCircle className="h-3.5 w-3.5" /><span className="text-[13px] font-semibold">Verified</span></div>
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                    Verification
+                  </p>
+                  <div className="flex items-center gap-1 text-[#3A9B9F]">
+                    <CheckCircle weight="regular" className="h-3.5 w-3.5" />
+                    <span className="text-[13px] font-semibold">Verified</span>
+                  </div>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">Last Event</p>
-                  <p className="text-[13px] font-semibold text-gray-900 dark:text-white">{new Date().toLocaleTimeString()}</p>
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                    Last Event
+                  </p>
+                  <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
+                    {new Date().toLocaleTimeString()}
+                  </p>
                 </div>
               </div>
-              <p className="text-[11px] text-gray-400 dark:text-[#525252] mt-3">Subscribed: <span className="font-medium text-gray-700 dark:text-[#A3A3A3]">messages · message_deliveries · message_reads</span></p>
+              <p className="text-[11px] text-gray-400 dark:text-[#525252] mt-3">
+                Subscribed:{" "}
+                <span className="font-medium text-gray-700 dark:text-[#A3A3A3]">
+                  messages · message_deliveries · message_reads
+                </span>
+              </p>
             </div>
           </TabsContent>
 
           {/* WhatsApp Business Profile Tab */}
           <TabsContent value="whatsapp" className="pb-12">
             {metaStatus?.whatsapp?.connected === false ? (
-              <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center" style={{ borderLeftColor: "#25D366", borderLeftWidth: 2 }}>
+              <div
+                className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
+                style={{ borderLeftColor: "#25D366", borderLeftWidth: 2 }}
+              >
                 <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center mx-auto mb-5">
-                  <Building2 className="h-5 w-5 text-[#25D366]" />
+                  <Buildings weight="regular" className="h-5 w-5 text-[#25D366]" />
                 </div>
-                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">WhatsApp Not Connected</h3>
+                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+                  WhatsApp Not Connected
+                </h3>
                 <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
-                  Connect your Meta account with WhatsApp Business permissions to manage your public business profile.
+                  Connect your Meta account with WhatsApp Business permissions to manage your public
+                  business profile.
                 </p>
-                <Button onClick={() => { const el = document.querySelector('[value="integrations"]') as HTMLButtonElement | null; el?.click() }}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl px-6">
+                <Button
+                  onClick={() => {
+                    const el = document.querySelector('[value="integrations"]') as HTMLButtonElement | null
+                    el?.click()
+                  }}
+                  className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl px-6"
+                >
                   Go to Integrations
                 </Button>
               </div>
             ) : (
               <div className="space-y-10">
-
                 {/* Business Info */}
                 <div>
-                  <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#25D366] inline-block" />Business Info</p>
-                  <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">Displayed publicly on your WhatsApp Business profile</p>
+                  <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-[#25D366] inline-block" />
+                    Business Info
+                  </p>
+                  <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                    Displayed publicly on your WhatsApp Business profile
+                  </p>
                   <div className="space-y-5">
                     <div>
-                      <Label htmlFor="wpBusinessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Name <span className="text-[#FF8B66]">*</span></Label>
-                      <Input id="wpBusinessName" value={wpBusinessName} onChange={(e) => setWpBusinessName(e.target.value)} placeholder="Simply Dave Nassau Tours" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpBusinessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Business Name <span className="text-[#FF8B66]">*</span>
+                      </Label>
+                      <Input
+                        id="wpBusinessName"
+                        value={wpBusinessName}
+                        onChange={(e) => setWpBusinessName(e.target.value)}
+                        placeholder="Simply Dave Nassau Tours"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="wpDescription" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Description</Label>
-                      <Textarea id="wpDescription" value={wpDescription} onChange={(e) => setWpDescription(e.target.value)} placeholder="Premier boat tours and water sports in Nassau, Bahamas..." className="mt-1.5 min-h-[110px] rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111] resize-none" />
-                      <p className="text-xs text-[#475569] dark:text-gray-500 mt-1.5">Max 512 characters · Shown in your WhatsApp profile card</p>
+                      <Label htmlFor="wpDescription" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Business Description
+                      </Label>
+                      <Textarea
+                        id="wpDescription"
+                        value={wpDescription}
+                        onChange={(e) => setWpDescription(e.target.value)}
+                        placeholder="Premier boat tours and water sports in Nassau, Bahamas..."
+                        className="mt-1.5 min-h-[110px] rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111] resize-none"
+                      />
+                      <p className="text-xs text-[#475569] dark:text-gray-500 mt-1.5">
+                        Max 512 characters · Shown in your WhatsApp profile card
+                      </p>
                     </div>
                     <div>
-                      <Label htmlFor="wpCategory" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Category</Label>
-                      <SimpleSelect value={wpCategory} onValueChange={setWpCategory} options={waCategoryOptions} className="mt-1.5" />
+                      <Label htmlFor="wpCategory" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Business Category
+                      </Label>
+                      <SimpleSelect
+                        value={wpCategory}
+                        onValueChange={setWpCategory}
+                        options={waCategoryOptions}
+                        className="mt-1.5"
+                      />
                     </div>
                   </div>
                 </div>
@@ -914,25 +1220,52 @@ export default function SettingsPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-9 w-9 rounded-xl bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center flex-shrink-0">
-                      <Phone className="h-5 w-5 text-blue-500" />
+                      <Phone weight="regular" className="h-5 w-5 text-blue-500" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-gray-100">Contact Information</h4>
-                      <p className="text-xs text-[#475569] dark:text-gray-400">How customers can reach you outside of WhatsApp</p>
+                      <p className="text-xs text-[#475569] dark:text-gray-400">
+                        How customers can reach you outside of WhatsApp
+                      </p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <Label htmlFor="wpPhone" className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</Label>
-                      <Input id="wpPhone" value={wpPhone} onChange={(e) => setWpPhone(e.target.value)} placeholder="+1-242-555-0199" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpPhone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="wpPhone"
+                        value={wpPhone}
+                        onChange={(e) => setWpPhone(e.target.value)}
+                        placeholder="+1-242-555-0199"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="wpEmail" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</Label>
-                      <Input id="wpEmail" type="email" value={wpEmail} onChange={(e) => setWpEmail(e.target.value)} placeholder="info@simplydavenassau.com" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpEmail" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="wpEmail"
+                        type="email"
+                        value={wpEmail}
+                        onChange={(e) => setWpEmail(e.target.value)}
+                        placeholder="info@simplydavenassau.com"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                     <div className="sm:col-span-2">
-                      <Label htmlFor="wpWebsite" className="text-sm font-medium text-gray-700 dark:text-gray-300">Website URL</Label>
-                      <Input id="wpWebsite" value={wpWebsite} onChange={(e) => setWpWebsite(e.target.value)} placeholder="www.simplydavenassau.com" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpWebsite" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Website URL
+                      </Label>
+                      <Input
+                        id="wpWebsite"
+                        value={wpWebsite}
+                        onChange={(e) => setWpWebsite(e.target.value)}
+                        placeholder="www.simplydavenassau.com"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -943,21 +1276,39 @@ export default function SettingsPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-9 w-9 rounded-xl bg-amber-50 dark:bg-amber-900/10 flex items-center justify-center flex-shrink-0">
-                      <MapPin className="h-5 w-5 text-amber-500" />
+                      <MapPin weight="regular" className="h-5 w-5 text-amber-500" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-gray-100">Location &amp; Hours</h4>
-                      <p className="text-xs text-[#475569] dark:text-gray-400">Let customers know where to find you and when you're open</p>
+                      <p className="text-xs text-[#475569] dark:text-gray-400">
+                        Let customers know where to find you and when you're open
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-5">
                     <div>
-                      <Label htmlFor="wpAddress" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Address</Label>
-                      <Input id="wpAddress" value={wpAddress} onChange={(e) => setWpAddress(e.target.value)} placeholder="Paradise Island, Nassau, Bahamas" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpAddress" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Business Address
+                      </Label>
+                      <Input
+                        id="wpAddress"
+                        value={wpAddress}
+                        onChange={(e) => setWpAddress(e.target.value)}
+                        placeholder="Paradise Island, Nassau, Bahamas"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="wpHours" className="text-sm font-medium text-gray-700 dark:text-gray-300">Business Hours</Label>
-                      <Input id="wpHours" value={wpHours} onChange={(e) => setWpHours(e.target.value)} placeholder="Monday-Saturday 8:00 AM - 6:00 PM, Sunday Closed" className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]" />
+                      <Label htmlFor="wpHours" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Business Hours
+                      </Label>
+                      <Input
+                        id="wpHours"
+                        value={wpHours}
+                        onChange={(e) => setWpHours(e.target.value)}
+                        placeholder="Monday-Saturday 8:00 AM - 6:00 PM, Sunday Closed"
+                        className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -966,12 +1317,16 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-end gap-3 pt-2">
                   {wpSaved && (
                     <span className="flex items-center gap-1.5 text-sm text-emerald-600">
-                      <CheckCircle className="h-4 w-4" />
+                      <CheckCircle weight="bold" className="h-4 w-4" />
                       Saved successfully
                     </span>
                   )}
-                  <Button onClick={handleSaveWhatsAppProfile} disabled={wpSaving} className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8">
-                    {wpSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  <Button
+                    onClick={handleSaveWhatsAppProfile}
+                    disabled={wpSaving}
+                    className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                  >
+                    {wpSaving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                     Save Changes
                   </Button>
                 </div>
@@ -984,11 +1339,13 @@ export default function SettingsPage() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-9 w-9 rounded-xl bg-orange-50 dark:bg-orange-900/10 flex items-center justify-center flex-shrink-0">
-                  <Bell className="h-5 w-5 text-orange-500" />
+                  <Bell weight="regular" className="h-5 w-5 text-orange-500" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">Push Notifications</h4>
-                  <p className="text-xs text-[#475569] dark:text-gray-400">Receive real-time alerts on your phone or desktop even when the app is closed</p>
+                  <p className="text-xs text-[#475569] dark:text-gray-400">
+                    Receive real-time alerts on your phone or desktop even when the app is closed
+                  </p>
                 </div>
               </div>
 
@@ -1003,7 +1360,9 @@ export default function SettingsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    {pushLoading && <Loader2 className="h-4 w-4 animate-spin text-[#3A9B9F]" />}
+                    {pushLoading && (
+                      <CircleNotch weight="bold" className="h-4 w-4 animate-spin text-[#3A9B9F]" />
+                    )}
                     <Switch
                       disabled={!pushSupported || pushLoading}
                       checked={pushEnabled}
@@ -1015,12 +1374,16 @@ export default function SettingsPage() {
                 {pushEnabled && (
                   <div className="mt-8 pt-6 border-t border-gray-100 dark:border-[#222222] grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222]">
-                      <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Connected Devices</p>
+                      <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                        Connected Devices
+                      </p>
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-white dark:bg-[#0A0A0A] flex items-center justify-center shadow-sm">
-                          <CheckCircle className="h-4 w-4 text-emerald-500" />
+                          <CheckCircle weight="regular" className="h-4 w-4 text-emerald-500" />
                         </div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">This Device is registered</p>
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          This Device is registered
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1031,23 +1394,26 @@ export default function SettingsPage() {
 
           {/* Billing Tab */}
           <TabsContent value="billing" className="space-y-10 pb-12">
-
             {/* Current Plan */}
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-9 w-9 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 flex items-center justify-center flex-shrink-0">
-                  <CreditCard className="h-5 w-5 text-emerald-500" />
+                  <CreditCard weight="regular" className="h-5 w-5 text-emerald-500" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">Current Plan Overview</h4>
-                  <p className="text-xs text-[#475569] dark:text-gray-400">Manage your active subscription and upcoming charges</p>
+                  <p className="text-xs text-[#475569] dark:text-gray-400">
+                    Manage your active subscription and upcoming charges
+                  </p>
                 </div>
               </div>
 
               <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                 <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100 dark:border-[#222222]">
                   <div>
-                    <h5 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">TropiChat {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}</h5>
+                    <h5 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+                      TropiChat {customer?.plan?.charAt(0).toUpperCase() + (customer?.plan?.slice(1) || "")}
+                    </h5>
                     <p className="text-sm text-[#475569] dark:text-gray-400 mt-1">
                       {customer?.plan === "free" ? (
                         (() => {
@@ -1055,8 +1421,8 @@ export default function SettingsPage() {
                           const trialEnd = new Date(created.getTime() + 14 * 24 * 60 * 60 * 1000)
                           const diffTime = Math.max(0, trialEnd.getTime() - new Date().getTime())
                           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-                          return diffDays > 0 
-                            ? `You have ${diffDays} day${diffDays === 1 ? '' : 's'} left in your 14-day free trial.` 
+                          return diffDays > 0
+                            ? `You have ${diffDays} day${diffDays === 1 ? "" : "s"} left in your 14-day free trial.`
                             : "Your 14-day free trial has expired."
                         })()
                       ) : (
@@ -1072,22 +1438,30 @@ export default function SettingsPage() {
                 {customer?.plan === "free" ? (
                   <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
-                      <h6 className="font-semibold text-emerald-900 dark:text-emerald-400">Ready to level up?</h6>
-                      <p className="text-sm text-emerald-700 dark:text-emerald-500 mt-1">Upgrade to Professional to unlock team management and advanced integrations.</p>
+                      <h6 className="font-semibold text-emerald-900 dark:text-emerald-400">
+                        Ready to level up?
+                      </h6>
+                      <p className="text-sm text-emerald-700 dark:text-emerald-500 mt-1">
+                        Upgrade to Professional to unlock team management and advanced integrations.
+                      </p>
                     </div>
                     <Button
                       className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm"
                       onClick={handleUpgrade}
                       disabled={billingLoading}
                     >
-                      {billingLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                      {billingLoading ? (
+                        <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />
+                      ) : null}
                       Upgrade Now
                     </Button>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">Monthly Cost</p>
+                      <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">
+                        Monthly Cost
+                      </p>
                       <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                         {customer?.stripe_current_period_end ? "$29" : "$0"}
                         <span className="text-sm text-gray-500 font-normal">/mo</span>
@@ -1100,8 +1474,7 @@ export default function SettingsPage() {
                       <p className="text-lg font-semibold text-[#3A9B9F] dark:text-teal-400">
                         {customer?.stripe_current_period_end
                           ? new Date(customer.stripe_current_period_end).toLocaleDateString()
-                          : "Lifetime Founder's Pass"
-                        }
+                          : "Lifetime Founder's Pass"}
                       </p>
                     </div>
                   </div>
@@ -1115,28 +1488,39 @@ export default function SettingsPage() {
             <div>
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-100">Workspace Usage</h4>
-                <p className="text-xs text-[#475569] dark:text-gray-400">Monitor your limits and message volume for the current billing cycle</p>
+                <p className="text-xs text-[#475569] dark:text-gray-400">
+                  Monitor your limits and message volume for the current billing cycle
+                </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-sm text-gray-900 dark:text-gray-100">Contacts</span>
-                    <span className="text-sm font-semibold text-[#3A9B9F]">{contactsCount} / 500</span>
+                    <span className="text-sm font-semibold text-[#3A9B9F]">
+                      {contactsCount} / 500
+                    </span>
                   </div>
                   <div className="w-full bg-gray-100 dark:bg-[#111111] rounded-full h-2.5 overflow-hidden">
-                    <div className="bg-[#3A9B9F] h-full rounded-full transition-all" style={{ width: `${Math.min((contactsCount / 500) * 100, 100)}%` }} />
+                    <div
+                      className="bg-[#3A9B9F] h-full rounded-full transition-all"
+                      style={{ width: `${Math.min((contactsCount / 500) * 100, 100)}%` }}
+                    />
                   </div>
                   <p className="text-xs text-[#475569] dark:text-gray-500 mt-3">Active unique clients</p>
                 </div>
                 <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-sm text-gray-900 dark:text-gray-100">Messages</span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{messagesCount.toLocaleString()}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {messagesCount.toLocaleString()}
+                    </span>
                   </div>
                   <div className="w-full bg-emerald-50 dark:bg-emerald-900/10 rounded-full h-2.5 overflow-hidden">
                     <div className="bg-emerald-400 h-full rounded-full transition-all" style={{ width: "100%" }} />
                   </div>
-                  <p className="text-xs text-[#475569] dark:text-gray-500 mt-3">Unlimited messages on all plans</p>
+                  <p className="text-xs text-[#475569] dark:text-gray-500 mt-3">
+                    Unlimited messages on all plans
+                  </p>
                 </div>
               </div>
             </div>
@@ -1148,16 +1532,22 @@ export default function SettingsPage() {
               <div>
                 <div className="mb-6">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">Manage Billing</h4>
-                  <p className="text-xs text-[#475569] dark:text-gray-400">Update payment methods, view invoices, or cancel your subscription</p>
+                  <p className="text-xs text-[#475569] dark:text-gray-400">
+                    Update payment methods, view invoices, or cancel your subscription
+                  </p>
                 </div>
                 <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-5 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div className="bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] rounded-xl w-14 h-10 flex items-center justify-center">
-                      <CreditCard className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                      <CreditCard weight="regular" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">Stripe Customer Portal</p>
-                      <p className="text-xs text-[#475569] dark:text-gray-500 mt-0.5">Securely manage your billing info</p>
+                      <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                        Stripe Customer Portal
+                      </p>
+                      <p className="text-xs text-[#475569] dark:text-gray-500 mt-0.5">
+                        Securely manage your billing info
+                      </p>
                     </div>
                   </div>
                   <Button
@@ -1167,13 +1557,16 @@ export default function SettingsPage() {
                     disabled={billingLoading}
                     className="rounded-xl border-gray-200 dark:border-[#3A3A3A] shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#111111] hover:bg-gray-50 dark:hover:bg-[#333333]"
                   >
-                    {billingLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ExternalLink className="h-4 w-4 mr-2" />}
+                    {billingLoading ? (
+                      <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <ArrowSquareOut weight="regular" className="h-4 w-4 mr-2" />
+                    )}
                     Portal
                   </Button>
                 </div>
               </div>
             )}
-
           </TabsContent>
         </Tabs>
       </div>
@@ -1185,10 +1578,10 @@ function MobileTabLink({ icon: Icon, label, onClick }: { icon: any, label: strin
   return (
     <button onClick={onClick} className="w-full flex items-center justify-between py-4 px-2 transition-colors active:bg-gray-50 dark:active:bg-[#111111] rounded-2xl">
       <div className="flex items-center gap-4">
-        <Icon className="h-[22px] w-[22px] text-[#475569] dark:text-gray-400" strokeWidth={1.5} />
+        <Icon weight="regular" className="h-[22px] w-[22px] text-[#475569] dark:text-gray-400" />
         <span className="font-medium text-[#213138] dark:text-gray-100 text-[16px]">{label}</span>
       </div>
-      <ChevronRight className="h-[20px] w-[20px] text-gray-400 dark:text-gray-600" strokeWidth={1.5} />
+      <CaretRight weight="bold" className="h-[20px] w-[20px] text-gray-400 dark:text-gray-600" />
     </button>
   )
 }
@@ -1284,9 +1677,9 @@ function ChannelCard({
           className="w-full rounded-xl border-red-100 dark:border-red-900/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 hover:border-red-200 font-bold transition-all duration-200"
         >
           {disconnecting ? (
-            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+            <CircleNotch weight="bold" className="h-3.5 w-3.5 mr-1.5 animate-spin" />
           ) : (
-            <LogOut className="h-3.5 w-3.5 mr-2" />
+            <SignOut weight="bold" className="h-3.5 w-3.5 mr-2" />
           )}
           Disconnect Channel
         </Button>

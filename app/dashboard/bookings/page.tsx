@@ -3,10 +3,20 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Calendar, CheckCircle2, ChevronLeft, ChevronRight,
-  Clock, ExternalLink, Filter, ChevronDown, Loader2,
-  Settings, Users, ArrowRight,
-} from "lucide-react"
+  ArrowLeft,
+  CalendarBlank,
+  CheckCircle,
+  CaretLeft,
+  CaretRight,
+  Clock,
+  ArrowSquareOut,
+  Funnel,
+  CaretDown,
+  CircleNotch,
+  GearSix,
+  Users,
+  ArrowRight,
+} from "@phosphor-icons/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -134,7 +144,7 @@ function ListView({ bookings, onBookingClick }: any) {
                   <p className="text-[14px] font-bold text-gray-900 dark:text-white tabular-nums">{formatBookingTime(b.booking_time)}</p>
                   <StatusBadge status={b.status} />
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-300 dark:text-[#333] group-hover:text-[#3A9B9F] transition-colors shrink-0" />
+                <CaretRight weight="regular" className="h-4 w-4 text-gray-300 dark:text-[#333] group-hover:text-[#3A9B9F] transition-colors shrink-0" />
               </button>
             ))}
           </div>
@@ -228,7 +238,7 @@ export default function BookingsPage() {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
     <div className="flex flex-1 items-center justify-center h-full p-8">
-      <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F]" />
+      <CircleNotch weight="bold" className="h-8 w-8 animate-spin text-[#3A9B9F]" />
     </div>
   )
 
@@ -241,7 +251,7 @@ export default function BookingsPage() {
           style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}>
           <div className="max-w-sm mx-auto">
             <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mx-auto mb-5">
-              <Calendar className="h-5 w-5 text-[#3A9B9F]" />
+              <CalendarBlank weight="regular" className="h-5 w-5 text-[#3A9B9F]" />
             </div>
             <h3 className="text-xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] mb-2">Professional Feature</h3>
             <p className="text-[14px] text-gray-500 dark:text-[#525252] mb-8 leading-relaxed">
@@ -249,7 +259,7 @@ export default function BookingsPage() {
             </p>
             <button onClick={() => router.push("/dashboard/settings?tab=billing")}
               className="flex items-center gap-2 px-6 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto">
-              Upgrade to Professional<ArrowRight className="h-4 w-4" />
+              Upgrade to Professional<ArrowRight weight="bold" className="h-4 w-4" />
             </button>
           </div>
         </motion.div>
@@ -265,14 +275,14 @@ export default function BookingsPage() {
  border-b border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
         <button onClick={handleMobileBack}
           className="h-9 w-9 flex items-center justify-center bg-gray-100 dark:bg-[#111] rounded-xl text-gray-500 dark:text-[#525252] active:scale-90 transition-transform">
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft weight="regular" className="h-4 w-4" />
         </button>
         <p className="text-[15px] font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
           {MONTH_NAMES[viewMonth]} {viewYear}
         </p>
         <Link href="/dashboard/bookings/availability">
           <button className="h-9 w-9 flex items-center justify-center bg-gray-100 dark:bg-[#111] rounded-xl text-gray-500 dark:text-[#525252] active:scale-90 transition-transform">
-            <Settings className="h-4 w-4" />
+            <GearSix weight="regular" className="h-4 w-4" />
           </button>
         </Link>
       </div>
@@ -281,12 +291,12 @@ export default function BookingsPage() {
       <div className="px-1 pt-4 pb-2">
         <div className="flex items-center justify-between mb-3 px-2">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
-          <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="p-2.5 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all shadow-sm">
-              <ChevronLeft className="h-5 w-5" />
+          <div className="flex items-center gap-2.5">
+            <button onClick={prevMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] active:scale-90 transition-all shadow-sm">
+              <CaretLeft weight="bold" className="h-6 w-6" />
             </button>
-            <button onClick={nextMonth} className="p-2.5 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all shadow-sm">
-              <ChevronRight className="h-5 w-5" />
+            <button onClick={nextMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] active:scale-90 transition-all shadow-sm">
+              <CaretRight weight="bold" className="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -400,13 +410,13 @@ export default function BookingsPage() {
           <div className="flex items-center gap-3">
             {/* Service filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-[#525252]" />
+              <Funnel weight="regular" className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-[#525252]" />
               <select value={filterService} onChange={e => setFilter(e.target.value)}
                 className="pl-9 pr-8 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-700 dark:text-[#A3A3A3] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200 cursor-pointer appearance-none">
                 <option value="all">All Services</option>
                 {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
-              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-[#525252] pointer-events-none" />
+              <CaretDown weight="regular" className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-[#525252] pointer-events-none" />
             </div>
             {/* View toggle */}
             <div className="flex items-center bg-gray-100 dark:bg-[#111] p-1 rounded-xl border border-gray-200 dark:border-[#1C1C1C] gap-0.5">
@@ -422,7 +432,7 @@ export default function BookingsPage() {
             </div>
             <Link href="/dashboard/bookings/availability">
               <Button variant="outline" className="bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] rounded-xl h-10 text-[13px]">
-                <Settings className="h-4 w-4 mr-2" />Services
+                <GearSix weight="regular" className="h-4 w-4 mr-2" />Services
               </Button>
             </Link>
             <button onClick={() => setCreateOpen(true)}
@@ -431,7 +441,7 @@ export default function BookingsPage() {
             </button>
             <Link href={currCustomerId ? `/book/${currCustomerId}` : "/book-preview"} target="_blank">
               <Button variant="outline" className="bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] hover:border-[#3A9B9F] text-[#3A9B9F] rounded-xl h-10 text-[13px]">
-                <ExternalLink className="h-4 w-4 mr-2" />Share Link
+                <ArrowSquareOut weight="regular" className="h-4 w-4 mr-2" />Share Link
               </Button>
             </Link>
           </div>
@@ -453,16 +463,16 @@ export default function BookingsPage() {
             <h2 className="text-[16px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
               {MONTH_NAMES[viewMonth]} <span className="text-gray-400 dark:text-[#525252] font-normal">{viewYear}</span>
             </h2>
-            <div className="flex items-center gap-2">
-              <button onClick={prevMonth} className="p-2 rounded-lg bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-500 dark:text-[#525252] hover:text-[#3A9B9F] transition-colors duration-200">
-                <ChevronLeft className="h-4 w-4" />
+            <div className="flex items-center gap-2.5">
+              <button onClick={prevMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] transition-all duration-200">
+                <CaretLeft weight="bold" className="h-5 w-5" />
               </button>
               <button onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()) }}
-                className="px-3 py-1.5 text-[12px] font-medium text-gray-500 dark:text-[#525252] hover:text-[#3A9B9F] transition-colors duration-200">
+                className="px-4 py-2 text-[13px] font-bold text-gray-500 dark:text-[#525252] hover:text-[#3A9B9F] transition-colors duration-200">
                 Today
               </button>
-              <button onClick={nextMonth} className="p-2 rounded-lg bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-500 dark:text-[#525252] hover:text-[#3A9B9F] transition-colors duration-200">
-                <ChevronRight className="h-4 w-4" />
+              <button onClick={nextMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] transition-all duration-200">
+                <CaretRight weight="bold" className="h-5 w-5" />
               </button>
             </div>
           </div>
