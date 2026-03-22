@@ -278,7 +278,7 @@ export default function BookingsPage() {
       </div>
 
       {/* Day calendar grid + nav */}
-      <div className="px-2 pt-4 pb-2">
+      <div className="px-1 pt-4 pb-2">
         <div className="flex items-center justify-between mb-3 px-2">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
           <div className="flex items-center gap-2">
@@ -291,8 +291,8 @@ export default function BookingsPage() {
           </div>
         </div>
         
-        {/* Compact fixed grid — maximized space */}
-        <div className="grid grid-cols-7 gap-1">
+        {/* Maximum Grid Space — Edge to Edge */}
+        <div className="grid grid-cols-7 gap-0.5">
           {DAY_NAMES.map(d => (
             <div key={d} className="text-center text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
           ))}
@@ -305,19 +305,19 @@ export default function BookingsPage() {
             
             return (
               <motion.button key={idx} onClick={() => setSelDate(date)}
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.003 }}
-                className={cn("flex flex-col items-center justify-center aspect-square rounded-xl border transition-all duration-200 relative",
+                initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.002 }}
+                className={cn("flex flex-col items-center justify-center aspect-square rounded-lg border transition-all duration-200 relative",
                   isSelected
                     ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20"
-                    : "bg-white dark:bg-[#0C0C0C] border-gray-100 dark:border-[#1C1C1C] text-gray-800 dark:text-white"
+                    : "bg-white dark:bg-[#0C0C0C] border-gray-100/60 dark:border-[#1C1C1C] text-gray-900 dark:text-white"
                 )}>
-                <span className={cn("text-[16px] font-bold", isSelected ? "text-white" : "opacity-90")}>
+                <span className={cn("text-[18px] font-bold leading-none", isSelected ? "text-white" : "opacity-100")}>
                   {day}
                 </span>
                 {count > 0 && (
-                  <div className={cn("absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full flex items-center justify-center text-[7px] font-bold border",
+                  <div className={cn("absolute top-0 right-0 h-3 w-3 rounded-full flex items-center justify-center text-[7px] font-bold border",
                     isSelected ? "bg-white text-[#3A9B9F] border-white" : "bg-[#3A9B9F] text-white border-transparent")}>
-                    {count}
+                    {/* Just the dot if count is 1, otherwise the number can stay if it fits */}
                   </div>
                 )}
               </motion.button>
