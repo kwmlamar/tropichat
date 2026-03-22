@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Trash2, Mail, AlertTriangle, Shield, Clock, ExternalLink } from "lucide-react"
+import { CaretLeft as ArrowLeft, Trash as Trash2, Envelope as Mail, Warning as AlertTriangle, Shield, Clock, ArrowSquareOut as ExternalLink } from "@phosphor-icons/react/dist/ssr"
 
 export const metadata: Metadata = {
   title: "Data Deletion Request - TropiChat by TropiTech Solutions LLC",
@@ -29,7 +29,7 @@ export default function DataDeletionPage() {
             href="/"
             className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#3A9B9F]"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft weight="bold" className="h-4 w-4" />
             Back to Home
           </Link>
         </div>
@@ -95,7 +95,7 @@ export default function DataDeletionPage() {
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <div className="mb-3 flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Trash2 className="h-4 w-4 text-[#3A9B9F]" />
+                <Trash2 weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
               </div>
               <h3 className="!mt-0 !mb-0 text-lg">
                 Option 1: Delete Your Account (Self-Service)
@@ -123,7 +123,7 @@ export default function DataDeletionPage() {
             </ol>
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
               <div className="flex gap-3">
-                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+                <AlertTriangle weight="bold" className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
                 <div className="text-sm text-red-800">
                   <strong>Warning:</strong> Account deletion is permanent and
                   cannot be undone. All your data — including messages, contacts,
@@ -137,7 +137,7 @@ export default function DataDeletionPage() {
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <div className="mb-3 flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Mail className="h-4 w-4 text-[#3A9B9F]" />
+                <Mail weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
               </div>
               <h3 className="!mt-0 !mb-0 text-lg">
                 Option 2: Request Deletion via Email
@@ -174,7 +174,7 @@ export default function DataDeletionPage() {
           <div className="space-y-4">
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Shield className="h-4 w-4 text-[#3A9B9F]" />
+                <Shield weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -190,7 +190,7 @@ export default function DataDeletionPage() {
             </div>
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Clock className="h-4 w-4 text-[#3A9B9F]" />
+                <Clock weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -205,7 +205,7 @@ export default function DataDeletionPage() {
             </div>
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Trash2 className="h-4 w-4 text-[#3A9B9F]" />
+                <Trash2 weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -264,7 +264,7 @@ export default function DataDeletionPage() {
                 rel="noopener noreferrer"
               >
                 Facebook Settings
-                <ExternalLink className="ml-1 inline h-3 w-3" />
+                <ExternalLink weight="bold" className="ml-1 inline h-3 w-3" />
               </a>{" "}
               &rarr; Your Facebook Information &rarr; Delete Your Information
             </li>
@@ -276,7 +276,7 @@ export default function DataDeletionPage() {
                 rel="noopener noreferrer"
               >
                 Instagram Privacy Settings
-                <ExternalLink className="ml-1 inline h-3 w-3" />
+                <ExternalLink weight="bold" className="ml-1 inline h-3 w-3" />
               </a>{" "}
               &rarr; Data Download or Account Deletion
             </li>

@@ -81,7 +81,7 @@ export function ProblemSection() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
             Sound familiar?
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
+          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             The daily struggle every
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">

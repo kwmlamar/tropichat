@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { CaretLeft as ArrowLeft } from "@phosphor-icons/react/dist/ssr"
 
 export const metadata: Metadata = {
   title: "Terms of Service - TropiChat by TropiTech Solutions LLC",
@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
             href="/"
             className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#3A9B9F]"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft weight="bold" className="h-4 w-4" />
             Back to Home
           </Link>
         </div>

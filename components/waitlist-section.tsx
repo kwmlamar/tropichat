@@ -91,7 +91,7 @@ export function WaitlistSection() {
             <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm ring-1 ring-white/20">
               <CheckCircle2 className="h-10 w-10 text-[#3A9B9F]" />
             </div>
-            <h2 className="mb-4 text-3xl font-bold text-white font-[family-name:var(--font-poppins)] md:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-white  md:text-4xl">
               You're on the list!
             </h2>
             <p className="mb-8 text-lg text-teal-100/80">
@@ -130,7 +130,7 @@ export function WaitlistSection() {
               <Sparkles className="h-4 w-4 text-[#3A9B9F]" />
               Limited Early Access
             </div>
-            <h2 className="mb-4 text-4xl font-bold text-white font-[family-name:var(--font-poppins)] md:text-5xl leading-tight">
+            <h2 className="mb-4 text-4xl font-bold text-white  md:text-5xl leading-tight">
               Be among the first to
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-300">

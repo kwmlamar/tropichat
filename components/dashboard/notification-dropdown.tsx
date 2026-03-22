@@ -65,7 +65,7 @@ export function NotificationDropdown({
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <div className="mb-3 rounded-full bg-gray-100 dark:bg-[#111111] p-3">
-              <Bell weight="regular" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+              <Bell weight="bold" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
             </div>
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100">All caught up!</p>
             <p className="mt-1 text-xs text-gray-500">No notifications yet</p>

@@ -68,17 +68,17 @@ const statusFilters = [
 function StatusBadge({ status }: { status: string }) {
   if (status === "APPROVED") return (
     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#3A9B9F] uppercase tracking-widest">
-      <CheckCircle className="h-3 w-3" />Approved
+      <CheckCircle weight="bold" className="h-3 w-3" />Approved
     </span>
   )
   if (status === "PENDING") return (
     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-500 uppercase tracking-widest">
-      <Clock className="h-3 w-3" />Pending
+      <Clock weight="bold" className="h-3 w-3" />Pending
     </span>
   )
   if (status === "REJECTED") return (
     <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-400 uppercase tracking-widest">
-      <XCircle className="h-3 w-3" />Rejected
+      <XCircle weight="bold" className="h-3 w-3" />Rejected
     </span>
   )
   return <span className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest">{status}</span>
@@ -175,7 +175,7 @@ export default function TemplatesPage() {
               <div className="w-12 h-12 rounded-xl bg-[#FF8B66]/10 flex items-center justify-center mx-auto mb-5">
                 <AlertTriangle className="h-5 w-5 text-[#FF8B66]" />
               </div>
-              <h3 className="text-xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+              <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">
                 WhatsApp Not Connected
               </h3>
               <p className="text-[14px] text-gray-500 dark:text-[#525252] mb-8 leading-relaxed">
@@ -211,7 +211,7 @@ export default function TemplatesPage() {
               <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
               WhatsApp
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
               Templates
             </h1>
           </div>
@@ -244,7 +244,7 @@ export default function TemplatesPage() {
         >
           {/* Search */}
           <div className="relative flex-1">
-            <Search weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Search weight="bold" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input
               type="text"
               placeholder="Search by name or content…"
@@ -293,7 +293,7 @@ export default function TemplatesPage() {
           >
             <div className="max-w-xs mx-auto">
               <FileText className="h-8 w-8 text-gray-300 dark:text-[#333] mx-auto mb-4" />
-              <h3 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+              <h3 className="text-[15px] font-semibold text-[#213138] dark:text-white  mb-2">
                 {searchQuery ? "No templates found" : "No templates yet"}
               </h3>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
@@ -366,7 +366,7 @@ export default function TemplatesPage() {
                         </DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem
-                          icon={<Trash weight="regular" className="h-4 w-4" />}
+                          icon={<Trash weight="bold" className="h-4 w-4" />}
                           destructive
                           onClick={() => handleDeleteTemplate(template.name)}
                         >

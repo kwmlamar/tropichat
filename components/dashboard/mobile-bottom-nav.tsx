@@ -107,14 +107,14 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
 
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#222222]">
-              <h2 className="text-base font-semibold text-[#213138] dark:text-gray-100" style={{ fontFamily: "var(--font-poppins)" }}>
+              <h2 className="text-base font-semibold text-[#213138] dark:text-gray-100" style={{ fontFamily: "var(--font-lexend)" }}>
                 More
               </h2>
               <button
                 onClick={() => setShowMore(false)}
                 className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors text-gray-400 dark:text-gray-500"
               >
-                <X className="h-5 w-5" />
+                <X weight="bold" className="h-5 w-5" />
               </button>
             </div>
 
@@ -134,7 +134,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                         : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
                     )}
                   >
-                    <Icon weight={active ? "fill" : "regular"} className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
+                    <Icon weight="bold" className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
                     <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
                   </Link>
                 )
@@ -177,7 +177,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                 )}
               >
                 <div className="relative">
-                  <Icon weight={active ? "fill" : "regular"} className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
+                  <Icon weight="bold" className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
                   {/* Unread dot on Inbox */}
                   {isInbox && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#25D366] text-[10px] font-bold text-white px-0.5">
@@ -204,7 +204,7 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
               isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400"
             )}
           >
-            <SquaresFour weight={isMoreActive || showMore ? "fill" : "regular"} className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")} />
+            <SquaresFour weight="bold" className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")} />
             <span className={cn("text-[10px] font-medium tracking-wide", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")}>
               More
             </span>

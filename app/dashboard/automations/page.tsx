@@ -110,7 +110,7 @@ function AutomationCard({
       {/* Top row: name + controls */}
       <div className="flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0">
-          <h3 className="font-semibold text-[15px] text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] truncate">
+          <h3 className="font-semibold text-[15px] text-[#213138] dark:text-white  truncate">
             {automation.name}
           </h3>
           <div className="flex items-center gap-2 mt-1">
@@ -208,7 +208,7 @@ function AutomationCard({
       {/* Last run */}
       {automation.last_triggered_at && (
         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-[#1C1C1C] flex items-center gap-1.5">
-          <Clock weight="regular" className="h-3 w-3 text-gray-300 dark:text-[#333]" />
+          <Clock weight="bold" className="h-3 w-3 text-gray-300 dark:text-[#333]" />
           <span className="text-[11px] text-gray-400 dark:text-[#525252]">
             Last run {formatDistanceToNow(automation.last_triggered_at)} ago
           </span>
@@ -307,7 +307,7 @@ export default function AutomationsPage() {
               <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
               Automations
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
               Workflows
             </h1>
           </div>
@@ -336,7 +336,7 @@ export default function AutomationsPage() {
               <div className="w-12 h-12 rounded-xl bg-[#FF8B66]/10 flex items-center justify-center mx-auto mb-5">
                 <Zap className="h-5 w-5 text-[#FF8B66]" />
               </div>
-              <h3 className="text-xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+              <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">
                 Professional Feature
               </h3>
               <p className="text-[14px] text-gray-500 dark:text-[#525252] mb-8 leading-relaxed">
@@ -375,7 +375,7 @@ export default function AutomationsPage() {
                   <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-2">
                     {s.label}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white  tabular-nums">
                     {s.value}
                   </p>
                 </div>
@@ -422,7 +422,7 @@ export default function AutomationsPage() {
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+                  <h3 className="text-lg font-bold text-[#213138] dark:text-white  mb-2">
                     No automations yet
                   </h3>
                   <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6 leading-relaxed">

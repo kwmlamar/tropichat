@@ -11,9 +11,6 @@ import {
   Eye, 
   EyeSlash as EyeOff, 
   CircleNotch as Loader2, 
-  ChatCircle as MessageCircle, 
-  InstagramLogo as Instagram, 
-  FacebookLogo as Facebook, 
   CheckCircle 
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
@@ -65,15 +62,14 @@ function WhatsAppBrandIcon({ className }: { className?: string }) {
 function InstagramBrandIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="url(#insta_gradient)" />
+      <rect width="24" height="24" rx="5" fill="url(#insta_gradient_2)" />
       <path d="M12 6.8c-2.8 0-5.1 2.3-5.1 5.2s2.3 5.2 5.1 5.2 5.1-2.3 5.1-5.2S14.8 6.8 12 6.8zm0 8.4c-1.8 0-3.3-1.5-3.3-3.2 0-1.8 1.5-3.2 3.3-3.2s3.3 1.4 3.3 3.2c0 1.7-1.4 3.2-3.3 3.2zM18.8 6.9c0 .6-.5 1.1-1.1 1.1-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1.6 0 1.1.5 1.1 1.1z" fill="white" />
       <path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.3-2.3.5-.6.2-1.1.6-1.6 1.1-.5.5-.9 1-1.1 1.6-.2.6-.4 1.3-.5 2.3-.1 1-.1 1.4-.1 4.1s0 3.1.1 4.1c.1 1 .3 1.7.5 2.3.2.6.6 1.1 1.1 1.6.5.5 1 1 1.6 1.1.6.2 1.3.4 2.3.5 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c1-.1 1.7-.3 2.3-.5.6-.2 1.1-.6 1.6-1.1.5-.5.9-1 1.1-1.6.2-.6.4-1.3.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.3-1.7-.5-2.3-.2-.6-.6-1.1-1.1-1.6-.5-.5-1-1-1.6-1.1-.6-.2-1.3-.4-2.3-.5C15.1 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1.9.1 1.4.2 1.7.3.4.2.7.4 1 .7.3.3.5.6.7 1 .1.3.3.8.4 1.7.1 1 .1 1.3.1 4s0 3-.1 4c-.1.9-.2 1.4-.3 1.7-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.3.1-.8.3-1.7.4-1 .1-1.3.1-4 .1s-3 0-4-.1c-.9-.1-1.4-.2-1.7-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.1-.3-.3-.8-.4-1.7-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-.9.2-1.4.3-1.7.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.3-.1.8-.3 1.7-.4 1-.1 1.3-.1 4-.1z" fill="white" />
       <defs>
-        <linearGradient id="insta_gradient" x1="2.5" y1="21.5" x2="21.6" y2="2.5" gradientUnits="userSpaceOnUse">
+        <linearGradient id="insta_gradient_2" x1="2.5" y1="21.5" x2="21.6" y2="2.5" gradientUnits="userSpaceOnUse">
           <stop stopColor="#F58529" />
           <stop offset="0.1" stopColor="#FEDA77" />
-          <stop offset="0.5" stopColor="#DD2A7B" />
-          <stop offset="1" stopColor="#8134AF" />
+          <stop offset="1" stopColor="#DD2A7B" />
         </linearGradient>
       </defs>
     </svg>
@@ -83,10 +79,10 @@ function InstagramBrandIcon({ className }: { className?: string }) {
 function MessengerBrandIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C6.47715 2 2 6.14214 2 11.2462C2 14.1561 3.46014 16.7491 5.73693 18.4601C5.9318 18.6046 6.04907 18.8354 6.04907 19.0818L6.03541 21.2281C6.0289 21.464 6.27376 21.6247 6.4782 21.5061L8.9056 20.1098C9.04353 20.031 9.20818 20.0125 9.35914 20.0573C10.2081 20.3094 11.0877 20.4925 12 20.4925C17.5228 20.4925 22 16.3504 22 11.2462C22 6.14214 17.5228 2 12 2Z" fill="url(#messenger_gradient)" />
+      <path d="M12 2C6.47715 2 2 6.14214 2 11.2462C2 14.1561 3.46014 16.7491 5.73693 18.4601C5.9318 18.6046 6.04907 18.8354 6.04907 19.0818L6.03541 21.2281C6.0289 21.464 6.27376 21.6247 6.4782 21.5061L8.9056 20.1098C9.04353 20.031 9.20818 20.0125 9.35914 20.0573C10.2081 20.3094 11.0877 20.4925 12 20.4925C17.5228 20.4925 22 16.3504 22 11.2462C22 6.14214 17.5228 2 12 2Z" fill="url(#messenger_gradient_2)" />
       <path d="M6.3 12.87l3.295-5.242a.858.858 0 0 1 1.233-.243l3.053 2.29a.428.428 0 0 0 .513 0l3.664-2.793a.286.286 0 0 1 .428.37l-3.295 5.242a.858.858 0 0 1-1.233.243l-3.053-2.29a.428.428 0 0 0-.513 0l-3.664 2.793a.286.286 0 0 1-.428-.37z" fill="white" />
       <defs>
-        <linearGradient id="messenger_gradient" x1="12" y1="20.4925" x2="12" y2="2" gradientUnits="userSpaceOnUse">
+        <linearGradient id="messenger_gradient_2" x1="12" y1="20.4925" x2="12" y2="2" gradientUnits="userSpaceOnUse">
           <stop stopColor="#0084FF" />
           <stop offset="1" stopColor="#00C6FF" />
         </linearGradient>
@@ -131,7 +127,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB] dark:bg-[#0A0A0A]">
-      {/* Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#3A9B9F]/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF8B66]/10 blur-[120px] rounded-full" />
@@ -142,7 +137,6 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-6xl bg-white dark:bg-[#0A0A0A] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-[#222222] overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
       >
-        {/* Left Side - Form */}
         <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center">
           <div className="mb-10 lg:mb-12">
             <Link href="/" className="inline-block">
@@ -161,7 +155,7 @@ export default function LoginPage() {
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10 shadow-sm ring-1 ring-teal-100 dark:ring-teal-500/20">
               <Lock weight="bold" className="h-7 w-7 text-[#3A9B9F]" />
             </div>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white">
               Login to your account!
             </h1>
             <p className="text-slate-500 dark:text-gray-400 mt-2">
@@ -211,10 +205,10 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" className="rounded-md border-slate-300 dark:border-[#4A4A4A] data-[state=checked]:bg-[#3A9B9F] data-[state=checked]:border-[#3A9B9F] dark:data-[state=checked]:border-[#3A9B9F]" />
+                <Checkbox id="remember" />
                 <label
                   htmlFor="remember"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-500 dark:text-gray-400"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-500 dark:text-gray-400 cursor-pointer"
                 >
                   Remember me
                 </label>
@@ -287,23 +281,19 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Right Side - Illustration */}
         <div className="hidden lg:flex w-[45%] bg-[#213138] p-12 flex-col justify-center relative overflow-hidden">
-          {/* Brand Background Effects */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#3A9B9F]/20 blur-[120px] rounded-full" />
             <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF8B66]/10 blur-[100px] rounded-full" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,155,159,0.05)_0%,transparent_70%)]" />
           </div>
 
           <div className="relative flex-1 flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold text-white text-center mb-4 font-[family-name:var(--font-poppins)]">
+            <h2 className="text-3xl font-bold text-white text-center mb-4">
               Manage All Messages <br />
               <span className="text-[#3A9B9F]">in One Place</span>
             </h2>
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
-              {/* Central Logo Orb */}
               <div className="absolute z-20 w-20 h-20 rounded-[2.1rem] bg-white dark:bg-[#162228] flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.3)] ring-4 ring-[#213138] dark:ring-white/5">
                 <div className="w-18 h-18 relative">
                   <Image
@@ -316,13 +306,10 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Rings */}
               <div className="absolute w-44 h-44 rounded-full border border-white/10" />
               <div className="absolute w-72 h-72 rounded-full border border-white/20" />
               <div className="absolute w-[380px] h-[380px] rounded-full border border-white/10" />
 
-              {/* Icons along rings */}
-              {/* WhatsApp on inner ring */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
@@ -333,7 +320,6 @@ export default function LoginPage() {
                 </div>
               </motion.div>
 
-              {/* Instagram & Messenger on middle ring */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
@@ -347,7 +333,6 @@ export default function LoginPage() {
                 </div>
               </motion.div>
 
-              {/* Features on outer ring */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
@@ -371,7 +356,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Pagination dots imitation */}
             <div className="mt-12 flex justify-center gap-2">
               <div className="h-1.5 w-10 rounded-full bg-[#3A9B9F]" />
               <div className="h-1.5 w-5 rounded-full bg-white/10" />

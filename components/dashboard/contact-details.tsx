@@ -4,19 +4,19 @@ import { useState } from "react"
 import {
   User,
   Phone,
-  Mail,
+  Envelope as Mail,
   Tag,
   FileText,
   Calendar,
-  MessageSquare,
-  Ban,
+  ChatCircle as MessageSquare,
+  Prohibit as Ban,
   Download,
-  Trash2,
+  Trash as Trash2,
   Plus,
   X,
-  Edit2,
+  PencilSimple as Edit2,
   Check,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"

@@ -4,19 +4,19 @@ import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
-  CalendarDays,
+  CalendarBlank as CalendarDays,
   Clock,
   Users,
   User,
   Phone,
   FileText,
-  AlertTriangle,
-  CheckCircle2,
+  Warning as AlertTriangle,
+  CheckCircle as CheckCircle2,
   Check,
-  Loader2,
-  ChevronRight,
-  ChevronLeft
-} from "lucide-react"
+  CircleNotch as Loader2,
+  CaretRight as ChevronRight,
+  CaretLeft as ChevronLeft
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -185,11 +185,11 @@ export function CreateBookingForm({
             onClick={handleClose}
             className="p-2.5 rounded-full bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-500 hover:text-navy-900 transition-all border border-gray-100 dark:border-[#222222] shadow-sm shrink-0"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft weight="bold" className="h-5 w-5" />
           </button>
           
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)] truncate">
+            <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight  truncate">
               {step === 'done' ? 'Success!' : step === 'confirm' ? 'Final Check' : 'New Booking'}
             </h2>
             {step === 'form' && (
@@ -230,7 +230,7 @@ export function CreateBookingForm({
                       className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110"
                       style={{ backgroundColor: s.color + '20', color: s.color }}
                     >
-                      <CalendarDays className="h-5 w-5" />
+                      <CalendarDays weight="bold" className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-bold text-[#213138] dark:text-gray-100 text-sm group-hover:text-[#3A9B9F] transition-colors">{s.name}</p>
@@ -241,7 +241,7 @@ export function CreateBookingForm({
                     </div>
                     {serviceId === s.id && (
                       <div className="h-5 w-5 rounded-full bg-[#3A9B9F] flex items-center justify-center shadow-md shadow-teal-500/20">
-                        <Check className="h-3 w-3 text-white" />
+                        <Check weight="bold" className="h-3 w-3 text-white" />
                       </div>
                     )}
                   </button>
@@ -257,7 +257,7 @@ export function CreateBookingForm({
                 Tour Date <span className="text-coral-500">*</span>
               </label>
               <div className="relative group min-w-0">
-                <CalendarDays className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+                <CalendarDays weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
                 <input
                   type="date"
                   value={date}
@@ -272,7 +272,7 @@ export function CreateBookingForm({
                 Tour Time <span className="text-coral-500">*</span>
               </label>
               <div className="relative group min-w-0">
-                <Clock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+                <Clock weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
                 <input
                   type="time"
                   value={time}
@@ -301,13 +301,13 @@ export function CreateBookingForm({
               >
                 <div className="shrink-0">
                   {checkingAvail ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 weight="bold" className="h-4 w-4 animate-spin" />
                   ) : availability?.available ? (
                     <div className="h-5 w-5 rounded-full bg-teal-500 text-white flex items-center justify-center">
-                      <Check className="h-3 w-3" />
+                      <Check weight="bold" className="h-3 w-3" />
                     </div>
                   ) : (
-                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTriangle weight="bold" className="h-4 w-4" />
                   )}
                 </div>
                 <span className="leading-tight">
@@ -327,7 +327,7 @@ export function CreateBookingForm({
             <div className="flex items-center gap-6 bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 rounded-2xl shadow-sm">
               <div className="flex items-center gap-3 ml-2">
                 <div className="h-9 w-9 rounded-xl bg-gray-50 dark:bg-[#333333] text-gray-400 dark:text-gray-500 flex items-center justify-center">
-                  <Users className="h-4 w-4" />
+                  <Users weight="bold" className="h-4 w-4" />
                 </div>
                 <span className="text-xs font-bold text-gray-500 dark:text-gray-400">People</span>
               </div>
@@ -339,7 +339,7 @@ export function CreateBookingForm({
                 >
                   −
                 </button>
-                <span className="text-2xl font-black text-[#213138] dark:text-white w-10 text-center font-[family-name:var(--font-poppins)]">{people}</span>
+                <span className="text-2xl font-black text-[#213138] dark:text-white w-10 text-center ">{people}</span>
                 <button
                   onClick={() => setPeople(Math.min(selectedService?.max_capacity ?? 99, people + 1))}
                   className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
@@ -363,7 +363,7 @@ export function CreateBookingForm({
             </label>
             <div className="grid gap-3">
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <User weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
                   placeholder="Full Name"
                   value={customerName}
@@ -373,7 +373,7 @@ export function CreateBookingForm({
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="relative group">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <Phone weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
                     placeholder="Phone"
                     value={customerPhone}
@@ -382,7 +382,7 @@ export function CreateBookingForm({
                   />
                 </div>
                 <div className="relative group">
-                  <FileText className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <FileText weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
                     type="email"
                     placeholder="Email"
@@ -425,7 +425,7 @@ export function CreateBookingForm({
               className="flex-1 h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
             >
               Continue
-              <ChevronRight className="ml-2 h-4 w-4" />
+              <ChevronRight weight="bold" className="ml-2 h-4 w-4" />
             </Button>
           </div>
           )}
@@ -439,7 +439,7 @@ export function CreateBookingForm({
                 className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-xl shadow-teal-500/20 text-base"
               >
                 Continue to Confirmation
-                <ChevronRight className="ml-2 h-5 w-5" />
+                <ChevronRight weight="bold" className="ml-2 h-5 w-5" />
               </Button>
             </div>
           )}
@@ -457,7 +457,7 @@ export function CreateBookingForm({
                   className="h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg"
                   style={{ backgroundColor: selectedService.color }}
                 >
-                  <CalendarDays className="h-6 w-6" />
+                  <CalendarDays weight="bold" className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold leading-tight uppercase tracking-wide">{selectedService.name}</h3>
@@ -528,7 +528,7 @@ export function CreateBookingForm({
               disabled={submitting}
               className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
             >
-              {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+              {submitting ? <Loader2 weight="bold" className="h-5 w-5 animate-spin" /> : (
                 prefill?.conversationId && onSendConfirmation ? 'Confirm & Notify Customer' : 'Confirm Order'
               )}
             </Button>
@@ -548,7 +548,7 @@ export function CreateBookingForm({
               onClick={() => setStep('form')}
               className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] dark:hover:text-[#3A9B9F] transition-all flex items-center justify-center gap-2 pt-2 uppercase tracking-widest"
             >
-              <ChevronLeft className="h-3 w-3" />
+              <ChevronLeft weight="bold" className="h-3 w-3" />
               Back to Details
             </button>
           </div>
@@ -564,10 +564,10 @@ export function CreateBookingForm({
             transition={{ type: "spring", damping: 12, stiffness: 200 }}
             className="mx-auto h-24 w-24 rounded-[32px] bg-teal-500 text-white flex items-center justify-center shadow-2xl shadow-teal-500/40 rotate-6"
           >
-               <Check className="h-10 w-10" />
+               <Check weight="bold" className="h-10 w-10" />
           </motion.div>
           <div className="space-y-2">
-            <h3 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)]">All Signed Up!</h3>
+            <h3 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 ">All Signed Up!</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-[240px] mx-auto leading-relaxed">
               Tour for <span className="text-[#3A9B9F] font-bold">{createdBooking.customer_name}</span> has been successfully logged.
             </p>

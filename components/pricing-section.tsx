@@ -93,7 +93,7 @@ export function PricingSection() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
             Pricing
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
+          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Simple pricing.{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
               No surprises.
@@ -285,7 +285,7 @@ export function PricingSection() {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="mx-auto max-w-3xl"
         >
-         <h3 className="mb-8 text-center text-2xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+         <h3 className="mb-8 text-center text-2xl font-bold text-[#213138] dark:text-white ">
             Pricing questions
           </h3>
           <div className="space-y-3">

@@ -5,7 +5,19 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { Mail, Lock, Eye, EyeOff, Loader2, MessageCircle, Instagram, Facebook, CheckCircle2, Building2, UserPlus } from "lucide-react"
+import { 
+  Envelope as Mail, 
+  Lock, 
+  Eye, 
+  EyeSlash as EyeOff, 
+  CircleNotch as Loader2, 
+  ChatCircle as MessageCircle, 
+  InstagramLogo as Instagram, 
+  FacebookLogo as Facebook, 
+  CheckCircle as CheckCircle2, 
+  Buildings as Building2, 
+  UserPlus 
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -162,9 +174,9 @@ export default function SignupPage() {
 
           <div className="mb-10">
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF8B66]/10 dark:bg-[#FF8B66]/20 shadow-sm ring-1 ring-[#FF8B66]/20 dark:ring-[#FF8B66]/30">
-              <UserPlus className="h-7 w-7 text-[#FF8B66]" />
+              <UserPlus weight="bold" className="h-7 w-7 text-[#FF8B66]" />
             </div>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white ">
               Create your account!
             </h1>
             <p className="text-slate-500 dark:text-gray-400 mt-2">
@@ -176,7 +188,7 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="businessName" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Business Name</Label>
               <div className="relative group">
-                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Building2 weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
                   id="businessName"
                   type="text"
@@ -193,7 +205,7 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
                     id="email"
                     type="email"
@@ -208,7 +220,7 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                   <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -224,7 +236,7 @@ export default function SignupPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? <EyeOff weight="bold" className="h-5 w-5" /> : <Eye weight="bold" className="h-5 w-5" />}
                   </button>
                 </div>
               </div>
@@ -233,7 +245,7 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" title="Confirm Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Confirm Password</Label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                 <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
@@ -322,7 +334,7 @@ export default function SignupPage() {
           </div>
 
           <div className="relative flex-1 flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold text-white text-center mb-4 font-[family-name:var(--font-poppins)]">
+            <h2 className="text-3xl font-bold text-white text-center mb-4 ">
               Organize Every <br />
               <span className="text-[#FF8B66]">Customer Interaction</span>
             </h2>
@@ -377,7 +389,7 @@ export default function SignupPage() {
                 className="absolute w-[380px] h-[380px]"
               >
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle2 className="w-7 h-7 text-[#3A9B9F]" />
+                  <CheckCircle2 weight="bold" className="w-7 h-7 text-[#3A9B9F]" />
                 </div>
                 <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex flex-col items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <span className="text-[8px] font-bold text-slate-400 uppercase">Tags</span>

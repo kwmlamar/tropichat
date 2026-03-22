@@ -87,7 +87,7 @@ export function SolutionSection() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/10 px-4 py-1.5 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm">
             The Solution
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
+          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Handle 3× more customers —
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">

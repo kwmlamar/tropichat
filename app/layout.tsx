@@ -1,24 +1,17 @@
+import * as React from "react";
 import type { Metadata, Viewport } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Lexend, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/toaster-wrapper";
 import Script from "next/script";
+import { ThemeProvider } from "@/components/theme-provider";
 
-const poppins = Poppins({
+const lexend = Lexend({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-lexend",
   display: "swap",
 });
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-import { Plus_Jakarta_Sans } from "next/font/google";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -78,8 +71,6 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-import { ThemeProvider } from "@/components/theme-provider";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -87,7 +78,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${poppins.variable} ${inter.variable} ${plusJakartaSans.variable} font-sans antialiased`}>
+      <body className={`${lexend.variable} ${plusJakartaSans.variable} font-sans antialiased text-brand-dark`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -95,20 +86,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster
-            position="top-center"
-            theme="system"
-            toastOptions={{
-              className: "tropichat-toast",
-              style: {
-                borderRadius: "20px",
-                padding: "16px 20px",
-                fontSize: "0.9375rem",
-                fontWeight: "500",
-                backdropFilter: "blur(12px)",
-              },
-            }}
-          />
+          <Toaster />
         </ThemeProvider>
         {/* Service Worker Registration */}
         <Script

@@ -13,8 +13,8 @@ description: How to approach any UI/UX or styling work on TropiChat
 | Navy | `#213138` | Primary brand, sidebar background |
 | Teal | `#3A9B9F` | Primary CTA, active states, focus rings |
 | Coral | `#FF8B66` | Accents, upgrade prompts, warnings |
-| Font Heading | Poppins (`var(--font-poppins)`) | All h1–h6 |
-| Font Body | Inter (`var(--font-inter)`) | All body text |
+| Font Heading | Poppins (`var(--font-lexend)`) | All h1–h6 |
+| Font Body | Inter (`var(--font-lexend)`) | All body text |
 | Text default | `#1e293b` (slate-900) | Body text |
 | Text muted | `#475569` (slate-600) | Secondary text — minimum for 4.5:1 contrast |
 | Border | `border-gray-100` / `border-gray-200` | Light mode borders |
@@ -103,7 +103,7 @@ Before delivering any UI code, verify:
 - [ ] Focus states visible via brand teal ring (globally handled in `globals.css`)
 - [ ] Light mode text contrast: **4.5:1 minimum** — use `text-gray-600` (`#475569`) or darker for muted text
 - [ ] `prefers-reduced-motion` respected (globally handled in `globals.css`)
-- [ ] Headings use Poppins (`font-[family-name:var(--font-poppins)]` if overriding)
+- [ ] Headings use Poppins (`` if overriding)
 - [ ] Body text uses Inter (default body font)
 - [ ] Responsive at 375px, 768px, 1024px, 1440px
 - [ ] Brand colors used for interactive elements (teal for primary, coral for accents)

@@ -112,10 +112,10 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           {!collapsed && (
             <div className="min-w-0 flex-1 ml-3.5">
               <div className="flex items-center gap-1.5">
-                <p className="text-[13.5px] font-black text-[#213138] dark:text-gray-100 truncate tracking-tight font-[family-name:var(--font-poppins)]">
+                <p className="text-[13.5px] font-black text-[#213138] dark:text-gray-100 truncate tracking-tight ">
                   {customer?.business_name || "TropiChat"}
                 </p>
-                <CaretDown weight="bold" className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <CaretDown className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-0.5 opacity-80">Workspace</p>
             </div>
@@ -143,7 +143,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon weight={active ? "bold" : "regular"} className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -163,7 +163,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         <div className="mx-4 mb-4 flex-shrink-0">
           <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 border border-orange-200/50 dark:border-orange-500/20 p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <Crown weight="duotone" className="h-4 w-4 text-[#FF8B66]" />
+              <Crown className="h-4 w-4 text-[#FF8B66]" />
               <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Upgrade to Pro</span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
@@ -197,9 +197,9 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
-            <ArrowLineRight weight="regular" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+            <ArrowLineRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
           ) : (
-            <ArrowLineLeft weight="regular" className="h-5 w-5 text-gray-400 dark:text-gray-500 shrink-0" />
+            <ArrowLineLeft className="h-5 w-5 text-gray-400 dark:text-gray-500 shrink-0" />
           )}
           {!collapsed && <span>Collapse</span>}
         </button>
@@ -217,7 +217,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <GearSix weight={isActive("/dashboard/settings") ? "bold" : "regular"} className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+          <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 
@@ -239,21 +239,21 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                       {customer?.contact_email || "Loading..."}
                     </p>
                   </div>
-                  <CaretDown weight="bold" className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
+                  <CaretDown className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
                 </>
               )}
             </button>
           }
         >
           <DropdownItem
-            icon={<GearSix weight="bold" className="h-4 w-4" />}
+            icon={<GearSix className="h-4 w-4" />}
             onClick={() => router.push("/dashboard/settings")}
           >
             Settings
           </DropdownItem>
           <DropdownSeparator />
           <DropdownItem
-            icon={<SignOut weight="bold" className="h-4 w-4" />}
+            icon={<SignOut className="h-4 w-4" />}
             onClick={handleSignOut}
             destructive
           >

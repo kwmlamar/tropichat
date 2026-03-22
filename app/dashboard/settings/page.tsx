@@ -23,6 +23,9 @@ import {
   CaretLeft,
   CaretRight,
   Bell,
+  WhatsappLogo,
+  MessengerLogo,
+  InstagramLogo,
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -494,7 +497,7 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="pt-[calc(env(safe-area-inset-top)+1rem)] pb-5 px-5 flex items-center justify-between border-b border-gray-100 dark:border-[#1C1C1C]">
           <div className="w-10" />
-          <h1 className="text-[18px] font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">Settings</h1>
+          <h1 className="text-[18px] font-bold text-[#213138] dark:text-white  tracking-tight">Settings</h1>
           <div className="h-9 w-9 flex items-center justify-center bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl">
             <ThemeToggle />
           </div>
@@ -503,15 +506,15 @@ export default function SettingsPage() {
         {/* Avatar & Info */}
         <div className="flex flex-col items-center px-5 pt-8 pb-8">
           <div className="h-20 w-20 rounded-2xl bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] flex items-center justify-center mb-4">
-            <span className="text-3xl font-bold text-[#3A9B9F] font-[family-name:var(--font-poppins)]">
+            <span className="text-3xl font-bold text-[#3A9B9F] ">
               {(businessName || contactEmail || "U")[0].toUpperCase()}
             </span>
           </div>
-          <h2 className="text-[18px] font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+          <h2 className="text-[18px] font-bold text-[#213138] dark:text-white  tracking-tight">
             {businessName || "Your Business"}
           </h2>
           <p className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-[#525252] mt-1">
-            <MapPin weight="regular" className="h-3 w-3 text-[#3A9B9F]" />
+            <MapPin weight="bold" className="h-3 w-3 text-[#3A9B9F]" />
             {timezone.split('/')[1]?.replace('_', ' ') || "Local"}
           </p>
         </div>
@@ -520,7 +523,7 @@ export default function SettingsPage() {
           {/* Auto-Reply toggle */}
           <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ChatCircleDots weight="regular" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+              <ChatCircleDots weight="bold" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
               <span className="text-[14px] font-medium text-gray-900 dark:text-white">Auto-Reply Mode</span>
             </div>
             <Switch
@@ -563,7 +566,7 @@ export default function SettingsPage() {
           >
             <CaretLeft weight="bold" className="h-5 w-5" />
           </button>
-          <h1 className="text-[22px] font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] tracking-tight">
+          <h1 className="text-[22px] font-bold text-[#213138] dark:text-gray-100  tracking-tight">
             Settings
           </h1>
         </div>
@@ -572,7 +575,7 @@ export default function SettingsPage() {
           <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
             <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Workspace
           </p>
-          <h1 className="hidden lg:block text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">Settings</h1>
+          <h1 className="hidden lg:block text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Settings</h1>
         </div>
 
         <Tabs value={activeTab} defaultValue={initialTab} onValueChange={(tab) => {
@@ -589,56 +592,56 @@ export default function SettingsPage() {
               value="profile"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <User weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <User weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Profile
             </TabsTrigger>
             <TabsTrigger
               value="hours"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <Clock weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <Clock weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Hours
             </TabsTrigger>
             <TabsTrigger
               value="autoreply"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <ChatCircleDots weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <ChatCircleDots weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Replies
             </TabsTrigger>
             <TabsTrigger
               value="team"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <Users weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <Users weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Team
             </TabsTrigger>
             <TabsTrigger
               value="integrations"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <Link weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <Link weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Channels
             </TabsTrigger>
             <TabsTrigger
               value="notifications"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <Bell weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <Bell weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Alerts
             </TabsTrigger>
             <TabsTrigger
               value="whatsapp"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <Buildings weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <Buildings weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               WA Profile
             </TabsTrigger>
             <TabsTrigger
               value="billing"
               className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
             >
-              <CreditCard weight="regular" className="h-3.5 w-3.5 mr-1.5" />
+              <CreditCard weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Billing
             </TabsTrigger>
           </TabsList>
@@ -890,9 +893,9 @@ export default function SettingsPage() {
               style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
             >
               <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mx-auto mb-5">
-                <Users weight="regular" className="h-5 w-5 text-[#3A9B9F]" />
+                <Users weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
               </div>
-              <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+              <h3 className="text-[16px] font-bold text-gray-900 dark:text-white  mb-2">
                 Team Management
               </h3>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
@@ -916,7 +919,7 @@ export default function SettingsPage() {
                   <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
                   Meta Business Platform
                 </p>
-                <h3 className="text-[18px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-1">
+                <h3 className="text-[18px] font-bold text-gray-900 dark:text-white  mb-1">
                   Connect your channels
                 </h3>
                 <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-md leading-relaxed">
@@ -1009,8 +1012,8 @@ export default function SettingsPage() {
                   <div className="space-y-2">
                     {metaStatus.instagram?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
-                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-[13px] flex-shrink-0">
-                          {metaStatus.instagram.account_name?.[0] || "I"}
+                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white flex-shrink-0">
+                          <InstagramLogo weight="bold" className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate">
@@ -1031,13 +1034,7 @@ export default function SettingsPage() {
                     {metaStatus.whatsapp?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
                         <div className="h-9 w-9 rounded-xl bg-[#25D366] flex items-center justify-center text-white flex-shrink-0">
-                          <svg
-                            className="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                          >
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                          </svg>
+                          <WhatsappLogo weight="bold" className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
@@ -1057,13 +1054,7 @@ export default function SettingsPage() {
                     {metaStatus.messenger?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
                         <div className="h-9 w-9 rounded-xl bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0">
-                          <svg
-                            className="h-4 w-4"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                          >
-                            <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.627 0 12-4.975 12-11.111C24 4.974 18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z" />
-                          </svg>
+                          <MessengerLogo weight="bold" className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
@@ -1112,7 +1103,7 @@ export default function SettingsPage() {
                     Verification
                   </p>
                   <div className="flex items-center gap-1 text-[#3A9B9F]">
-                    <CheckCircle weight="regular" className="h-3.5 w-3.5" />
+                    <CheckCircle weight="bold" className="h-3.5 w-3.5" />
                     <span className="text-[13px] font-semibold">Verified</span>
                   </div>
                 </div>
@@ -1142,9 +1133,9 @@ export default function SettingsPage() {
                 style={{ borderLeftColor: "#25D366", borderLeftWidth: 2 }}
               >
                 <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center mx-auto mb-5">
-                  <Buildings weight="regular" className="h-5 w-5 text-[#25D366]" />
+                  <Buildings weight="bold" className="h-5 w-5 text-[#25D366]" />
                 </div>
-                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] mb-2">
+                <h3 className="text-[16px] font-bold text-gray-900 dark:text-white  mb-2">
                   WhatsApp Not Connected
                 </h3>
                 <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
@@ -1220,7 +1211,7 @@ export default function SettingsPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-9 w-9 rounded-xl bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center flex-shrink-0">
-                      <Phone weight="regular" className="h-5 w-5 text-blue-500" />
+                      <Phone weight="bold" className="h-5 w-5 text-blue-500" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-gray-100">Contact Information</h4>
@@ -1276,7 +1267,7 @@ export default function SettingsPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="h-9 w-9 rounded-xl bg-amber-50 dark:bg-amber-900/10 flex items-center justify-center flex-shrink-0">
-                      <MapPin weight="regular" className="h-5 w-5 text-amber-500" />
+                      <MapPin weight="bold" className="h-5 w-5 text-amber-500" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 dark:text-gray-100">Location &amp; Hours</h4>
@@ -1339,7 +1330,7 @@ export default function SettingsPage() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-9 w-9 rounded-xl bg-orange-50 dark:bg-orange-900/10 flex items-center justify-center flex-shrink-0">
-                  <Bell weight="regular" className="h-5 w-5 text-orange-500" />
+                  <Bell weight="bold" className="h-5 w-5 text-orange-500" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">Push Notifications</h4>
@@ -1379,7 +1370,7 @@ export default function SettingsPage() {
                       </p>
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-white dark:bg-[#0A0A0A] flex items-center justify-center shadow-sm">
-                          <CheckCircle weight="regular" className="h-4 w-4 text-emerald-500" />
+                          <CheckCircle weight="bold" className="h-4 w-4 text-emerald-500" />
                         </div>
                         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           This Device is registered
@@ -1398,7 +1389,7 @@ export default function SettingsPage() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-9 w-9 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 flex items-center justify-center flex-shrink-0">
-                  <CreditCard weight="regular" className="h-5 w-5 text-emerald-500" />
+                  <CreditCard weight="bold" className="h-5 w-5 text-emerald-500" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100">Current Plan Overview</h4>
@@ -1539,7 +1530,7 @@ export default function SettingsPage() {
                 <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-5 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div className="bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] rounded-xl w-14 h-10 flex items-center justify-center">
-                      <CreditCard weight="regular" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                      <CreditCard weight="bold" className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     </div>
                     <div>
                       <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">
@@ -1560,7 +1551,7 @@ export default function SettingsPage() {
                     {billingLoading ? (
                       <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />
                     ) : (
-                      <ArrowSquareOut weight="regular" className="h-4 w-4 mr-2" />
+                      <ArrowSquareOut weight="bold" className="h-4 w-4 mr-2" />
                     )}
                     Portal
                   </Button>
@@ -1578,7 +1569,7 @@ function MobileTabLink({ icon: Icon, label, onClick }: { icon: any, label: strin
   return (
     <button onClick={onClick} className="w-full flex items-center justify-between py-4 px-2 transition-colors active:bg-gray-50 dark:active:bg-[#111111] rounded-2xl">
       <div className="flex items-center gap-4">
-        <Icon weight="regular" className="h-[22px] w-[22px] text-[#475569] dark:text-gray-400" />
+        <Icon weight="bold" className="h-[22px] w-[22px] text-[#475569] dark:text-gray-400" />
         <span className="font-medium text-[#213138] dark:text-gray-100 text-[16px]">{label}</span>
       </div>
       <CaretRight weight="bold" className="h-[20px] w-[20px] text-gray-400 dark:text-gray-600" />
@@ -1630,7 +1621,7 @@ function ChannelCard({
           {icon}
         </div>
         <div className="flex-1 min-w-0 pt-0.5">
-          <h4 className="font-bold text-[#213138] dark:text-gray-100 font-[family-name:var(--font-poppins)] text-lg leading-tight truncate">
+          <h4 className="font-bold text-[#213138] dark:text-gray-100  text-lg leading-tight truncate">
             {label}
           </h4>
           <div className="flex items-center gap-1.5 mt-1">

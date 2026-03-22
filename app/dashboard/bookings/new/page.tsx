@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { CreateBookingForm } from "@/components/bookings/create-booking-form"
-import { ChevronLeft } from "lucide-react"
+
 
 export default function NewBookingPage() {
   const router = useRouter()

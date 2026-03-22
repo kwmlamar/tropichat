@@ -177,13 +177,13 @@ export default function BookingPreviewPage() {
                    <Image src="/tropichat-logo.png" alt="Logo" width={32} height={32} className="brightness-200" />
                 </div>
                 <div>
-                   <h2 className="text-3xl font-black text-[#213138] leading-tight font-[family-name:var(--font-poppins)]">Simply Dave</h2>
+                   <h2 className="text-3xl font-black text-[#213138] leading-tight ">Simply Dave</h2>
                    <p className="text-xs font-bold text-[#3A9B9F] uppercase tracking-[0.2em]">Exotic Bahamas Experiences</p>
                 </div>
              </div>
 
              <div className="space-y-6">
-                <h1 className="text-5xl font-extrabold text-[#213138] tracking-tighter leading-[1.1] font-[family-name:var(--font-poppins)]">
+                <h1 className="text-5xl font-extrabold text-[#213138] tracking-tighter leading-[1.1] ">
                    Discover the Magic <br />
                    <span className="text-[#3A9B9F]">of the Islands.</span>
                 </h1>
@@ -220,7 +220,7 @@ export default function BookingPreviewPage() {
           {/* Right: Booking Card */}
           <div className="w-full lg:w-[420px] shrink-0">
              <div className="bg-white rounded-[40px] shadow-2xl shadow-navy-900/5 border border-gray-100 p-8 sticky top-12">
-                   <h3 className="text-xl font-bold text-[#213138] mb-8 font-[family-name:var(--font-poppins)]">Request Booking</h3>
+                   <h3 className="text-xl font-bold text-[#213138] mb-8 ">Request Booking</h3>
                    
                    <div className="space-y-6">
                       <div className="p-4 rounded-2xl bg-[#F8FAFB] border border-gray-100 flex items-center gap-4">

@@ -125,7 +125,7 @@ export function BookingDetailsModal({
                 </div>
               )}
               <div>
-                <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)]">
+                <h2 className="text-xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight ">
                   {service?.name ?? 'Booking Info'}
                 </h2>
                 <div className={cn(

@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Checkbox } from "@/components/ui/checkbox"
 import { getContacts, updateContact } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
 import { useDebounce } from "@/lib/hooks"
@@ -108,7 +109,7 @@ export default function ContactsPage() {
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
               <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />CRM
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">Contacts</h1>
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Contacts</h1>
           </div>
           {selectedContacts.length > 0 && (
             <button onClick={handleExport}
@@ -124,7 +125,7 @@ export default function ContactsPage() {
             <div key={i} className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
               style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}>
               <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-2">{s.label}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+              <p className="text-2xl font-bold text-gray-900 dark:text-white  tabular-nums">
                 {loading ? "—" : s.value}
               </p>
             </div>
@@ -133,7 +134,7 @@ export default function ContactsPage() {
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.10 }}>
           <div className="relative">
-            <Search weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            <Search weight="bold" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input type="text" placeholder="Search by name, phone, or email…" value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200" />
@@ -147,9 +148,10 @@ export default function ContactsPage() {
               <thead>
                 <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#111]">
                   <th className="w-12 px-5 py-3.5">
-                    <input type="checkbox" checked={selectedContacts.length === contacts.length && contacts.length > 0}
-                      onChange={toggleAll}
-                      className="rounded border-gray-300 dark:border-[#333] bg-white dark:bg-[#111] text-[#3A9B9F] h-3.5 w-3.5 cursor-pointer" />
+                    <Checkbox 
+                      checked={selectedContacts.length === contacts.length && contacts.length > 0}
+                      onCheckedChange={toggleAll}
+                    />
                   </th>
                   {[["Contact",""],["Channel",""],["Last Active","hidden md:table-cell"],["Messages","hidden lg:table-cell"],["Tags","hidden lg:table-cell"]].map(([col, cls]) => (
                     <th key={col} className={cn("px-4 py-3.5 text-left text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest", cls)}>
@@ -180,8 +182,10 @@ export default function ContactsPage() {
                 ) : contacts.map(contact => (
                   <tr key={contact.id} className="group hover:bg-gray-50 dark:hover:bg-[#111] transition-colors duration-150">
                     <td className="px-5 py-4">
-                      <input type="checkbox" checked={selectedContacts.includes(contact.id)} onChange={() => toggleOne(contact.id)}
-                        className="rounded border-gray-300 dark:border-[#333] bg-white dark:bg-[#111] text-[#3A9B9F] h-3.5 w-3.5 cursor-pointer" />
+                      <Checkbox 
+                        checked={selectedContacts.includes(contact.id)} 
+                        onCheckedChange={() => toggleOne(contact.id)}
+                      />
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
@@ -231,8 +235,8 @@ export default function ContactsPage() {
                           <MoreVertical weight="bold" className="h-4 w-4" />
                         </button>
                       }>
-                        <DropdownItem icon={<Phone weight="regular" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
-                        <DropdownItem icon={<Tag weight="regular" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
+                        <DropdownItem icon={<Phone weight="bold" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
+                        <DropdownItem icon={<Tag weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem onClick={() => handleBlock(contact)}>{contact.is_blocked ? "Unblock" : "Block"}</DropdownItem>
                       </Dropdown>

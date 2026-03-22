@@ -76,7 +76,7 @@ TropiChat is a Caribbean-rooted messaging SaaS. The visual language should feel 
 | Muted text | Inter | 400 | 13px |
 
 ### Typography Rules
-- All `h1`–`h6` use `font-[family-name:var(--font-poppins)]`
+- All `h1`–`h6` use ``
 - Uppercase labels use `tracking-widest` and `text-[10px]` — no larger
 - Metric numbers are the hero of data cards — give them vertical breathing room
 - **Never use more than 3 font sizes in one card**
@@ -117,7 +117,7 @@ border-l-2 border-l-[#FF8B66]   ← coral variant
 
 **Section title inside card:**
 ```
-text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]
+text-[15px] font-semibold text-[#213138] dark:text-white 
 ```
 
 **Muted subtitle inside card:**
@@ -127,7 +127,7 @@ text-[13px] text-gray-500 dark:text-[#525252] mt-0.5
 
 **Metric number (hero):**
 ```
-text-3xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums
+text-3xl font-bold text-gray-900 dark:text-white  tabular-nums
 ```
 
 **Metric label:**

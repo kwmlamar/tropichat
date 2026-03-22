@@ -422,7 +422,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
-          className="mb-6 max-w-4xl font-[family-name:var(--font-poppins)] text-5xl font-bold tracking-tight text-[#213138] dark:text-white md:text-6xl lg:text-7xl leading-[1.1]"
+          className="mb-6 max-w-4xl  text-5xl font-bold tracking-tight text-[#213138] dark:text-white md:text-6xl lg:text-7xl leading-[1.1]"
         >
           The best messaging system <br className="hidden md:block" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-[#2F8488]">
@@ -435,7 +435,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="mb-10 max-w-2xl font-[family-name:var(--font-inter)] text-lg text-slate-600 dark:text-gray-400 md:text-xl leading-relaxed"
+          className="mb-10 max-w-2xl  text-lg text-slate-600 dark:text-gray-400 md:text-xl leading-relaxed"
         >
           Bring WhatsApp, Instagram, and Facebook Messenger into one delightful app.{" "}
           <span className="font-medium text-slate-800 dark:text-gray-200">

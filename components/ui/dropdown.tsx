@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronDown, Check } from "lucide-react"
+import { CaretDown as ChevronDown, Check } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { useOnClickOutside } from "@/lib/hooks"
 
@@ -130,7 +130,7 @@ export function SimpleSelect({
         )}
       >
         <span>{selectedOption?.label || placeholder}</span>
-        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown weight="bold" className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (
@@ -149,7 +149,7 @@ export function SimpleSelect({
               )}
             >
               <span className="truncate">{option.label}</span>
-              {option.value === value && <Check className="h-4 w-4 shrink-0" />}
+              {option.value === value && <Check weight="bold" className="h-4 w-4 shrink-0" />}
             </button>
           ))}
         </div>

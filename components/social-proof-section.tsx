@@ -95,7 +95,7 @@ export function SocialProofSection() {
             </span>
             Early Access — Limited Spots Available
           </div>
-          <h2 className="mb-4 font-[family-name:var(--font-poppins)] text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
+          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Join Caribbean businesses
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
@@ -209,7 +209,7 @@ export function SocialProofSection() {
             <p className="mb-1 text-xs font-bold uppercase tracking-widest text-teal-300">
               Limited Early Access
             </p>
-            <h3 className="mb-2 text-2xl font-bold text-white font-[family-name:var(--font-poppins)]">
+            <h3 className="mb-2 text-2xl font-bold text-white ">
               Lock in Early Adopter Pricing
             </h3>
             <p className="mb-6 text-sm text-slate-300">

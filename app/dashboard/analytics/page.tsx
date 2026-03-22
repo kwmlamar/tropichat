@@ -99,7 +99,7 @@ function DonutChart({
           })}
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+          <span className="text-xl font-bold text-gray-900 dark:text-white  tabular-nums">
             {total}
           </span>
         </div>
@@ -226,7 +226,7 @@ export default function AnalyticsPage() {
               <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
               Analytics
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
               Overview
             </h1>
           </div>
@@ -277,7 +277,7 @@ export default function AnalyticsPage() {
                   <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-3">
                     {m.label}
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums">
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white  tabular-nums">
                     {m.value.toLocaleString()}
                   </p>
                   <p className="text-[12px] font-medium mt-2 text-[#3A9B9F]">
@@ -297,7 +297,7 @@ export default function AnalyticsPage() {
             className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
           >
             <div className="mb-6">
-              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white ">
                 Message Volume
               </h2>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">
@@ -319,7 +319,7 @@ export default function AnalyticsPage() {
             className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
           >
             <div className="mb-6">
-              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white ">
                 Conversations
               </h2>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">
@@ -357,7 +357,7 @@ export default function AnalyticsPage() {
               Avg. Response Time
             </p>
             <div>
-              <p className="text-5xl font-bold text-gray-900 dark:text-white font-[family-name:var(--font-poppins)] tabular-nums leading-none">
+              <p className="text-5xl font-bold text-gray-900 dark:text-white  tabular-nums leading-none">
                 2.5
                 <span className="text-xl font-medium text-gray-400 dark:text-[#525252] ml-1.5">min</span>
               </p>
@@ -370,7 +370,7 @@ export default function AnalyticsPage() {
           {/* Peak hours */}
           <div className="lg:col-span-2 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200">
             <div className="mb-6">
-              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
+              <h2 className="text-[15px] font-semibold text-[#213138] dark:text-white ">
                 Peak Hours
               </h2>
               <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-0.5">

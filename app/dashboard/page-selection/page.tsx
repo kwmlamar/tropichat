@@ -4,18 +4,18 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import {
   CheckCircle,
-  Loader2,
-  Link2,
-  AlertTriangle,
-  Facebook,
+  CircleNotch as Loader2,
+  Link as Link2,
+  Warning as AlertTriangle,
+  FacebookLogo as Facebook,
   ArrowRight,
   Phone,
-  Signal,
-  Instagram,
-  MessageCircle,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react"
+  WifiHigh as Signal,
+  InstagramLogo as Instagram,
+  ChatCircle as MessageCircle,
+  CaretDown as ChevronDown,
+  CaretUp as ChevronUp,
+} from "@phosphor-icons/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -121,7 +121,7 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
 function NotConnectedState({ channel, onSetup }: { channel: string; onSetup: () => void }) {
   return (
     <div className="py-6 text-center">
-      <AlertTriangle className="h-5 w-5 text-amber-400 mx-auto mb-3" />
+      <AlertTriangle weight="bold" className="h-5 w-5 text-amber-400 mx-auto mb-3" />
       <p className="text-[13px] font-medium text-gray-700 dark:text-[#A3A3A3] mb-1">{channel} not connected</p>
       <p className="text-[12px] text-gray-400 dark:text-[#525252] mb-4 max-w-xs mx-auto">
         Connect your Meta account to manage {channel} conversations.
@@ -130,9 +130,9 @@ function NotConnectedState({ channel, onSetup }: { channel: string; onSetup: () 
         onClick={onSetup}
         className="flex items-center gap-1.5 text-[12px] font-semibold text-[#3A9B9F] hover:text-[#2F8488] transition-colors mx-auto"
       >
-        <Link2 className="h-3.5 w-3.5" />
+        <Link2 weight="bold" className="h-3.5 w-3.5" />
         Go to Integrations
-        <ArrowRight className="h-3 w-3" />
+        <ArrowRight weight="bold" className="h-3 w-3" />
       </button>
     </div>
   )
@@ -190,8 +190,8 @@ function ChannelPanel({
             </span>
           )}
           {isOpen
-            ? <ChevronUp className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
-            : <ChevronDown className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            ? <ChevronUp weight="bold" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+            : <ChevronDown weight="bold" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
           }
         </div>
       </button>
@@ -317,7 +317,7 @@ export default function PageSelectionPage() {
       disabled={saving}
       className="flex items-center gap-2 px-4 py-2 bg-[#3A9B9F] hover:bg-[#2F8488] disabled:opacity-50 text-white text-[13px] font-semibold rounded-lg transition-colors duration-200"
     >
-      {saving ? <><Loader2 className="h-3.5 w-3.5 animate-spin" />Saving…</> : "Save Selection"}
+      {saving ? <><Loader2 weight="bold" className="h-3.5 w-3.5 animate-spin" />Saving…</> : "Save Selection"}
     </button>
   )
 
@@ -335,7 +335,7 @@ export default function PageSelectionPage() {
             <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
             Channels
           </p>
-          <h1 className="text-3xl font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)] tracking-tight">
+          <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
             Connected Accounts
           </h1>
           <p className="text-[14px] text-gray-500 dark:text-[#525252] mt-2">
@@ -348,7 +348,7 @@ export default function PageSelectionPage() {
           {/* Messenger */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.06 }}>
             <ChannelPanel
-              icon={<Facebook className="h-4 w-4" />}
+              icon={<Facebook weight="bold" className="h-4 w-4" />}
               iconBg="bg-blue-50 dark:bg-blue-900/10"
               iconColor="text-blue-600 dark:text-blue-400"
               title="Facebook / Messenger"
@@ -382,10 +382,10 @@ export default function PageSelectionPage() {
                     title={page.name}
                     subtitle={`${page.follower_count.toLocaleString()} followers · ${page.category}`}
                     badge={page.is_connected
-                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle className="h-3 w-3" />Live</span>
+                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
                       : undefined
                     }
-                    trailing={<MessageCircle className={cn("h-4 w-4 shrink-0", messenger.selectedId === page.id ? "text-blue-400" : "text-gray-300 dark:text-[#333]")} />}
+                    trailing={<MessageCircle weight="bold" className={cn("h-4 w-4 shrink-0", messenger.selectedId === page.id ? "text-blue-400" : "text-gray-300 dark:text-[#333]")} />}
                   />
                 ))
               )}
@@ -395,7 +395,7 @@ export default function PageSelectionPage() {
           {/* Instagram */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.10 }}>
             <ChannelPanel
-              icon={<Instagram className="h-4 w-4" />}
+              icon={<Instagram weight="bold" className="h-4 w-4" />}
               iconBg="bg-pink-50 dark:bg-pink-900/10"
               iconColor="text-pink-600 dark:text-pink-400"
               title="Instagram"
@@ -429,10 +429,10 @@ export default function PageSelectionPage() {
                     title={account.name}
                     subtitle={`@${account.username} · ${account.follower_count.toLocaleString()} followers`}
                     badge={account.is_connected
-                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle className="h-3 w-3" />Live</span>
+                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
                       : undefined
                     }
-                    trailing={<Instagram className={cn("h-4 w-4 shrink-0", instagram.selectedId === account.id ? "text-pink-400" : "text-gray-300 dark:text-[#333]")} />}
+                    trailing={<Instagram weight="bold" className={cn("h-4 w-4 shrink-0", instagram.selectedId === account.id ? "text-pink-400" : "text-gray-300 dark:text-[#333]")} />}
                   />
                 ))
               )}
@@ -442,7 +442,7 @@ export default function PageSelectionPage() {
           {/* WhatsApp */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.14 }}>
             <ChannelPanel
-              icon={<Phone className="h-4 w-4" />}
+              icon={<Phone weight="bold" className="h-4 w-4" />}
               iconBg="bg-green-50 dark:bg-green-900/10"
               iconColor="text-green-600 dark:text-green-400"
               title="WhatsApp Business"
@@ -476,7 +476,7 @@ export default function PageSelectionPage() {
                           ? "bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/20 text-green-600 dark:text-green-400"
                           : "bg-gray-50 dark:bg-[#111] border-gray-100 dark:border-[#1C1C1C] text-gray-400 dark:text-[#525252]"
                       )}>
-                        <Phone className="h-4 w-4" />
+                        <Phone weight="bold" className="h-4 w-4" />
                       </div>
                     }
                     title={number.display_number}
@@ -488,7 +488,7 @@ export default function PageSelectionPage() {
                     trailing={
                       <div className="flex items-center gap-2">
                         <QualityDot rating={number.quality_rating} />
-                        <Signal className={cn("h-4 w-4 shrink-0", whatsapp.selectedId === number.id ? "text-green-400" : "text-gray-300 dark:text-[#333]")} />
+                        <Signal weight="bold" className={cn("h-4 w-4 shrink-0", whatsapp.selectedId === number.id ? "text-green-400" : "text-gray-300 dark:text-[#333]")} />
                       </div>
                     }
                   />

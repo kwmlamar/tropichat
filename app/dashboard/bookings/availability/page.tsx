@@ -105,7 +105,7 @@ function ServiceForm({
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">
-            <DollarSign className="h-3 w-3 inline" /> Price (display only)
+            <DollarSign weight="bold" className="h-3 w-3 inline" /> Price (display only)
           </label>
           <div className="flex gap-2">
             <Input type="number" min="0" step="0.01" placeholder="0.00" value={price} onChange={e => setPrice(e.target.value)} className="flex-1" />
@@ -121,7 +121,7 @@ function ServiceForm({
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">
-            <Palette className="h-3 w-3 inline mr-1" />Color
+            <Palette weight="bold" className="h-3 w-3 inline mr-1" />Color
           </label>
           <div className="flex items-center gap-1.5 flex-wrap">
             {PRESET_COLORS.map(c => (
@@ -410,7 +410,7 @@ export default function AvailabilityPage() {
           <ArrowLeft weight="bold" className="h-4 w-4" />
         </button>
         <div>
-          <h1 className="text-[18px] font-bold text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)] leading-none">Services</h1>
+          <h1 className="text-[18px] font-bold text-[#213138] dark:text-gray-100 tracking-tight  leading-none">Services</h1>
         </div>
       </div>
 
@@ -421,7 +421,7 @@ export default function AvailabilityPage() {
           </div>
         ) : services.length === 0 && !addingService ? (
           <div className="text-center py-20 text-gray-400">
-            <Clock weight="regular" className="h-12 w-12 mx-auto mb-3 opacity-30" />
+            <Clock weight="bold" className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p className="font-medium">No services yet</p>
             <p className="text-sm mt-1">Add your first tour or activity below</p>
           </div>
@@ -454,7 +454,7 @@ export default function AvailabilityPage() {
                         {service.active ? <ToggleRight weight="bold" className="h-6 w-6 text-[#3A9B9F]" /> : <ToggleLeft weight="bold" className="h-6 w-6" />}
                       </button>
                       <button onClick={() => setEditingServiceId(editing ? null : service.id)} className="p-1.5 text-gray-400">
-                        <Pencil weight="regular" className="h-4 w-4" />
+                        <Pencil weight="bold" className="h-4 w-4" />
                       </button>
                       <button onClick={() => setExpandedServiceId(expanded ? null : service.id)} className="p-1.5 text-gray-400">
                         {expanded ? <ChevronUp weight="bold" className="h-4 w-4" /> : <ChevronDown weight="bold" className="h-4 w-4" />}
@@ -491,7 +491,7 @@ export default function AvailabilityPage() {
                       <div className="space-y-1.5">
                         {serviceSlots.map(slot => (
                           <div key={slot.id} className={cn("flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold", slot.is_available ? "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] text-gray-600 dark:text-gray-300" : "opacity-40 line-through")}>
-                            <Clock weight="regular" className="h-3.5 w-3.5 text-gray-400" />
+                            <Clock weight="bold" className="h-3.5 w-3.5 text-gray-400" />
                             <span className="flex-1">{formatSlotLabel(slot)}</span>
                             <button onClick={() => handleToggleSlot(slot)} className="p-1">{slot.is_available ? <ToggleRight weight="bold" className="h-5 w-5 text-[#3A9B9F]" /> : <ToggleLeft weight="bold" className="h-5 w-5" />}</button>
                             <button onClick={() => handleDeleteSlot(slot)} className="p-1"><X weight="bold" className="h-3.5 w-3.5" /></button>
@@ -540,7 +540,7 @@ export default function AvailabilityPage() {
                 <ArrowLeft weight="bold" className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight font-[family-name:var(--font-poppins)] leading-none mb-1">Services</h1>
+              <h1 className="text-3xl font-black text-[#213138] dark:text-gray-100 tracking-tight  leading-none mb-1">Services</h1>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Configure your tours and availability</p>
             </div>
           </div>
@@ -567,7 +567,7 @@ export default function AvailabilityPage() {
           </div>
         ) : services.length === 0 && !addingService ? (
           <div className="text-center py-20 text-gray-400">
-            <Clock className="h-12 w-12 mx-auto mb-3 opacity-30" />
+            <Clock weight="bold" className="h-12 w-12 mx-auto mb-3 opacity-30" />
             <p className="font-medium">No services yet</p>
             <p className="text-sm mt-1">Add your first tour or activity above</p>
           </div>
@@ -612,14 +612,14 @@ export default function AvailabilityPage() {
                         className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors text-gray-400"
                         title="Edit"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil weight="bold" className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteService(service)}
                         className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-gray-400 hover:text-red-500"
                         title="Archive"
                       >
-                        <Trash weight="regular" className="h-4 w-4" />
+                        <Trash weight="bold" className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setExpandedServiceId(expanded ? null : service.id)}
@@ -680,7 +680,7 @@ export default function AvailabilityPage() {
                               slot.is_available ? "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] text-gray-600 dark:text-gray-300 shadow-sm" : "bg-red-50/50 dark:bg-red-950/10 text-red-500/50 dark:text-red-500/30 line-through"
                             )}
                           >
-                            <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                            <Clock weight="bold" className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                             <span className={cn("flex-1", !slot.is_available && "line-through text-gray-400")}>
                               {formatSlotLabel(slot)}
                             </span>

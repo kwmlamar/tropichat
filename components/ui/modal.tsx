@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { X } from "lucide-react"
+import { X } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 interface ModalProps {
@@ -70,7 +70,7 @@ export function Modal({
           onClick={onClose}
           className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-[#111111] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
         >
-          <X className="h-5 w-5" />
+          <X weight="bold" className="h-5 w-5" />
         </button>
 
         {/* Header */}

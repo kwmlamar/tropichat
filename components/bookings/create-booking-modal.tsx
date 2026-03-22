@@ -4,19 +4,19 @@ import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
-  CalendarDays,
+  CalendarBlank as CalendarDays,
   Clock,
   Users,
   User,
   Phone,
   FileText,
-  AlertTriangle,
-  CheckCircle2,
+  Warning as AlertTriangle,
+  CheckCircle as CheckCircle2,
   Check,
-  Loader2,
-  ChevronRight,
-  ChevronLeft
-} from "lucide-react"
+  CircleNotch as Loader2,
+  CaretRight as ChevronRight,
+  CaretLeft as ChevronLeft
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -79,7 +79,7 @@ export function CreateBookingModal({
           {/* Header */}
           <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100/50 dark:border-[#222222]/50 relative overflow-hidden shrink-0">
             <div className="relative z-10">
-              <h2 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight font-[family-name:var(--font-poppins)]">
+              <h2 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 leading-tight ">
                 New Booking
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Fill in the tour details below</p>
@@ -88,7 +88,7 @@ export function CreateBookingModal({
               onClick={onClose}
               className="relative z-10 p-2.5 rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 hover:bg-white dark:hover:bg-[#222222] text-gray-400 dark:text-gray-500 hover:text-navy-900 dark:hover:text-white transition-all border border-gray-100 dark:border-[#222222] shadow-sm"
             >
-              <X className="h-5 w-5" />
+              <X weight="bold" className="h-5 w-5" />
             </button>
           </div>
 

@@ -16,7 +16,7 @@
 - Use `border-l-2` accent: teal for sent/conversations, coral for received/contacts
 - No icon boxes — the number is the hero
 - Change indicator: small text only, no badge/chip. Format: `+12%` in `text-[#3A9B9F]`
-- Number: `text-4xl font-bold text-white font-[family-name:var(--font-poppins)]`
+- Number: `text-4xl font-bold text-white `
 - Label: `text-[11px] text-[#525252] uppercase tracking-widest mb-2`
 
 ## Bar Chart (Message Volume)

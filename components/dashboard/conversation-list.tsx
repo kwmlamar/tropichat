@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Filter, MoreVertical } from "lucide-react"
+import { MagnifyingGlass as Search, Funnel as Filter, DotsThreeVertical as MoreVertical } from "@phosphor-icons/react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"

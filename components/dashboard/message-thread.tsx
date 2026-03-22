@@ -2,17 +2,17 @@
 
 import { useState, useRef, useEffect } from "react"
 import {
-  Send,
+  PaperPlaneRight as Send,
   Paperclip,
   FileText,
-  MoreVertical,
+  DotsThreeVertical as MoreVertical,
   Check,
-  CheckCheck,
+  Checks as CheckCheck,
   Clock,
-  AlertCircle,
-  ChevronDown,
+  WarningCircle as AlertCircle,
+  CaretDown as ChevronDown,
   Image as ImageIcon,
-} from "lucide-react"
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar } from "@/components/ui/avatar"
@@ -88,15 +88,15 @@ export function MessageThread({
     switch (status) {
       case "queued":
       case "sending":
-        return <Clock className="h-3 w-3 text-gray-400" />
+        return <Clock weight="bold" className="h-3 w-3 text-gray-400" />
       case "sent":
-        return <Check className="h-3 w-3 text-gray-400" />
+        return <Check weight="bold" className="h-3 w-3 text-gray-400" />
       case "delivered":
-        return <CheckCheck className="h-3 w-3 text-gray-400" />
+        return <CheckCheck weight="bold" className="h-3 w-3 text-gray-400" />
       case "read":
-        return <CheckCheck className="h-3 w-3 text-blue-500" />
+        return <CheckCheck weight="bold" className="h-3 w-3 text-blue-500" />
       case "failed":
-        return <AlertCircle className="h-3 w-3 text-red-500" />
+        return <AlertCircle weight="bold" className="h-3 w-3 text-red-500" />
       default:
         return null
     }
@@ -123,7 +123,7 @@ export function MessageThread({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-8 text-center">
         <div className="rounded-full bg-gray-100 p-6 mb-4">
-          <FileText className="h-12 w-12 text-gray-400" />
+          <FileText weight="bold" className="h-12 w-12 text-gray-400" />
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
         <p className="text-sm text-gray-500 max-w-sm">
@@ -164,7 +164,7 @@ export function MessageThread({
             align="right"
             trigger={
               <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <MoreVertical className="h-5 w-5 text-gray-500" />
+                <MoreVertical weight="bold" className="h-5 w-5 text-gray-500" />
               </button>
             }
           >
@@ -243,7 +243,7 @@ export function MessageThread({
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-sm underline"
                               >
-                                <Paperclip className="h-4 w-4" />
+                                <Paperclip weight="bold" className="h-4 w-4" />
                                 View attachment
                               </a>
                             )}
@@ -286,10 +286,10 @@ export function MessageThread({
         <div className="flex items-end gap-3">
           <div className="flex gap-1">
             <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
-              <Paperclip className="h-5 w-5" />
+              <Paperclip weight="bold" className="h-5 w-5" />
             </button>
             <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-500">
-              <FileText className="h-5 w-5" />
+              <FileText weight="bold" className="h-5 w-5" />
             </button>
           </div>
 
@@ -314,7 +314,7 @@ export function MessageThread({
             disabled={!messageText.trim() || isSending}
             className="bg-[#3A9B9F] hover:bg-[#2F8488] h-11 w-11 p-0"
           >
-            <Send className="h-5 w-5" />
+            <Send weight="bold" className="h-5 w-5" />
           </Button>
         </div>
       </div>
