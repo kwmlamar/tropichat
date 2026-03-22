@@ -15,7 +15,8 @@ import {
   CaretDown,
   Stack,
   CalendarBlank,
-  Columns,
+  ArrowLineLeft,
+  ArrowLineRight,
   Crown,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
@@ -195,7 +196,11 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <Columns weight="regular" className={cn("shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5", "text-gray-400 dark:text-gray-500")} />
+          {collapsed ? (
+            <ArrowLineRight weight="regular" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+          ) : (
+            <ArrowLineLeft weight="regular" className="h-5 w-5 text-gray-400 dark:text-gray-500 shrink-0" />
+          )}
           {!collapsed && <span>Collapse</span>}
         </button>
 
