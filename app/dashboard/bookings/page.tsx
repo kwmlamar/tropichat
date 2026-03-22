@@ -277,7 +277,7 @@ export default function BookingsPage() {
         </Link>
       </div>
 
-      {/* Day carousel + nav */}
+      {/* Day calendar grid + nav */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-3 px-1">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
@@ -290,28 +290,32 @@ export default function BookingsPage() {
             </button>
           </div>
         </div>
-        {/* Date cards — signature of mobile bookings — now scrollable */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-fade-right">
-          {carouselDays.map((date, idx) => {
+        
+        {/* Compact fixed grid */}
+        <div className="grid grid-cols-7 gap-1.5 px-0.5">
+          {DAY_NAMES.map(d => (
+            <div key={d} className="text-center text-[9px] font-bold text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
+          ))}
+          {calendarDays.map((day, idx) => {
+            if (day === null) return <div key={idx} />
+            const date = new Date(viewYear, viewMonth, day)
             const isSelected = selectedDate.toDateString() === date.toDateString()
             const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`
             const count = filtered.filter(b => b.booking_date === dateStr).length
+            
             return (
               <motion.button key={idx} onClick={() => setSelDate(date)}
-                initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.01 }}
-                className={cn("flex flex-col items-center py-3 min-w-[62px] rounded-xl border transition-all duration-200 relative shrink-0",
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.005 }}
+                className={cn("flex flex-col items-center justify-center aspect-square rounded-xl border transition-all duration-200 relative",
                   isSelected
                     ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20"
-                    : "bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] text-gray-700 dark:text-[#A3A3A3]"
+                    : "bg-white dark:bg-[#0C0C0C] border-gray-100 dark:border-[#1C1C1C] text-gray-700 dark:text-[#A3A3A3]"
                 )}>
-                <span className={cn("text-[9px] font-semibold uppercase tracking-widest", isSelected ? "text-white/70" : "text-gray-400 dark:text-[#525252]")}>
-                  {DAY_NAMES[date.getDay()]}
-                </span>
-                <span className={cn("text-xl font-bold leading-tight", isSelected ? "text-white" : "dark:text-white/90")}>
-                  {date.getDate()}
+                <span className={cn("text-[14px] font-bold", isSelected ? "text-white" : "dark:text-white/90")}>
+                  {day}
                 </span>
                 {count > 0 && (
-                  <div className={cn("absolute -top-1 -right-1 h-4 w-4 rounded-full flex items-center justify-center text-[8px] font-bold border",
+                  <div className={cn("absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full flex items-center justify-center text-[7px] font-bold border",
                     isSelected ? "bg-white text-[#3A9B9F] border-white" : "bg-[#3A9B9F] text-white border-transparent")}>
                     {count}
                   </div>
