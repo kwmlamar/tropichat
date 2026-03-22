@@ -282,11 +282,11 @@ export default function BookingsPage() {
         <div className="flex items-center justify-between mb-3 px-2">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="p-1.5 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
-              <ChevronLeft className="h-3.5 w-3.5" />
+            <button onClick={prevMonth} className="p-2.5 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all shadow-sm">
+              <ChevronLeft className="h-5 w-5" />
             </button>
-            <button onClick={nextMonth} className="p-1.5 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
-              <ChevronRight className="h-3.5 w-3.5" />
+            <button onClick={nextMonth} className="p-2.5 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all shadow-sm">
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>
