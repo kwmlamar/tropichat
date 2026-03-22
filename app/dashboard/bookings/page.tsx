@@ -278,8 +278,8 @@ export default function BookingsPage() {
       </div>
 
       {/* Day calendar grid + nav */}
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between mb-3 px-1">
+      <div className="px-2 pt-4 pb-2">
+        <div className="flex items-center justify-between mb-3 px-2">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
           <div className="flex items-center gap-2">
             <button onClick={prevMonth} className="p-1.5 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
@@ -291,10 +291,10 @@ export default function BookingsPage() {
           </div>
         </div>
         
-        {/* Compact fixed grid */}
-        <div className="grid grid-cols-7 gap-1.5 px-0.5">
+        {/* Compact fixed grid — maximized space */}
+        <div className="grid grid-cols-7 gap-1">
           {DAY_NAMES.map(d => (
-            <div key={d} className="text-center text-[9px] font-bold text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
+            <div key={d} className="text-center text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
           ))}
           {calendarDays.map((day, idx) => {
             if (day === null) return <div key={idx} />
@@ -305,13 +305,13 @@ export default function BookingsPage() {
             
             return (
               <motion.button key={idx} onClick={() => setSelDate(date)}
-                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.005 }}
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.003 }}
                 className={cn("flex flex-col items-center justify-center aspect-square rounded-xl border transition-all duration-200 relative",
                   isSelected
                     ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20"
-                    : "bg-white dark:bg-[#0C0C0C] border-gray-100 dark:border-[#1C1C1C] text-gray-700 dark:text-[#A3A3A3]"
+                    : "bg-white dark:bg-[#0C0C0C] border-gray-100 dark:border-[#1C1C1C] text-gray-800 dark:text-white"
                 )}>
-                <span className={cn("text-[14px] font-bold", isSelected ? "text-white" : "dark:text-white/90")}>
+                <span className={cn("text-[16px] font-bold", isSelected ? "text-white" : "opacity-90")}>
                   {day}
                 </span>
                 {count > 0 && (
