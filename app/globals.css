@@ -357,6 +357,11 @@
     outline-offset: 2px;
     border-radius: 4px;
   }
+  /* Mask fade effect for horizontal scrollable areas */
+  .mask-fade-right {
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
 }
 
 /* Skill: prefers-reduced-motion — respect user accessibility settings */

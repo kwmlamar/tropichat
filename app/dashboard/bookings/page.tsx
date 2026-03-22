@@ -159,7 +159,6 @@ export default function BookingsPage() {
   const [customerPlan, setPlan]   = useState("free")
   const [isMobile, setIsMobile]   = useState(false)
   const [selectedDate, setSelDate]= useState<Date>(today)
-  const [pageIndex, setPageIndex] = useState(Math.floor((today.getDate() - 1) / 12))
   const [selectedTime, setSelTime]= useState("10:00 AM")
   const [currCustomerId, setCurrId]= useState<string|null>(null)
   const [createOpen, setCreateOpen]   = useState(false)
@@ -203,9 +202,9 @@ export default function BookingsPage() {
   }, [viewYear, viewMonth])
 
   const carouselDays = useMemo(() => {
-    const base = new Date(viewYear, viewMonth, 1)
-    return Array.from({ length: 12 }, (_, i) => { const d = new Date(base); d.setDate(base.getDate() + (pageIndex*12) + i); return d })
-  }, [viewYear, viewMonth, pageIndex])
+    const daysInMonth = getDaysInMonth(viewYear, viewMonth)
+    return Array.from({ length: daysInMonth }, (_, i) => new Date(viewYear, viewMonth, i + 1))
+  }, [viewYear, viewMonth])
 
   const bookingsForDay = useCallback((day: number) => {
     const dateStr = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`
@@ -269,7 +268,7 @@ export default function BookingsPage() {
           <ArrowLeft className="h-4 w-4" />
         </button>
         <p className="text-[15px] font-bold text-[#213138] dark:text-white font-[family-name:var(--font-poppins)]">
-          {carouselDays[0].toLocaleString("en-US", { month: "long", year: "numeric" })}
+          {MONTH_NAMES[viewMonth]} {viewYear}
         </p>
         <Link href="/dashboard/bookings/availability">
           <button className="h-9 w-9 flex items-center justify-center bg-gray-100 dark:bg-[#111] rounded-xl text-gray-500 dark:text-[#525252] active:scale-90 transition-transform">
@@ -280,32 +279,35 @@ export default function BookingsPage() {
 
       {/* Day carousel + nav */}
       <div className="px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between mb-3">
-          <button onClick={() => setPageIndex(p=>p-1)} className="p-2 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button onClick={() => setPageIndex(p=>p+1)} className="p-2 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
-            <ChevronRight className="h-4 w-4" />
-          </button>
+        <div className="flex items-center justify-between mb-3 px-1">
+          <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
+          <div className="flex items-center gap-2">
+            <button onClick={prevMonth} className="p-1.5 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+            <button onClick={nextMonth} className="p-1.5 rounded-lg border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-400 dark:text-[#525252] hover:text-[#3A9B9F] active:scale-95 transition-all">
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
-        {/* Date cards — signature of mobile bookings */}
-        <div className="grid grid-cols-4 gap-2">
-          {carouselDays.slice(0, 8).map((date, idx) => {
+        {/* Date cards — signature of mobile bookings — now scrollable */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-fade-right">
+          {carouselDays.map((date, idx) => {
             const isSelected = selectedDate.toDateString() === date.toDateString()
             const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`
             const count = filtered.filter(b => b.booking_date === dateStr).length
             return (
               <motion.button key={idx} onClick={() => setSelDate(date)}
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}
-                className={cn("flex flex-col items-center py-3 rounded-xl border transition-all duration-200 relative",
+                initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.01 }}
+                className={cn("flex flex-col items-center py-3 min-w-[62px] rounded-xl border transition-all duration-200 relative shrink-0",
                   isSelected
-                    ? "bg-[#3A9B9F] border-[#3A9B9F] text-white"
+                    ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20"
                     : "bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] text-gray-700 dark:text-[#A3A3A3]"
                 )}>
                 <span className={cn("text-[9px] font-semibold uppercase tracking-widest", isSelected ? "text-white/70" : "text-gray-400 dark:text-[#525252]")}>
                   {DAY_NAMES[date.getDay()]}
                 </span>
-                <span className={cn("text-xl font-bold leading-tight", isSelected ? "text-white" : "")}>
+                <span className={cn("text-xl font-bold leading-tight", isSelected ? "text-white" : "dark:text-white/90")}>
                   {date.getDate()}
                 </span>
                 {count > 0 && (
