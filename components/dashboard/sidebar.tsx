@@ -93,7 +93,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
       <div className={cn("flex shrink-0 items-center pt-8 pb-6", collapsed ? "justify-center px-3" : "px-5")}>
         <div className={cn(
           "flex items-center w-full transition-all duration-200",
-          !collapsed && "p-2 -m-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-[#262626]/50 cursor-default group"
+          collapsed ? "justify-center" : "p-2 -m-2 rounded-xl hover:bg-gray-200/50 dark:hover:bg-[#262626]/50 cursor-default group"
         )}>
           <div className={cn(
             "shrink-0 flex items-center justify-center bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm border border-gray-100 dark:border-[#2A2A2A] transition-all duration-300",
