@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
         .from('connected_accounts')
         .update({
           is_active: true,
+          channel_account_name: pageName || 'Facebook Page',
           access_token: pageAccessToken,
           metadata: {
             page_name: pageName,
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Keep meta_connections in sync
-    const metaUpdate: Record<string, unknown> = { account_id: pageId }
+    const metaUpdate: Record<string, unknown> = { account_id: pageId, account_name: pageName || 'Facebook Page' }
     if (!isDemoToken) {
       metaUpdate.page_access_token = pageAccessToken
     }
