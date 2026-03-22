@@ -142,7 +142,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon weight={active ? "bold" : "light"} className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+              <Icon weight={active ? "bold" : "regular"} className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -195,7 +195,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <Columns weight="light" className={cn("shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5", "text-gray-400 dark:text-gray-500")} />
+          <Columns weight="regular" className={cn("shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5", "text-gray-400 dark:text-gray-500")} />
           {!collapsed && <span>Collapse</span>}
         </button>
 
@@ -212,7 +212,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <GearSix weight={isActive("/dashboard/settings") ? "bold" : "light"} className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+          <GearSix weight={isActive("/dashboard/settings") ? "bold" : "regular"} className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 
