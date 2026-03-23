@@ -396,13 +396,13 @@ export async function handleIncomingMessage(
     console.error(`[Webhook:${event.channel_type}] Failed to insert message:`, msgError)
   } else {
     // 5. Trigger push notification for browser/mobile
-    const channelName = event.channel_type === 'whatsapp' ? 'WhatsApp' : 
-                      event.channel_type === 'instagram' ? 'Instagram' : 'Facebook'
+    const channelAbbr = event.channel_type === 'whatsapp' ? 'WA' : 
+                      event.channel_type === 'instagram' ? 'IG' : 'Messenger'
     
     await triggerPushNotifications(
       db,
       account.user_id,
-      `${resolvedName ?? 'New Message'} on ${channelName}`,
+      `${resolvedName ?? 'New Message'} (${channelAbbr})`,
       event.message.content?.substring(0, 100) || "Image or other attachment",
       {
         url: `/dashboard?conversation=${conversationDbId}`,

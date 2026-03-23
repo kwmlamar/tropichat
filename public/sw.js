@@ -100,9 +100,9 @@ self.addEventListener("push", (event) => {
   }
 
   const data = event.data ? event.data.json() : {};
-  const title = data.title || "New Message - TropiChat";
+  const title = data.title || "New Message";
   const options = {
-    body: data.body || "You have a new message from a customer.",
+    body: data.body || "You have a new incoming message.",
     icon: "/tropichat-logo.png",
     badge: "/tropichat-logo.png", // Small icon for top bar
     tag: data.tag || "new_message", // Consolidate multiple notifications
