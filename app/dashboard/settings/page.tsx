@@ -789,35 +789,50 @@ export default function SettingsPage() {
                     {days.map((day) => (
                       <div
                         key={day}
-                        className="flex items-center justify-between sm:justify-start gap-4 p-4 hover:bg-gray-50 dark:hover:bg-[#111] transition-colors"
+                        className={cn(
+                          "flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-gray-50 dark:hover:bg-[#111] transition-colors",
+                          !businessHours[day]?.enabled && "bg-gray-50/50 dark:bg-transparent"
+                        )}
                       >
-                        <div className="w-14">
-                          <Switch
-                            checked={businessHours[day]?.enabled || false}
-                            onCheckedChange={(checked) => updateDayHours(day, "enabled", checked)}
-                          />
+                        <div className="flex items-center justify-between sm:justify-start gap-4">
+                          <div className="flex items-center gap-3">
+                            <Switch
+                              checked={businessHours[day]?.enabled || false}
+                              onCheckedChange={(checked) => updateDayHours(day, "enabled", checked)}
+                            />
+                            <span className="text-[14px] font-bold text-gray-900 dark:text-white capitalize min-w-[90px]">
+                              {day}
+                            </span>
+                          </div>
+                          {!businessHours[day]?.enabled && (
+                            <span className="sm:hidden text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                              Closed
+                            </span>
+                          )}
                         </div>
-                        <span className="w-24 text-[13px] font-medium text-gray-900 dark:text-white capitalize">
-                          {day}
-                        </span>
+
                         {businessHours[day]?.enabled ? (
-                          <div className="flex items-center gap-2 flex-1 sm:flex-none">
-                            <Input
-                              type="time"
-                              value={businessHours[day]?.start || "09:00"}
-                              onChange={(e) => updateDayHours(day, "start", e.target.value)}
-                              className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9"
-                            />
-                            <span className="text-[12px] text-gray-400 dark:text-gray-400">to</span>
-                            <Input
-                              type="time"
-                              value={businessHours[day]?.end || "17:00"}
-                              onChange={(e) => updateDayHours(day, "end", e.target.value)}
-                              className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9"
-                            />
+                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <div className="relative flex-1 sm:w-32">
+                              <Input
+                                type="time"
+                                value={businessHours[day]?.start || "09:00"}
+                                onChange={(e) => updateDayHours(day, "start", e.target.value)}
+                                className="w-full text-center rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-11 sm:h-9"
+                              />
+                            </div>
+                            <span className="text-[12px] font-medium text-gray-400 dark:text-gray-500 shrink-0">to</span>
+                            <div className="relative flex-1 sm:w-32">
+                              <Input
+                                type="time"
+                                value={businessHours[day]?.end || "17:00"}
+                                onChange={(e) => updateDayHours(day, "end", e.target.value)}
+                                className="w-full text-center rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-11 sm:h-9"
+                              />
+                            </div>
                           </div>
                         ) : (
-                          <span className="text-[13px] text-gray-400 dark:text-gray-400 italic py-1.5">
+                          <span className="hidden sm:inline text-[13px] text-gray-400 dark:text-gray-500 italic">
                             Closed
                           </span>
                         )}
