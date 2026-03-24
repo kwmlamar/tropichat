@@ -33,7 +33,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-white/5 bg-[#213138] dark:bg-[#0A0A0A] text-gray-400 overflow-hidden">
       {/* Subtle glow */}
-      <div className="absolute left-1/2 -top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-[#3A9B9F]/10 blur-3xl pointer-events-none" />
+      <div className="absolute left-1/2 -top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-[#007B85]/10 blur-3xl pointer-events-none" />
 
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 md:grid-cols-4 lg:gap-16">
@@ -54,7 +54,7 @@ export function Footer() {
             </p>
             <a
               href="mailto:support@tropichat.com"
-              className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#3A9B9F]"
+              className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#007B85]"
             >
               <Mail className="h-4 w-4" />
               support@tropichat.com
@@ -68,7 +68,7 @@ export function Footer() {
                     key={s.label}
                     href={s.href}
                     aria-label={s.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 dark:bg-[#111111] text-gray-400 transition-all duration-200 hover:bg-[#3A9B9F]/20 hover:text-[#3A9B9F]"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 dark:bg-[#111111] text-gray-400 transition-all duration-200 hover:bg-[#007B85]/20 hover:text-[#007B85]"
                   >
                     <Icon className="h-4 w-4" />
                   </a>
@@ -87,7 +87,7 @@ export function Footer() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="text-sm transition-colors duration-200 hover:text-[#3A9B9F]"
+                    className="text-sm transition-colors duration-200 hover:text-[#007B85]"
                   >
                     {link.label}
                   </a>
@@ -106,7 +106,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm transition-colors duration-200 hover:text-[#3A9B9F]"
+                    className="text-sm transition-colors duration-200 hover:text-[#007B85]"
                   >
                     {link.label}
                   </Link>
@@ -120,7 +120,7 @@ export function Footer() {
         <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 dark:border-[#222222] pt-8 text-xs text-gray-500 md:flex-row font-sans">
           <p>&copy; {new Date().getFullYear()} TropiChat by TropiTech Solutions. All rights reserved.</p>
           <p className="flex items-center gap-1.5 text-gray-500">
-            <MessageCircle className="h-3.5 w-3.5 text-[#3A9B9F]" />
+            <MessageCircle className="h-3.5 w-3.5 text-[#007B85]" />
             Built with care in the Bahamas
           </p>
         </div>

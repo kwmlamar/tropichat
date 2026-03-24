@@ -30,9 +30,9 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       if (!name) return "bg-gray-400"
       const colors = [
         "bg-blue-500",
-        "bg-[#3A9B9F]", // Brand Teal
+        "bg-[#007B85]", // Brand Teal
         "bg-amber-500",
-        "bg-[#FF8B66]", // Brand Coral
+        "bg-[#FF7E36]", // Brand Coral
         "bg-indigo-500",
         "bg-cyan-500",
         "bg-emerald-500",

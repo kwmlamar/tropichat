@@ -130,11 +130,11 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                     className={cn(
                       "flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 active:scale-[0.97]",
                       active
-                        ? "bg-[#3A9B9F]/10 border-[#3A9B9F]/20 text-[#3A9B9F] dark:bg-[#3A9B9F]/20 dark:border-[#3A9B9F]/30"
+                        ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85] dark:bg-[#007B85]/20 dark:border-[#007B85]/30"
                         : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
                     )}
                   >
-                    <Icon weight="bold" className={cn("h-6 w-6", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500")} />
+                    <Icon weight="bold" className={cn("h-6 w-6", active ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500")} />
                     <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
                   </Link>
                 )
@@ -173,11 +173,11 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                 href={tab.href}
                 className={cn(
                   "flex-1 flex flex-col items-center justify-center gap-1 py-2.5 relative transition-colors duration-200",
-                  active ? "text-[#3A9B9F]" : "text-gray-400"
+                  active ? "text-[#007B85]" : "text-gray-400"
                 )}
               >
                 <div className="relative">
-                  <Icon weight="bold" className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")} />
+                  <Icon weight="bold" className={cn("h-6 w-6 transition-colors duration-200", active ? "text-[#007B85]" : "text-gray-400")} />
                   {/* Unread dot on Inbox */}
                   {isInbox && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#25D366] text-[10px] font-bold text-white px-0.5">
@@ -185,12 +185,12 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
                     </span>
                   )}
                 </div>
-                <span className={cn("text-[10px] font-medium tracking-wide transition-colors duration-200", active ? "text-[#3A9B9F]" : "text-gray-400")}>
+                <span className={cn("text-[10px] font-medium tracking-wide transition-colors duration-200", active ? "text-[#007B85]" : "text-gray-400")}>
                   {tab.label}
                 </span>
                 {/* Active indicator pill */}
                 {active && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#3A9B9F]" />
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#007B85]" />
                 )}
               </Link>
             )
@@ -201,15 +201,15 @@ export function MobileBottomNav({ customer }: MobileBottomNavProps) {
             onClick={() => setShowMore(!showMore)}
             className={cn(
               "flex-1 flex flex-col items-center justify-center gap-1 py-2.5 relative transition-colors duration-200",
-              isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400"
+              isMoreActive || showMore ? "text-[#007B85]" : "text-gray-400"
             )}
           >
-            <SquaresFour weight="bold" className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")} />
-            <span className={cn("text-[10px] font-medium tracking-wide", isMoreActive || showMore ? "text-[#3A9B9F]" : "text-gray-400")}>
+            <SquaresFour weight="bold" className={cn("h-6 w-6 transition-colors duration-200", isMoreActive || showMore ? "text-[#007B85]" : "text-gray-400")} />
+            <span className={cn("text-[10px] font-medium tracking-wide", isMoreActive || showMore ? "text-[#007B85]" : "text-gray-400")}>
               More
             </span>
             {(isMoreActive || showMore) && (
-              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#3A9B9F]" />
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#007B85]" />
             )}
           </button>
         </div>

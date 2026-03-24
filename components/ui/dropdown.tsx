@@ -68,7 +68,7 @@ export function DropdownItem({
       disabled={disabled}
       className={cn(
         "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-all duration-200 mx-1 w-[calc(100%-8px)] rounded-xl",
-        "hover:bg-[#3A9B9F]/5 dark:hover:bg-[#3A9B9F]/10 hover:text-[#3A9B9F] disabled:cursor-not-allowed disabled:opacity-50",
+        "hover:bg-[#007B85]/5 dark:hover:bg-[#007B85]/10 hover:text-[#007B85] disabled:cursor-not-allowed disabled:opacity-50",
         destructive ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600" : "text-gray-600 dark:text-gray-300",
         className
       )}
@@ -126,7 +126,7 @@ export function SimpleSelect({
           "flex w-full items-center justify-between rounded-lg border border-gray-200 dark:border-[#222222] bg-white dark:bg-[#111111] px-3 py-2 text-sm text-gray-900 dark:text-gray-100",
           "focus:outline-none focus:ring-2 focus:ring-blue-500",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          !selectedOption && "text-gray-400 dark:text-gray-500"
+          !selectedOption && "text-muted-foreground"
         )}
       >
         <span>{selectedOption?.label || placeholder}</span>
@@ -144,8 +144,8 @@ export function SimpleSelect({
               }}
               className={cn(
                 "flex w-full items-center justify-between px-4 py-2.5 text-sm transition-all duration-200 mx-1 w-[calc(100%-8px)] rounded-xl",
-                "hover:bg-[#3A9B9F]/5 dark:hover:bg-[#222222] hover:text-[#3A9B9F]",
-                option.value === value ? "bg-[#3A9B9F]/10 dark:bg-[#3A9B9F]/20 text-[#3A9B9F] font-semibold" : "text-gray-600 dark:text-gray-300"
+                "hover:bg-[#007B85]/5 dark:hover:bg-[#222222] hover:text-[#007B85]",
+                option.value === value ? "bg-[#007B85]/10 dark:bg-[#007B85]/20 text-[#007B85] font-semibold" : "text-gray-600 dark:text-gray-300"
               )}
             >
               <span className="truncate">{option.label}</span>

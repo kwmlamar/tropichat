@@ -32,7 +32,7 @@ import { DAY_LABELS } from "@/types/bookings"
 import { toast } from "sonner"
 
 const PRESET_COLORS = [
-  '#3A9B9F', '#FF8B66', '#7C3AED', '#10B981', '#F59E0B',
+  '#007B85', '#FF7E36', '#7C3AED', '#10B981', '#F59E0B',
   '#EF4444', '#3B82F6', '#EC4899', '#8B5CF6', '#14B8A6',
 ]
 
@@ -54,7 +54,7 @@ function ServiceForm({
   const [capacity, setCapacity] = useState(String(initial?.max_capacity ?? 10))
   const [price, setPrice] = useState(initial?.price != null ? String(initial.price) : '')
   const [priceType, setPriceType] = useState<'per_person' | 'fixed'>(initial?.price_type ?? 'per_person')
-  const [color, setColor] = useState(initial?.color ?? '#3A9B9F')
+  const [color, setColor] = useState(initial?.color ?? '#007B85')
   const [saving, setSaving] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,7 +77,7 @@ function ServiceForm({
     <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-sm">
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
-          <label className="block text-[10px] font-black uppercase tracking-widest text-[#3A9B9F] mb-2 ml-1">Service Name *</label>
+          <label className="block text-[10px] font-black uppercase tracking-widest text-[#007B85] mb-2 ml-1">Service Name *</label>
           <Input
             value={name}
             onChange={e => setName(e.target.value)}
@@ -92,7 +92,7 @@ function ServiceForm({
             onChange={e => setDescription(e.target.value)}
             placeholder="Short description of the tour…"
             rows={2}
-            className="w-full rounded-xl border border-gray-100 dark:border-[#222222] bg-gray-50 dark:bg-[#111111] px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all"
+            className="w-full rounded-xl border border-gray-100 dark:border-[#222222] bg-gray-50 dark:bg-[#111111] px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 focus:border-[#007B85] transition-all"
           />
         </div>
         <div>
@@ -112,7 +112,7 @@ function ServiceForm({
             <select
               value={priceType}
               onChange={e => setPriceType(e.target.value as 'per_person' | 'fixed')}
-              className="rounded-xl border border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#3A9B9F]/20"
+              className="rounded-xl border border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#007B85]/20"
             >
               <option value="per_person">/ person</option>
               <option value="fixed">fixed total</option>
@@ -140,7 +140,7 @@ function ServiceForm({
         </div>
       </div>
       <div className="flex gap-2">
-        <Button type="submit" disabled={saving} className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white">
+        <Button type="submit" disabled={saving} className="bg-[#007B85] hover:bg-[#2F8488] text-white">
           <Check className="h-4 w-4 mr-1" />
           {saving ? 'Saving…' : 'Save'}
         </Button>
@@ -187,7 +187,7 @@ function SlotForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-5 bg-[#F8FAFB] dark:bg-black rounded-2xl border border-gray-100 dark:border-[#222222] mt-4 shadow-inner">
-      <p className="text-[10px] font-black uppercase tracking-widest text-[#3A9B9F]">New Availability Slot</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">New Availability Slot</p>
 
       {/* Recurring vs one-time */}
       <div className="flex bg-gray-100 dark:bg-[#0A0A0A] p-1 rounded-xl w-fit">
@@ -195,7 +195,7 @@ function SlotForm({
           type="button"
           onClick={() => setIsRecurring(true)}
           className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all",
-            isRecurring ? "bg-[#3A9B9F] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            isRecurring ? "bg-[#007B85] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           )}
         >
           Weekly
@@ -204,7 +204,7 @@ function SlotForm({
           type="button"
           onClick={() => setIsRecurring(false)}
           className={cn("px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all",
-            !isRecurring ? "bg-[#3A9B9F] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            !isRecurring ? "bg-[#007B85] text-white shadow-md" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           )}
         >
           One-time
@@ -218,7 +218,7 @@ function SlotForm({
             <select
               value={dayOfWeek}
               onChange={e => setDayOfWeek(Number(e.target.value))}
-              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all appearance-none"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 transition-all appearance-none"
             >
               {DAY_LABELS.map((d, i) => <option key={i} value={i}>{d}</option>)}
             </select>
@@ -231,7 +231,7 @@ function SlotForm({
               value={specificDate}
               onChange={e => setSpecificDate(e.target.value)}
               required={!isRecurring}
-              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+              className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 transition-all"
             />
           </div>
         )}
@@ -253,7 +253,7 @@ function SlotForm({
             type="time"
             value={startTime}
             onChange={e => setStartTime(e.target.value)}
-            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 transition-all"
           />
         </div>
         <div>
@@ -262,13 +262,13 @@ function SlotForm({
             type="time"
             value={endTime}
             onChange={e => setEndTime(e.target.value)}
-            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 transition-all"
+            className="w-full h-12 rounded-xl border border-gray-100 dark:border-[#222222] px-4 text-sm font-bold bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 transition-all"
           />
         </div>
       </div>
 
       <div className="flex gap-2 pt-2">
-        <Button type="submit" disabled={saving} className="flex-1 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl h-12 font-bold shadow-lg shadow-teal-500/10">
+        <Button type="submit" disabled={saving} className="flex-1 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl h-12 font-bold shadow-lg shadow-teal-500/10">
           <Check className="h-4 w-4 mr-2" />
           {saving ? 'Adding...' : 'Add Slot'}
         </Button>
@@ -405,7 +405,7 @@ export default function AvailabilityPage() {
       <div className="flex items-center gap-4 px-5 pt-[calc(env(safe-area-inset-top)+1.25rem)] pb-3 border-b border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0A0A0A]">
         <button 
           onClick={handleBack}
-          className="h-9 w-9 flex shrink-0 items-center justify-center bg-gray-100 dark:bg-[#111] rounded-xl text-gray-400 hover:text-[#3A9B9F] transition-all active:scale-95"
+          className="h-9 w-9 flex shrink-0 items-center justify-center bg-gray-100 dark:bg-[#111] rounded-xl text-gray-400 hover:text-[#007B85] transition-all active:scale-95"
         >
           <ArrowLeft weight="bold" className="h-4 w-4" />
         </button>
@@ -417,7 +417,7 @@ export default function AvailabilityPage() {
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <CircleNotch weight="bold" className="h-8 w-8 animate-spin text-[#3A9B9F]" />
+            <CircleNotch weight="bold" className="h-8 w-8 animate-spin text-[#007B85]" />
           </div>
         ) : services.length === 0 && !addingService ? (
           <div className="text-center py-20 text-gray-400">
@@ -451,7 +451,7 @@ export default function AvailabilityPage() {
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button onClick={() => handleToggleActive(service)} className="p-1.5 text-gray-400">
-                        {service.active ? <ToggleRight weight="bold" className="h-6 w-6 text-[#3A9B9F]" /> : <ToggleLeft weight="bold" className="h-6 w-6" />}
+                        {service.active ? <ToggleRight weight="bold" className="h-6 w-6 text-[#007B85]" /> : <ToggleLeft weight="bold" className="h-6 w-6" />}
                       </button>
                       <button onClick={() => setEditingServiceId(editing ? null : service.id)} className="p-1.5 text-gray-400">
                         <Pencil weight="bold" className="h-4 w-4" />
@@ -478,7 +478,7 @@ export default function AvailabilityPage() {
                         <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Availability Slots</p>
                         <button
                           onClick={() => setAddingSlotForService(addingSlotForService === service.id ? null : service.id)}
-                          className="text-xs text-[#3A9B9F] font-bold flex items-center gap-1.5"
+                          className="text-xs text-[#007B85] font-bold flex items-center gap-1.5"
                         >
                           <Plus weight="bold" className="h-4 w-4" /> Add
                         </button>
@@ -493,7 +493,7 @@ export default function AvailabilityPage() {
                           <div key={slot.id} className={cn("flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold", slot.is_available ? "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] text-gray-600 dark:text-gray-300" : "opacity-40 line-through")}>
                             <Clock weight="bold" className="h-3.5 w-3.5 text-gray-400" />
                             <span className="flex-1">{formatSlotLabel(slot)}</span>
-                            <button onClick={() => handleToggleSlot(slot)} className="p-1">{slot.is_available ? <ToggleRight weight="bold" className="h-5 w-5 text-[#3A9B9F]" /> : <ToggleLeft weight="bold" className="h-5 w-5" />}</button>
+                            <button onClick={() => handleToggleSlot(slot)} className="p-1">{slot.is_available ? <ToggleRight weight="bold" className="h-5 w-5 text-[#007B85]" /> : <ToggleLeft weight="bold" className="h-5 w-5" />}</button>
                             <button onClick={() => handleDeleteSlot(slot)} className="p-1"><X weight="bold" className="h-3.5 w-3.5" /></button>
                           </div>
                         ))}
@@ -516,7 +516,7 @@ export default function AvailabilityPage() {
               form?.scrollIntoView({ behavior: 'smooth' })
             }, 100)
           }}
-          className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold text-[15px] shadow-lg shadow-teal-500/10 flex items-center justify-center gap-2 active:scale-95 transition-all"
+          className="w-full h-12 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold text-[15px] shadow-lg shadow-teal-500/10 flex items-center justify-center gap-2 active:scale-95 transition-all"
         >
           <Plus weight="bold" className="h-5 w-5" />
           Add Service
@@ -535,7 +535,7 @@ export default function AvailabilityPage() {
           <div className="flex items-center gap-4">
             <button 
               onClick={handleBack}
-              className="h-10 w-10 flex shrink-0 items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-xl border border-gray-100 dark:border-[#222222] text-gray-400 hover:text-[#3A9B9F] transition-all"
+              className="h-10 w-10 flex shrink-0 items-center justify-center bg-white dark:bg-[#0A0A0A] rounded-xl border border-gray-100 dark:border-[#222222] text-gray-400 hover:text-[#007B85] transition-all"
             >
                 <ArrowLeft weight="bold" className="h-5 w-5" />
             </button>
@@ -546,7 +546,7 @@ export default function AvailabilityPage() {
           </div>
           <Button
             onClick={() => setAddingService(true)}
-            className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl"
+            className="bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl"
           >
             <Plus weight="bold" className="h-4 w-4 mr-1.5" />
             Add Service
@@ -563,7 +563,7 @@ export default function AvailabilityPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#3A9B9F] border-t-transparent" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#007B85] border-t-transparent" />
           </div>
         ) : services.length === 0 && !addingService ? (
           <div className="text-center py-20 text-gray-400">
@@ -603,7 +603,7 @@ export default function AvailabilityPage() {
                         title={service.active ? 'Deactivate' : 'Activate'}
                       >
                         {service.active
-                          ? <ToggleRight className="h-5 w-5 text-[#3A9B9F]" />
+                          ? <ToggleRight className="h-5 w-5 text-[#007B85]" />
                           : <ToggleLeft className="h-5 w-5" />
                         }
                       </button>
@@ -650,7 +650,7 @@ export default function AvailabilityPage() {
                         </p>
                         <button
                           onClick={() => setAddingSlotForService(addingSlotForService === service.id ? null : service.id)}
-                          className="text-xs text-[#3A9B9F] font-bold hover:underline flex items-center gap-1.5 transition-all"
+                          className="text-xs text-[#007B85] font-bold hover:underline flex items-center gap-1.5 transition-all"
                         >
                           <Plus className="h-4 w-4" />
                           Add slot
@@ -691,7 +691,7 @@ export default function AvailabilityPage() {
                               className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors"
                             >
                               {slot.is_available
-                                ? <ToggleRight className="h-4 w-4 text-[#3A9B9F]" />
+                                ? <ToggleRight className="h-4 w-4 text-[#007B85]" />
                                 : <ToggleLeft className="h-4 w-4" />
                               }
                             </button>
@@ -724,7 +724,7 @@ export default function AvailabilityPage() {
                 form?.scrollIntoView({ behavior: 'smooth' })
               }, 100)
             }}
-            className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl font-bold text-[14px] shadow-lg shadow-teal-500/10 flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
+            className="w-full h-12 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-bold text-[14px] shadow-lg shadow-teal-500/10 flex items-center justify-center gap-2 active:scale-[0.99] transition-all"
           >
             <Plus className="h-4 w-4" />
             Add Service

@@ -18,7 +18,7 @@ function getToken(req: NextRequest): string | null {
 const DEMO_PAGES = [
   {
     id: '200000000000001',
-    name: 'Simply Dave Nassau Tours',
+    name: 'Ocean Breeze Tours Nassau Tours',
     category: 'Tour Operator',
     profile_picture_url: 'https://ui-avatars.com/api/?name=SD&background=0084FF&color=fff&size=200',
     follower_count: 1247,

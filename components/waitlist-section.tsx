@@ -89,7 +89,7 @@ export function WaitlistSection() {
             className="mx-auto max-w-lg text-center"
           >
             <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm ring-1 ring-white/20">
-              <CheckCircle2 className="h-10 w-10 text-[#3A9B9F]" />
+              <CheckCircle2 className="h-10 w-10 text-[#007B85]" />
             </div>
             <h2 className="mb-4 text-3xl font-bold text-white  md:text-4xl">
               You're on the list!
@@ -127,13 +127,13 @@ export function WaitlistSection() {
             className="mb-12 text-center"
           >
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white/80 backdrop-blur-sm ring-1 ring-white/20">
-              <Sparkles className="h-4 w-4 text-[#3A9B9F]" />
+              <Sparkles className="h-4 w-4 text-[#007B85]" />
               Limited Early Access
             </div>
             <h2 className="mb-4 text-4xl font-bold text-white  md:text-5xl leading-tight">
               Be among the first to
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-300">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-teal-300">
                 try TropiChat
               </span>
             </h2>
@@ -164,7 +164,7 @@ export function WaitlistSection() {
                       id="name"
                       placeholder="Your full name"
                       {...register("name")}
-                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#007B85] dark:text-white"
                     />
                     {errors.name && (
                       <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
@@ -179,7 +179,7 @@ export function WaitlistSection() {
                       type="email"
                       placeholder="your@email.com"
                       {...register("email")}
-                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#007B85] dark:text-white"
                     />
                     {errors.email && (
                       <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
@@ -197,7 +197,7 @@ export function WaitlistSection() {
                       onValueChange={(value) => setValue("business_type", value)}
                       value={businessType}
                     >
-                      <SelectTrigger className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus:ring-[#3A9B9F] dark:text-white">
+                      <SelectTrigger className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus:ring-[#007B85] dark:text-white">
                         <SelectValue placeholder="Select business type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -221,7 +221,7 @@ export function WaitlistSection() {
                       type="tel"
                       placeholder="+1 (242) 555-0123"
                       {...register("phone")}
-                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#3A9B9F] dark:text-white"
+                      className="rounded-xl border-slate-200 dark:border-[#222222] dark:bg-[#111111] h-11 focus-visible:ring-[#007B85] dark:text-white"
                     />
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export function WaitlistSection() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-xl bg-[#3A9B9F] text-base font-semibold text-white hover:bg-[#2F8488] h-12 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full rounded-xl bg-[#007B85] text-base font-semibold text-white hover:bg-[#2F8488] h-12 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">
@@ -261,7 +261,7 @@ export function WaitlistSection() {
               className="mt-5 text-center"
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-2.5 text-sm font-medium text-white/80 backdrop-blur-sm ring-1 ring-white/10">
-                <Gift className="h-4 w-4 text-[#FF8B66]" />
+                <Gift className="h-4 w-4 text-[#FF7E36]" />
                 First 100 signups get 3 months at 50% off
               </div>
             </motion.div>

@@ -148,8 +148,8 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB] dark:bg-[#0A0A0A]">
       {/* Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#3A9B9F]/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF8B66]/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#007B85]/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[120px] rounded-full" />
       </div>
 
       <motion.div
@@ -173,8 +173,8 @@ export default function SignupPage() {
           </div>
 
           <div className="mb-10">
-            <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF8B66]/10 dark:bg-[#FF8B66]/20 shadow-sm ring-1 ring-[#FF8B66]/20 dark:ring-[#FF8B66]/30">
-              <UserPlus weight="bold" className="h-7 w-7 text-[#FF8B66]" />
+            <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FF7E36]/10 dark:bg-[#FF7E36]/20 shadow-sm ring-1 ring-[#FF7E36]/20 dark:ring-[#FF7E36]/30">
+              <UserPlus weight="bold" className="h-7 w-7 text-[#FF7E36]" />
             </div>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white ">
               Create your account!
@@ -188,14 +188,14 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="businessName" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Business Name</Label>
               <div className="relative group">
-                <Building2 weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Building2 weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   id="businessName"
                   type="text"
                   placeholder="Your Business Name"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                   required
                 />
               </div>
@@ -205,14 +205,14 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
                 <div className="relative group">
-                  <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                    className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                     required
                   />
                 </div>
@@ -220,14 +220,14 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
                 <div className="relative group">
-                   <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                   <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                    className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                     required
                     minLength={8}
                   />
@@ -245,14 +245,14 @@ export default function SignupPage() {
             <div className="space-y-2">
               <Label htmlFor="confirmPassword" title="Confirm Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Confirm Password</Label>
               <div className="relative group">
-                 <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                 <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                   required
                 />
               </div>
@@ -261,7 +261,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               disabled={anyLoading}
-              className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white h-14 rounded-2xl text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] mt-4"
+              className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white h-14 rounded-2xl text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] mt-4"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -275,8 +275,8 @@ export default function SignupPage() {
 
             <p className="text-[10px] text-center text-slate-400 dark:text-gray-500 mt-2">
               By signing up, you agree to our{" "}
-              <Link href="/terms" className="text-[#3A9B9F] font-semibold hover:underline">Terms</Link> and{" "}
-              <Link href="/privacy" className="text-[#3A9B9F] font-semibold hover:underline">Privacy Policy</Link>.
+              <Link href="/terms" className="text-[#007B85] font-semibold hover:underline">Terms</Link> and{" "}
+              <Link href="/privacy" className="text-[#007B85] font-semibold hover:underline">Privacy Policy</Link>.
             </p>
           </form>
 
@@ -317,7 +317,7 @@ export default function SignupPage() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-[#3A9B9F] font-bold hover:underline"
+              className="text-[#007B85] font-bold hover:underline"
             >
               Sign in
             </Link>
@@ -328,15 +328,15 @@ export default function SignupPage() {
         <div className="hidden lg:flex w-[45%] bg-[#213138] p-12 flex-col justify-center relative overflow-hidden">
           {/* Brand Background Effects */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#3A9B9F]/20 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF8B66]/15 blur-[100px] rounded-full" />
+            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#007B85]/20 blur-[120px] rounded-full" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF7E36]/15 blur-[100px] rounded-full" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,155,159,0.05)_0%,transparent_70%)]" />
           </div>
 
           <div className="relative flex-1 flex flex-col items-center justify-center">
             <h2 className="text-3xl font-bold text-white text-center mb-4 ">
               Organize Every <br />
-              <span className="text-[#FF8B66]">Customer Interaction</span>
+              <span className="text-[#FF7E36]">Customer Interaction</span>
             </h2>
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
@@ -389,7 +389,7 @@ export default function SignupPage() {
                 className="absolute w-[380px] h-[380px]"
               >
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle2 weight="bold" className="w-7 h-7 text-[#3A9B9F]" />
+                  <CheckCircle2 weight="bold" className="w-7 h-7 text-[#007B85]" />
                 </div>
                 <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex flex-col items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <span className="text-[8px] font-bold text-slate-400 uppercase">Tags</span>
@@ -404,13 +404,13 @@ export default function SignupPage() {
 
             <div className="mt-12 text-center">
               <p className="text-white/70 max-w-sm mx-auto text-sm leading-relaxed px-4">
-                Join our Early Access and lock in <span className="font-bold text-[#FF8B66]">Founding Member pricing</span> forever.
+                Join our Early Access and lock in <span className="font-bold text-[#FF7E36]">Founding Member pricing</span> forever.
               </p>
             </div>
 
             <div className="mt-12 flex justify-center gap-2">
               <div className="h-1.5 w-5 rounded-full bg-white/10" />
-              <div className="h-1.5 w-10 rounded-full bg-[#FF8B66]" />
+              <div className="h-1.5 w-10 rounded-full bg-[#FF7E36]" />
               <div className="h-1.5 w-5 rounded-full bg-white/10" />
             </div>
           </div>

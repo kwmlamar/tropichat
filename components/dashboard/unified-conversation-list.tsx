@@ -96,7 +96,7 @@ export function UnifiedConversationList({
             <button className="text-[#213138] dark:text-gray-100">
               <Camera className="h-6 w-6" />
             </button>
-            <button className="h-8 w-8 bg-[#3A9B9F] flex items-center justify-center text-white rounded-full">
+            <button className="h-8 w-8 bg-[#007B85] flex items-center justify-center text-white rounded-full">
               <Plus className="h-5 w-5" />
             </button>
           </div>
@@ -131,7 +131,7 @@ export function UnifiedConversationList({
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="pl-9 bg-gray-100 dark:bg-[#111] border-transparent dark:border-transparent hover:bg-gray-200 dark:hover:bg-[#1A1A1A] focus:bg-white dark:focus:bg-[#0C0C0C] focus:border-gray-200 dark:focus:border-[#3A9B9F] focus:ring-0 transition-all rounded-xl dark:text-white dark:placeholder:text-[#525252]"
+              className="pl-9 bg-gray-100 dark:bg-[#111] border-transparent dark:border-transparent hover:bg-gray-200 dark:hover:bg-[#1A1A1A] focus:bg-white dark:focus:bg-[#0C0C0C] focus:border-gray-200 dark:focus:border-[#007B85] focus:ring-0 transition-all rounded-xl dark:text-white dark:placeholder:text-[#525252]"
             />
           </div>
           <button
@@ -140,7 +140,7 @@ export function UnifiedConversationList({
             className={cn(
               "p-2 rounded-xl transition-colors flex-shrink-0",
               showArchived
-                ? "bg-[#3A9B9F]/10 text-[#3A9B9F]"
+                ? "bg-[#007B85]/10 text-[#007B85]"
                 : "hover:bg-gray-100 dark:hover:bg-[#1A1A1A] text-gray-400 dark:text-[#525252]"
             )}
           >
@@ -160,7 +160,7 @@ export function UnifiedConversationList({
                   className={cn(
                     "whitespace-nowrap font-medium transition-all duration-200 relative py-1 flex items-center justify-center",
                     filter.value === "all" ? "text-[15px]" : "px-1",
-                    isActive ? "text-[#3A9B9F]" : "text-gray-500 dark:text-[#525252] hover:text-gray-800 dark:hover:text-gray-100"
+                    isActive ? "text-[#007B85]" : "text-gray-500 dark:text-[#525252] hover:text-gray-800 dark:hover:text-gray-100"
                   )}
                 >
                   {filter.value === "all" ? filter.title : <filter.icon />}
@@ -174,7 +174,7 @@ export function UnifiedConversationList({
                 </button>
               )
             })}
-            <button className="hidden lg:flex ml-auto flex-shrink-0 w-8 h-8 items-center justify-center text-gray-400 hover:text-[#3A9B9F] transition-colors rounded-xl hover:bg-gray-50 dark:hover:bg-[#111]">
+            <button className="hidden lg:flex ml-auto flex-shrink-0 w-8 h-8 items-center justify-center text-gray-400 hover:text-[#007B85] transition-colors rounded-xl hover:bg-gray-50 dark:hover:bg-[#111]">
               <Plus className="w-5 h-5" />
             </button>
           </div>
@@ -187,13 +187,13 @@ export function UnifiedConversationList({
             className="w-full flex items-center gap-6 py-3 px-6 text-left hover:bg-gray-50 dark:hover:bg-[#0C0C0C] transition-colors group border-b border-gray-100 dark:border-[#1C1C1C]/50"
           >
             <div className="flex-shrink-0 w-8 flex justify-center">
-              <Archive className="h-5 w-5 text-gray-400 dark:text-[#525252] group-hover:text-[#3A9B9F] transition-colors" />
+              <Archive className="h-5 w-5 text-gray-400 dark:text-[#525252] group-hover:text-[#007B85] transition-colors" />
             </div>
             <span className="text-[16px] font-semibold text-gray-900 dark:text-white">
               {showArchived ? "Back to Chats" : "Archived"}
             </span>
             {showArchived && conversations.length > 0 && (
-              <span className="ml-auto text-[13px] font-bold text-[#3A9B9F]">
+              <span className="ml-auto text-[13px] font-bold text-[#007B85]">
                 {conversations.length}
               </span>
             )}
@@ -207,8 +207,8 @@ export function UnifiedConversationList({
         )}>
           {conversations.length === 0 && !loading ? (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center pt-20">
-              <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mb-4">
-                <Inbox className="h-5 w-5 text-[#3A9B9F]" />
+              <div className="w-12 h-12 rounded-xl bg-[#007B85]/10 flex items-center justify-center mb-4">
+                <Inbox className="h-5 w-5 text-[#007B85]" />
               </div>
               <h3 className="text-[14px] font-semibold text-gray-900 dark:text-white mb-1">
                 {showArchived ? "No archived conversations" : "No conversations"}
@@ -258,7 +258,7 @@ export function UnifiedConversationList({
                         className={cn(
                           "w-full flex items-center gap-4 py-3.5 px-6 text-left transition-all relative border-b border-gray-100 dark:border-[#1C1C1C]/30 active:bg-gray-100 dark:active:bg-[#1A1A1A]",
                           selectedId === conversation.id
-                            ? "bg-[#3A9B9F]/5 dark:bg-[#3A9B9F]/10 border-l-2 border-l-[#3A9B9F]"
+                            ? "bg-[#007B85]/5 dark:bg-[#007B85]/10 border-l-2 border-l-[#007B85]"
                             : "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-[#0C0C0C]"
                         )}
                       >
@@ -283,7 +283,7 @@ export function UnifiedConversationList({
                           </span>
                           <span className={cn(
                             "text-[12px] font-bold whitespace-nowrap",
-                            conversation.unread_count > 0 ? "text-[#3A9B9F]" : "text-gray-400"
+                            conversation.unread_count > 0 ? "text-[#007B85]" : "text-gray-400"
                           )}>
                             {conversation.last_message_at
                               ? new Date(conversation.last_message_at).toLocaleDateString() === new Date().toLocaleDateString()
@@ -303,7 +303,7 @@ export function UnifiedConversationList({
  
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                              {conversation.unread_count > 0 && (
-                              <div className="h-[22px] min-w-[22px] rounded-full bg-[#3A9B9F] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
+                              <div className="h-[22px] min-w-[22px] rounded-full bg-[#007B85] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
                                 <span className="text-[10px] font-black text-white leading-none">
                                   {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
                                 </span>

@@ -48,14 +48,14 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         <div
           className={cn(
             "h-[18px] w-[18px] shrink-0 rounded-md border transition-all duration-200 flex items-center justify-center",
-            "group-focus-within:ring-2 group-focus-within:ring-[#3A9B9F]/40 group-focus-within:ring-offset-2",
+            "group-focus-within:ring-2 group-focus-within:ring-[#007B85]/40 group-focus-within:ring-offset-2",
             disabled ? "opacity-40 cursor-not-allowed" : "active:scale-95",
             // Light mode
             !isChecked && "bg-white border-gray-200 hover:border-gray-300 shadow-sm",
             // Dark mode
             !isChecked && "dark:bg-[#0C0C0C] dark:border-[#1C1C1C] dark:hover:border-[#2A2A2A] dark:shadow-none",
             // Checked state (brand colors work in both modes)
-            isChecked && "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-sm shadow-[#3A9B9F]/10",
+            isChecked && "bg-[#007B85] border-[#007B85] text-white shadow-sm shadow-[#007B85]/10",
             className
           )}
         >

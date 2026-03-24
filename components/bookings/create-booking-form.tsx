@@ -42,7 +42,7 @@ interface CreateBookingFormProps {
 }
 
 const SERVICE_COLORS = [
-  '#3A9B9F', '#FF8B66', '#7C3AED', '#10B981', '#F59E0B',
+  '#007B85', '#FF7E36', '#7C3AED', '#10B981', '#F59E0B',
   '#EF4444', '#3B82F6', '#EC4899', '#8B5CF6', '#14B8A6',
 ]
 
@@ -222,7 +222,7 @@ export function CreateBookingForm({
                     className={cn(
                       "flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 group hover-lift",
                       serviceId === s.id
-                        ? "border-[#3A9B9F] bg-teal-50/30 dark:bg-[#3A9B9F]/10 ring-1 ring-[#3A9B9F]/20 shadow-lg shadow-teal-500/5 scale-[1.01]"
+                        ? "border-[#007B85] bg-teal-50/30 dark:bg-[#007B85]/10 ring-1 ring-[#007B85]/20 shadow-lg shadow-teal-500/5 scale-[1.01]"
                         : "border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 hover:border-gray-200 dark:hover:border-[#333333] hover:bg-white dark:hover:bg-[#222222]"
                     )}
                   >
@@ -233,14 +233,14 @@ export function CreateBookingForm({
                       <CalendarDays weight="bold" className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-[#213138] dark:text-gray-100 text-sm group-hover:text-[#3A9B9F] transition-colors">{s.name}</p>
+                      <p className="font-bold text-[#213138] dark:text-gray-100 text-sm group-hover:text-[#007B85] transition-colors">{s.name}</p>
                       <p className="text-[11px] text-gray-500 dark:text-gray-400 font-bold mt-0.5 uppercase tracking-wider opacity-80">
                         {s.duration_minutes} min · max {s.max_capacity} Guests
                         {s.price ? ` · $${s.price}` : ''}
                       </p>
                     </div>
                     {serviceId === s.id && (
-                      <div className="h-5 w-5 rounded-full bg-[#3A9B9F] flex items-center justify-center shadow-md shadow-teal-500/20">
+                      <div className="h-5 w-5 rounded-full bg-[#007B85] flex items-center justify-center shadow-md shadow-teal-500/20">
                         <Check weight="bold" className="h-3 w-3 text-white" />
                       </div>
                     )}
@@ -257,13 +257,13 @@ export function CreateBookingForm({
                 Tour Date <span className="text-coral-500">*</span>
               </label>
               <div className="relative group min-w-0">
-                <CalendarDays weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+                <CalendarDays weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#007B85] transition-colors" />
                 <input
                   type="date"
                   value={date}
                   onChange={e => setDate(e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#007B85] dark:focus:border-[#007B85] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#007B85]/10 shadow-sm"
                 />
               </div>
             </div>
@@ -272,12 +272,12 @@ export function CreateBookingForm({
                 Tour Time <span className="text-coral-500">*</span>
               </label>
               <div className="relative group min-w-0">
-                <Clock weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F] transition-colors" />
+                <Clock weight="bold" className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-hover:text-[#007B85] transition-colors" />
                 <input
                   type="time"
                   value={time}
                   onChange={e => setTime(e.target.value)}
-                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#3A9B9F] dark:focus:border-[#3A9B9F] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#3A9B9F]/10 shadow-sm"
+                  className="w-full rounded-2xl bg-white/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] hover:border-gray-200 dark:hover:border-[#333333] focus:border-[#007B85] dark:focus:border-[#007B85] pl-9 sm:pl-11 pr-2 sm:pr-4 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-[#213138] dark:text-gray-100 focus:outline-none transition-all focus:ring-4 focus:ring-[#007B85]/10 shadow-sm"
                 />
               </div>
             </div>
@@ -295,8 +295,8 @@ export function CreateBookingForm({
                   checkingAvail
                     ? "bg-gray-50/50 dark:bg-[#111111]/50 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-[#222222]"
                     : availability?.available
-                      ? "bg-teal-50/50 dark:bg-teal-900/10 text-[#3A9B9F] border-teal-100/50 dark:border-teal-900/20 shadow-sm shadow-teal-500/5"
-                      : "bg-coral-50/50 dark:bg-coral-900/10 text-[#FF8B66] border-coral-100/50 dark:border-coral-900/20 shadow-sm shadow-coral-500/5"
+                      ? "bg-teal-50/50 dark:bg-teal-900/10 text-[#007B85] border-teal-100/50 dark:border-teal-900/20 shadow-sm shadow-teal-500/5"
+                      : "bg-coral-50/50 dark:bg-coral-900/10 text-[#FF7E36] border-coral-100/50 dark:border-coral-900/20 shadow-sm shadow-coral-500/5"
                 )}
               >
                 <div className="shrink-0">
@@ -335,14 +335,14 @@ export function CreateBookingForm({
               <div className="flex-1 flex justify-center items-center gap-6">
                 <button
                   onClick={() => setPeople(Math.max(1, people - 1))}
-                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#007B85] transition-all font-bold text-xl shadow-sm btn-press"
                 >
                   −
                 </button>
                 <span className="text-2xl font-black text-[#213138] dark:text-white w-10 text-center ">{people}</span>
                 <button
                   onClick={() => setPeople(Math.min(selectedService?.max_capacity ?? 99, people + 1))}
-                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#3A9B9F] transition-all font-bold text-xl shadow-sm btn-press"
+                  className="h-10 w-10 rounded-xl bg-white dark:bg-[#333333] border border-gray-100 dark:border-[#222222] flex items-center justify-center text-[#213138] dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#222222] hover:text-[#007B85] transition-all font-bold text-xl shadow-sm btn-press"
                 >
                   +
                 </button>
@@ -363,32 +363,32 @@ export function CreateBookingForm({
             </label>
             <div className="grid gap-3">
               <div className="relative group">
-                <User weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <User weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   placeholder="Full Name"
                   value={customerName}
                   onChange={e => setCustomerName(e.target.value)}
-                  className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                  className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#007B85]/10 focus-visible:border-[#007B85] transition-all"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="relative group">
-                  <Phone weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <Phone weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#007B85] transition-colors" />
                   <Input
                     placeholder="Phone"
                     value={customerPhone}
                     onChange={e => setCustomerPhone(e.target.value)}
-                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#007B85]/10 focus-visible:border-[#007B85] transition-all"
                   />
                 </div>
                 <div className="relative group">
-                  <FileText weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                  <FileText weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#007B85] transition-colors" />
                   <Input
                     type="email"
                     placeholder="Email"
                     value={customerEmail}
                     onChange={e => setCustomerEmail(e.target.value)}
-                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#3A9B9F]/10 focus-visible:border-[#3A9B9F] transition-all"
+                    className="rounded-2xl border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 pl-11 h-12 font-bold text-sm dark:text-gray-100 focus-visible:ring-4 focus-visible:ring-[#007B85]/10 focus-visible:border-[#007B85] transition-all"
                   />
                 </div>
               </div>
@@ -405,7 +405,7 @@ export function CreateBookingForm({
               onChange={e => setNotes(e.target.value)}
               placeholder="Special requests, dietary requirements, etc."
               rows={3}
-              className="w-full rounded-2xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 px-4 py-3 text-sm font-medium dark:text-gray-200 resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-sm"
+              className="w-full rounded-2xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 px-4 py-3 text-sm font-medium dark:text-gray-200 resize-none focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 focus:border-[#007B85] transition-all shadow-sm"
             />
           </div>
 
@@ -422,7 +422,7 @@ export function CreateBookingForm({
             <Button
               onClick={handleProceedToConfirm}
               disabled={!serviceId || !date || !time || !customerName || !people}
-              className="flex-1 h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
+              className="flex-1 h-12 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
             >
               Continue
               <ChevronRight weight="bold" className="ml-2 h-4 w-4" />
@@ -436,7 +436,7 @@ export function CreateBookingForm({
               <Button
                 onClick={handleProceedToConfirm}
                 disabled={!serviceId || !date || !time || !customerName || !people}
-                className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-xl shadow-teal-500/20 text-base"
+                className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-xl shadow-teal-500/20 text-base"
               >
                 Continue to Confirmation
                 <ChevronRight weight="bold" className="ml-2 h-5 w-5" />
@@ -516,7 +516,7 @@ export function CreateBookingForm({
                   value={confirmationMsg}
                   onChange={e => setConfirmationMsg(e.target.value)}
                   rows={4}
-                  className="w-full rounded-[24px] border border-gray-100 dark:border-[#222222] bg-gray-50/50 dark:bg-black/50 px-5 py-4 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#3A9B9F]/10 focus:border-[#3A9B9F] transition-all shadow-inner"
+                  className="w-full rounded-[24px] border border-gray-100 dark:border-[#222222] bg-gray-50/50 dark:bg-black/50 px-5 py-4 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-[#007B85]/10 focus:border-[#007B85] transition-all shadow-inner"
                 />
               </div>
             </motion.div>
@@ -526,7 +526,7 @@ export function CreateBookingForm({
             <Button
               onClick={() => handleCreateBooking(true)}
               disabled={submitting}
-              className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
+              className="w-full h-12 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
             >
               {submitting ? <Loader2 weight="bold" className="h-5 w-5 animate-spin" /> : (
                 prefill?.conversationId && onSendConfirmation ? 'Confirm & Notify Customer' : 'Confirm Order'
@@ -546,7 +546,7 @@ export function CreateBookingForm({
 
             <button
               onClick={() => setStep('form')}
-              className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-[#3A9B9F] dark:hover:text-[#3A9B9F] transition-all flex items-center justify-center gap-2 pt-2 uppercase tracking-widest"
+              className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-[#007B85] dark:hover:text-[#007B85] transition-all flex items-center justify-center gap-2 pt-2 uppercase tracking-widest"
             >
               <ChevronLeft weight="bold" className="h-3 w-3" />
               Back to Details
@@ -569,7 +569,7 @@ export function CreateBookingForm({
           <div className="space-y-2">
             <h3 className="text-2xl font-extrabold text-[#213138] dark:text-gray-100 ">All Signed Up!</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-[240px] mx-auto leading-relaxed">
-              Tour for <span className="text-[#3A9B9F] font-bold">{createdBooking.customer_name}</span> has been successfully logged.
+              Tour for <span className="text-[#007B85] font-bold">{createdBooking.customer_name}</span> has been successfully logged.
             </p>
           </div>
 

@@ -105,13 +105,13 @@ function DesktopAppMockup() {
       {/* Sidebar — collapsed icon rail */}
       <div className="flex w-14 flex-col items-center gap-4 border-r border-slate-100 dark:border-[#222222] bg-[#213138] dark:bg-[#0A0A0A] py-4">
         {/* Logo mark */}
-        <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#3A9B9F]">
+        <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#007B85]">
           <MessageCircle weight="bold" className="h-4 w-4 text-white" />
         </div>
         {[LayoutDashboard, Users, Tag, Settings].map((Icon, i) => (
           <button
             key={i}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${i === 0 ? "bg-[#3A9B9F]/20 text-[#3A9B9F]" : "text-slate-400 hover:bg-white/10 hover:text-white"
+            className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${i === 0 ? "bg-[#007B85]/20 text-[#007B85]" : "text-slate-400 hover:bg-white/10 hover:text-white"
               }`}
           >
             <Icon weight="bold" className="h-4 w-4" />
@@ -133,7 +133,7 @@ function DesktopAppMockup() {
               <button
                 key={tab}
                 className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold transition-colors ${i === 0
-                    ? "bg-[#213138] dark:bg-[#3A9B9F] text-white"
+                    ? "bg-[#213138] dark:bg-[#007B85] text-white"
                     : "text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-[#111111]"
                   }`}
               >
@@ -148,7 +148,7 @@ function DesktopAppMockup() {
           {conversations.map((c, i) => (
             <div
               key={i}
-              className={`flex cursor-pointer items-start gap-2.5 px-3 py-2.5 transition-colors ${i === 0 ? "bg-teal-50/60 dark:bg-[#3A9B9F]/10" : "hover:bg-slate-50 dark:hover:bg-[#111111]"
+              className={`flex cursor-pointer items-start gap-2.5 px-3 py-2.5 transition-colors ${i === 0 ? "bg-teal-50/60 dark:bg-[#007B85]/10" : "hover:bg-slate-50 dark:hover:bg-[#111111]"
                 }`}
             >
               <div className="relative mt-0.5 shrink-0">
@@ -169,7 +169,7 @@ function DesktopAppMockup() {
                 <p className="truncate text-[10px] text-slate-500 dark:text-gray-400">{c.preview}</p>
               </div>
               {c.unread > 0 && (
-                <div className="ml-1 mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#3A9B9F] text-[9px] font-bold text-white">
+                <div className="ml-1 mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#007B85] text-[9px] font-bold text-white">
                   {c.unread}
                 </div>
               )}
@@ -223,7 +223,7 @@ function DesktopAppMockup() {
 
           {/* Outbound */}
           <div className="flex items-end justify-end gap-2">
-            <div className="max-w-[60%] rounded-2xl rounded-br-sm bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] px-3 py-2 shadow-sm">
+            <div className="max-w-[60%] rounded-2xl rounded-br-sm bg-gradient-to-br from-[#007B85] to-[#2F8488] px-3 py-2 shadow-sm">
               <p className="text-[11px] text-white">Hi Maria! Yes, your order is confirmed for Saturday at 2 PM. We'll have it ready for pickup! 🎂</p>
               <div className="mt-1 flex items-center justify-end gap-1">
                 <p className="text-[9px] text-white/70">9:41 AM</p>
@@ -247,7 +247,7 @@ function DesktopAppMockup() {
         <div className="border-t border-slate-100 dark:border-[#222222] bg-white dark:bg-black px-4 py-3">
           <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-2">
             <span className="flex-1 text-[11px] text-slate-400 dark:text-gray-500">Type a message…</span>
-            <button className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#3A9B9F] transition-colors hover:bg-[#2F8488]">
+            <button className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#007B85] transition-colors hover:bg-[#2F8488]">
               <Send weight="bold" className="h-3 w-3 text-white" />
             </button>
           </div>
@@ -303,7 +303,7 @@ function MobileAppMockup() {
 
       {/* Chat header */}
       <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-[#222222] px-3 py-2">
-        <button className="text-[#3A9B9F]">
+        <button className="text-[#007B85]">
           <ChevronLeft weight="bold" className="h-4 w-4" />
         </button>
         <div className="relative">
@@ -343,7 +343,7 @@ function MobileAppMockup() {
 
         {/* Outbound */}
         <div className="flex items-end justify-end gap-1.5">
-          <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] px-2.5 py-1.5 shadow-sm">
+          <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-gradient-to-br from-[#007B85] to-[#2F8488] px-2.5 py-1.5 shadow-sm">
             <p className="text-[10px] leading-relaxed text-white">Hi Maria! Yes, confirmed for Saturday 2 PM. Ready for pickup!</p>
             <div className="mt-0.5 flex items-center justify-end gap-1">
               <p className="text-[8px] text-white/70">9:41 AM</p>
@@ -366,7 +366,7 @@ function MobileAppMockup() {
       <div className="border-t border-slate-100 dark:border-[#222222] bg-white dark:bg-black px-3 py-2">
         <div className="flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-1.5">
           <span className="flex-1 text-[10px] text-slate-400 dark:text-gray-500">Message…</span>
-          <button className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3A9B9F]">
+          <button className="flex h-5 w-5 items-center justify-center rounded-full bg-[#007B85]">
             <Send weight="bold" className="h-2.5 w-2.5 text-white" />
           </button>
         </div>
@@ -401,8 +401,8 @@ export function HeroSection() {
 
       {/* Brand Glowing Orbs */}
       <div className="absolute left-1/2 top-[15%] -z-10 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 opacity-40 pointer-events-none">
-        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-[#3A9B9F]/20 blur-[100px]" />
-        <div className="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-[#FF8B66]/10 blur-[100px]" />
+        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-[#007B85]/20 blur-[100px]" />
+        <div className="absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full bg-[#FF7E36]/10 blur-[100px]" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
@@ -413,7 +413,7 @@ export function HeroSection() {
           transition={{ duration: 0.5 }}
           className="mb-8 inline-flex items-center gap-2 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/10 px-4 py-1.5 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm transition-all hover:bg-teal-100 dark:hover:bg-teal-900/20"
         >
-          <Sparkles weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+          <Sparkles weight="bold" className="h-4 w-4 text-[#007B85]" />
           <span>#1 MULTI-CHANNEL INBOX</span>
         </motion.div>
 
@@ -425,7 +425,7 @@ export function HeroSection() {
           className="mb-6 max-w-4xl  text-5xl font-bold tracking-tight text-[#213138] dark:text-white md:text-6xl lg:text-7xl leading-[1.1]"
         >
           The best messaging system <br className="hidden md:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-[#2F8488]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-[#2F8488]">
             for your entire team
           </span>
         </motion.h1>
@@ -452,7 +452,7 @@ export function HeroSection() {
         >
           <Button
             onClick={scrollToWaitlist}
-            className="group relative rounded-full bg-[#3A9B9F] px-8 py-7 text-lg font-semibold text-white shadow-[0_8px_30px_-8px_rgba(58,155,159,0.5)] transition-all hover:scale-105 hover:bg-[#2F8488] hover:shadow-[0_12px_40px_-8px_rgba(58,155,159,0.6)] btn-press"
+            className="group relative rounded-full bg-[#007B85] px-8 py-7 text-lg font-semibold text-white shadow-[0_8px_30px_-8px_rgba(58,155,159,0.5)] transition-all hover:scale-105 hover:bg-[#2F8488] hover:shadow-[0_12px_40px_-8px_rgba(58,155,159,0.6)] btn-press"
           >
             Start Free 14-Day Trial
             <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -525,7 +525,7 @@ export function HeroSection() {
               <Instagram weight="bold" className="h-6 w-6" />
               Instagram
             </div>
-            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#3A9B9F]">
+            <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-gray-300 text-lg md:text-xl transition-colors hover:text-[#007B85]">
               <Phone weight="bold" className="h-6 w-6" />
               SMS
             </div>

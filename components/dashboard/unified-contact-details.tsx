@@ -32,8 +32,8 @@ export function UnifiedContactDetails({
   if (!conversation) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black border-l border-gray-100 dark:border-[#1C1C1C] p-8 text-center">
-        <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mb-4">
-          <User weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
+        <div className="w-12 h-12 rounded-xl bg-[#007B85]/10 flex items-center justify-center mb-4">
+          <User weight="bold" className="h-5 w-5 text-[#007B85]" />
         </div>
         <h3 className="text-[14px] font-semibold text-gray-900 dark:text-white mb-1">No contact selected</h3>
         <p className="text-[13px] text-gray-400 dark:text-[#525252]">
@@ -135,7 +135,7 @@ export function UnifiedContactDetails({
 
         {/* Stats */}
         <div>
-          <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-3 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Statistics</p>
+          <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-3 flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />Statistics</p>
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-gray-50 dark:bg-[#0C0C0C] rounded-xl border border-gray-100 dark:border-[#1C1C1C] p-3">
               <div className="flex items-center gap-1.5 mb-1">

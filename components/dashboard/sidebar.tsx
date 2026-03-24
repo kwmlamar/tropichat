@@ -138,12 +138,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                 "flex items-center rounded-xl text-sm font-medium transition-all duration-200 relative",
                 collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5",
                 active
-                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
+                  ? "bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+              <Icon className={cn("shrink-0", active ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -163,7 +163,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
         <div className="mx-4 mb-4 flex-shrink-0">
           <div className="rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 border border-orange-200/50 dark:border-orange-500/20 p-4 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <Crown className="h-4 w-4 text-[#FF8B66]" />
+              <Crown className="h-4 w-4 text-[#FF7E36]" />
               <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Upgrade to Pro</span>
             </div>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
@@ -171,7 +171,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             </p>
             <Link
               href="/dashboard/settings?tab=billing"
-              className="block w-full text-center text-xs font-semibold text-white bg-[#FF8B66] hover:bg-[#ff7b52] rounded-lg py-2 transition-all shadow-sm"
+              className="block w-full text-center text-xs font-semibold text-white bg-[#FF7E36] hover:bg-[#ff7b52] rounded-lg py-2 transition-all shadow-sm"
             >
               View Plans
             </Link>
@@ -212,12 +212,12 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
             "flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-1 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
             isActive("/dashboard/settings")
-              ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
+              ? "bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20"
               : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+          <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 

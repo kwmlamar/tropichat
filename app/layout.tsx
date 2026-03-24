@@ -31,7 +31,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/tropichat-logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "32x32" },
+      { url: "/tropichat-logo-transparent.png", type: "image/png", sizes: "16x16" },
       { url: "/tropichat-icon-dark-192.png", type: "image/png", sizes: "192x192" },
     ],
     apple: "/apple-touch-icon.png",

@@ -128,8 +128,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB] dark:bg-[#0A0A0A]">
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#3A9B9F]/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF8B66]/10 blur-[120px] rounded-full" />
+        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#007B85]/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[120px] rounded-full" />
       </div>
 
       <motion.div
@@ -153,7 +153,7 @@ export default function LoginPage() {
 
           <div className="mb-10">
             <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10 shadow-sm ring-1 ring-teal-100 dark:ring-teal-500/20">
-              <Lock weight="bold" className="h-7 w-7 text-[#3A9B9F]" />
+              <Lock weight="bold" className="h-7 w-7 text-[#007B85]" />
             </div>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white">
               Login to your account!
@@ -167,14 +167,14 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
               <div className="relative group">
-                <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="eg. pixelcot@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                   required
                 />
               </div>
@@ -183,14 +183,14 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
               <div className="relative group">
-                <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#3A9B9F] transition-colors" />
+                <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] focus-visible:ring-[#3A9B9F] bg-slate-50/50 dark:bg-[#222222] dark:text-gray-100 dark:placeholder-gray-500"
+                  className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
                   required
                 />
                 <button
@@ -215,7 +215,7 @@ export default function LoginPage() {
               </div>
               <Link
                 href="/forgot-password"
-                className="text-sm font-bold text-[#3A9B9F] hover:underline"
+                className="text-sm font-bold text-[#007B85] hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -224,7 +224,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={anyLoading}
-              className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white h-14 rounded-2xl text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98]"
+              className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white h-14 rounded-2xl text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98]"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
@@ -274,7 +274,7 @@ export default function LoginPage() {
             Don't have an account?{" "}
             <Link
               href="/signup"
-              className="text-[#3A9B9F] font-bold hover:underline"
+              className="text-[#007B85] font-bold hover:underline"
             >
               Sign up for free
             </Link>
@@ -283,14 +283,14 @@ export default function LoginPage() {
 
         <div className="hidden lg:flex w-[45%] bg-[#213138] p-12 flex-col justify-center relative overflow-hidden">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#3A9B9F]/20 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF8B66]/10 blur-[100px] rounded-full" />
+            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#007B85]/20 blur-[120px] rounded-full" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[100px] rounded-full" />
           </div>
 
           <div className="relative flex-1 flex flex-col items-center justify-center">
             <h2 className="text-3xl font-bold text-white text-center mb-4">
               Manage All Messages <br />
-              <span className="text-[#3A9B9F]">in One Place</span>
+              <span className="text-[#007B85]">in One Place</span>
             </h2>
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
@@ -339,12 +339,12 @@ export default function LoginPage() {
                 className="absolute w-[380px] h-[380px]"
               >
                 <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle weight="bold" className="w-7 h-7 text-[#3A9B9F]" />
+                  <CheckCircle weight="bold" className="w-7 h-7 text-[#007B85]" />
                 </div>
                 <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
                   <div className="flex flex-col items-center">
-                    <div className="text-[10px] font-bold text-[#FF8B66]">VIP</div>
-                    <div className="w-6 h-1 rounded-full bg-[#FF8B66]/20 mt-0.5" />
+                    <div className="text-[10px] font-bold text-[#FF7E36]">VIP</div>
+                    <div className="w-6 h-1 rounded-full bg-[#FF7E36]/20 mt-0.5" />
                   </div>
                 </div>
               </motion.div>
@@ -357,7 +357,7 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-12 flex justify-center gap-2">
-              <div className="h-1.5 w-10 rounded-full bg-[#3A9B9F]" />
+              <div className="h-1.5 w-10 rounded-full bg-[#007B85]" />
               <div className="h-1.5 w-5 rounded-full bg-white/10" />
               <div className="h-1.5 w-5 rounded-full bg-white/10" />
             </div>

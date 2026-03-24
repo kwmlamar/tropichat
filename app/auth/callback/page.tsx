@@ -93,7 +93,7 @@ export default function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#3A9B9F] mx-auto mb-4" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#007B85] mx-auto mb-4" />
         <p className="text-gray-600">Signing you in...</p>
       </div>
     </div>

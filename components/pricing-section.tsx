@@ -95,7 +95,7 @@ export function PricingSection() {
           </div>
           <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Simple pricing.{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-teal-700">
               No surprises.
             </span>
           </h2>
@@ -108,7 +108,7 @@ export function PricingSection() {
             <button
               onClick={() => setIsAnnual(false)}
               className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${!isAnnual
-                  ? "bg-[#213138] dark:bg-[#3A9B9F] text-white shadow-sm"
+                  ? "bg-[#213138] dark:bg-[#007B85] text-white shadow-sm"
                   : "text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200"
                 }`}
             >
@@ -117,12 +117,12 @@ export function PricingSection() {
             <button
               onClick={() => setIsAnnual(true)}
               className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${isAnnual
-                  ? "bg-[#213138] dark:bg-[#3A9B9F] text-white shadow-sm"
+                  ? "bg-[#213138] dark:bg-[#007B85] text-white shadow-sm"
                   : "text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200"
                 }`}
             >
               Annual
-              <span className="rounded-full bg-[#3A9B9F] px-2 py-0.5 text-[10px] font-bold text-white">
+              <span className="rounded-full bg-[#007B85] px-2 py-0.5 text-[10px] font-bold text-white">
                 SAVE 20%
               </span>
             </button>
@@ -140,8 +140,8 @@ export function PricingSection() {
           <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-6 md:px-8 md:py-7 shadow-sm">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex-1">
-                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#FF8B66]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF8B66] animate-pulse" />
+                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#FF7E36]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#FF7E36] animate-pulse" />
                   ONLY 7 SPOTS LEFT
                 </div>
                 <h3 className="text-xl font-bold text-[#213138] dark:text-white mb-2">
@@ -158,11 +158,11 @@ export function PricingSection() {
                     <span className="text-4xl font-bold text-[#213138] dark:text-white">$29</span>
                     <span className="text-slate-500">/mo</span>
                   </div>
-                  <div className="text-xs font-semibold text-[#FF8B66] mt-1">Locked in forever</div>
+                  <div className="text-xs font-semibold text-[#FF7E36] mt-1">Locked in forever</div>
                 </div>
                 <Button
                   onClick={handleSignup}
-                  className="rounded-full bg-[#FF8B66] text-white hover:bg-[#e87a55] font-semibold h-10 px-6 text-sm shadow-sm transition-all duration-300"
+                  className="rounded-full bg-[#FF7E36] text-white hover:bg-[#e87a55] font-semibold h-10 px-6 text-sm shadow-sm transition-all duration-300"
                 >
                   Claim Offer
                 </Button>
@@ -181,16 +181,16 @@ export function PricingSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className={`relative flex flex-col overflow-hidden rounded-2xl p-8 transition-all duration-300 hover:shadow-lg ${plan.popular
-                  ? "border border-[#3A9B9F] bg-white dark:bg-[#0A0A0A] shadow-sm md:scale-[1.02] z-10"
+                  ? "border border-[#007B85] bg-white dark:bg-[#0A0A0A] shadow-sm md:scale-[1.02] z-10"
                   : "border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] shadow-sm"
                 }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 left-0 right-0 h-1 bg-[#3A9B9F]" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-[#007B85]" />
               )}
               {plan.popular && (
-                <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#3A9B9F]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+                <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#007B85]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#007B85] animate-pulse" />
                   MOST POPULAR
                 </div>
               )}
@@ -210,7 +210,7 @@ export function PricingSection() {
                       <span className="text-slate-500 dark:text-gray-400">/{plan.period}</span>
                     </div>
                     {isAnnual && (
-                      <p className="mt-1 text-xs text-[#3A9B9F] font-semibold">
+                      <p className="mt-1 text-xs text-[#007B85] font-semibold">
                         Billed annually · Save ${((plan.monthlyPrice! - plan.annualPrice!) * 12)}/yr
                       </p>
                     )}
@@ -226,7 +226,7 @@ export function PricingSection() {
               <ul className="mb-8 space-y-2.5">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Check className={`h-4 w-4 flex-shrink-0 mt-0.5 ${plan.popular ? "text-[#3A9B9F]" : "text-slate-400"}`} />
+                    <Check className={`h-4 w-4 flex-shrink-0 mt-0.5 ${plan.popular ? "text-[#007B85]" : "text-slate-400"}`} />
                      <span
                       className={`text-sm ${feature.includes("Everything")
                           ? "font-semibold text-[#213138] dark:text-white"
@@ -242,10 +242,10 @@ export function PricingSection() {
               <Button
                 onClick={plan.name === "Enterprise" ? undefined : handleSignup}
                 className={`w-full rounded-full h-11 text-sm font-semibold transition-all duration-300 ${plan.popular
-                     ? "bg-[#3A9B9F] text-white hover:bg-[#2F8488] shadow-sm hover:shadow-md"
+                     ? "bg-[#007B85] text-white hover:bg-[#2F8488] shadow-sm hover:shadow-md"
                     : plan.name === "Enterprise"
-                      ? "bg-[#213138] dark:bg-[#3A9B9F] text-white hover:bg-slate-800 dark:hover:bg-[#2F8488]"
-                      : "border border-slate-300 dark:border-[#222222] bg-white dark:bg-[#111111] text-slate-700 dark:text-gray-200 hover:border-[#3A9B9F] hover:text-[#3A9B9F]"
+                      ? "bg-[#213138] dark:bg-[#007B85] text-white hover:bg-slate-800 dark:hover:bg-[#2F8488]"
+                      : "border border-slate-300 dark:border-[#222222] bg-white dark:bg-[#111111] text-slate-700 dark:text-gray-200 hover:border-[#007B85] hover:text-[#007B85]"
                   }`}
               >
                 {plan.cta}
@@ -271,7 +271,7 @@ export function PricingSection() {
         >
           {["14-day free trial", "No credit card required", "Cancel anytime", "Free onboarding"].map((t, i) => (
             <div key={i} className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-[#3A9B9F]" />
+              <Check className="h-4 w-4 text-[#007B85]" />
               {t}
             </div>
           ))}
@@ -296,11 +296,11 @@ export function PricingSection() {
               >
                  <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="flex w-full items-center justify-between px-6 py-4 text-left font-semibold text-[#213138] dark:text-white hover:text-[#3A9B9F] transition-colors duration-200"
+                  className="flex w-full items-center justify-between px-6 py-4 text-left font-semibold text-[#213138] dark:text-white hover:text-[#007B85] transition-colors duration-200"
                 >
                   {faq.question}
                   <span
-                    className={`ml-4 shrink-0 text-[#3A9B9F] transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
+                    className={`ml-4 shrink-0 text-[#007B85] transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
                   >
                     ▾
                   </span>

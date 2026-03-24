@@ -12,13 +12,13 @@ interface NotificationItemProps {
 const typeConfig = {
   new_message: {
     icon: MessageSquare,
-    color: "text-[#3A9B9F]",
-    bg: "bg-[#3A9B9F]/10",
+    color: "text-[#007B85]",
+    bg: "bg-[#007B85]/10",
   },
   mention: {
     icon: Bell,
-    color: "text-[#FF8B66]",
-    bg: "bg-[#FF8B66]/10",
+    color: "text-[#FF7E36]",
+    bg: "bg-[#FF7E36]/10",
   },
   assignment: {
     icon: UserPlus,
@@ -41,7 +41,7 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
       onClick={() => onClick(notification)}
       className={cn(
         "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-[#111111]",
-        !notification.read && "bg-[#3A9B9F]/[0.03] dark:bg-[#3A9B9F]/5"
+        !notification.read && "bg-[#007B85]/[0.03] dark:bg-[#007B85]/5"
       )}
     >
       {/* Icon */}
@@ -56,7 +56,7 @@ export function NotificationItem({ notification, onClick }: NotificationItemProp
             {notification.title}
           </p>
           {!notification.read && (
-            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#3A9B9F]" />
+            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#007B85]" />
           )}
         </div>
         <p className="mt-0.5 text-xs text-gray-500 line-clamp-2">{notification.message}</p>

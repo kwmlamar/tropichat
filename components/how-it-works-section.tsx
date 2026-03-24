@@ -10,7 +10,7 @@ const steps = [
     title: "Connect your channels",
     description:
       "Simple one-click connection for each platform. Link your WhatsApp Business, Instagram, and Facebook Messenger accounts in minutes. Your messages stay secure and private.",
-    color: "text-[#3A9B9F]",
+    color: "text-[#007B85]",
     bgColor: "bg-teal-50",
     ringColor: "ring-teal-100",
     barColor: "bg-teal-500",
@@ -32,10 +32,10 @@ const steps = [
     title: "Respond faster. Sell more.",
     description:
       "Manage all your customer conversations from one dashboard. Never miss a message on any platform and close more deals than ever before.",
-    color: "text-[#FF8B66]",
+    color: "text-[#FF7E36]",
     bgColor: "bg-orange-50",
     ringColor: "ring-orange-100",
-    barColor: "bg-[#FF8B66]",
+    barColor: "bg-[#FF7E36]",
   },
 ]
 
@@ -58,7 +58,7 @@ export function HowItWorksSection() {
           </div>
           <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Up and running in{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-teal-700">
               3 simple steps
             </span>
           </h2>
@@ -105,7 +105,7 @@ export function HowItWorksSection() {
           className="mt-16 flex justify-center"
         >
            <div className="inline-flex items-center gap-2.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-white dark:bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm">
-            <Clock className="h-4 w-4 text-[#3A9B9F]" />
+            <Clock className="h-4 w-4 text-[#007B85]" />
             Setup takes less than 5 minutes
           </div>
         </motion.div>

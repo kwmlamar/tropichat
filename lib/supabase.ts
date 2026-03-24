@@ -108,7 +108,7 @@ export async function signUp(email: string, password: string, businessName: stri
         contact_email: email,
         status: 'trial',
         plan: 'free',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone: 'America/Nassau',
       })
 
     if (customerError) {

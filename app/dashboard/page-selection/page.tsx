@@ -49,7 +49,7 @@ interface ChannelState<T> {
 // ─── Quality signal dot for WhatsApp numbers ──────────────────────────────────
 function QualityDot({ rating }: { rating: string | null }) {
   const color =
-    rating === "GREEN"  ? "bg-[#3A9B9F]" :
+    rating === "GREEN"  ? "bg-[#007B85]" :
     rating === "YELLOW" ? "bg-amber-400"  :
     rating === "RED"    ? "bg-red-500"    :
     "bg-gray-300 dark:bg-[#333]"
@@ -76,13 +76,13 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
       className={cn(
         "w-full text-left rounded-xl border transition-all duration-200 p-4 flex items-center gap-3 relative overflow-hidden",
         isSelected
-          ? "border-[#3A9B9F] bg-[#3A9B9F]/[0.04] dark:bg-[#3A9B9F]/[0.06]"
+          ? "border-[#007B85] bg-[#007B85]/[0.04] dark:bg-[#007B85]/[0.06]"
           : "border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] hover:border-gray-300 dark:hover:border-[#2A2A2A]"
       )}
     >
       {/* Left accent bar on selected */}
       {isSelected && (
-        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#3A9B9F]" />
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#007B85]" />
       )}
 
       {/* Radio indicator */}
@@ -90,7 +90,7 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
         className={cn(
           "h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200",
           isSelected
-            ? "border-[#3A9B9F] bg-[#3A9B9F]"
+            ? "border-[#007B85] bg-[#007B85]"
             : "border-gray-300 dark:border-[#333]"
         )}
       >
@@ -128,7 +128,7 @@ function NotConnectedState({ channel, onSetup }: { channel: string; onSetup: () 
       </p>
       <button
         onClick={onSetup}
-        className="flex items-center gap-1.5 text-[12px] font-semibold text-[#3A9B9F] hover:text-[#2F8488] transition-colors mx-auto"
+        className="flex items-center gap-1.5 text-[12px] font-semibold text-[#007B85] hover:text-[#2F8488] transition-colors mx-auto"
       >
         <Link2 weight="bold" className="h-3.5 w-3.5" />
         Go to Integrations
@@ -185,8 +185,8 @@ function ChannelPanel({
         <div className="flex items-center gap-3 shrink-0">
           {isConnected && (
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3A9B9F]" />
-              <span className="text-[10px] font-medium uppercase tracking-widest text-[#3A9B9F]">Active</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#007B85]" />
+              <span className="text-[10px] font-medium uppercase tracking-widest text-[#007B85]">Active</span>
             </span>
           )}
           {isOpen
@@ -315,7 +315,7 @@ export default function PageSelectionPage() {
     <button
       onClick={onClick}
       disabled={saving}
-      className="flex items-center gap-2 px-4 py-2 bg-[#3A9B9F] hover:bg-[#2F8488] disabled:opacity-50 text-white text-[13px] font-semibold rounded-lg transition-colors duration-200"
+      className="flex items-center gap-2 px-4 py-2 bg-[#007B85] hover:bg-[#2F8488] disabled:opacity-50 text-white text-[13px] font-semibold rounded-lg transition-colors duration-200"
     >
       {saving ? <><Loader2 weight="bold" className="h-3.5 w-3.5 animate-spin" />Saving…</> : "Save Selection"}
     </button>
@@ -332,7 +332,7 @@ export default function PageSelectionPage() {
           transition={{ duration: 0.4 }}
         >
           <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-            <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+            <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
             Channels
           </p>
           <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
@@ -382,7 +382,7 @@ export default function PageSelectionPage() {
                     title={page.name}
                     subtitle={`${page.follower_count.toLocaleString()} followers · ${page.category}`}
                     badge={page.is_connected
-                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
+                      ? <span className="text-[10px] font-medium text-[#007B85] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
                       : undefined
                     }
                     trailing={<MessageCircle weight="bold" className={cn("h-4 w-4 shrink-0", messenger.selectedId === page.id ? "text-blue-400" : "text-gray-300 dark:text-[#333]")} />}
@@ -429,7 +429,7 @@ export default function PageSelectionPage() {
                     title={account.name}
                     subtitle={`@${account.username} · ${account.follower_count.toLocaleString()} followers`}
                     badge={account.is_connected
-                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
+                      ? <span className="text-[10px] font-medium text-[#007B85] flex items-center gap-1"><CheckCircle weight="bold" className="h-3 w-3" />Live</span>
                       : undefined
                     }
                     trailing={<Instagram weight="bold" className={cn("h-4 w-4 shrink-0", instagram.selectedId === account.id ? "text-pink-400" : "text-gray-300 dark:text-[#333]")} />}
@@ -482,7 +482,7 @@ export default function PageSelectionPage() {
                     title={number.display_number}
                     subtitle={number.verified_name}
                     badge={number.is_connected
-                      ? <span className="text-[10px] font-medium text-[#3A9B9F] flex items-center gap-1"><CheckCircle className="h-3 w-3" />Live</span>
+                      ? <span className="text-[10px] font-medium text-[#007B85] flex items-center gap-1"><CheckCircle className="h-3 w-3" />Live</span>
                       : undefined
                     }
                     trailing={

@@ -64,7 +64,7 @@ export function SiteHeader() {
                 >
                   {link.label}
                   {/* Hover underline */}
-                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-[#3A9B9F] scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-[#007B85] scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                 </button>
               ))}
             </nav>
@@ -80,7 +80,7 @@ export function SiteHeader() {
               </Button>
               <Button
                 asChild
-                className="bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-sm font-semibold px-5 shadow-sm hover:shadow-md transition-all duration-300"
+                className="bg-[#007B85] text-white hover:bg-[#2F8488] text-sm font-semibold px-5 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <Link href="/signup">Start Free Trial</Link>
               </Button>
@@ -134,7 +134,7 @@ export function SiteHeader() {
                   </Link>
                   <Button
                     asChild
-                    className="mt-2 w-full bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-base font-semibold py-3 h-auto shadow-sm"
+                    className="mt-2 w-full bg-[#007B85] text-white hover:bg-[#2F8488] text-base font-semibold py-3 h-auto shadow-sm"
                   >
                     <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
                       Start Free Trial

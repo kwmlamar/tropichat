@@ -150,7 +150,7 @@ export function BookingDetailsModal({
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <CalendarDays weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <CalendarDays weight="bold" className="h-4 w-4 text-[#007B85] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Date</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100 leading-tight">
                   {new Date(booking.booking_date + 'T12:00:00').toLocaleDateString('en-US', {
@@ -160,14 +160,14 @@ export function BookingDetailsModal({
                 </p>
               </div>
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <Clock weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <Clock weight="bold" className="h-4 w-4 text-[#007B85] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Time</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">
                   {formatBookingTime(booking.booking_time)}
                 </p>
               </div>
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
-                <Users weight="bold" className="h-4 w-4 text-[#3A9B9F] mx-auto mb-1.5 opacity-60" />
+                <Users weight="bold" className="h-4 w-4 text-[#007B85] mx-auto mb-1.5 opacity-60" />
                 <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Size</p>
                 <p className="text-[13px] font-extrabold text-[#213138] dark:text-gray-100">{booking.number_of_people}</p>
               </div>
@@ -198,7 +198,7 @@ export function BookingDetailsModal({
             {/* Customer Card */}
             <div className="rounded-3xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-[#111111]/50 p-5 space-y-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-[#3A9B9F] flex items-center justify-center font-bold text-sm shadow-inner shadow-teal-500/5">
+                <div className="h-10 w-10 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-[#007B85] flex items-center justify-center font-bold text-sm shadow-inner shadow-teal-500/5">
                   {booking.customer_name.charAt(0)}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -227,8 +227,8 @@ export function BookingDetailsModal({
             {booking.notes && (
               <div className="rounded-3xl bg-teal-50/30 dark:bg-teal-900/10 border border-teal-100/50 dark:border-teal-900/20 p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <FileText weight="bold" className="h-4 w-4 text-[#3A9B9F] opacity-60" />
-                  <p className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-widest">Internal Notes</p>
+                  <FileText weight="bold" className="h-4 w-4 text-[#007B85] opacity-60" />
+                  <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">Internal Notes</p>
                 </div>
                 <p className="text-xs font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">"{booking.notes}"</p>
               </div>
@@ -244,7 +244,7 @@ export function BookingDetailsModal({
                   className="rounded-[24px] border border-teal-100 dark:border-teal-900/30 bg-teal-50/20 dark:bg-teal-900/10 p-5 space-y-4"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-widest">Confirmation Message</p>
+                    <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">Confirmation Message</p>
                     <button onClick={() => setShowConfirmMsg(false)} className="text-gray-400 hover:text-gray-600">
                       <X className="h-3 w-3" />
                     </button>
@@ -257,7 +257,7 @@ export function BookingDetailsModal({
                   />
                   <Button
                     onClick={handleSendConfirmMsg}
-                    className="w-full h-11 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
+                    className="w-full h-11 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
                     disabled={!booking.conversation_id}
                   >
                     <Send weight="bold" className="h-4 w-4 mr-2" />
@@ -273,7 +273,7 @@ export function BookingDetailsModal({
                 <Button
                   onClick={handleConfirm}
                   disabled={confirming}
-                  className="w-full bg-[#3A9B9F] hover:bg-[#2F8488] text-white"
+                  className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white"
                 >
                   {confirming ? 'Confirming…' : 'Confirm Booking'}
                 </Button>

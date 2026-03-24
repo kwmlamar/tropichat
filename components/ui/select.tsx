@@ -37,7 +37,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "border-gray-200 data-[placeholder]:text-gray-400 [&_svg:not([class*='text-'])]:text-gray-400 focus:border-[#3A9B9F] focus:ring-1 focus:ring-[#3A9B9F]/20 flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-4 py-2 text-sm whitespace-nowrap shadow-sm transition-all duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-11 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:border-[#3A9B9F]/50",
+        "border-gray-200 data-[placeholder]:text-gray-400 [&_svg:not([class*='text-'])]:text-gray-400 focus:border-[#007B85] focus:ring-1 focus:ring-[#007B85]/20 flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-4 py-2 text-sm whitespace-nowrap shadow-sm transition-all duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-11 data-[size=sm]:h-9 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:border-[#007B85]/50",
         className
       )}
       {...props}
@@ -109,14 +109,14 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "focus:bg-[#3A9B9F]/5 focus:text-[#3A9B9F] [&_svg:not([class*='text-'])]:text-gray-400 relative flex w-full cursor-default items-center gap-3 rounded-xl py-2.5 pr-10 pl-4 text-sm outline-none transition-all duration-200 select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 m-0.5",
+        "focus:bg-[#007B85]/5 focus:text-[#007B85] [&_svg:not([class*='text-'])]:text-gray-400 relative flex w-full cursor-default items-center gap-3 rounded-xl py-2.5 pr-10 pl-4 text-sm outline-none transition-all duration-200 select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 m-0.5",
         className
       )}
       {...props}
     >
       <span
         data-slot="select-item-indicator"
-        className="absolute right-3 flex size-4 items-center justify-center text-[#3A9B9F]"
+        className="absolute right-3 flex size-4 items-center justify-center text-[#007B85]"
       >
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />

@@ -39,7 +39,7 @@ export default function DashboardLayout({
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
         <div className="flex flex-col items-center justify-center relative">
-          <div className="absolute inset-0 bg-[#3A9B9F]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+          <div className="absolute inset-0 bg-[#007B85]/20 blur-3xl rounded-full scale-150 animate-pulse" />
           <div className="relative w-24 h-24 mb-6">
             <div className="absolute inset-0 rounded-[2rem] bg-white dark:bg-[#0A0A0A] shadow-[0_8px_30px_rgba(58,155,159,0.2)] animate-pulse" />
             <img 
@@ -49,9 +49,9 @@ export default function DashboardLayout({
             />
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#3A9B9F] animate-bounce" style={{ animationDelay: "0ms" }} />
-            <div className="w-2 h-2 rounded-full bg-[#FF8B66] animate-bounce" style={{ animationDelay: "150ms" }} />
-            <div className="w-2 h-2 rounded-full bg-[#3A9B9F] animate-bounce" style={{ animationDelay: "300ms" }} />
+            <div className="w-2 h-2 rounded-full bg-[#007B85] animate-bounce" style={{ animationDelay: "0ms" }} />
+            <div className="w-2 h-2 rounded-full bg-[#FF7E36] animate-bounce" style={{ animationDelay: "150ms" }} />
+            <div className="w-2 h-2 rounded-full bg-[#007B85] animate-bounce" style={{ animationDelay: "300ms" }} />
           </div>
         </div>
       </div>

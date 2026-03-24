@@ -192,7 +192,7 @@ export function MessageThread({
               <div className="text-center mb-4">
                 <button
                   onClick={onLoadMore}
-                  className="text-sm text-[#3A9B9F] hover:underline"
+                  className="text-sm text-[#007B85] hover:underline"
                 >
                   Load earlier messages
                 </button>
@@ -223,7 +223,7 @@ export function MessageThread({
                         className={cn(
                           "max-w-[70%] rounded-[24px] px-[18px] py-[10px] transition-all",
                           message.direction === "outbound"
-                            ? "bg-gradient-to-br from-[#3A9B9F] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#3A9B9F]/20"
+                            ? "bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#007B85]/20"
                             : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
                         )}
                       >
@@ -312,7 +312,7 @@ export function MessageThread({
           <Button
             onClick={handleSend}
             disabled={!messageText.trim() || isSending}
-            className="bg-[#3A9B9F] hover:bg-[#2F8488] h-11 w-11 p-0"
+            className="bg-[#007B85] hover:bg-[#2F8488] h-11 w-11 p-0"
           >
             <Send weight="bold" className="h-5 w-5" />
           </Button>

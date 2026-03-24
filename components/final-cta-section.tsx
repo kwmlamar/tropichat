@@ -16,8 +16,8 @@ export function FinalCTASection() {
     >
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-1/4 top-0 h-96 w-96 rounded-full bg-[#3A9B9F] opacity-10 blur-3xl" />
-        <div className="absolute -left-1/4 bottom-0 h-96 w-96 rounded-full bg-[#FF8B66] opacity-10 blur-3xl" />
+        <div className="absolute -right-1/4 top-0 h-96 w-96 rounded-full bg-[#007B85] opacity-10 blur-3xl" />
+        <div className="absolute -left-1/4 bottom-0 h-96 w-96 rounded-full bg-[#FF7E36] opacity-10 blur-3xl" />
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
       </div>
 
@@ -46,7 +46,7 @@ export function FinalCTASection() {
             <Button
               onClick={handleGetStarted}
               size="lg"
-              className="group bg-[#3A9B9F] text-white hover:bg-[#2F8488] text-base px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
+              className="group bg-[#007B85] text-white hover:bg-[#2F8488] text-base px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />

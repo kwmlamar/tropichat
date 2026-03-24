@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#3A9B9F]"
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#007B85]"
           >
             <ArrowLeft weight="bold" className="h-4 w-4" />
             Back to Home
@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
           Last updated: February 18, 2026
         </p>
 
-        <div className="prose prose-gray max-w-none space-y-8 text-[#213138]/90 [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[#213138] [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[#213138] [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:leading-relaxed [&_a]:text-[#3A9B9F] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#2F8488]">
+        <div className="prose prose-gray max-w-none space-y-8 text-[#213138]/90 [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[#213138] [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[#213138] [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:leading-relaxed [&_a]:text-[#007B85] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#2F8488]">
           <p>
             TropiTech Solutions LLC (&quot;TropiTech,&quot; &quot;we,&quot;
             &quot;us,&quot; or &quot;our&quot;) operates TropiChat
@@ -420,28 +420,28 @@ export default function PrivacyPolicyPage() {
           <div className="mt-2 flex items-center justify-center gap-4">
             <Link
               href="/"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Home
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/privacy"
-              className="font-medium text-[#3A9B9F]"
+              className="font-medium text-[#007B85]"
             >
               Privacy Policy
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/terms"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Terms of Service
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/data-deletion"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Data Deletion
             </Link>

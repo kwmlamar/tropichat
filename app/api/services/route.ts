@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       max_capacity,
       price: price ?? null,
       price_type: price_type ?? 'per_person',
-      color: color ?? '#3A9B9F',
+      color: color ?? '#007B85',
     })
     .select()
     .single()

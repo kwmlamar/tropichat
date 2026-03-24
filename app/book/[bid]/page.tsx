@@ -119,7 +119,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
-        <Loader2 className="h-10 w-10 animate-spin text-[#3A9B9F]" />
+        <Loader2 className="h-10 w-10 animate-spin text-[#007B85]" />
       </div>
     )
   }
@@ -154,7 +154,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                     onClick={() => setSelectedService(s)}
                     className={cn(
                         "p-4 rounded-[24px] border text-left transition-all",
-                        selectedService?.id === s.id ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg" : "bg-white dark:bg-[#0A0A0A] border-transparent"
+                        selectedService?.id === s.id ? "bg-[#007B85] border-[#007B85] text-white shadow-lg" : "bg-white dark:bg-[#0A0A0A] border-transparent"
                     )}
                 >
                     <p className="font-bold text-sm">{s.name}</p>
@@ -184,7 +184,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
         <Button 
           onClick={handleComplete}
           disabled={bookingLoading || !selectedDate || !selectedTime}
-          className="w-full h-16 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-3xl font-black text-lg shadow-xl shadow-teal-500/20"
+          className="w-full h-16 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-3xl font-black text-lg shadow-xl shadow-teal-500/20"
         >
           {bookingLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : "Request Booking"}
         </Button>
@@ -206,14 +206,14 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                 </div>
                 <div>
                    <h2 className="text-3xl font-black text-[#213138] dark:text-white leading-tight">{businessProfile?.business_name || "Business Booking"}</h2>
-                   <p className="text-xs font-bold text-[#3A9B9F] uppercase tracking-[0.2em]">{businessProfile?.business_category || "Service Provider"}</p>
+                   <p className="text-xs font-bold text-[#007B85] uppercase tracking-[0.2em]">{businessProfile?.business_category || "Service Provider"}</p>
                 </div>
              </div>
 
              <div className="space-y-6">
                 <h1 className="text-5xl font-extrabold text-[#213138] dark:text-white tracking-tighter leading-[1.1]">
                    Your Adventure <br />
-                   <span className="text-[#3A9B9F]">Awaits.</span>
+                   <span className="text-[#007B85]">Awaits.</span>
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 text-lg max-w-md leading-relaxed">
                    {businessProfile?.business_description || "Book your next professional experience with us easily via WhatsApp and TropiChat."}
@@ -227,17 +227,17 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                      onClick={() => setSelectedService(s)}
                      className={cn(
                        "relative rounded-[32px] p-8 border transition-all text-left bg-white dark:bg-[#0A0A0A] group",
-                       selectedService?.id === s.id ? "border-[#3A9B9F] ring-4 ring-[#3A9B9F]/10 shadow-lg" : "border-gray-100 dark:border-gray-800"
+                       selectedService?.id === s.id ? "border-[#007B85] ring-4 ring-[#007B85]/10 shadow-lg" : "border-gray-100 dark:border-gray-800"
                      )}
                    >
                      <p className="font-bold text-2xl text-[#213138] dark:text-white mb-2">{s.name}</p>
                      <p className="text-gray-400 text-sm mb-6 line-clamp-2">{s.description}</p>
                      <div className="flex items-center justify-between">
-                        <p className="text-[#3A9B9F] font-black text-xl">${s.price}</p>
+                        <p className="text-[#007B85] font-black text-xl">${s.price}</p>
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{s.duration_minutes} Min</p>
                      </div>
                      {selectedService?.id === s.id && (
-                        <div className="absolute top-4 right-4 h-8 w-8 bg-[#3A9B9F] rounded-full flex items-center justify-center text-white">
+                        <div className="absolute top-4 right-4 h-8 w-8 bg-[#007B85] rounded-full flex items-center justify-center text-white">
                            <Check className="h-4 w-4" />
                         </div>
                      )}
@@ -251,7 +251,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                    <h3 className="text-xl font-bold text-[#213138] dark:text-white mb-8">Schedule Booking</h3>
                    <div className="space-y-6">
                       <div className="p-4 rounded-2xl bg-[#F8FAFB] dark:bg-[#111111] border border-gray-100 dark:border-gray-800 flex items-center gap-4">
-                         <div className="h-12 w-12 bg-[#213138] rounded-xl flex items-center justify-center text-[#3A9B9F] shrink-0">
+                         <div className="h-12 w-12 bg-[#213138] rounded-xl flex items-center justify-center text-[#007B85] shrink-0">
                             <CalendarDays className="h-6 w-6" />
                          </div>
                          <div className="min-w-0">
@@ -272,7 +272,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                       </div>
 
                       <Button 
-                        className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20"
+                        className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20"
                         onClick={handleComplete}
                         disabled={bookingLoading || !selectedService || !selectedDate || !selectedTime}
                       >
@@ -289,7 +289,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
   if (isDone) {
     return (
       <div className="min-h-screen bg-white dark:bg-black flex flex-col items-center justify-center p-6 text-center">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-[#3A9B9F] rounded-[32px] flex items-center justify-center text-white mb-8">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-24 h-24 bg-[#007B85] rounded-[32px] flex items-center justify-center text-white mb-8">
           <Check className="h-12 w-12" />
         </motion.div>
         <h1 className="text-3xl font-extrabold text-[#213138] dark:text-white mb-4">You're All Set!</h1>

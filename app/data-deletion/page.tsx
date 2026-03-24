@@ -27,7 +27,7 @@ export default function DataDeletionPage() {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#3A9B9F]"
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-[#007B85]"
           >
             <ArrowLeft weight="bold" className="h-4 w-4" />
             Back to Home
@@ -44,7 +44,7 @@ export default function DataDeletionPage() {
           Last updated: February 25, 2026
         </p>
 
-        <div className="prose prose-gray max-w-none space-y-8 text-[#213138]/90 [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[#213138] [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[#213138] [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:leading-relaxed [&_a]:text-[#3A9B9F] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#2F8488]">
+        <div className="prose prose-gray max-w-none space-y-8 text-[#213138]/90 [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[#213138] [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-[#213138] [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1 [&_li]:leading-relaxed [&_a]:text-[#007B85] [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:text-[#2F8488]">
           <p>
             At TropiChat, we respect your privacy and your right to control your
             data. This page explains how to request deletion of your data from
@@ -94,8 +94,8 @@ export default function DataDeletionPage() {
           {/* Option 1 */}
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Trash2 weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#007B85]/10">
+                <Trash2 weight="bold" className="h-4 w-4 text-[#007B85]" />
               </div>
               <h3 className="!mt-0 !mb-0 text-lg">
                 Option 1: Delete Your Account (Self-Service)
@@ -136,8 +136,8 @@ export default function DataDeletionPage() {
           {/* Option 2 */}
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Mail weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#007B85]/10">
+                <Mail weight="bold" className="h-4 w-4 text-[#007B85]" />
               </div>
               <h3 className="!mt-0 !mb-0 text-lg">
                 Option 2: Request Deletion via Email
@@ -173,8 +173,8 @@ export default function DataDeletionPage() {
           <h2>What Happens After Deletion</h2>
           <div className="space-y-4">
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Shield weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#007B85]/10">
+                <Shield weight="bold" className="h-4 w-4 text-[#007B85]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -189,8 +189,8 @@ export default function DataDeletionPage() {
               </div>
             </div>
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Clock weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#007B85]/10">
+                <Clock weight="bold" className="h-4 w-4 text-[#007B85]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -204,8 +204,8 @@ export default function DataDeletionPage() {
               </div>
             </div>
             <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#3A9B9F]/10">
-                <Trash2 weight="bold" className="h-4 w-4 text-[#3A9B9F]" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#007B85]/10">
+                <Trash2 weight="bold" className="h-4 w-4 text-[#007B85]" />
               </div>
               <div>
                 <p className="font-semibold text-[#213138]">
@@ -330,28 +330,28 @@ export default function DataDeletionPage() {
           <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <Link
               href="/"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Home
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/privacy"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Privacy Policy
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/terms"
-              className="transition-colors hover:text-[#3A9B9F]"
+              className="transition-colors hover:text-[#007B85]"
             >
               Terms of Service
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               href="/data-deletion"
-              className="font-medium text-[#3A9B9F]"
+              className="font-medium text-[#007B85]"
             >
               Data Deletion
             </Link>

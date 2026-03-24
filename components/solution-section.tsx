@@ -10,7 +10,7 @@ const features = [
     outcome: "Never switch apps to find a conversation again.",
     description:
       "All your messages from WhatsApp, Instagram DMs, and Facebook Messenger land in one unified inbox. Tag customers as VIP, New, or Payment Pending — and see every conversation across all platforms instantly.",
-    gradient: "from-[#3A9B9F] to-teal-600",
+    gradient: "from-[#007B85] to-teal-600",
     iconBg: "bg-teal-50",
     badge: "Most Popular",
     badgeStyle: "bg-teal-100 text-teal-800",
@@ -43,7 +43,7 @@ const features = [
     outcome: "No more 'I thought you handled that' moments.",
     description:
       "Assign conversations from any channel, leave internal notes, see who's handling what — in real time. Your helper knows you replied on Instagram. You know they handled the WhatsApp order.",
-    gradient: "from-[#3A9B9F] to-cyan-600",
+    gradient: "from-[#007B85] to-cyan-600",
     iconBg: "bg-cyan-50",
     badge: "New",
     badgeStyle: "bg-cyan-100 text-cyan-800",
@@ -90,7 +90,7 @@ export function SolutionSection() {
           <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
             Handle 3× more customers —
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3A9B9F] to-teal-700">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-teal-700">
               without the chaos.
             </span>
           </h2>
@@ -117,7 +117,7 @@ export function SolutionSection() {
                 {/* Badge */}
                 {feature.badge && (
                   <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-[#222222] bg-slate-50 dark:bg-[#111111] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-gray-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#007B85] animate-pulse" />
                     {feature.badge}
                   </div>
                 )}
@@ -128,7 +128,7 @@ export function SolutionSection() {
                 </h3>
 
                 {/* Outcome */}
-                <p className="mb-6 text-sm font-semibold text-[#3A9B9F]">
+                <p className="mb-6 text-sm font-semibold text-[#007B85]">
                   {feature.outcome}
                 </p>
 
@@ -155,7 +155,7 @@ export function SolutionSection() {
           <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 dark:border-[#222222] bg-gradient-to-br from-teal-50/60 to-white dark:from-[#111111] dark:to-[#111111] p-6 md:grid-cols-4 md:p-10">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="mb-1 text-4xl font-bold text-[#3A9B9F]">{stat.value}</div>
+                <div className="mb-1 text-4xl font-bold text-[#007B85]">{stat.value}</div>
                 <div className="text-sm font-semibold text-[#213138] dark:text-gray-200">{stat.label}</div>
                 <div className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">{stat.sub}</div>
               </div>

@@ -46,7 +46,7 @@ function PresenceDot({ lastMessageAt }: { lastMessageAt: string | null }) {
   return (
     <span className={cn(
       "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#0C0C0C]",
-      active ? "bg-[#3A9B9F]" : "bg-gray-200 dark:bg-[#333]"
+      active ? "bg-[#007B85]" : "bg-gray-200 dark:bg-[#333]"
     )} />
   )
 }
@@ -93,7 +93,7 @@ export default function ContactsPage() {
   }
 
   const stats = [
-    { label: "Total",     value: contacts.length,                                    accent: "#3A9B9F" },
+    { label: "Total",     value: contacts.length,                                    accent: "#007B85" },
     { label: "WhatsApp",  value: contacts.filter(c => c.channel_type==="whatsapp").length,  accent: "#25D366" },
     { label: "Instagram", value: contacts.filter(c => c.channel_type==="instagram").length,  accent: "#E1306C" },
     { label: "Messenger", value: contacts.filter(c => c.channel_type==="messenger").length,  accent: "#0084FF" },
@@ -107,14 +107,14 @@ export default function ContactsPage() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />CRM
+              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />CRM
             </p>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Contacts</h1>
           </div>
           {selectedContacts.length > 0 && (
             <button onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200 shadow-sm active:scale-95">
-              <Download weight="bold" className="h-3.5 w-3.5 text-[#3A9B9F]" />Export ({selectedContacts.length})
+              <Download weight="bold" className="h-3.5 w-3.5 text-[#007B85]" />Export ({selectedContacts.length})
             </button>
           )}
         </motion.div>
@@ -137,7 +137,7 @@ export default function ContactsPage() {
             <Search weight="bold" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input type="text" placeholder="Search by name, phone, or email…" value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200" />
+              className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#007B85] transition-colors duration-200" />
           </div>
         </motion.div>
 
@@ -264,7 +264,7 @@ export default function ContactsPage() {
             <div><Label>Email</Label><Input type="email" value={editingContact.email || ""} onChange={e => setEditing({ ...editingContact, email: e.target.value })} className="mt-1" /></div>
             <ModalFooter>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-              <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white" onClick={async () => {
+              <Button className="bg-[#007B85] hover:bg-[#2F8488] text-white" onClick={async () => {
                 const { error } = await updateContact(editingContact.id, { name: editingContact.name, email: editingContact.email })
                 if (error) toast.error("Failed to update contact")
                 else { setContacts(p => p.map(c => c.id === editingContact.id ? editingContact : c)); toast.success("Contact updated"); setIsModalOpen(false) }

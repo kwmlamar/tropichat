@@ -148,7 +148,7 @@ export function UnifiedMessageThread({
           <div className="bg-white/40 dark:bg-[#1A1A1A]/40 backdrop-blur-xl rounded-[40px] border border-gray-100/50 dark:border-[#222222]/50 p-12 shadow-2xl shadow-sky-900/5 dark:shadow-black/20">
             <div className="mb-10 relative">
               <div className="relative inline-block">
-                <div className="relative rounded-full bg-white dark:bg-[#111111]/50 p-8 shadow-2xl shadow-teal-500/20 dark:shadow-[#3A9B9F]/20 border border-teal-50/50 dark:border-[#3A9B9F]/20">
+                <div className="relative rounded-full bg-white dark:bg-[#111111]/50 p-8 shadow-2xl shadow-teal-500/20 dark:shadow-[#007B85]/20 border border-teal-50/50 dark:border-[#007B85]/20">
                   <Image
                     src="/tropichat-logo.png"
                     alt="TropiChat"
@@ -158,7 +158,7 @@ export function UnifiedMessageThread({
                   />
                 </div>
                 {/* Subtle pulse effect */}
-                <div className="absolute inset-0 rounded-full animate-ping-slow bg-[#3A9B9F]/10 -z-10" />
+                <div className="absolute inset-0 rounded-full animate-ping-slow bg-[#007B85]/10 -z-10" />
               </div>
             </div>
 
@@ -170,7 +170,7 @@ export function UnifiedMessageThread({
             </p>
 
             <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] transition-all hover:bg-white dark:hover:bg-[#333333]">
-              <div className="p-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F]">
+              <div className="p-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85]">
                 <Inbox className="h-4 w-4" />
               </div>
               <span className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-[0.2em]">Unified Inbox</span>
@@ -212,7 +212,7 @@ export function UnifiedMessageThread({
             <h2 className="font-bold text-[#213138] dark:text-gray-100 text-[15px] lg:text-[16px] truncate leading-tight">
               {getConversationDisplayName(conversation)}
             </h2>
-            <p className="text-[11px] text-[#3A9B9F] font-bold uppercase tracking-wider">
+            <p className="text-[11px] text-[#007B85] font-bold uppercase tracking-wider">
               {getChannelLabel(conversation.channel_type)}
             </p>
           </div>
@@ -223,7 +223,7 @@ export function UnifiedMessageThread({
           {onCreateBooking && (
             <button
               onClick={onCreateBooking}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F] hover:bg-[#3A9B9F]/20 transition-colors text-xs font-medium"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85] hover:bg-[#007B85]/20 transition-colors text-xs font-medium"
               title="Create a booking from this conversation"
             >
               <CalendarPlus className="h-4 w-4" />
@@ -271,7 +271,7 @@ export function UnifiedMessageThread({
               <div className="text-center mb-4">
                 <button
                   onClick={onLoadMore}
-                  className="text-sm text-[#3A9B9F] hover:underline"
+                  className="text-sm text-[#007B85] hover:underline"
                 >
                   Load earlier messages
                 </button>
@@ -305,7 +305,7 @@ export function UnifiedMessageThread({
                           className={cn(
                             "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 transition-all",
                             isOutbound
-                              ? "bg-[#3A9B9F] text-white rounded-br-sm shadow-sm"
+                              ? "bg-[#007B85] text-white rounded-br-sm shadow-sm"
                               : "bg-slate-100 dark:bg-[#111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#1C1C1C] shadow-sm"
                           )}
                         >
@@ -402,7 +402,7 @@ export function UnifiedMessageThread({
           <Plus className="w-6 h-6 transition-transform hover:rotate-90" />
         </button>
 
-        <div className="flex-1 bg-white dark:bg-[#0C0C0C] rounded-3xl border border-gray-300/60 dark:border-[#1C1C1C] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#3A9B9F] focus-within:border-[#3A9B9F]">
+        <div className="flex-1 bg-white dark:bg-[#0C0C0C] rounded-3xl border border-gray-300/60 dark:border-[#1C1C1C] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#007B85] focus-within:border-[#007B85]">
           <Textarea
             ref={textareaRef}
             placeholder=""

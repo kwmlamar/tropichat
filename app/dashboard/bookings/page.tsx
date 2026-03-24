@@ -39,10 +39,10 @@ function getFirstDay(y: number, m: number)    { return new Date(y, m, 1).getDay(
 // Signature: teal = confirmed, coral = pending, muted = cancelled
 function StatusBadge({ status }: { status: string }) {
   if (status === "confirmed") return (
-    <span className="text-[10px] font-semibold text-[#3A9B9F] uppercase tracking-widest">Confirmed</span>
+    <span className="text-[10px] font-semibold text-[#007B85] uppercase tracking-widest">Confirmed</span>
   )
   if (status === "pending") return (
-    <span className="text-[10px] font-semibold text-[#FF8B66] uppercase tracking-widest">Pending</span>
+    <span className="text-[10px] font-semibold text-[#FF7E36] uppercase tracking-widest">Pending</span>
   )
   return <span className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest">{status}</span>
 }
@@ -61,8 +61,8 @@ function StatCard({ title, val, accent }: { title: string; val: number; accent: 
 
 // ─── Month view ───────────────────────────────────────────────────────────────
 const STATUS_DOT: Record<string, string> = {
-  confirmed: "bg-[#3A9B9F]",
-  pending:   "bg-[#FF8B66]",
+  confirmed: "bg-[#007B85]",
+  pending:   "bg-[#FF7E36]",
   cancelled: "bg-gray-300 dark:bg-[#333]",
 }
 
@@ -83,13 +83,13 @@ function MonthView({ calendarDays, bookingsForDay, isToday, onBookingClick }: an
             <div key={idx} className={cn(
               "min-h-[96px] rounded-xl border transition-all duration-200 overflow-hidden",
               today
-                ? "border-[#3A9B9F] bg-[#3A9B9F]/[0.04] dark:bg-[#3A9B9F]/[0.08]"
+                ? "border-[#007B85] bg-[#007B85]/[0.04] dark:bg-[#007B85]/[0.08]"
                 : "border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] hover:border-gray-200 dark:hover:border-[#2A2A2A]"
             )}>
               <div className="p-2.5">
                 <div className={cn(
                   "h-6 w-6 rounded-lg flex items-center justify-center text-[11px] font-bold mb-1.5",
-                  today ? "bg-[#3A9B9F] text-white" : "text-gray-400 dark:text-[#525252]"
+                  today ? "bg-[#007B85] text-white" : "text-gray-400 dark:text-[#525252]"
                 )}>{day}</div>
                 <div className="space-y-1">
                   {dayBkgs.slice(0, 3).map((b: Booking) => (
@@ -99,7 +99,7 @@ function MonthView({ calendarDays, bookingsForDay, isToday, onBookingClick }: an
                     </button>
                   ))}
                   {dayBkgs.length > 3 && (
-                    <p className="text-[8px] font-bold text-[#3A9B9F] pl-1">+{dayBkgs.length - 3}</p>
+                    <p className="text-[8px] font-bold text-[#007B85] pl-1">+{dayBkgs.length - 3}</p>
                   )}
                 </div>
               </div>
@@ -127,7 +127,7 @@ function ListView({ bookings, onBookingClick }: any) {
     <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto">
       {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([date, dayBookings]) => (
         <div key={date}>
-          <p className="text-[10px] font-semibold text-[#3A9B9F] uppercase tracking-widest mb-3">
+          <p className="text-[10px] font-semibold text-[#007B85] uppercase tracking-widest mb-3">
             {new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
           <div className="space-y-2">
@@ -144,7 +144,7 @@ function ListView({ bookings, onBookingClick }: any) {
                   <p className="text-[14px] font-bold text-gray-900 dark:text-white tabular-nums">{formatBookingTime(b.booking_time)}</p>
                   <StatusBadge status={b.status} />
                 </div>
-                <CaretRight weight="bold" className="h-4 w-4 text-gray-300 dark:text-[#333] group-hover:text-[#3A9B9F] transition-colors shrink-0" />
+                <CaretRight weight="bold" className="h-4 w-4 text-gray-300 dark:text-[#333] group-hover:text-[#007B85] transition-colors shrink-0" />
               </button>
             ))}
           </div>
@@ -238,7 +238,7 @@ export default function BookingsPage() {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) return (
     <div className="flex flex-1 items-center justify-center h-full p-8">
-      <CircleNotch weight="bold" className="h-8 w-8 animate-spin text-[#3A9B9F]" />
+      <CircleNotch weight="bold" className="h-8 w-8 animate-spin text-[#007B85]" />
     </div>
   )
 
@@ -248,17 +248,17 @@ export default function BookingsPage() {
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center mt-12"
-          style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}>
+          style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}>
           <div className="max-w-sm mx-auto">
-            <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mx-auto mb-5">
-              <CalendarBlank weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
+            <div className="w-12 h-12 rounded-xl bg-[#007B85]/10 flex items-center justify-center mx-auto mb-5">
+              <CalendarBlank weight="bold" className="h-5 w-5 text-[#007B85]" />
             </div>
             <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">Professional Feature</h3>
             <p className="text-[14px] text-gray-500 dark:text-[#525252] mb-8 leading-relaxed">
               Unlock the integrated calendar to schedule appointments, manage services, and view your agenda.
             </p>
             <button onClick={() => router.push("/dashboard/settings?tab=billing")}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto">
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto">
               Upgrade to Professional<ArrowRight weight="bold" className="h-4 w-4" />
             </button>
           </div>
@@ -292,10 +292,10 @@ export default function BookingsPage() {
         <div className="flex items-center justify-between mb-3 px-2">
           <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Select Date</p>
           <div className="flex items-center gap-2.5">
-            <button onClick={prevMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] active:scale-90 transition-all shadow-sm">
+            <button onClick={prevMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#007B85] active:scale-90 transition-all shadow-sm">
               <CaretLeft weight="bold" className="h-6 w-6" />
             </button>
-            <button onClick={nextMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] active:scale-90 transition-all shadow-sm">
+            <button onClick={nextMonth} className="p-3.5 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#007B85] active:scale-90 transition-all shadow-sm">
               <CaretRight weight="bold" className="h-6 w-6" />
             </button>
           </div>
@@ -318,7 +318,7 @@ export default function BookingsPage() {
                 initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.002 }}
                 className={cn("flex flex-col items-center justify-center aspect-square rounded-lg border transition-all duration-200 relative",
                   isSelected
-                    ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20"
+                    ? "bg-[#007B85] border-[#007B85] text-white shadow-lg shadow-teal-500/20"
                     : "bg-white dark:bg-[#0C0C0C] border-gray-100/60 dark:border-[#1C1C1C] text-gray-900 dark:text-white"
                 )}>
                 <span className={cn("text-[18px] font-bold leading-none", isSelected ? "text-white" : "opacity-100")}>
@@ -326,7 +326,7 @@ export default function BookingsPage() {
                 </span>
                 {count > 0 && (
                   <div className={cn("absolute top-0 right-0 h-3 w-3 rounded-full flex items-center justify-center text-[7px] font-bold border",
-                    isSelected ? "bg-white text-[#3A9B9F] border-white" : "bg-[#3A9B9F] text-white border-transparent")}>
+                    isSelected ? "bg-white text-[#007B85] border-white" : "bg-[#007B85] text-white border-transparent")}>
                     {/* Just the dot if count is 1, otherwise the number can stay if it fits */}
                   </div>
                 )}
@@ -343,7 +343,7 @@ export default function BookingsPage() {
             <button key={t} onClick={() => setSelTime(t)}
               className={cn("px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap border shrink-0 transition-all",
                 selectedTime === t
-                  ? "bg-[#3A9B9F] text-white border-[#3A9B9F]"
+                  ? "bg-[#007B85] text-white border-[#007B85]"
                   : "bg-white dark:bg-[#0C0C0C] text-gray-500 dark:text-[#525252] border-gray-200 dark:border-[#1C1C1C]")}>
               {t}
             </button>
@@ -386,7 +386,7 @@ export default function BookingsPage() {
           const dateStr = selectedDate.toISOString().split("T")[0]
           router.push(`/dashboard/bookings/new?date=${dateStr}&time=${encodeURIComponent(selectedTime)}`)
         }}
-          className="w-full h-12 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl font-semibold text-[14px] transition-colors duration-200 active:scale-[0.99]">
+          className="w-full h-12 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-semibold text-[14px] transition-colors duration-200 active:scale-[0.99]">
           Book Appointment
         </button>
       </div>
@@ -403,7 +403,7 @@ export default function BookingsPage() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Calendar
+              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />Calendar
             </p>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Bookings</h1>
           </div>
@@ -412,7 +412,7 @@ export default function BookingsPage() {
             <div className="relative">
               <Funnel weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-[#525252]" />
               <select value={filterService} onChange={e => setFilter(e.target.value)}
-                className="pl-9 pr-8 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-700 dark:text-[#A3A3A3] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200 cursor-pointer appearance-none">
+                className="pl-9 pr-8 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-700 dark:text-[#A3A3A3] focus:outline-none focus:border-[#007B85] transition-colors duration-200 cursor-pointer appearance-none">
                 <option value="all">All Services</option>
                 {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
@@ -424,7 +424,7 @@ export default function BookingsPage() {
                 <button key={v} onClick={() => setView(v)}
                   className={cn("px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 capitalize",
                     view === v
-                      ? "bg-[#3A9B9F] text-white"
+                      ? "bg-[#007B85] text-white"
                       : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]")}>
                   {v}
                 </button>
@@ -436,11 +436,11 @@ export default function BookingsPage() {
               </Button>
             </Link>
             <button onClick={() => setCreateOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200">
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200">
               New Booking
             </button>
             <Link href={currCustomerId ? `/book/${currCustomerId}` : "/book-preview"} target="_blank">
-              <Button variant="outline" className="bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] hover:border-[#3A9B9F] text-[#3A9B9F] rounded-xl h-10 text-[13px]">
+              <Button variant="outline" className="bg-white dark:bg-[#0C0C0C] border-gray-200 dark:border-[#1C1C1C] hover:border-[#007B85] text-[#007B85] rounded-xl h-10 text-[13px]">
                 <ArrowSquareOut weight="bold" className="h-4 w-4 mr-2" />Share Link
               </Button>
             </Link>
@@ -450,9 +450,9 @@ export default function BookingsPage() {
         {/* Stats */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.06 }}
           className="grid grid-cols-3 gap-4">
-          <StatCard title="Confirmed" val={filtered.filter(b => b.status==="confirmed").length} accent="#3A9B9F" />
-          <StatCard title="Pending"   val={filtered.filter(b => b.status==="pending").length}   accent="#FF8B66" />
-          <StatCard title="Guests"    val={filtered.filter(b => b.status!=="cancelled").reduce((s,b)=>s+b.number_of_people,0)} accent="#3A9B9F" />
+          <StatCard title="Confirmed" val={filtered.filter(b => b.status==="confirmed").length} accent="#007B85" />
+          <StatCard title="Pending"   val={filtered.filter(b => b.status==="pending").length}   accent="#FF7E36" />
+          <StatCard title="Guests"    val={filtered.filter(b => b.status!=="cancelled").reduce((s,b)=>s+b.number_of_people,0)} accent="#007B85" />
         </motion.div>
 
         {/* Calendar card — the signature element of bookings */}
@@ -464,14 +464,14 @@ export default function BookingsPage() {
               {MONTH_NAMES[viewMonth]} <span className="text-gray-400 dark:text-[#525252] font-normal">{viewYear}</span>
             </h2>
             <div className="flex items-center gap-2.5">
-              <button onClick={prevMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] transition-all duration-200">
+              <button onClick={prevMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#007B85] transition-all duration-200">
                 <CaretLeft weight="bold" className="h-5 w-5" />
               </button>
               <button onClick={() => { setViewYear(today.getFullYear()); setViewMonth(today.getMonth()) }}
-                className="px-4 py-2 text-[13px] font-bold text-gray-500 dark:text-[#525252] hover:text-[#3A9B9F] transition-colors duration-200">
+                className="px-4 py-2 text-[13px] font-bold text-gray-500 dark:text-[#525252] hover:text-[#007B85] transition-colors duration-200">
                 Today
               </button>
-              <button onClick={nextMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] transition-all duration-200">
+              <button onClick={nextMonth} className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#1C1C1C] text-gray-600 dark:text-gray-300 hover:text-[#007B85] transition-all duration-200">
                 <CaretRight weight="bold" className="h-5 w-5" />
               </button>
             </div>

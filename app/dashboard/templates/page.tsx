@@ -67,7 +67,7 @@ const statusFilters = [
 // Three distinct looks — approved teal, pending amber, rejected muted.
 function StatusBadge({ status }: { status: string }) {
   if (status === "APPROVED") return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#3A9B9F] uppercase tracking-widest">
+    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#007B85] uppercase tracking-widest">
       <CheckCircle weight="bold" className="h-3 w-3" />Approved
     </span>
   )
@@ -169,11 +169,11 @@ export default function TemplatesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center mt-12"
-            style={{ borderLeftColor: "#FF8B66", borderLeftWidth: 2 }}
+            style={{ borderLeftColor: "#FF7E36", borderLeftWidth: 2 }}
           >
             <div className="max-w-sm mx-auto">
-              <div className="w-12 h-12 rounded-xl bg-[#FF8B66]/10 flex items-center justify-center mx-auto mb-5">
-                <AlertTriangle className="h-5 w-5 text-[#FF8B66]" />
+              <div className="w-12 h-12 rounded-xl bg-[#FF7E36]/10 flex items-center justify-center mx-auto mb-5">
+                <AlertTriangle className="h-5 w-5 text-[#FF7E36]" />
               </div>
               <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">
                 WhatsApp Not Connected
@@ -183,7 +183,7 @@ export default function TemplatesPage() {
               </p>
               <button
                 onClick={() => router.push("/dashboard/settings?tab=integrations")}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#213138] dark:bg-[#3A9B9F] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#213138] dark:bg-[#007B85] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
               >
                 <Link2 className="h-4 w-4" />
                 Set Up WhatsApp Integration
@@ -208,7 +208,7 @@ export default function TemplatesPage() {
         >
           <div>
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               WhatsApp
             </p>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
@@ -227,7 +227,7 @@ export default function TemplatesPage() {
             </button>
             <button
               onClick={handleCreateTemplate}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200"
             >
               <Plus weight="bold" className="h-4 w-4" />
               New Template
@@ -250,7 +250,7 @@ export default function TemplatesPage() {
               placeholder="Search by name or content…"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200"
+              className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#007B85] transition-colors duration-200"
             />
           </div>
 
@@ -304,7 +304,7 @@ export default function TemplatesPage() {
               {!searchQuery && (
                 <button
                   onClick={handleCreateTemplate}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
                 >
                   <Plus weight="bold" className="h-4 w-4" />
                   Create Template
@@ -381,7 +381,7 @@ export default function TemplatesPage() {
                         <p className="text-[13px] text-gray-700 dark:text-[#A3A3A3] leading-relaxed line-clamp-4">
                           {body.split(/({{[\d]+}})/).map((part, j) =>
                             part.match(/{{[\d]+}}/) ? (
-                              <span key={j} className="text-[#3A9B9F] font-medium">{part}</span>
+                              <span key={j} className="text-[#007B85] font-medium">{part}</span>
                             ) : part
                           )}
                         </p>
@@ -448,7 +448,7 @@ export default function TemplatesPage() {
               className="mt-1 min-h-[120px]"
             />
             <p className="text-[11px] text-gray-400 dark:text-[#525252] mt-1.5">
-              Use <code className="text-[#3A9B9F]">{"{{1}}"}</code> for dynamic values. Requires Meta review.
+              Use <code className="text-[#007B85]">{"{{1}}"}</code> for dynamic values. Requires Meta review.
             </p>
           </div>
 
@@ -460,7 +460,7 @@ export default function TemplatesPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 6 }}
               >
-                <Label className="text-[10px] text-[#3A9B9F] uppercase tracking-widest">
+                <Label className="text-[10px] text-[#007B85] uppercase tracking-widest">
                   Preview
                 </Label>
                 {/* WhatsApp bubble — signature element of templates page */}
@@ -468,7 +468,7 @@ export default function TemplatesPage() {
                   <p className="text-[13px] text-gray-800 dark:text-[#A3A3A3] leading-relaxed whitespace-pre-wrap">
                     {newBody.split(/({{[\d]+}})/).map((part, i) =>
                       part.match(/{{[\d]+}}/) ? (
-                        <span key={i} className="text-[#3A9B9F] font-medium">{part}</span>
+                        <span key={i} className="text-[#007B85] font-medium">{part}</span>
                       ) : part
                     )}
                   </p>
@@ -483,7 +483,7 @@ export default function TemplatesPage() {
           <ModalFooter>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
             <Button
-              className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white"
+              className="bg-[#007B85] hover:bg-[#2F8488] text-white"
               onClick={handleSaveTemplate}
               disabled={isSaving}
             >

@@ -43,7 +43,7 @@ export function SkeletonMessage({ direction = "inbound" }: { direction?: "inboun
     <div className={cn("flex", direction === "outbound" ? "justify-end" : "justify-start")}>
       <div className={cn(
         "rounded-2xl px-4 py-2",
-        direction === "outbound" ? "bg-blue-100 dark:bg-[#3A9B9F]/20" : "bg-gray-100 dark:bg-[#111111]"
+        direction === "outbound" ? "bg-blue-100 dark:bg-[#007B85]/20" : "bg-gray-100 dark:bg-[#111111]"
       )}>
         <Skeleton className="h-4 w-32" />
         <Skeleton className="mt-1 h-3 w-24" />

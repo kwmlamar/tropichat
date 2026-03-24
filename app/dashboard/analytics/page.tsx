@@ -35,7 +35,7 @@ function BarChart({
                 className={cn(
                   "w-full rounded-t-sm transition-colors duration-200",
                   isLatest
-                    ? "bg-[#3A9B9F]"
+                    ? "bg-[#007B85]"
                     : "bg-slate-100 dark:bg-[#1E1E1E] group-hover:bg-slate-200 dark:group-hover:bg-[#2A2A2A]"
                 )}
               />
@@ -189,8 +189,8 @@ export default function AnalyticsPage() {
       if (c.status in counts) counts[c.status as keyof typeof counts]++
     })
     return [
-      { label: "Open",     value: counts.open,     color: "#3A9B9F" },
-      { label: "Pending",  value: counts.pending,  color: "#FF8B66" },
+      { label: "Open",     value: counts.open,     color: "#007B85" },
+      { label: "Pending",  value: counts.pending,  color: "#FF7E36" },
       // neutral: visible in both light (#D1D5DB) and dark (#333333) would need JS-side
       // using a mid-gray that works in both modes
       { label: "Resolved", value: counts.resolved, color: "#9CA3AF" },
@@ -198,10 +198,10 @@ export default function AnalyticsPage() {
   }, [analyticsData])
 
   const metrics = [
-    { label: "Messages Sent",     value: analyticsData?.messagesSent      ?? 0, delta: "+12%", accent: "#3A9B9F" },
-    { label: "Messages Received", value: analyticsData?.messagesReceived  ?? 0, delta: "+8%",  accent: "#FF8B66" },
-    { label: "Conversations",     value: analyticsData?.totalConversations ?? 0, delta: "+15%", accent: "#3A9B9F" },
-    { label: "Active Contacts",   value: analyticsData?.activeContacts    ?? 0, delta: "+5%",  accent: "#FF8B66" },
+    { label: "Messages Sent",     value: analyticsData?.messagesSent      ?? 0, delta: "+12%", accent: "#007B85" },
+    { label: "Messages Received", value: analyticsData?.messagesReceived  ?? 0, delta: "+8%",  accent: "#FF7E36" },
+    { label: "Conversations",     value: analyticsData?.totalConversations ?? 0, delta: "+15%", accent: "#007B85" },
+    { label: "Active Contacts",   value: analyticsData?.activeContacts    ?? 0, delta: "+5%",  accent: "#FF7E36" },
   ]
 
   const peakHours = [
@@ -223,7 +223,7 @@ export default function AnalyticsPage() {
         >
           <div>
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               Analytics
             </p>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
@@ -280,7 +280,7 @@ export default function AnalyticsPage() {
                   <p className="text-3xl font-bold text-gray-900 dark:text-white  tabular-nums">
                     {m.value.toLocaleString()}
                   </p>
-                  <p className="text-[12px] font-medium mt-2 text-[#3A9B9F]">
+                  <p className="text-[12px] font-medium mt-2 text-[#007B85]">
                     {m.delta}
                   </p>
                 </div>
@@ -351,7 +351,7 @@ export default function AnalyticsPage() {
           {/* Avg response time — typographic hero, no icon */}
           <div
             className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-8 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 flex flex-col justify-between"
-            style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+            style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
           >
             <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-4">
               Avg. Response Time
@@ -388,7 +388,7 @@ export default function AnalyticsPage() {
                       initial={{ width: 0 }}
                       animate={{ width: `${item.pct}%` }}
                       transition={{ duration: 1, ease: "easeOut", delay: 0.4 + i * 0.1 }}
-                      className="h-full bg-[#3A9B9F] rounded-full"
+                      className="h-full bg-[#007B85] rounded-full"
                     />
                   </div>
                   <span className="text-[13px] font-semibold text-gray-900 dark:text-white tabular-nums w-8 text-right">

@@ -506,15 +506,15 @@ export default function SettingsPage() {
         {/* Avatar & Info */}
         <div className="flex flex-col items-center px-5 pt-8 pb-8">
           <div className="h-20 w-20 rounded-2xl bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] flex items-center justify-center mb-4">
-            <span className="text-3xl font-bold text-[#3A9B9F] ">
+            <span className="text-3xl font-bold text-[#007B85] ">
               {(businessName || contactEmail || "U")[0].toUpperCase()}
             </span>
           </div>
           <h2 className="text-[18px] font-bold text-[#213138] dark:text-white  tracking-tight">
             {businessName || "Your Business"}
           </h2>
-          <p className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-[#525252] mt-1">
-            <MapPin weight="bold" className="h-3 w-3 text-[#3A9B9F]" />
+          <p className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-1">
+            <MapPin weight="bold" className="h-3 w-3 text-[#007B85]" />
             {timezone.split('/')[1]?.replace('_', ' ') || "Local"}
           </p>
         </div>
@@ -523,7 +523,7 @@ export default function SettingsPage() {
           {/* Auto-Reply toggle */}
           <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ChatCircleDots weight="bold" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
+              <ChatCircleDots weight="bold" className="h-4 w-4 text-gray-400 dark:text-gray-400" />
               <span className="text-[14px] font-medium text-gray-900 dark:text-white">Auto-Reply Mode</span>
             </div>
             <Switch
@@ -538,7 +538,7 @@ export default function SettingsPage() {
 
           {/* Nav links */}
           <div>
-            <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium px-1 mb-3">General</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium px-1 mb-3">General</p>
             <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl overflow-hidden divide-y divide-gray-100 dark:divide-[#1C1C1C]">
               <MobileTabLink icon={User} label="Profile" onClick={() => handleMobileNav('profile')} />
               <MobileTabLink icon={Clock} label="Business Hours" onClick={() => handleMobileNav('hours')} />
@@ -572,8 +572,8 @@ export default function SettingsPage() {
         </div>
 
         <div className="mb-8">
-          <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-            <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />Workspace
+          <p className="text-[11px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+            <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />Workspace
           </p>
           <h1 className="hidden lg:block text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Settings</h1>
         </div>
@@ -581,65 +581,68 @@ export default function SettingsPage() {
         <Tabs value={activeTab} defaultValue={initialTab} onValueChange={(tab) => {
           setActiveTab(tab)
           router.push(`/dashboard/settings?tab=${tab}`)
-          if (tab === "integrations" && !metaStatus) fetchMetaConnectionStatus()
+          if (tab === "integrations") fetchMetaConnectionStatus()
           if (tab === "whatsapp") {
             fetchWhatsAppProfile()
-            if (!metaStatus) fetchMetaConnectionStatus()
+            fetchMetaConnectionStatus()
+          }
+          if (tab === "billing") {
+             // Handle billing tab logic if needed
           }
         }}>
           <TabsList className="hidden lg:flex mb-8 p-1 bg-gray-100 dark:bg-black rounded-xl w-fit gap-0.5 border border-gray-200 dark:border-[#1C1C1C]">
             <TabsTrigger
               value="profile"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <User weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Profile
             </TabsTrigger>
             <TabsTrigger
               value="hours"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <Clock weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Hours
             </TabsTrigger>
             <TabsTrigger
               value="autoreply"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <ChatCircleDots weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Replies
             </TabsTrigger>
             <TabsTrigger
               value="team"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <Users weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Team
             </TabsTrigger>
             <TabsTrigger
               value="integrations"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <Link weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Channels
             </TabsTrigger>
             <TabsTrigger
               value="notifications"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <Bell weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Alerts
             </TabsTrigger>
             <TabsTrigger
               value="whatsapp"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <Buildings weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               WA Profile
             </TabsTrigger>
             <TabsTrigger
               value="billing"
-              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#3A9B9F] text-gray-500 dark:text-[#525252] data-[state=active]:shadow-sm font-medium"
+              className="rounded-lg px-4 py-2 text-[13px] data-[state=active]:bg-white dark:data-[state=active]:bg-[#1E1E1E] data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:border-b-2 dark:data-[state=active]:border-b-[#007B85] text-gray-500 dark:text-gray-400 data-[state=active]:shadow-sm font-medium"
             >
               <CreditCard weight="bold" className="h-3.5 w-3.5 mr-1.5" />
               Billing
@@ -650,11 +653,11 @@ export default function SettingsPage() {
           <TabsContent value="profile" className="space-y-10 pb-12">
             {/* Profile Details */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                 Personal Details
               </p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+              <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
                 Manage your primary account information and contact details
               </p>
               <div className="space-y-5">
@@ -709,7 +712,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleSaveProfile}
                   disabled={saving}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                  className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8"
                 >
                   {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Changes
@@ -721,11 +724,11 @@ export default function SettingsPage() {
 
             {/* Change Password */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#525252] dark:bg-[#333] inline-block" />
+              <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-[#333] inline-block" />
                 Change Password
               </p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+              <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
                 Ensure your account is using a long, random password to stay secure
               </p>
               <div className="space-y-5 max-w-md">
@@ -760,7 +763,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleChangePassword}
                   disabled={savingPassword || !newPassword || !confirmPassword}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                  className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8"
                 >
                   {savingPassword && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Update Password
@@ -773,11 +776,11 @@ export default function SettingsPage() {
           <TabsContent value="hours" className="pb-12">
             <div className="space-y-8">
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                  <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                   Business Hours
                 </p>
-                <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
                   Set your standard hours. Auto-replies use these to determine working state.
                 </p>
 
@@ -805,7 +808,7 @@ export default function SettingsPage() {
                               onChange={(e) => updateDayHours(day, "start", e.target.value)}
                               className="w-32 rounded-lg border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] h-9"
                             />
-                            <span className="text-[12px] text-gray-400 dark:text-[#525252]">to</span>
+                            <span className="text-[12px] text-gray-400 dark:text-gray-400">to</span>
                             <Input
                               type="time"
                               value={businessHours[day]?.end || "17:00"}
@@ -814,7 +817,7 @@ export default function SettingsPage() {
                             />
                           </div>
                         ) : (
-                          <span className="text-[13px] text-gray-400 dark:text-[#525252] italic py-1.5">
+                          <span className="text-[13px] text-gray-400 dark:text-gray-400 italic py-1.5">
                             Closed
                           </span>
                         )}
@@ -828,7 +831,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleSaveBusinessHours}
                   disabled={saving}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                  className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8"
                 >
                   {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Business Hours
@@ -843,11 +846,11 @@ export default function SettingsPage() {
               <div>
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <div>
-                    <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                    <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                       Auto-Reply
                     </p>
-                    <p className="text-[13px] text-gray-500 dark:text-[#525252]">
+                    <p className="text-[13px] text-gray-500 dark:text-gray-400">
                       Automatically respond to messages outside of business hours
                     </p>
                   </div>
@@ -866,7 +869,7 @@ export default function SettingsPage() {
                       placeholder="Thanks for reaching out! We'll get back to you as soon as possible."
                       className="mt-2 min-h-[140px] rounded-xl border-gray-200 dark:border-[#1C1C1C] resize-none bg-gray-50 dark:bg-[#111] dark:text-white"
                     />
-                    <p className="text-[12px] text-gray-400 dark:text-[#525252] mt-2">
+                    <p className="text-[12px] text-gray-400 dark:text-gray-400 mt-2">
                       Sent instantly when you are outside business hours.
                     </p>
                   </div>
@@ -877,7 +880,7 @@ export default function SettingsPage() {
                 <Button
                   onClick={handleSaveAutoReply}
                   disabled={saving}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                  className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8"
                 >
                   {saving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                   Save Auto-Reply Settings
@@ -890,18 +893,21 @@ export default function SettingsPage() {
           <TabsContent value="team" className="pb-12">
             <div
               className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
-              style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+              style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
             >
-              <div className="w-12 h-12 rounded-xl bg-[#3A9B9F]/10 flex items-center justify-center mx-auto mb-5">
-                <Users weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
+              <div className="w-12 h-12 rounded-xl bg-[#007B85]/10 flex items-center justify-center mx-auto mb-5">
+                <Users weight="bold" className="h-5 w-5 text-[#007B85]" />
               </div>
               <h3 className="text-[16px] font-bold text-gray-900 dark:text-white  mb-2">
                 Team Management
               </h3>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
+              <p className="text-[13px] text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-8 leading-relaxed">
                 Invite team members to help manage customer conversations across all channels.
               </p>
-              <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl px-6">
+              <Button 
+                onClick={() => handleMobileNav('billing')}
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl px-6"
+              >
                 Upgrade to Professional
               </Button>
             </div>
@@ -912,24 +918,24 @@ export default function SettingsPage() {
             {/* Connect Meta — clean card, no dark hero */}
             <div
               className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
-              style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+              style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
             >
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                  <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                  <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                   Meta Business Platform
                 </p>
                 <h3 className="text-[18px] font-bold text-gray-900 dark:text-white  mb-1">
                   Connect your channels
                 </h3>
-                <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-md leading-relaxed">
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 max-w-md leading-relaxed">
                   Link WhatsApp Business, Instagram, and Messenger in one OAuth flow.
                 </p>
               </div>
               <Button
                 onClick={handleConnectMeta}
                 disabled={connecting}
-                className="shrink-0 h-10 px-6 bg-[#3A9B9F] hover:bg-[#2F8488] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-95"
+                className="shrink-0 h-10 px-6 bg-[#007B85] hover:bg-[#2F8488] text-white font-semibold rounded-xl transition-colors duration-200 active:scale-95"
               >
                 {connecting ? (
                   <>
@@ -944,11 +950,11 @@ export default function SettingsPage() {
 
             {/* Channel Cards */}
             <div>
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                 Connected Channels
               </p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-5">
+              <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-5">
                 Each channel connects independently. Disconnect them individually at any time.
               </p>
               {metaLoading ? (
@@ -1005,8 +1011,8 @@ export default function SettingsPage() {
                 metaStatus.messenger?.connected) && (
                 <div>
                   <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
-                  <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+                  <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
                     Connected Accounts
                   </p>
                   <div className="space-y-2">
@@ -1021,12 +1027,12 @@ export default function SettingsPage() {
                               metaStatus.instagram.account_name ||
                               "Instagram"}
                           </p>
-                          <p className="text-[11px] text-gray-400 dark:text-[#525252]">
+                          <p className="text-[11px] text-gray-400 dark:text-gray-400">
                             Instagram · ID: {metaStatus.instagram.account_id?.slice(0, 8)}…
                             {metaStatus.instagram.account_id?.slice(-4)}
                           </p>
                         </div>
-                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                        <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest">
                           Active
                         </span>
                       </div>
@@ -1041,12 +1047,12 @@ export default function SettingsPage() {
                             {metaStatus.whatsapp.account_name || "WhatsApp Business"}
                           </p>
                           {(metaStatus.whatsapp.metadata as Record<string, string>)?.phone_display && (
-                            <p className="text-[11px] text-gray-400 dark:text-[#525252]">
+                            <p className="text-[11px] text-gray-400 dark:text-gray-400">
                               {(metaStatus.whatsapp.metadata as Record<string, string>).phone_display}
                             </p>
                           )}
                         </div>
-                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                        <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest">
                           Active
                         </span>
                       </div>
@@ -1061,7 +1067,7 @@ export default function SettingsPage() {
                             {metaStatus.messenger.account_name || "Messenger"}
                           </p>
                         </div>
-                        <span className="text-[11px] font-bold text-[#3A9B9F] uppercase tracking-widest">
+                        <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest">
                           Active
                         </span>
                       </div>
@@ -1073,25 +1079,25 @@ export default function SettingsPage() {
             {/* Webhook strip */}
             <div>
               <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
-              <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#3A9B9F] animate-pulse inline-block" />
+              <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#007B85] animate-pulse inline-block" />
                 Webhook Status
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <div
                   className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3"
-                  style={{ borderLeftColor: "#3A9B9F", borderLeftWidth: 2 }}
+                  style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
                 >
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">
                     Status
                   </p>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#007B85] animate-pulse" />
                     <p className="text-[13px] font-semibold text-gray-900 dark:text-white">Active</p>
                   </div>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">
                     Endpoint
                   </p>
                   <code className="text-[11px] font-mono text-gray-700 dark:text-[#A3A3A3]">
@@ -1099,16 +1105,16 @@ export default function SettingsPage() {
                   </code>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">
                     Verification
                   </p>
-                  <div className="flex items-center gap-1 text-[#3A9B9F]">
+                  <div className="flex items-center gap-1 text-[#007B85]">
                     <CheckCircle weight="bold" className="h-3.5 w-3.5" />
                     <span className="text-[13px] font-semibold">Verified</span>
                   </div>
                 </div>
                 <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl px-4 py-3">
-                  <p className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-1">
+                  <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">
                     Last Event
                   </p>
                   <p className="text-[13px] font-semibold text-gray-900 dark:text-white">
@@ -1116,7 +1122,7 @@ export default function SettingsPage() {
                   </p>
                 </div>
               </div>
-              <p className="text-[11px] text-gray-400 dark:text-[#525252] mt-3">
+              <p className="text-[11px] text-gray-400 dark:text-gray-400 mt-3">
                 Subscribed:{" "}
                 <span className="font-medium text-gray-700 dark:text-[#A3A3A3]">
                   messages · message_deliveries · message_reads
@@ -1138,16 +1144,13 @@ export default function SettingsPage() {
                 <h3 className="text-[16px] font-bold text-gray-900 dark:text-white  mb-2">
                   WhatsApp Not Connected
                 </h3>
-                <p className="text-[13px] text-gray-500 dark:text-[#525252] max-w-sm mx-auto mb-8 leading-relaxed">
+                <p className="text-[13px] text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-8 leading-relaxed">
                   Connect your Meta account with WhatsApp Business permissions to manage your public
                   business profile.
                 </p>
                 <Button
-                  onClick={() => {
-                    const el = document.querySelector('[value="integrations"]') as HTMLButtonElement | null
-                    el?.click()
-                  }}
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-xl px-6"
+                  onClick={() => setActiveTab('integrations')}
+                  className="bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl px-6"
                 >
                   Go to Integrations
                 </Button>
@@ -1156,23 +1159,23 @@ export default function SettingsPage() {
               <div className="space-y-10">
                 {/* Business Info */}
                 <div>
-                  <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+                  <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full bg-[#25D366] inline-block" />
                     Business Info
                   </p>
-                  <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6">
+                  <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
                     Displayed publicly on your WhatsApp Business profile
                   </p>
                   <div className="space-y-5">
                     <div>
                       <Label htmlFor="wpBusinessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Business Name <span className="text-[#FF8B66]">*</span>
+                        Business Name <span className="text-[#FF7E36]">*</span>
                       </Label>
                       <Input
                         id="wpBusinessName"
                         value={wpBusinessName}
                         onChange={(e) => setWpBusinessName(e.target.value)}
-                        placeholder="Simply Dave Nassau Tours"
+                        placeholder="Ocean Breeze Tours Nassau Tours"
                         className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
                       />
                     </div>
@@ -1242,7 +1245,7 @@ export default function SettingsPage() {
                         type="email"
                         value={wpEmail}
                         onChange={(e) => setWpEmail(e.target.value)}
-                        placeholder="info@simplydavenassau.com"
+                        placeholder="info@oceanbreezetours.com"
                         className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
                       />
                     </div>
@@ -1254,7 +1257,7 @@ export default function SettingsPage() {
                         id="wpWebsite"
                         value={wpWebsite}
                         onChange={(e) => setWpWebsite(e.target.value)}
-                        placeholder="www.simplydavenassau.com"
+                        placeholder="www.oceanbreezetours.com"
                         className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
                       />
                     </div>
@@ -1315,7 +1318,7 @@ export default function SettingsPage() {
                   <Button
                     onClick={handleSaveWhatsAppProfile}
                     disabled={wpSaving}
-                    className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl px-8"
+                    className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8"
                   >
                     {wpSaving && <CircleNotch weight="bold" className="h-4 w-4 mr-2 animate-spin" />}
                     Save Changes
@@ -1352,7 +1355,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     {pushLoading && (
-                      <CircleNotch weight="bold" className="h-4 w-4 animate-spin text-[#3A9B9F]" />
+                      <CircleNotch weight="bold" className="h-4 w-4 animate-spin text-[#007B85]" />
                     )}
                     <Switch
                       disabled={!pushSupported || pushLoading}
@@ -1437,7 +1440,7 @@ export default function SettingsPage() {
                       </p>
                     </div>
                     <Button
-                      className="bg-[#3A9B9F] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm"
+                      className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl text-white shrink-0 shadow-sm"
                       onClick={handleUpgrade}
                       disabled={billingLoading}
                     >
@@ -1462,7 +1465,7 @@ export default function SettingsPage() {
                       <p className="text-sm text-[#475569] dark:text-gray-400 font-medium mb-1">
                         {customer?.stripe_current_period_end ? "Next Billing Date" : "Account Status"}
                       </p>
-                      <p className="text-lg font-semibold text-[#3A9B9F] dark:text-teal-400">
+                      <p className="text-lg font-semibold text-[#007B85] dark:text-teal-400">
                         {customer?.stripe_current_period_end
                           ? new Date(customer.stripe_current_period_end).toLocaleDateString()
                           : "Lifetime Founder's Pass"}
@@ -1487,13 +1490,13 @@ export default function SettingsPage() {
                 <div className="bg-white dark:bg-[#0A0A0A] rounded-2xl border border-gray-100 dark:border-[#222222] shadow-[0_2px_8px_rgba(0,0,0,0.03)] p-6">
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-sm text-gray-900 dark:text-gray-100">Contacts</span>
-                    <span className="text-sm font-semibold text-[#3A9B9F]">
+                    <span className="text-sm font-semibold text-[#007B85]">
                       {contactsCount} / 500
                     </span>
                   </div>
                   <div className="w-full bg-gray-100 dark:bg-[#111111] rounded-full h-2.5 overflow-hidden">
                     <div
-                      className="bg-[#3A9B9F] h-full rounded-full transition-all"
+                      className="bg-[#007B85] h-full rounded-full transition-all"
                       style={{ width: `${Math.min((contactsCount / 500) * 100, 100)}%` }}
                     />
                   </div>
@@ -1626,8 +1629,8 @@ function ChannelCard({
           </h4>
           <div className="flex items-center gap-1.5 mt-1">
             {isConnected ? (
-              <div className="flex items-center gap-1.5 text-[#3A9B9F] text-xs font-bold uppercase tracking-wider">
-                <div className="h-1.5 w-1.5 rounded-full bg-[#3A9B9F] animate-pulse" />
+              <div className="flex items-center gap-1.5 text-[#007B85] text-xs font-bold uppercase tracking-wider">
+                <div className="h-1.5 w-1.5 rounded-full bg-[#007B85] animate-pulse" />
                 Connected
               </div>
             ) : (

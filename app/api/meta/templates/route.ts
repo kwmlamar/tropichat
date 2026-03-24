@@ -57,7 +57,7 @@ const DEMO_TEMPLATES = [
     components: [
       {
         type: 'BODY',
-        text: 'Welcome to Simply Dave Nassau Tours! We offer snorkeling, sunset cruises, and island-hopping adventures. Reply TOURS to see our full lineup or BOOK to reserve your spot.',
+        text: 'Welcome to Ocean Breeze Tours Nassau Tours! We offer snorkeling, sunset cruises, and island-hopping adventures. Reply TOURS to see our full lineup or BOOK to reserve your spot.',
       },
     ],
   },
@@ -83,7 +83,7 @@ const DEMO_TEMPLATES = [
     components: [
       {
         type: 'BODY',
-        text: 'Payment received! Hi {{1}}, we\'ve received your payment of {{2}} for {{3}}. Your confirmation number is {{4}}. Thank you for choosing Simply Dave Nassau Tours!',
+        text: 'Payment received! Hi {{1}}, we\'ve received your payment of {{2}} for {{3}}. Your confirmation number is {{4}}. Thank you for choosing Ocean Breeze Tours Nassau Tours!',
       },
     ],
   },
@@ -109,7 +109,7 @@ const DEMO_TEMPLATES = [
     components: [
       {
         type: 'BODY',
-        text: 'Your Simply Dave Nassau Tours verification code is {{1}}. This code expires in 10 minutes. Do not share this code with anyone.',
+        text: 'Your Ocean Breeze Tours Nassau Tours verification code is {{1}}. This code expires in 10 minutes. Do not share this code with anyone.',
       },
     ],
   },

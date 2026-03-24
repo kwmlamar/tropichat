@@ -25,7 +25,7 @@ const MOCK_SERVICES = [
     description: "Experience the best of Nassau with our guided standard tour including key landmarks and history.",
     price: 85,
     duration_minutes: 180,
-    color: "#3A9B9F",
+    color: "#007B85",
     image: "https://images.unsplash.com/photo-1548574505-5e239809ee19?q=80&w=800&auto=format&fit=crop"
   },
   {
@@ -34,7 +34,7 @@ const MOCK_SERVICES = [
     description: "Exclusive private boat tour with snorkeling and beach lunch. Perfect for groups and families.",
     price: 450,
     duration_minutes: 240,
-    color: "#FF8B66",
+    color: "#FF7E36",
     image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop"
   }
 ]
@@ -110,7 +110,7 @@ export default function BookingPreviewPage() {
               className={cn(
                 "flex flex-col items-center justify-center p-4 rounded-[24px] border transition-all h-28 transform active:scale-95 shadow-sm",
                 isActive 
-                  ? "bg-[#3A9B9F] border-[#3A9B9F] text-white shadow-lg shadow-teal-500/20 z-10 scale-[1.02]" 
+                  ? "bg-[#007B85] border-[#007B85] text-white shadow-lg shadow-teal-500/20 z-10 scale-[1.02]" 
                   : "bg-white border-transparent text-[#213138] hover:border-teal-500/30"
               )}
             >
@@ -140,7 +140,7 @@ export default function BookingPreviewPage() {
             className={cn(
               "px-5 py-3 rounded-2xl text-[11px] font-bold border transition-all shadow-sm",
               selectedTime === t 
-                ? "bg-[#3A9B9F] border-[#3A9B9F] text-white" 
+                ? "bg-[#007B85] border-[#007B85] text-white" 
                 : "bg-white border-transparent text-[#213138] hover:bg-gray-50"
             )}
           >
@@ -154,7 +154,7 @@ export default function BookingPreviewPage() {
         <Button 
           onClick={handleComplete}
           disabled={loading}
-          className="w-full h-16 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-3xl font-black text-lg shadow-xl shadow-teal-500/20 active:scale-[0.98] transition-all border-none"
+          className="w-full h-16 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-3xl font-black text-lg shadow-xl shadow-teal-500/20 active:scale-[0.98] transition-all border-none"
         >
           {loading ? (
              <span className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full" />
@@ -177,15 +177,15 @@ export default function BookingPreviewPage() {
                    <Image src="/tropichat-logo.png" alt="Logo" width={32} height={32} className="brightness-200" />
                 </div>
                 <div>
-                   <h2 className="text-3xl font-black text-[#213138] leading-tight ">Simply Dave</h2>
-                   <p className="text-xs font-bold text-[#3A9B9F] uppercase tracking-[0.2em]">Exotic Bahamas Experiences</p>
+                   <h2 className="text-3xl font-black text-[#213138] leading-tight ">Ocean Breeze Tours</h2>
+                   <p className="text-xs font-bold text-[#007B85] uppercase tracking-[0.2em]">Exotic Bahamas Experiences</p>
                 </div>
              </div>
 
              <div className="space-y-6">
                 <h1 className="text-5xl font-extrabold text-[#213138] tracking-tighter leading-[1.1] ">
                    Discover the Magic <br />
-                   <span className="text-[#3A9B9F]">of the Islands.</span>
+                   <span className="text-[#007B85]">of the Islands.</span>
                 </h1>
                 <p className="text-gray-500 text-lg max-w-md leading-relaxed">
                    Select one of our curated island experiences below and book your adventure in seconds.
@@ -199,7 +199,7 @@ export default function BookingPreviewPage() {
                      onClick={() => setSelectedService(s)}
                      className={cn(
                        "relative rounded-[32px] overflow-hidden border transition-all h-64 group",
-                       selectedService.id === s.id ? "border-[#3A9B9F] ring-4 ring-[#3A9B9F]/10" : "border-gray-100"
+                       selectedService.id === s.id ? "border-[#007B85] ring-4 ring-[#007B85]/10" : "border-gray-100"
                      )}
                    >
                      <Image src={s.image} alt={s.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -208,7 +208,7 @@ export default function BookingPreviewPage() {
                         <p className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">${s.price} / GUEST</p>
                      </div>
                      {selectedService.id === s.id && (
-                        <div className="absolute top-4 right-4 h-8 w-8 bg-[#3A9B9F] rounded-full flex items-center justify-center text-white shadow-lg">
+                        <div className="absolute top-4 right-4 h-8 w-8 bg-[#007B85] rounded-full flex items-center justify-center text-white shadow-lg">
                            <Check className="h-4 w-4" />
                         </div>
                      )}
@@ -224,7 +224,7 @@ export default function BookingPreviewPage() {
                    
                    <div className="space-y-6">
                       <div className="p-4 rounded-2xl bg-[#F8FAFB] border border-gray-100 flex items-center gap-4">
-                         <div className="h-12 w-12 bg-[#213138] rounded-xl flex items-center justify-center text-[#3A9B9F] shrink-0 shadow-lg">
+                         <div className="h-12 w-12 bg-[#213138] rounded-xl flex items-center justify-center text-[#007B85] shrink-0 shadow-lg">
                             <CalendarDays className="h-6 w-6" />
                          </div>
                          <div className="min-w-0">
@@ -246,7 +246,7 @@ export default function BookingPreviewPage() {
 
                       <div className="space-y-4 pt-4 border-t border-gray-50">
                           <Button 
-                            className="w-full h-14 bg-[#3A9B9F] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 text-md"
+                            className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-bold shadow-lg shadow-teal-500/20 text-md"
                             onClick={handleComplete}
                             disabled={loading}
                           >
@@ -270,7 +270,7 @@ export default function BookingPreviewPage() {
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="w-24 h-24 bg-[#3A9B9F] rounded-[32px] flex items-center justify-center text-white shadow-2xl shadow-teal-500/30 mb-8"
+          className="w-24 h-24 bg-[#007B85] rounded-[32px] flex items-center justify-center text-white shadow-2xl shadow-teal-500/30 mb-8"
         >
           <Check className="h-12 w-12" />
         </motion.div>

@@ -40,7 +40,7 @@ export function NotificationDropdown({
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</h3>
           {unreadCount > 0 && (
-            <span className="rounded-full bg-[#3A9B9F]/10 px-2 py-0.5 text-xs font-medium text-[#3A9B9F]">
+            <span className="rounded-full bg-[#007B85]/10 px-2 py-0.5 text-xs font-medium text-[#007B85]">
               {unreadCount} new
             </span>
           )}
@@ -48,7 +48,7 @@ export function NotificationDropdown({
         {unreadCount > 0 && (
           <button
             onClick={onMarkAllRead}
-            className="flex items-center gap-1 text-xs font-medium text-[#3A9B9F] hover:text-[#2F8488] transition-colors"
+            className="flex items-center gap-1 text-xs font-medium text-[#007B85] hover:text-[#2F8488] transition-colors"
           >
             <CheckCheck weight="bold" className="h-3.5 w-3.5" />
             Mark all read
@@ -60,7 +60,7 @@ export function NotificationDropdown({
       <div className="max-h-[400px] overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#3A9B9F] border-t-transparent" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#007B85] border-t-transparent" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4">

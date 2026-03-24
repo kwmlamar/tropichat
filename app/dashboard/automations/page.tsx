@@ -116,8 +116,8 @@ function AutomationCard({
           <div className="flex items-center gap-2 mt-1">
             {active ? (
               <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#3A9B9F]" />
-                <span className="text-[10px] font-medium uppercase tracking-widest text-[#3A9B9F]">Active</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#007B85]" />
+                <span className="text-[10px] font-medium uppercase tracking-widest text-[#007B85]">Active</span>
               </span>
             ) : (
               <span className="flex items-center gap-1.5">
@@ -140,7 +140,7 @@ function AutomationCard({
           <Switch
             checked={active}
             onCheckedChange={onToggle}
-            className="data-[state=checked]:bg-[#3A9B9F] scale-90"
+            className="data-[state=checked]:bg-[#007B85] scale-90"
           />
           <Dropdown
             align="right"
@@ -190,7 +190,7 @@ function AutomationCard({
         {/* THEN */}
         <div className="flex items-stretch gap-3">
           <div className="flex flex-col items-center">
-            <div className="w-7 h-7 rounded-md bg-[#3A9B9F] flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-md bg-[#007B85] flex items-center justify-center shrink-0">
               <span className="text-[9px] font-black text-white tracking-widest">DO</span>
             </div>
           </div>
@@ -304,7 +304,7 @@ export default function AutomationsPage() {
         >
           <div>
             <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-[#3A9B9F] inline-block" />
+              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               Automations
             </p>
             <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
@@ -315,7 +315,7 @@ export default function AutomationsPage() {
           {customerPlan !== "free" && (
             <button
               onClick={handleCreateAutomation}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 self-start sm:self-auto"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 self-start sm:self-auto"
             >
               <Plus weight="bold" className="h-4 w-4" />
               New Automation
@@ -330,11 +330,11 @@ export default function AutomationsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.06 }}
             className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
-            style={{ borderLeftColor: "#FF8B66", borderLeftWidth: 2 }}
+            style={{ borderLeftColor: "#FF7E36", borderLeftWidth: 2 }}
           >
             <div className="max-w-sm mx-auto">
-              <div className="w-12 h-12 rounded-xl bg-[#FF8B66]/10 flex items-center justify-center mx-auto mb-5">
-                <Zap className="h-5 w-5 text-[#FF8B66]" />
+              <div className="w-12 h-12 rounded-xl bg-[#FF7E36]/10 flex items-center justify-center mx-auto mb-5">
+                <Zap className="h-5 w-5 text-[#FF7E36]" />
               </div>
               <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">
                 Professional Feature
@@ -344,7 +344,7 @@ export default function AutomationsPage() {
               </p>
               <button
                 onClick={() => router.push("/dashboard/settings?tab=billing")}
-                className="flex items-center gap-2 px-6 py-2.5 bg-[#213138] dark:bg-[#3A9B9F] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+                className="flex items-center gap-2 px-6 py-2.5 bg-[#213138] dark:bg-[#007B85] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
               >
                 Upgrade to Professional
                 <ArrowRight weight="bold" className="h-4 w-4" />
@@ -363,9 +363,9 @@ export default function AutomationsPage() {
               className="grid grid-cols-3 gap-4"
             >
               {[
-                { label: "Active",     value: activeCount,                    accent: "#3A9B9F" },
-                { label: "Total Runs", value: totalRuns,                      accent: "#FF8B66" },
-                { label: "Hours Saved",value: Math.floor(totalRuns * 0.1),   accent: "#3A9B9F" },
+                { label: "Active",     value: activeCount,                    accent: "#007B85" },
+                { label: "Total Runs", value: totalRuns,                      accent: "#FF7E36" },
+                { label: "Hours Saved",value: Math.floor(totalRuns * 0.1),   accent: "#007B85" },
               ].map((s, i) => (
                 <div
                   key={i}
@@ -415,7 +415,7 @@ export default function AutomationsPage() {
                     </div>
                     <div className="ml-3 h-4 border-l border-dashed border-gray-200 dark:border-[#222]" />
                     <div className="flex items-center gap-2.5">
-                      <div className="w-6 h-6 rounded-md bg-[#3A9B9F] flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-md bg-[#007B85] flex items-center justify-center">
                         <span className="text-[8px] font-black text-white">DO</span>
                       </div>
                       <span className="text-[13px] text-gray-400 dark:text-[#525252]">send a welcome message</span>
@@ -430,7 +430,7 @@ export default function AutomationsPage() {
                   </p>
                   <button
                     onClick={handleCreateAutomation}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
                   >
                     <Plus weight="bold" className="h-4 w-4" />
                     Create your first automation
@@ -544,7 +544,7 @@ export default function AutomationsPage() {
                 <Switch
                   checked={editingAutomation.is_enabled ?? true}
                   onCheckedChange={(v) => setEditingAutomation({ ...editingAutomation, is_enabled: v })}
-                  className="data-[state=checked]:bg-[#3A9B9F]"
+                  className="data-[state=checked]:bg-[#007B85]"
                 />
                 <Label className="cursor-pointer">Enable automation</Label>
               </div>
@@ -554,7 +554,7 @@ export default function AutomationsPage() {
                   Cancel
                 </Button>
                 <Button
-                  className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white"
+                  className="bg-[#007B85] hover:bg-[#2F8488] text-white"
                   onClick={handleSaveAutomation}
                   disabled={isSaving}
                 >

@@ -15,8 +15,8 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
       warning: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-amber-900/30 dark:text-amber-200 dark:border-amber-900/50",
       danger: "bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/30 dark:text-rose-200 dark:border-rose-900/50",
       outline: "bg-transparent text-gray-600 border-gray-300 dark:text-gray-400 dark:border-[#222222]",
-      primary: "bg-[#3A9B9F] text-white border-none shadow-sm",
-      accent: "bg-[#FF8B66] text-white border-none shadow-sm",
+      primary: "bg-[#007B85] text-white border-none shadow-sm",
+      accent: "bg-[#FF7E36] text-white border-none shadow-sm",
     }
 
     const sizes = {

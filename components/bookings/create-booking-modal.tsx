@@ -43,7 +43,7 @@ interface CreateBookingModalProps {
 }
 
 const SERVICE_COLORS = [
-  '#3A9B9F', '#FF8B66', '#7C3AED', '#10B981', '#F59E0B',
+  '#007B85', '#FF7E36', '#7C3AED', '#10B981', '#F59E0B',
   '#EF4444', '#3B82F6', '#EC4899', '#8B5CF6', '#14B8A6',
 ]
 
