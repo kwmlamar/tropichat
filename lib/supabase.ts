@@ -267,27 +267,36 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
   if (!user) return { data: null, error: 'Not authenticated' }
 
   const client = getSupabase()
-  const { data, error } = await client
+  let { data, error } = await client
     .from('customers')
     .select('*')
     .eq('id', user.id)
     .single()
 
-  // Auto-provision personal profile if missing
-  if (error && (error.code === 'PGRST116')) {
-    const { data: newData, error: insertError } = await client
+  // Auto-provision or Fix incomplete personal profile
+  if ((error && error.code === 'PGRST116') || (data && !data.full_name)) {
+    // Check if they are a team member to get their name
+    const { data: teamMember } = await client
+      .from('team_members')
+      .select('name')
+      .eq('email', user.email)
+      .maybeSingle()
+
+    const updates = {
+      id: user.id,
+      full_name: data?.full_name || teamMember?.name || user.user_metadata?.full_name || '',
+      business_name: data?.business_name || user.user_metadata?.business_name || '',
+      contact_email: data?.contact_email || user.email,
+      is_trial: true,
+    }
+
+    const { data: newData, error: upsertError } = await client
       .from('customers')
-      .upsert({
-        id: user.id,
-        full_name: user.user_metadata?.full_name || '',
-        business_name: user.user_metadata?.business_name || '',
-        contact_email: user.email,
-        is_trial: true,
-      }, { onConflict: 'id' })
+      .upsert(updates, { onConflict: 'id' })
       .select()
       .single()
 
-    return { data: newData, error: insertError?.message || null }
+    return { data: newData, error: upsertError?.message || null }
   }
 
   return { data, error: error?.message || null }

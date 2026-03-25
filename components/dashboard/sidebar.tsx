@@ -30,6 +30,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 interface SidebarProps {
   customer: Customer | null
+  personalProfile: Customer | null
   isCollapsed: boolean
   setIsCollapsed: (value: boolean) => void
 }
@@ -44,7 +45,7 @@ const navItems = [
   { href: "/dashboard/analytics", label: "Analytics", icon: ChartBar },
 ]
 
-export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps) {
+export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [unreadCount, setUnreadCount] = useState(0)
@@ -228,7 +229,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
           trigger={
             <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-[#222222]", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
               <Avatar
-                fallback={customer?.business_name || "User"}
+                fallback={personalProfile?.full_name || personalProfile?.contact_email || "User"}
                 size="sm"
                 className="shrink-0 ring-2 ring-white dark:ring-[#222222]"
               />
@@ -236,7 +237,7 @@ export function Sidebar({ customer, isCollapsed, setIsCollapsed }: SidebarProps)
                 <>
                   <div className="flex-1 min-w-0 text-left overflow-hidden">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                      {customer?.contact_email || "Loading..."}
+                      {personalProfile?.full_name || personalProfile?.contact_email || "Loading..."}
                     </p>
                   </div>
                   <CaretDown className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />

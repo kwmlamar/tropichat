@@ -39,9 +39,10 @@ const moreItems = [
 
 interface MobileBottomNavProps {
   customer: Customer | null
+  personalProfile: Customer | null
 }
 
-export function MobileBottomNav({ customer }: MobileBottomNavProps) {
+export function MobileBottomNav({ customer, personalProfile }: MobileBottomNavProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [showMore, setShowMore] = useState(false)
