@@ -68,7 +68,14 @@ export async function POST(req: NextRequest) {
     })
 
     if (inviteError) {
-      // Non-fatal: member row is saved; log and continue
+      const isExistingUser = inviteError.message.includes('already been registered') || (inviteError as any).status === 422
+      if (isExistingUser) {
+        return NextResponse.json({ 
+          error: 'This user already has a TropiChat account. They have been added to your team record, but no new invite email was sent as they can already log in.',
+          data: member
+        }, { status: 400 })
+      }
+      
       console.warn('Invite email error:', inviteError.message)
     }
 

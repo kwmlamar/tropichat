@@ -1797,7 +1797,7 @@ function TeamTab({ customer }: { customer: Customer | null }) {
                     {member.role !== 'owner' && (
                       <button 
                         onClick={() => handleRemove(member.id)}
-                        className="h-10 w-10 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                        className="h-10 w-10 flex items-center justify-center text-gray-300/60 dark:text-gray-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all"
                         title="Remove Member"
                       >
                         <Trash weight="bold" className="h-5 w-5" />
