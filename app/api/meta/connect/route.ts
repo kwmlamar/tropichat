@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
 
 // All scopes needed across the three channels
@@ -48,17 +48,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  // Validate the token
-  const supabase = createServerClient(token)
-  const { data: { user }, error } = await supabase.auth.getUser()
-
-  if (error || !user) {
-    return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+  // Resolve the workspace owner's ID
+  const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+  if (ctxErr || !customerId) {
+    return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
   }
 
-  // Build state param with user ID to verify on callback
+  // Build state param with the workspace owner's ID
   const state = Buffer.from(JSON.stringify({
-    user_id: user.id,
+    user_id: customerId,
+    actor_id: (await (createServerClient(token)).auth.getUser()).data.user?.id, // Keep trace of who did it
     ts: Date.now(),
   })).toString('base64url')
 
