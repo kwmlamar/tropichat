@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createServerClient, createServiceClient } from '@/lib/supabase-server'
+import { createServerClient, createServiceClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('Authorization')
@@ -26,10 +26,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
   }
 
+  const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+  if (ctxErr || !customerId) {
+    return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
+  }
+
   const { data: connections, error } = await supabase
     .from('meta_connections')
     .select('id, channel, account_id, account_name, access_token, is_active, scopes, metadata, token_expires_at, updated_at')
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .order('channel')
 
   if (error) {
@@ -49,7 +54,7 @@ export async function GET(request: Request) {
         const { data: existingCA } = await serviceDb
           .from('connected_accounts')
           .select('id, channel_account_id')
-          .eq('user_id', user.id)
+          .eq('user_id', customerId)
           .eq('channel_type', 'whatsapp')
           .eq('is_active', true)
           .single()
@@ -71,7 +76,7 @@ export async function GET(request: Request) {
           // Upsert the correct row
           const { error: upsertErr } = await serviceDb.from('connected_accounts').upsert(
             {
-              user_id: user.id,
+              user_id: customerId,
               channel_type: 'whatsapp',
               access_token: waConn.access_token,
               token_expires_at: waConn.token_expires_at,

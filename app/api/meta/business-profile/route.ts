@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient, createServiceClient } from '@/lib/supabase-server'
+import { createServerClient, createServiceClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 function getToken(req: NextRequest): string | null {
   const auth = req.headers.get('Authorization')
@@ -28,11 +28,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+    if (ctxErr || !customerId) {
+      return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
+    }
+
     // Find the WhatsApp connected account
     const { data: account } = await supabase
       .from('connected_accounts')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel_type', 'whatsapp')
       .eq('is_active', true)
       .single()
@@ -83,11 +88,13 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json()
 
+    const { customerId } = await getWorkspaceIdServer(token)
+
     // Find the WhatsApp connected account
     const { data: account } = await supabase
       .from('connected_accounts')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel_type', 'whatsapp')
       .eq('is_active', true)
       .single()

@@ -258,6 +258,37 @@ export async function getCurrentCustomer(): Promise<{ data: Customer | null; err
   return { data, error: error?.message || null }
 }
 
+/**
+ * Always returns the personal profile of the logged-in user, 
+ * regardless of which workspace they are currently acting in.
+ */
+export async function getPersonalCustomer(): Promise<{ data: Customer | null; error: string | null }> {
+  const { user } = await getUser()
+  if (!user) return { data: null, error: 'Not authenticated' }
+
+  const client = getSupabase()
+  const { data, error } = await client
+    .from('customers')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
+  return { data, error: error?.message || null }
+}
+
+export async function updatePersonalProfile(updates: Partial<Customer>) {
+  const { user } = await getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const client = getSupabase()
+  const { error } = await client
+    .from('customers')
+    .update(updates)
+    .eq('id', user.id)
+
+  return { error: error?.message || null }
+}
+
 export async function updateCustomer(updates: Partial<Customer>) {
   const client = getSupabase()
   const { customerId, error: ctxErr } = await getWorkspaceId()
