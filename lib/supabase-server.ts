@@ -40,3 +40,32 @@ export function createServerClient(accessToken: string) {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 }
+
+/**
+ * Resolves the active workspace (owner's ID) for the authenticated user on the server.
+ */
+export async function getWorkspaceIdServer(accessToken: string): Promise<{ customerId: string | null; error: string | null }> {
+  try {
+    const client = createServerClient(accessToken)
+    const { data: { user } } = await client.auth.getUser()
+    if (!user) return { customerId: null, error: 'Not authenticated' }
+
+    // Use service client to bypass RLS to lookup membership
+    const service = createServiceClient()
+    const { data: members } = await service
+      .from('team_members')
+      .select('customer_id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+    const customerId = (members && members.length > 0) 
+      ? members[0].customer_id 
+      : user.id
+
+    return { customerId, error: null }
+  } catch (err: any) {
+    return { customerId: null, error: err.message || 'Workspace lookup failed' }
+  }
+}
