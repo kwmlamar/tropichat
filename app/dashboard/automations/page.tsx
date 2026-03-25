@@ -292,7 +292,7 @@ export default function AutomationsPage() {
   const totalRuns   = automations.reduce((acc, a) => acc + (a.times_triggered || 0), 0)
 
   return (
-    <div className="p-8 min-h-screen overflow-y-auto">
+    <div className="p-4 sm:p-8 min-h-screen overflow-y-auto">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
@@ -302,12 +302,12 @@ export default function AutomationsPage() {
           transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6"
         >
-          <div>
-            <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
               <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               Automations
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
               Workflows
             </h1>
           </div>
@@ -315,7 +315,7 @@ export default function AutomationsPage() {
           {customerPlan !== "free" && (
             <button
               onClick={handleCreateAutomation}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 self-start sm:self-auto"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200 w-full sm:w-auto"
             >
               <Plus weight="bold" className="h-4 w-4" />
               New Automation
@@ -329,7 +329,7 @@ export default function AutomationsPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.06 }}
-            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
+            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 sm:p-12 text-center"
             style={{ borderLeftColor: "#FF7E36", borderLeftWidth: 2 }}
           >
             <div className="max-w-sm mx-auto">
@@ -360,7 +360,7 @@ export default function AutomationsPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.06 }}
-              className="grid grid-cols-3 gap-4"
+              className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
             >
               {[
                 { label: "Active",     value: activeCount,                    accent: "#007B85" },
@@ -372,10 +372,10 @@ export default function AutomationsPage() {
                   className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
                   style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}
                 >
-                  <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-2">
+                  <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 sm:mb-2 text-center sm:text-left">
                     {s.label}
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white  tabular-nums">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tabular-nums text-center sm:text-left">
                     {s.value}
                   </p>
                 </div>
@@ -402,7 +402,7 @@ export default function AutomationsPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.12 }}
-                className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-16 text-center"
+                className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-8 sm:p-16 text-center"
               >
                 <div className="max-w-xs mx-auto">
                   {/* Mini pipeline preview — teases the IF/THEN design */}

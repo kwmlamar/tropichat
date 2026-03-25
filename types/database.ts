@@ -42,6 +42,7 @@ export interface BusinessProfile {
 export interface Customer {
   id: string
   business_name: string
+  full_name: string | null
   contact_email: string
   password_hash?: string
   status: CustomerStatus
@@ -220,15 +221,17 @@ export interface WhatsAppMetaTemplate {
   }>
 }
 
-// Team Member table (for future use)
+// Team Member table
 export interface TeamMember {
   id: string
   customer_id: string
-  user_id: string
+  user_id: string | null
   role: 'owner' | 'admin' | 'agent'
   name: string
   email: string
+  status: 'pending' | 'active' | 'deactivated'
   is_active: boolean
+  invited_at: string
   created_at: string
 }
 

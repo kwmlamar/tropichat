@@ -413,6 +413,9 @@ export async function handleIncomingMessage(
 
     // 6. Process Automations (Gated by Professional plan)
     await processAutomations(db, account, conversationDbId, event)
+
+    // 7. Process Auto-Reply (Offline Message)
+    await processAutoReply(db, account, conversationDbId, event)
   }
 }
 
@@ -538,6 +541,102 @@ async function processAutomations(
   } catch (err) {
     console.error('[Automations] Failed during processing:', err)
   }
+}
+
+/**
+ * Checks if current time is within business hours and sends an offline message if enabled.
+ */
+async function processAutoReply(
+  db: ServiceClient,
+  account: { user_id: string; access_token: string; metadata: unknown; channel_account_id?: string },
+  conversationId: string,
+  event: IncomingWebhookEvent
+) {
+  try {
+    // 1. Fetch auto-reply settings
+    const { data: customer, error } = await db
+      .from('customers')
+      .select('auto_reply_enabled, auto_reply_message, business_hours, timezone')
+      .eq('id', account.user_id)
+      .single()
+
+    if (error || !customer || !customer.auto_reply_enabled || !customer.auto_reply_message) {
+      return
+    }
+
+    // 2. Check if within business hours
+    const isClosed = !isWithinBusinessHours(
+      customer.business_hours as any,
+      customer.timezone || 'America/Nassau'
+    )
+
+    if (isClosed) {
+      console.log(`[Auto-Reply] Business is closed. Sending offline message to ${event.customer_id}`)
+      
+      const metaOptions = account.metadata as Record<string, any>
+      
+      await sendMessage({
+        channelType: event.channel_type,
+        accountId: account.channel_account_id || (metaOptions?.page_id) || '',
+        pageId: metaOptions?.page_id,
+        accessToken: metaOptions?.page_access_token || account.access_token,
+        recipientId: event.customer_id,
+        content: customer.auto_reply_message,
+      })
+
+      // Log the automated outbound message
+      await db.from('unified_messages').insert({
+        conversation_id: conversationId,
+        channel_message_id: `offline_${Date.now()}`,
+        sender_type: 'business',
+        content: customer.auto_reply_message,
+        message_type: 'text',
+        sent_at: new Date().toISOString(),
+        status: 'sent',
+        metadata: { is_auto_reply: true }
+      })
+    }
+  } catch (err) {
+    console.error('[Auto-Reply] Failed to process:', err)
+  }
+}
+
+/**
+ * Utility to check if a Date is within business hours.
+ */
+function isWithinBusinessHours(
+  businessHours: Record<string, { start: string; end: string; enabled: boolean }> | null,
+  timezone: string
+): boolean {
+  if (!businessHours) return true
+
+  const now = new Date()
+  
+  // Get current day and time in target timezone
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    weekday: 'long',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false
+  })
+  
+  const parts = formatter.formatToParts(now)
+  const dayName = parts.find(p => p.type === 'weekday')?.value.toLowerCase() || ''
+  const hour = parseInt(parts.find(p => p.type === 'hour')?.value || '0')
+  const minute = parseInt(parts.find(p => p.type === 'minute')?.value || '0')
+  const currentTimeInMinutes = hour * 60 + minute
+
+  const schedule = businessHours[dayName]
+  if (!schedule || !schedule.enabled) return false
+
+  const [startH, startM] = schedule.start.split(':').map(Number)
+  const [endH, endM] = schedule.end.split(':').map(Number)
+  
+  const startInMinutes = startH * 60 + startM
+  const endInMinutes = endH * 60 + endM
+
+  return currentTimeInMinutes >= startInMinutes && currentTimeInMinutes <= endInMinutes
 }
 
 /**

@@ -64,7 +64,7 @@ function DonutChart({
   let offset = 0
 
   return (
-    <div className="flex items-center gap-8">
+    <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
       <div className="relative w-24 h-24 shrink-0">
         <svg viewBox="0 0 100 100" className="-rotate-90 w-full h-full">
           {/* track — light: slate-200, dark: #1A1A1A */}
@@ -105,7 +105,7 @@ function DonutChart({
         </div>
       </div>
 
-      <div className="space-y-2.5">
+      <div className="w-full sm:w-auto space-y-2.5">
         {data.map((item, i) => (
           <div key={i} className="flex items-center gap-2.5">
             <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
   ]
 
   return (
-    <div className="min-h-screen p-8 overflow-y-auto">
+    <div className="min-h-screen p-4 sm:p-8 overflow-y-auto">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
@@ -221,18 +221,18 @@ export default function AnalyticsPage() {
           transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6"
         >
-          <div>
-            <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
               <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               Analytics
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white tracking-tight">
               Overview
             </h1>
           </div>
 
           {/* Segmented date control — light: bg-gray-100 white active / dark: bg-[#111] #1C1C1C active */}
-          <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-[#1C1C1C]">
+          <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-[#1C1C1C] w-full sm:w-auto">
             {[
               { value: "7d",  label: "7D"  },
               { value: "30d", label: "30D" },
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
                 key={opt.value}
                 onClick={() => setDateRange(opt.value)}
                 className={cn(
-                  "px-5 py-2 text-xs font-semibold rounded-lg transition-all duration-200",
+                  "flex-1 sm:flex-none px-5 py-2 text-[11px] sm:text-xs font-semibold rounded-lg transition-all duration-200",
                   dateRange === opt.value
                     ? "bg-white dark:bg-[#1C1C1C] text-gray-900 dark:text-white shadow-sm dark:shadow-none"
                     : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]"
@@ -271,16 +271,16 @@ export default function AnalyticsPage() {
             : metrics.map((m) => (
                 <div
                   key={m.label}
-                  className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 relative overflow-hidden"
+                  className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-4 sm:p-6 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 relative overflow-hidden shadow-sm"
                   style={{ borderLeftColor: m.accent, borderLeftWidth: 2 }}
                 >
-                  <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-3">
+                  <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 sm:mb-3">
                     {m.label}
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white  tabular-nums">
+                  <p className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white tabular-nums">
                     {m.value.toLocaleString()}
                   </p>
-                  <p className="text-[12px] font-medium mt-2 text-[#007B85]">
+                  <p className="text-[11px] sm:text-[12px] font-medium mt-1 sm:mt-2 text-[#007B85]">
                     {m.delta}
                   </p>
                 </div>
@@ -350,18 +350,18 @@ export default function AnalyticsPage() {
         >
           {/* Avg response time — typographic hero, no icon */}
           <div
-            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-8 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 flex flex-col justify-between"
+            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 sm:p-8 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 flex flex-col justify-between"
             style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
           >
-            <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-4">
+            <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-4">
               Avg. Response Time
             </p>
             <div>
-              <p className="text-5xl font-bold text-gray-900 dark:text-white  tabular-nums leading-none">
+              <p className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white tabular-nums leading-none">
                 2.5
-                <span className="text-xl font-medium text-gray-400 dark:text-[#525252] ml-1.5">min</span>
+                <span className="text-lg sm:text-xl font-medium text-gray-400 dark:text-[#525252] ml-1 sm:ml-1.5">min</span>
               </p>
-              <p className="text-[13px] text-gray-500 dark:text-[#525252] mt-3">
+              <p className="text-[12px] sm:text-[13px] text-gray-500 dark:text-[#525252] mt-2 sm:mt-3">
                 First response to a new conversation
               </p>
             </div>
@@ -380,7 +380,7 @@ export default function AnalyticsPage() {
             <div className="space-y-5">
               {peakHours.map((item, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <span className="text-[13px] text-gray-500 dark:text-[#A3A3A3] w-36 shrink-0">
+                  <span className="text-[12px] sm:text-[13px] text-gray-500 dark:text-[#A3A3A3] w-24 sm:w-36 shrink-0 truncate">
                     {item.time}
                   </span>
                   <div className="flex-1 h-1.5 bg-slate-100 dark:bg-[#1A1A1A] rounded-full overflow-hidden">

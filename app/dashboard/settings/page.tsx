@@ -26,6 +26,9 @@ import {
   WhatsappLogo,
   MessengerLogo,
   InstagramLogo,
+  Plus,
+  Trash,
+  SealCheck,
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -41,7 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { ChannelIcon } from "@/components/dashboard/channel-icon"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { getSession, getCurrentCustomer, updateCustomer, changePassword } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, updateCustomer, changePassword, getTeamMembers, inviteTeamMember, removeTeamMember } from "@/lib/supabase"
 import {
   getMetaStatus,
   initiateMetaConnect,
@@ -54,7 +57,8 @@ import {
 } from "@/lib/meta-connections"
 import { toast } from "sonner"
 import { subscribeToPush, unsubscribeFromPush, getNotificationPermission, isPushSupported } from "@/lib/push-notifications"
-import type { Customer, BusinessHours, MetaChannel } from "@/types/database"
+import type { Customer, BusinessHours, MetaChannel, TeamMember } from "@/types/database"
+import { Avatar } from "@/components/ui/avatar"
 
 const timezones = [
   { value: "America/Nassau", label: "Bahamas (Nassau)" },
@@ -107,6 +111,7 @@ export default function SettingsPage() {
   const [customer, setCustomer] = useState<Customer | null>(null)
 
   // Form state
+  const [fullName, setFullName] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [contactEmail, setContactEmail] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
@@ -164,6 +169,7 @@ export default function SettingsPage() {
         toast.error("Failed to load settings")
       } else if (data) {
         setCustomer(data)
+        setFullName(data.full_name || "")
         setBusinessName(data.business_name)
         setContactEmail(data.contact_email)
         setPhoneNumber(data.phone_number || "")
@@ -257,12 +263,12 @@ export default function SettingsPage() {
 
   const handleSaveProfile = async () => {
     setSaving(true)
-
     const { error } = await updateCustomer({
       business_name: businessName,
+      full_name: fullName,
       contact_email: contactEmail,
-      phone_number: phoneNumber || null,
-      timezone,
+      phone_number: phoneNumber,
+      timezone: timezone,
     })
 
     if (error) {
@@ -507,11 +513,11 @@ export default function SettingsPage() {
         <div className="flex flex-col items-center px-5 pt-8 pb-8">
           <div className="h-20 w-20 rounded-2xl bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] flex items-center justify-center mb-4">
             <span className="text-3xl font-bold text-[#007B85] ">
-              {(businessName || contactEmail || "U")[0].toUpperCase()}
+              {(fullName || businessName || contactEmail || "U")[0].toUpperCase()}
             </span>
           </div>
           <h2 className="text-[18px] font-bold text-[#213138] dark:text-white  tracking-tight">
-            {businessName || "Your Business"}
+            {fullName || businessName || "Your Profile"}
           </h2>
           <p className="flex items-center gap-1.5 text-[13px] text-gray-500 dark:text-gray-400 mt-1">
             <MapPin weight="bold" className="h-3 w-3 text-[#007B85]" />
@@ -662,6 +668,17 @@ export default function SettingsPage() {
               </p>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Full Name
+                    </Label>
+                    <Input
+                      id="fullName"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="mt-1.5 rounded-xl border-gray-200 dark:border-[#222222] dark:bg-[#111111]"
+                    />
+                  </div>
                   <div>
                     <Label htmlFor="businessName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Business Name
@@ -906,26 +923,7 @@ export default function SettingsPage() {
 
           {/* Team Tab */}
           <TabsContent value="team" className="pb-12">
-            <div
-              className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-12 text-center"
-              style={{ borderLeftColor: "#007B85", borderLeftWidth: 2 }}
-            >
-              <div className="w-12 h-12 rounded-xl bg-[#007B85]/10 flex items-center justify-center mx-auto mb-5">
-                <Users weight="bold" className="h-5 w-5 text-[#007B85]" />
-              </div>
-              <h3 className="text-[16px] font-bold text-gray-900 dark:text-white  mb-2">
-                Team Management
-              </h3>
-              <p className="text-[13px] text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-8 leading-relaxed">
-                Invite team members to help manage customer conversations across all channels.
-              </p>
-              <Button 
-                onClick={() => handleMobileNav('billing')}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl px-6"
-              >
-                Upgrade to Professional
-              </Button>
-            </div>
+            <TeamTab customer={customer} />
           </TabsContent>
 
           {/* Integrations Tab */}
@@ -1596,6 +1594,225 @@ function MobileTabLink({ icon: Icon, label, onClick }: { icon: any, label: strin
 }
 
 // ==================== Channel Status Card ====================
+
+function TeamTab({ customer }: { customer: Customer | null }) {
+  const [members, setMembers] = useState<TeamMember[]>([])
+  const [loading, setLoading] = useState(true)
+  const [inviting, setInviting] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState("")
+  const [inviteName, setInviteName] = useState("")
+  const [inviteRole, setInviteRole] = useState<'admin' | 'agent'>('agent')
+
+  useEffect(() => {
+    async function fetchMembers() {
+      setLoading(true)
+      const { data, error } = await getTeamMembers()
+      if (!error && data) {
+        setMembers(data)
+      }
+      setLoading(false)
+    }
+    fetchMembers()
+  }, [])
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inviteEmail || !inviteName) return
+
+    setInviting(true)
+    const { data, error } = await inviteTeamMember(inviteEmail, inviteName, inviteRole)
+    if (error) {
+      toast.error(error)
+    } else if (data) {
+      toast.success("Invitation sent successfully")
+      setMembers([...members, data])
+      setInviteEmail("")
+      setInviteName("")
+    }
+    setInviting(false)
+  }
+
+  const handleRemove = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this team member?")) return
+
+    const { error } = await removeTeamMember(id)
+    if (error) {
+      toast.error(error)
+    } else {
+      toast.success("Team member removed")
+      setMembers(members.filter((m) => m.id !== id))
+    }
+  }
+
+  const isFreePlan = customer?.plan === "free"
+
+  return (
+    <div className="space-y-8">
+      {/* Plan Gating Overlay */}
+      {isFreePlan && (
+        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
+              <SealCheck weight="bold" className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <h4 className="font-bold text-amber-900 dark:text-amber-400">Professional Feature</h4>
+              <p className="text-sm text-amber-700 dark:text-amber-500/80 mt-1">
+                Team management is only available on the Professional plan. Upgrade to invite your staff.
+              </p>
+            </div>
+          </div>
+          <Button 
+            className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-sm px-6"
+            onClick={() => window.location.href = '/dashboard/settings?tab=billing'}
+          >
+            Upgrade to Invite Team
+          </Button>
+        </div>
+      )}
+
+      {/* Invite Form */}
+      <div className={cn("space-y-6", isFreePlan && "opacity-50 pointer-events-none")}>
+        <div>
+          <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-1 flex items-center gap-2">
+            <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
+            Invite Member
+          </p>
+          <p className="text-[13px] text-gray-500 dark:text-gray-400 mb-6">
+            Add team members to your workspace to collaborate on conversations
+          </p>
+          
+          <form onSubmit={handleInvite} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white dark:bg-[#0A0A0A] p-5 rounded-2xl border border-gray-100 dark:border-[#222222] shadow-sm">
+            <div className="md:col-span-1">
+              <Label className="text-xs font-semibold mb-1.5 block">Full Name</Label>
+              <Input 
+                placeholder="John Doe" 
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
+                className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111]"
+                required
+              />
+            </div>
+            <div className="md:col-span-1">
+              <Label className="text-xs font-semibold mb-1.5 block">Email Address</Label>
+              <Input 
+                type="email"
+                placeholder="john@example.com" 
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111]"
+                required
+              />
+            </div>
+            <div className="md:col-span-1">
+              <Label className="text-xs font-semibold mb-1.5 block">Role</Label>
+              <SimpleSelect 
+                value={inviteRole} 
+                onValueChange={(v) => setInviteRole(v as any)}
+                options={[
+                  { value: 'admin', label: 'Admin' },
+                  { value: 'agent', label: 'Agent' }
+                ]}
+                className="w-full"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button 
+                type="submit"
+                disabled={inviting || !inviteEmail || !inviteName}
+                className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl h-10 font-bold"
+              >
+                {inviting ? (
+                  <CircleNotch weight="bold" className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Plus weight="bold" className="h-4 w-4 mr-2" />
+                    Send Invite
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+        {/* Members List */}
+        <div>
+          <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
+            <span className="w-1 h-1 rounded-full bg-gray-400 dark:bg-[#333] inline-block" />
+            Existing Team Members
+          </p>
+
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2].map((i) => (
+                <Skeleton key={i} className="h-20 w-full rounded-2xl bg-gray-100 dark:bg-[#111]" />
+              ))}
+            </div>
+          ) : members.length === 0 ? (
+            <div className="bg-gray-50 dark:bg-[#0A0A0A]/40 border border-dashed border-gray-200 dark:border-[#222222] rounded-2xl p-12 text-center">
+              <Users weight="bold" className="h-8 w-8 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
+              <p className="text-sm text-gray-400">No team members yet. Invite someone to get started.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3">
+              {members.map((member) => (
+                <motion.div 
+                  key={member.id}
+                  layout
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="group flex items-center justify-between p-4 bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] rounded-2xl transition-all hover:shadow-md hover:border-[#007B85]/20"
+                >
+                  <div className="flex items-center gap-4">
+                    <Avatar fallback={member.name} size="md" className="ring-2 ring-white dark:ring-[#222222]" />
+                    <div>
+                      <h5 className="font-bold text-gray-900 dark:text-gray-100 text-[15px] leading-tight">
+                        {member.name}
+                        {member.role === 'owner' && (
+                          <span className="ml-2 text-[10px] bg-[#007B85]/10 text-[#007B85] px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">Owner</span>
+                        )}
+                      </h5>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{member.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex flex-col items-end mr-4">
+                      <Badge 
+                        variant={member.role === 'admin' ? 'warning' : member.role === 'owner' ? 'success' : 'secondary'}
+                        className="text-[10px] font-black uppercase tracking-widest px-2"
+                      >
+                        {member.role}
+                      </Badge>
+                      <span className={cn(
+                        "text-[10px] font-bold mt-1 uppercase tracking-tighter",
+                        member.status === 'active' ? "text-emerald-500" : "text-amber-500"
+                      )}>
+                        {member.status}
+                      </span>
+                    </div>
+
+                    {member.role !== 'owner' && (
+                      <button 
+                        onClick={() => handleRemove(member.id)}
+                        className="h-10 w-10 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                        title="Remove Member"
+                      >
+                        <Trash weight="bold" className="h-5 w-5" />
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function ChannelCard({
   channel,

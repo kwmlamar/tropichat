@@ -81,7 +81,7 @@ export const createSupabaseClient = () => {
 
 // ==================== AUTH FUNCTIONS ====================
 
-export async function signUp(email: string, password: string, businessName: string) {
+export async function signUp(email: string, password: string, businessName: string, fullName: string) {
   const client = getSupabase()
 
   const { data: authData, error: authError } = await client.auth.signUp({
@@ -90,6 +90,7 @@ export async function signUp(email: string, password: string, businessName: stri
     options: {
       data: {
         business_name: businessName,
+        full_name: fullName,
       },
     },
   })
@@ -105,11 +106,33 @@ export async function signUp(email: string, password: string, businessName: stri
       .insert({
         id: authData.user.id,
         business_name: businessName,
+        full_name: fullName,
         contact_email: email,
         status: 'trial',
         plan: 'free',
         timezone: 'America/Nassau',
       })
+
+    if (customerError) {
+      console.error('Error creating customer:', customerError)
+    }
+
+    // Create the team_member owner record
+    const { error: memberError } = await client
+      .from('team_members')
+      .insert({
+        customer_id: authData.user.id,
+        user_id: authData.user.id,
+        role: 'owner',
+        name: fullName,
+        email: email,
+        status: 'active',
+        is_active: true,
+      })
+
+    if (memberError) {
+      console.error('Error creating team owner:', memberError)
+    }
 
     if (customerError) {
       console.error('Error creating customer:', customerError)
@@ -833,4 +856,55 @@ export function subscribeToConversations(
   return () => {
     client.removeChannel(channel)
   }
+}
+
+// ==================== TEAM MEMBER FUNCTIONS ====================
+
+export async function getTeamMembers(): Promise<{ data: import('@/types/database').TeamMember[]; error: string | null }> {
+  const client = getSupabase()
+  const { user } = await getUser()
+
+  if (!user) return { data: [], error: 'Not authenticated' }
+
+  const { data, error } = await client
+    .from('team_members')
+    .select('*')
+    .eq('customer_id', user.id)
+    .order('created_at', { ascending: true })
+
+  return { data: data || [], error: error?.message || null }
+}
+
+export async function inviteTeamMember(email: string, name: string, role: 'admin' | 'agent'): Promise<{ data: import('@/types/database').TeamMember | null; error: string | null }> {
+  const { session } = await getSession()
+  if (!session) return { data: null, error: 'Not authenticated' }
+
+  const res = await fetch('/api/team/invite', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ email, name, role }),
+  })
+
+  const json = await res.json()
+  return { data: json.data || null, error: json.error || null }
+}
+
+export async function removeTeamMember(id: string): Promise<{ error: string | null }> {
+  const { session } = await getSession()
+  if (!session) return { error: 'Not authenticated' }
+
+  const res = await fetch('/api/team/remove', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ id }),
+  })
+
+  const json = await res.json()
+  return { error: json.error || null }
 }

@@ -16,6 +16,7 @@ import {
   FacebookLogo as Facebook, 
   CheckCircle as CheckCircle2, 
   Buildings as Building2, 
+  User,
   UserPlus 
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
@@ -98,6 +99,7 @@ function MessengerBrandIcon({ className }: { className?: string }) {
 
 export default function SignupPage() {
   const router = useRouter()
+  const [fullName, setFullName] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -121,7 +123,7 @@ export default function SignupPage() {
 
     setIsLoading(true)
 
-    const { data, error } = await signUp(email, password, businessName)
+    const { data, error } = await signUp(email, password, businessName, fullName)
 
     if (error) {
       toast.error(error)
@@ -185,6 +187,22 @@ export default function SignupPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Your Full Name</Label>
+              <div className="relative group">
+                <User weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="businessName" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Business Name</Label>
               <div className="relative group">

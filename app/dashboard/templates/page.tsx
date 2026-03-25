@@ -196,7 +196,7 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div className="p-8 min-h-screen overflow-y-auto">
+    <div className="p-4 sm:p-8 min-h-screen overflow-y-auto">
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* ── Header ────────────────────────────────────────────────────── */}
@@ -206,28 +206,28 @@ export default function TemplatesPage() {
           transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6"
         >
-          <div>
-            <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
               <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
               WhatsApp
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white tracking-tight">
               Templates
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200 disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200 disabled:opacity-50"
             >
               <RefreshCw className={cn("h-3.5 w-3.5", isRefreshing && "animate-spin")} />
               Sync
             </button>
             <button
               onClick={handleCreateTemplate}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200"
+              className="flex-[2] sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-[13px] font-semibold rounded-xl transition-colors duration-200"
             >
               <Plus weight="bold" className="h-4 w-4" />
               New Template
@@ -255,13 +255,13 @@ export default function TemplatesPage() {
           </div>
 
           {/* Status filter segmented control */}
-          <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-[#1C1C1C]">
+          <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-[#111111] rounded-xl p-1 border border-gray-200 dark:border-[#1C1C1C] overflow-x-auto no-scrollbar">
             {statusFilters.map(f => (
               <button
                 key={f.value}
                 onClick={() => setStatusFilter(f.value)}
                 className={cn(
-                  "px-4 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200",
+                  "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap",
                   statusFilter === f.value
                     ? "bg-white dark:bg-[#1C1C1C] text-gray-900 dark:text-white shadow-sm dark:shadow-none"
                     : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]"

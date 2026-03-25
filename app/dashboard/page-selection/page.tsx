@@ -99,8 +99,8 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
 
       {avatar}
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+      <div className="flex-1 min-w-0 py-0.5">
+        <div className="flex items-center justify-between gap-2">
           <span className={cn(
             "text-[14px] font-semibold truncate",
             isSelected ? "text-[#213138] dark:text-white" : "text-gray-700 dark:text-[#A3A3A3]"
@@ -112,7 +112,9 @@ function SelectableCard({ isSelected, onClick, avatar, title, subtitle, badge, t
         <p className="text-[12px] text-gray-400 dark:text-[#525252] truncate mt-0.5">{subtitle}</p>
       </div>
 
-      {trailing}
+      <div className="shrink-0">
+        {trailing}
+      </div>
     </button>
   )
 }
@@ -322,7 +324,7 @@ export default function PageSelectionPage() {
   )
 
   return (
-    <div className="p-8 min-h-screen overflow-y-auto">
+    <div className="p-4 sm:p-8 min-h-screen overflow-y-auto">
       <div className="max-w-3xl mx-auto space-y-8">
 
         {/* ── Header ────────────────────────────────────────────────────── */}
@@ -331,14 +333,14 @@ export default function PageSelectionPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+          <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />
             Channels
           </p>
-          <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white tracking-tight">
             Connected Accounts
           </h1>
-          <p className="text-[14px] text-gray-500 dark:text-[#525252] mt-2">
+          <p className="text-[13px] sm:text-[14px] text-gray-500 dark:text-[#525252] mt-1.5 sm:mt-2">
             Choose which account to use for each channel.
           </p>
         </motion.div>

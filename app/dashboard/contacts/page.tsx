@@ -100,16 +100,16 @@ export default function ContactsPage() {
   ]
 
   return (
-    <div className="p-8 min-h-screen overflow-y-auto">
+    <div className="p-4 sm:p-8 min-h-screen overflow-y-auto">
       <div className="max-w-7xl mx-auto space-y-8">
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-          <div>
-            <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
               <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />CRM
             </p>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white  tracking-tight">Contacts</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white tracking-tight">Contacts</h1>
           </div>
           {selectedContacts.length > 0 && (
             <button onClick={handleExport}
@@ -120,12 +120,12 @@ export default function ContactsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.06 }}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((s, i) => (
-            <div key={i} className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
+            <div key={i} className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-4 sm:p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 shadow-sm"
               style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}>
-              <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-2">{s.label}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white  tabular-nums">
+              <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 sm:mb-2">{s.label}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
                 {loading ? "—" : s.value}
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function ContactsPage() {
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.14 }}
           className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto hidden sm:block">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#111]">
@@ -245,6 +245,59 @@ export default function ContactsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile list view */}
+          <div className="sm:hidden divide-y divide-gray-50 dark:divide-[#1A1A1A]">
+            {loading ? Array(5).fill(0).map((_, i) => (
+              <div key={i} className="p-4 flex items-center gap-3">
+                <Skeleton className="h-10 w-10 rounded-full bg-slate-100 dark:bg-[#1A1A1A]" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3.5 w-32 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+                  <Skeleton className="h-3 w-24 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+                </div>
+              </div>
+            )) : contacts.length === 0 ? (
+              <div className="py-12 text-center px-4">
+                <User weight="bold" className="h-8 w-8 text-gray-200 dark:text-[#1A1A1A] mx-auto mb-3" />
+                <p className="text-[14px] text-gray-500 dark:text-[#525252]">
+                  {searchQuery ? "No contacts match that search" : "No contacts yet"}
+                </p>
+              </div>
+            ) : contacts.map(contact => (
+              <div key={contact.id} className="p-4 flex items-center gap-3 active:bg-gray-50 dark:active:bg-[#111] transition-colors">
+                <div className="relative shrink-0">
+                  <Avatar src={contact.avatar_url ?? undefined} fallback={contact.name || contact.phone_number || "?"} size="md" className="h-10 w-10" />
+                  <PresenceDot lastMessageAt={contact.last_message_at} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[14px] font-semibold text-gray-900 dark:text-white truncate">
+                      {contact.name || "Unknown"}
+                    </p>
+                    <ChannelPill type={contact.channel_type ?? null} />
+                  </div>
+                  <div className="flex items-center justify-between gap-2 mt-0.5">
+                    <p className="text-[12px] text-gray-400 dark:text-[#525252] truncate">
+                      {contact.phone_number || contact.email || "No details"}
+                    </p>
+                    <p className="text-[11px] text-gray-400 dark:text-[#525252] shrink-0">
+                      {contact.last_message_at ? formatDistanceToNow(contact.last_message_at) : "Never"}
+                    </p>
+                  </div>
+                </div>
+                <Dropdown align="right" trigger={
+                  <button className="p-2 -mr-2 rounded-lg text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-white outline-none">
+                    <MoreVertical weight="bold" className="h-5 w-5" />
+                  </button>
+                }>
+                  <DropdownItem icon={<Phone weight="bold" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
+                  <DropdownItem icon={<Tag weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
+                  <DropdownSeparator />
+                  <DropdownItem onClick={() => handleBlock(contact)}>{contact.is_blocked ? "Unblock" : "Block"}</DropdownItem>
+                </Dropdown>
+              </div>
+            ))}
           </div>
           {!loading && contacts.length > 0 && (
             <div className="px-5 py-3 border-t border-gray-100 dark:border-[#1C1C1C]">
