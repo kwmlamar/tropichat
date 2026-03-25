@@ -194,34 +194,49 @@ export async function signInWithOAuth(provider: OAuthProvider) {
   return { data, error: null }
 }
 
-export async function resetPassword(email: string) {
-  const client = getSupabase()
-  const { error } = await client.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
-  })
-  return { error: error?.message || null }
-}
+// ==================== WORKSPACE HELPERS ====================
 
-export async function changePassword(newPassword: string) {
+/**
+ * Resolves the active workspace (customer_id) for the current user.
+ * If the user is a team member, it returns the owner's customer_id.
+ * If the user is an owner, it returns their own user.id.
+ */
+export async function getWorkspaceId(): Promise<{ customerId: string | null; error: string | null }> {
+  const { user } = await getUser()
+  if (!user) return { customerId: null, error: 'Not authenticated' }
+
   const client = getSupabase()
-  const { error } = await client.auth.updateUser({ password: newPassword })
-  return { error: error?.message || null }
+  
+  // Try to find the user in team_members as an active member
+  const { data: member } = await client
+    .from('team_members')
+    .select('customer_id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .maybeSingle()
+
+  if (member) {
+    return { customerId: member.customer_id, error: null }
+  }
+
+  // Fallback to user.id (the user is an owner of their own workspace)
+  return { customerId: user.id, error: null }
 }
 
 // ==================== CUSTOMER FUNCTIONS ====================
 
 export async function getCurrentCustomer(): Promise<{ data: Customer | null; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: null, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: null, error: ctxErr || 'Workspace not found' }
   }
 
   const { data, error } = await client
     .from('customers')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', customerId)
     .single()
 
   return { data, error: error?.message || null }
@@ -229,16 +244,16 @@ export async function getCurrentCustomer(): Promise<{ data: Customer | null; err
 
 export async function updateCustomer(updates: Partial<Customer>) {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { error: ctxErr || 'Workspace not found' }
   }
 
   const { error } = await client
     .from('customers')
     .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', user.id)
+    .eq('id', customerId)
 
   return { error: error?.message || null }
 }
@@ -249,12 +264,12 @@ export async function getConversations(
   status?: string,
   search?: string,
   limit = 50
-): Promise<{ data: ConversationWithContact[]; error: string | null }> {
+ ): Promise<{ data: ConversationWithContact[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
   }
 
   let query = client
@@ -263,7 +278,7 @@ export async function getConversations(
       *,
       contact:contacts(*)
     `)
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('last_message_at', { ascending: false })
     .limit(limit)
 
@@ -401,16 +416,16 @@ export async function getContacts(
   limit = 100
 ): Promise<{ data: Contact[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
   }
 
   let query = client
     .from('contacts')
     .select('*')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('last_message_at', { ascending: false, nullsFirst: false })
     .limit(limit)
 
@@ -457,16 +472,16 @@ export async function getTemplates(
   status?: string
 ): Promise<{ data: MessageTemplate[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
   }
 
   let query = client
     .from('message_templates')
     .select('*')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('created_at', { ascending: false })
 
   if (category) {
@@ -484,17 +499,17 @@ export async function getTemplates(
 
 export async function createTemplate(template: Partial<MessageTemplate>) {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: null, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: null, error: ctxErr || 'Workspace not found' }
   }
 
   const { data, error } = await client
     .from('message_templates')
     .insert({
       ...template,
-      customer_id: user.id,
+      customer_id: customerId,
       approval_status: 'pending',
       times_used: 0,
     })
@@ -530,16 +545,16 @@ export async function deleteTemplate(id: string) {
 
 export async function getAutomations(): Promise<{ data: AutomationRule[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
   }
 
   const { data, error } = await client
     .from('automation_rules')
     .select('*')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('priority', { ascending: true })
 
   return { data: data || [], error: error?.message || null }
@@ -547,17 +562,17 @@ export async function getAutomations(): Promise<{ data: AutomationRule[]; error:
 
 export async function createAutomation(automation: Partial<AutomationRule>) {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: null, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: null, error: ctxErr || 'Workspace not found' }
   }
 
   const { data, error } = await client
     .from('automation_rules')
     .insert({
       ...automation,
-      customer_id: user.id,
+      customer_id: customerId,
       times_triggered: 0,
     })
     .select()
@@ -592,17 +607,17 @@ export async function deleteAutomation(id: string) {
 
 export async function getAnalytics(startDate: string, endDate: string) {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: null, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: null, error: ctxErr || 'Workspace not found' }
   }
 
   // Get message counts
   const { data: messages, error: messagesError } = await client
     .from('messages')
     .select('direction, sent_at, status')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .gte('sent_at', startDate)
     .lte('sent_at', endDate)
 
@@ -610,7 +625,7 @@ export async function getAnalytics(startDate: string, endDate: string) {
   const { data: conversations, error: convsError } = await client
     .from('conversations')
     .select('status, created_at')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .gte('created_at', startDate)
     .lte('created_at', endDate)
 
@@ -618,7 +633,7 @@ export async function getAnalytics(startDate: string, endDate: string) {
   const { count: activeContacts } = await client
     .from('contacts')
     .select('*', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .gte('last_message_at', startDate)
 
   if (messagesError || convsError) {
@@ -648,16 +663,16 @@ export async function getAnalytics(startDate: string, endDate: string) {
 
 export async function getUnreadConversationCount(): Promise<{ count: number; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { count: 0, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { count: 0, error: ctxErr || 'Workspace not found' }
   }
 
   const { count, error } = await client
     .from('conversations')
     .select('*', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .gt('unread_count', 0)
 
   return { count: count || 0, error: error?.message || null }
@@ -667,26 +682,21 @@ export async function getUnreadConversationCount(): Promise<{ count: number; err
 
 export async function getWorkspaceUsage(): Promise<{ contactsCount: number, messagesCount: number, error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { contactsCount: 0, messagesCount: 0, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { contactsCount: 0, messagesCount: 0, error: ctxErr || 'Workspace not found' }
   }
 
   const { count: contactsCount, error: contactsError } = await client
     .from('contacts')
     .select('*', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
-
-  // Because messages belong to conversations, and conversations belong to customer
-  // we do an inner join but supabase JS doesn't support aggregate count across joins easily.
-  // We can just rely on unified_messages if they have customer_id or count all messages from conversations.
-  // Wait, unified_messages doesn't have customer_id directly. It is linked to conversations.
-  // We can just query `messages` table which appears to have customer_id since `getAnalytics` uses .from('messages').eq('customer_id', user.id)
+    .eq('customer_id', customerId)
+ 
   const { count: messagesCount, error: messagesError } = await client
     .from('messages')
     .select('*', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
 
   return { 
     contactsCount: contactsCount || 0, 
@@ -702,16 +712,16 @@ export async function getNotifications(
   offset = 0
 ): Promise<{ data: Notification[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
   }
 
   const { data, error } = await client
     .from('notifications')
     .select('*')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
@@ -720,16 +730,16 @@ export async function getNotifications(
 
 export async function getUnreadNotificationCount(): Promise<{ count: number; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { count: 0, error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { count: 0, error: ctxErr || 'Workspace not found' }
   }
 
   const { count, error } = await client
     .from('notifications')
     .select('*', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .eq('read', false)
 
   return { count: count || 0, error: error?.message || null }
@@ -748,16 +758,16 @@ export async function markNotificationAsRead(notificationId: string) {
 
 export async function markAllNotificationsAsRead() {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) {
-    return { error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { error: ctxErr || 'Workspace not found' }
   }
 
   const { error } = await client
     .from('notifications')
     .update({ read: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .eq('read', false)
 
   return { error: error?.message || null }
@@ -862,14 +872,16 @@ export function subscribeToConversations(
 
 export async function getTeamMembers(): Promise<{ data: import('@/types/database').TeamMember[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
 
-  if (!user) return { data: [], error: 'Not authenticated' }
+  if (ctxErr || !customerId) {
+    return { data: [], error: ctxErr || 'Workspace not found' }
+  }
 
   const { data, error } = await client
     .from('team_members')
     .select('*')
-    .eq('customer_id', user.id)
+    .eq('customer_id', customerId)
     .order('created_at', { ascending: true })
 
   return { data: data || [], error: error?.message || null }
