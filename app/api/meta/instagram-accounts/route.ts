@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 function getToken(req: NextRequest): string | null {
   const auth = req.headers.get('Authorization')
@@ -49,15 +49,18 @@ export async function GET(request: NextRequest) {
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
+    const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+    if (ctxErr || !customerId) {
+        return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
+    }
+
     const supabase = createServerClient(token)
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Get the Meta connection for messenger (same token used for Instagram)
     const { data: connection } = await supabase
       .from('meta_connections')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'messenger')
       .eq('is_active', true)
       .single()
@@ -66,7 +69,7 @@ export async function GET(request: NextRequest) {
     const { data: connectedAccount } = await supabase
       .from('connected_accounts')
       .select('channel_account_id')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel_type', 'instagram')
       .eq('is_active', true)
       .maybeSingle()
@@ -124,8 +127,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const supabase = createServerClient(token)
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { customerId } = await getWorkspaceIdServer(token)
 
     const { accountId, accountName, profilePictureUrl, username } = await request.json()
     if (!accountId) return NextResponse.json({ error: 'accountId is required' }, { status: 400 })
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
     const { data: conn } = await supabase
       .from('meta_connections')
       .select('access_token')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'messenger')
       .maybeSingle()
 
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('connected_accounts')
       .update({ is_active: false })
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel_type', 'instagram')
 
     // 2. Check if a row already exists for this account
@@ -168,7 +170,7 @@ export async function POST(request: NextRequest) {
       await supabase
         .from('connected_accounts')
         .insert({
-          user_id: user.id,
+          user_id: customerId,
           channel_type: 'instagram',
           access_token: accessToken,
           channel_account_id: accountId,
@@ -182,7 +184,7 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('meta_connections')
       .update({ account_id: accountId, account_name: accountName })
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'instagram')
 
     return NextResponse.json({ success: true })

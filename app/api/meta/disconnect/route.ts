@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get('Authorization')
@@ -16,13 +16,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const supabase = createServerClient(token)
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+  const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+  if (ctxErr || !customerId) {
+    return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
   }
 
+  const supabase = createServerClient(token)
   const body = await request.json()
   const { channel } = body
 
@@ -33,7 +32,7 @@ export async function POST(request: Request) {
   const { error } = await supabase
     .from('meta_connections')
     .update({ is_active: false, access_token: '' })
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .eq('channel', channel)
 
   if (error) {
@@ -45,7 +44,7 @@ export async function POST(request: Request) {
   await supabase
     .from('connected_accounts')
     .update({ is_active: false, access_token: '' })
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .eq('channel_type', channel)
 
   return NextResponse.json({ success: true })

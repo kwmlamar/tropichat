@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 function getToken(req: NextRequest): string | null {
   const auth = req.headers.get('Authorization')
@@ -55,6 +55,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+    if (ctxErr || !customerId) {
+        return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
+    }
+
     const { pageId, pageName, profilePictureUrl } = await request.json()
     if (!pageId) {
       return NextResponse.json({ error: 'pageId is required' }, { status: 400 })
@@ -64,7 +69,7 @@ export async function POST(request: NextRequest) {
     const { data: conn } = await supabase
       .from('meta_connections')
       .select('access_token')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'messenger')
       .maybeSingle()
 
@@ -93,7 +98,7 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('connected_accounts')
       .update({ is_active: false })
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel_type', 'messenger')
 
     // 2. Check if a row already exists for this page
@@ -124,7 +129,7 @@ export async function POST(request: NextRequest) {
       await supabase
         .from('connected_accounts')
         .insert({
-          user_id: user.id,
+          user_id: customerId,
           channel_type: 'messenger',
           access_token: pageAccessToken,
           channel_account_id: pageId,
@@ -147,7 +152,7 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('meta_connections')
       .update(metaUpdate)
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'messenger')
 
     return NextResponse.json({ success: true })
@@ -170,11 +175,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+    if (ctxErr || !customerId) {
+        return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
+    }
+
     // Get the Meta connection for messenger
     const { data: connection } = await supabase
       .from('meta_connections')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', customerId)
       .eq('channel', 'messenger')
       .eq('is_active', true)
       .single()
@@ -185,7 +195,7 @@ export async function GET(request: NextRequest) {
       const { data: connectedAccount } = await supabase
         .from('connected_accounts')
         .select('channel_account_id')
-        .eq('user_id', user.id)
+        .eq('user_id', customerId)
         .eq('channel_type', 'messenger')
         .eq('is_active', true)
         .single()
@@ -214,7 +224,7 @@ export async function GET(request: NextRequest) {
       const { data: connectedAccount } = await supabase
         .from('connected_accounts')
         .select('channel_account_id')
-        .eq('user_id', user.id)
+        .eq('user_id', customerId)
         .eq('channel_type', 'messenger')
         .eq('is_active', true)
         .single()
