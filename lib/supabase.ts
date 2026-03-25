@@ -282,19 +282,41 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
       .eq('email', user.email)
       .maybeSingle()
 
+    const name = data?.full_name || teamMember?.name || user.user_metadata?.full_name || ''
+    const email = data?.contact_email || user.email
+
     const updates = {
       id: user.id,
-      full_name: data?.full_name || teamMember?.name || user.user_metadata?.full_name || '',
+      full_name: name,
       business_name: data?.business_name || user.user_metadata?.business_name || '',
-      contact_email: data?.contact_email || user.email,
+      contact_email: email,
       is_trial: true,
     }
 
-    const { data: newData, error: upsertError } = await client
+    // Attempt upsert (onConflict is ID)
+    let { data: newData, error: upsertError } = await client
       .from('customers')
       .upsert(updates, { onConflict: 'id' })
       .select()
       .single()
+
+    // If it fails with a duplicate key error for contact_email, 
+    // it means another record exists for THIS email but a DIFFERENT ID.
+    // We should take over that record (delete the old orphan one and try again)
+    if (upsertError?.message.includes('duplicate key') && upsertError.message.includes('contact_email')) {
+      console.log("Cleaning up orphan customer record for email:", email)
+      await client.from('customers').delete().eq('contact_email', email).neq('id', user.id)
+      
+      // Try upsert one more time
+      const finalRes = await client
+        .from('customers')
+        .upsert(updates, { onConflict: 'id' })
+        .select()
+        .single()
+      
+      newData = finalRes.data
+      upsertError = finalRes.error
+    }
 
     return { data: newData, error: upsertError?.message || null }
   }
