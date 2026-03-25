@@ -11,7 +11,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, getWorkspaceIdServer } from '@/lib/supabase-server'
 
 const META_GRAPH = 'https://graph.facebook.com/v19.0'
 
@@ -215,10 +215,15 @@ async function getWhatsAppConnection(token: string) {
     return { error: 'Not authenticated', status: 401, connection: null }
   }
 
+  const { customerId, error: ctxErr } = await getWorkspaceIdServer(token)
+  if (ctxErr || !customerId) {
+    return { error: ctxErr || 'Workspace not found', status: 404, connection: null }
+  }
+
   const { data: connection } = await supabase
     .from('meta_connections')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .eq('channel', 'whatsapp')
     .eq('is_active', true)
     .single()
@@ -250,7 +255,7 @@ async function getWhatsAppConnection(token: string) {
         // Cache the resolved WABA ID back to the DB so we don't re-resolve every time
         await supabase.from('meta_connections').update({
           account_id: resolvedWaba,
-        }).eq('user_id', user.id).eq('channel', 'whatsapp')
+        }).eq('user_id', customerId).eq('channel', 'whatsapp')
         console.log('[meta/templates] Cached resolved WABA ID to meta_connections:', resolvedWaba)
       } else {
         // Also try the WHATSAPP_PHONE_NUMBER_ID env var for reverse lookup
@@ -261,7 +266,7 @@ async function getWhatsAppConnection(token: string) {
             wabaId = resolvedFromPhone
             await supabase.from('meta_connections').update({
               account_id: resolvedFromPhone,
-            }).eq('user_id', user.id).eq('channel', 'whatsapp')
+            }).eq('user_id', customerId).eq('channel', 'whatsapp')
             console.log('[meta/templates] Cached resolved WABA ID (from phone) to meta_connections:', resolvedFromPhone)
           } else {
             return {

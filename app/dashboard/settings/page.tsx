@@ -44,7 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { ChannelIcon } from "@/components/dashboard/channel-icon"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { getSession, getCurrentCustomer, updateCustomer, changePassword, getTeamMembers, inviteTeamMember, removeTeamMember } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, updateCustomer, changePassword, getTeamMembers, inviteTeamMember, removeTeamMember, getPersonalCustomer, updatePersonalProfile } from "@/lib/supabase"
 import {
   getMetaStatus,
   initiateMetaConnect,
@@ -163,22 +163,31 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchCustomer() {
       setLoading(true)
-      const { data, error } = await getCurrentCustomer()
+      // Fetch both personal and workspace data
+      const [workspaceRes, personalRes] = await Promise.all([
+        getCurrentCustomer(),
+        getPersonalCustomer()
+      ])
 
-      if (error) {
-        toast.error("Failed to load settings")
-      } else if (data) {
-        setCustomer(data)
-        setFullName(data.full_name || "")
-        setBusinessName(data.business_name)
-        setContactEmail(data.contact_email)
-        setPhoneNumber(data.phone_number || "")
-        setTimezone(data.timezone || "America/Nassau")
-        setBusinessHours(data.business_hours || defaultBusinessHours)
-        setAutoReplyEnabled(data.auto_reply_enabled)
-        setAutoReplyMessage(data.auto_reply_message || "")
+      if (workspaceRes.error) {
+        toast.error("Failed to load workspace settings")
+      } else if (workspaceRes.data) {
+        setCustomer(workspaceRes.data)
+        setBusinessName(workspaceRes.data.business_name)
+        setTimezone(workspaceRes.data.timezone || "America/Nassau")
+        setBusinessHours(workspaceRes.data.business_hours || defaultBusinessHours)
+        setAutoReplyEnabled(workspaceRes.data.auto_reply_enabled)
+        setAutoReplyMessage(workspaceRes.data.auto_reply_message || "")
+      }
 
-        // Fetch usage
+      if (personalRes.data) {
+        setFullName(personalRes.data.full_name || "")
+        setContactEmail(personalRes.data.contact_email)
+        setPhoneNumber(personalRes.data.phone_number || "")
+      }
+
+      // Fetch usage if we have a workspace
+      if (workspaceRes.data) {
         const { getWorkspaceUsage } = await import('@/lib/supabase')
         const usage = await getWorkspaceUsage()
         if (!usage.error) {
@@ -263,18 +272,30 @@ export default function SettingsPage() {
 
   const handleSaveProfile = async () => {
     setSaving(true)
-    const { error } = await updateCustomer({
-      business_name: businessName,
+
+    // Save personal profile data to the user's specific record
+    const { error: profileError } = await updatePersonalProfile({
       full_name: fullName,
       contact_email: contactEmail,
       phone_number: phoneNumber,
-      timezone: timezone,
     })
 
-    if (error) {
-      toast.error("Failed to save settings")
-    } else {
-      toast.success("Settings saved")
+    if (profileError) {
+      toast.error("Failed to update personal profile")
+    }
+
+    // Update workspace business name and timezone
+    const { error: wsError } = await updateCustomer({
+      business_name: businessName,
+      timezone,
+    })
+
+    if (wsError) {
+      toast.error("Failed to update workspace details")
+    }
+
+    if (!profileError && !wsError) {
+      toast.success("Profile updated successfully")
     }
 
     setSaving(false)
