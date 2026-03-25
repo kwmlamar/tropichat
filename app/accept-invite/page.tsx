@@ -28,60 +28,30 @@ export default function AcceptInvitePage() {
 
       setStatus("Activating your team membership...")
 
-      // 2. Link the team_members record to this new user.id and set to active
-      // We look for any pending invite for this email
-      const { data: member, error: memberError } = await client
-        .from('team_members')
-        .update({ 
-          user_id: user.id, 
-          status: 'active', 
-          is_active: true,
-          updated_at: new Date().toISOString() 
-        })
-        .eq('email', user.email?.toLowerCase())
-        .eq('status', 'pending')
-        .select()
-        .maybeSingle()
-
-      if (memberError) {
-        console.error("Team activation error:", memberError)
-        toast.error("Failed to activate team membership")
-      } else if (member) {
-        console.log("Team membership activated for:", user.email)
-        toast.success("Welcome to the team!")
-      } else {
-        // Maybe already active? Check if any record exists for this user in team_members
-        const { data: existing } = await client
-          .from('team_members')
-          .select('id')
-          .eq('user_id', user.id)
-          .maybeSingle()
-        
-        if (existing) {
-          console.log("Membership already active")
-        } else {
-          console.warn("No pending invite found for:", user.email)
-        }
+      // 2. Call the activation API (uses service role to bypass RLS)
+      const { data: { session } } = await client.auth.getSession()
+      if (!session) {
+        console.error("No session found during activate")
+        router.push("/login")
+        return
       }
 
-      // 3. Ensure the personal customer profile exists
-      // My getPersonalCustomer fix handles this too, but let's be sure
-      const { data: profile } = await client
-        .from('customers')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
-      
-      if (!profile) {
-        const name = user.user_metadata?.full_name || member?.name || user.email?.split('@')[0] || "User"
-        await client.from('customers').insert({
-          id: user.id,
-          full_name: name,
-          contact_email: user.email,
-          business_name: user.user_metadata?.business_name || '',
-          is_trial: true,
-          status: 'trial'
-        })
+      const res = await fetch('/api/team/activate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+
+      const json = await res.json()
+
+      if (!res.ok) {
+        console.error("Team activation API error:", json.error)
+        toast.error(json.error || "Failed to activate team membership")
+      } else {
+        console.log("Team membership activated:", json)
+        toast.success("Welcome to the team!")
       }
 
       // 4. Send to dashboard
