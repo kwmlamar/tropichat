@@ -194,6 +194,20 @@ export async function signInWithOAuth(provider: OAuthProvider) {
   return { data, error: null }
 }
 
+export async function resetPassword(email: string) {
+  const client = getSupabase()
+  const { error } = await client.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  })
+  return { error: error?.message || null }
+}
+
+export async function changePassword(newPassword: string) {
+  const client = getSupabase()
+  const { error } = await client.auth.updateUser({ password: newPassword })
+  return { error: error?.message || null }
+}
+
 // ==================== WORKSPACE HELPERS ====================
 
 /**
