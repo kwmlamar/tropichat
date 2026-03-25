@@ -267,6 +267,15 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
   if (!user) return { data: null, error: 'Not authenticated' }
 
   const client = getSupabase()
+  
+  // 1. First, check if there's a team_member record for this user (preferred source of truth for name/email)
+  const { data: teamMember } = await client
+    .from('team_members')
+    .select('name, email')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  // 2. Fetch the customers record
   let { data, error } = await client
     .from('customers')
     .select('*')
@@ -275,15 +284,10 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
 
   // Auto-provision or Fix incomplete personal profile
   if ((error && error.code === 'PGRST116') || (data && !data.full_name)) {
-    // Check if they are a team member to get their name
-    const { data: teamMember } = await client
-      .from('team_members')
-      .select('name')
-      .eq('email', user.email)
-      .maybeSingle()
-
-    const name = data?.full_name || teamMember?.name || user.user_metadata?.full_name || ''
-    const email = data?.contact_email || user.email
+    console.log("Personal profile incomplete, syncing from team membership...")
+    
+    const name = data?.full_name || teamMember?.name || user.user_metadata?.full_name || user.user_metadata?.name || ''
+    const email = data?.contact_email || teamMember?.email || user.email || ''
 
     const updates = {
       id: user.id,
@@ -300,22 +304,14 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
       .select()
       .single()
 
-    // If it fails with a duplicate key error for contact_email, 
-    // it means another record exists for THIS email but a DIFFERENT ID.
-    // We should take over that record (delete the old orphan one and try again)
+    // Handle duplicate email collision (recycled account)
     if (upsertError?.message.includes('duplicate key') && upsertError.message.includes('contact_email')) {
-      console.log("Cleaning up orphan customer record for email:", email)
+      console.log("Cleaning up orphan customer record for recycle:", email)
       await client.from('customers').delete().eq('contact_email', email).neq('id', user.id)
       
-      // Try upsert one more time
-      const finalRes = await client
-        .from('customers')
-        .upsert(updates, { onConflict: 'id' })
-        .select()
-        .single()
-      
-      newData = finalRes.data
-      upsertError = finalRes.error
+      const res = await client.from('customers').upsert(updates, { onConflict: 'id' }).select().single()
+      newData = res.data
+      upsertError = res.error
     }
 
     return { data: newData, error: upsertError?.message || null }
@@ -980,6 +976,20 @@ export async function getTeamMembers(): Promise<{ data: import('@/types/database
     .order('created_at', { ascending: true })
 
   return { data: data || [], error: error?.message || null }
+}
+
+export async function getPersonalTeamMember(): Promise<{ data: import('@/types/database').TeamMember | null; error: string | null }> {
+  const { user } = await getUser()
+  if (!user) return { data: null, error: 'Not authenticated' }
+
+  const client = getSupabase()
+  const { data, error } = await client
+    .from('team_members')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  return { data, error: error?.message || null }
 }
 
 export async function inviteTeamMember(email: string, name: string, role: 'admin' | 'agent'): Promise<{ data: import('@/types/database').TeamMember | null; error: string | null }> {

@@ -44,7 +44,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { ChannelIcon } from "@/components/dashboard/channel-icon"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { getSession, getCurrentCustomer, updateCustomer, changePassword, getTeamMembers, inviteTeamMember, removeTeamMember, getPersonalCustomer, updatePersonalProfile } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, updateCustomer, changePassword, getTeamMembers, inviteTeamMember, removeTeamMember, getPersonalCustomer, updatePersonalProfile, getPersonalTeamMember } from "@/lib/supabase"
 import {
   getMetaStatus,
   initiateMetaConnect,
@@ -182,8 +182,17 @@ export default function SettingsPage() {
 
       if (personalRes.data) {
         setFullName(personalRes.data.full_name || "")
-        setContactEmail(personalRes.data.contact_email)
+        setContactEmail(personalRes.data.contact_email || personalRes.data.email || "")
         setPhoneNumber(personalRes.data.phone_number || "")
+      }
+
+      // Final fallback: if after all that, name is still empty, pull from team_members directly
+      if (!workspaceRes.error && (!personalRes.data?.full_name || !personalRes.data?.contact_email)) {
+        const { data: member } = await getPersonalTeamMember()
+        if (member) {
+          if (!fullName && member.name) setFullName(member.name)
+          if (!contactEmail && member.email) setContactEmail(member.email)
+        }
       }
 
       // Fetch usage if we have a workspace
