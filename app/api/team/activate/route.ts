@@ -31,8 +31,7 @@ export async function POST(req: NextRequest) {
       .update({
         user_id: user.id,
         status: 'active',
-        is_active: true,
-        updated_at: new Date().toISOString()
+        is_active: true
       })
       .eq('email', email)
       .eq('status', 'pending')
