@@ -222,18 +222,20 @@ export async function getWorkspaceId(): Promise<{ customerId: string | null; err
   const client = getSupabase()
   
   // Try to find the user in team_members as an active member
-  const { data: member } = await client
+  // If they have multiple, we'll pick the one they were joined/active in most recently
+  const { data: members } = await client
     .from('team_members')
     .select('customer_id')
     .eq('user_id', user.id)
     .eq('status', 'active')
-    .maybeSingle()
+    .order('created_at', { ascending: false })
+    .limit(1)
 
-  if (member) {
-    return { customerId: member.customer_id, error: null }
+  if (members && members.length > 0) {
+    return { customerId: members[0].customer_id, error: null }
   }
 
-  // Fallback to user.id (the user is an owner of their own workspace)
+  // Fallback to user.id (the user is an owner of their own workspace but not in team_members as agent)
   return { customerId: user.id, error: null }
 }
 
