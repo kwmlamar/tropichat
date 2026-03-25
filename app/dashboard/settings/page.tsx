@@ -182,7 +182,7 @@ export default function SettingsPage() {
 
       if (personalRes.data) {
         setFullName(personalRes.data.full_name || "")
-        setContactEmail(personalRes.data.contact_email || personalRes.data.email || "")
+        setContactEmail(personalRes.data.contact_email || "")
         setPhoneNumber(personalRes.data.phone_number || "")
       }
 
