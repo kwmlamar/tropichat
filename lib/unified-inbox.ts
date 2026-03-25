@@ -5,7 +5,7 @@
  * plus real-time subscriptions.
  */
 
-import { getSupabase, getUser } from './supabase'
+import { getSupabase, getUser, getWorkspaceId } from './supabase'
 import type {
   ConnectedAccount,
   UnifiedConversation,
@@ -21,13 +21,13 @@ export async function getConnectedAccounts(): Promise<{
   error: string | null
 }> {
   const client = getSupabase()
-  const { user } = await getUser()
-  if (!user) return { data: [], error: 'Not authenticated' }
+  const { customerId, error: ctxErr } = await getWorkspaceId()
+  if (ctxErr || !customerId) return { data: [], error: ctxErr || 'Workspace not found' }
 
   const { data, error } = await client
     .from('connected_accounts')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .order('created_at', { ascending: false })
 
   return { data: (data as ConnectedAccount[]) || [], error: error?.message || null }
@@ -56,14 +56,14 @@ export async function getUnifiedConversations(
   showArchived = false
 ): Promise<{ data: ConversationWithAccount[]; error: string | null }> {
   const client = getSupabase()
-  const { user } = await getUser()
-  if (!user) return { data: [], error: 'Not authenticated' }
+  const { customerId, error: ctxErr } = await getWorkspaceId()
+  if (ctxErr || !customerId) return { data: [], error: ctxErr || 'Workspace not found' }
 
-  // First get user's connected account IDs
+  // First get workspace's connected account IDs
   const { data: accounts } = await client
     .from('connected_accounts')
     .select('id')
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .eq('is_active', true)
 
   if (!accounts || accounts.length === 0) {
@@ -140,13 +140,13 @@ export async function getUnreadUnifiedCount(): Promise<{
   error: string | null
 }> {
   const client = getSupabase()
-  const { user } = await getUser()
-  if (!user) return { count: 0, error: 'Not authenticated' }
+  const { customerId, error: ctxErr } = await getWorkspaceId()
+  if (ctxErr || !customerId) return { count: 0, error: ctxErr || 'Workspace not found' }
 
   const { data: accounts } = await client
     .from('connected_accounts')
     .select('id')
-    .eq('user_id', user.id)
+    .eq('user_id', customerId)
     .eq('is_active', true)
 
   if (!accounts || accounts.length === 0) {

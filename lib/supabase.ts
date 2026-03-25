@@ -273,6 +273,23 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
     .eq('id', user.id)
     .single()
 
+  // Auto-provision personal profile if missing
+  if (error && (error.code === 'PGRST116')) {
+    const { data: newData, error: insertError } = await client
+      .from('customers')
+      .upsert({
+        id: user.id,
+        full_name: user.user_metadata?.full_name || '',
+        business_name: user.user_metadata?.business_name || '',
+        contact_email: user.email,
+        is_trial: true,
+      }, { onConflict: 'id' })
+      .select()
+      .single()
+
+    return { data: newData, error: insertError?.message || null }
+  }
+
   return { data, error: error?.message || null }
 }
 
