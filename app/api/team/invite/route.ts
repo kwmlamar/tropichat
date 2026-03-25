@@ -30,29 +30,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Role must be admin or agent' }, { status: 400 })
     }
 
-    // Check if already a member
-    const { data: existing } = await supabaseAdmin
-      .from('team_members')
-      .select('id')
-      .eq('customer_id', user.id)
-      .eq('email', email.toLowerCase())
-      .maybeSingle()
-
-    if (existing) {
-      return NextResponse.json({ error: 'This email is already a team member' }, { status: 409 })
-    }
-
-    // Insert pending member record
+    // Upsert the team member record (allows re-inviting with a fresh pending status)
     const { data: member, error: insertError } = await supabaseAdmin
       .from('team_members')
-      .insert({
+      .upsert({
         customer_id: user.id,
         email: email.toLowerCase(),
         name,
         role,
         status: 'pending',
         is_active: true,
-      })
+      }, { onConflict: 'customer_id,email' })
       .select()
       .single()
 
