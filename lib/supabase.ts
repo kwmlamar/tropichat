@@ -276,7 +276,7 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
     .maybeSingle()
 
   // 2. Fetch the customers record
-  let { data, error } = await client
+  const { data, error } = await client
     .from('customers')
     .select('*')
     .eq('id', user.id)

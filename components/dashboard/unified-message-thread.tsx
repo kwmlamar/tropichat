@@ -148,17 +148,13 @@ export function UnifiedMessageThread({
           <div className="bg-white/40 dark:bg-[#1A1A1A]/40 backdrop-blur-xl rounded-[40px] border border-gray-100/50 dark:border-[#222222]/50 p-12 shadow-2xl shadow-sky-900/5 dark:shadow-black/20">
             <div className="mb-10 relative">
               <div className="relative inline-block">
-                <div className="relative rounded-full bg-white dark:bg-[#111111]/50 p-8 shadow-2xl shadow-teal-500/20 dark:shadow-[#007B85]/20 border border-teal-50/50 dark:border-[#007B85]/20">
-                  <Image
-                    src="/tropichat-logo.png"
-                    alt="TropiChat"
-                    width={96}
-                    height={96}
-                    className="h-24 w-24 object-contain scale-110"
-                  />
-                </div>
-                {/* Subtle pulse effect */}
-                <div className="absolute inset-0 rounded-full animate-ping-slow bg-[#007B85]/10 -z-10" />
+                <Image
+                  src="/tropichat-logo.png"
+                  alt="TropiChat"
+                  width={96}
+                  height={96}
+                  className="h-24 w-24 object-contain scale-110"
+                />
               </div>
             </div>
 

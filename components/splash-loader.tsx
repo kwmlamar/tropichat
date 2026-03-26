@@ -32,6 +32,7 @@ export function SplashLoader({ isLoading }: { isLoading: boolean }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ 
               scale: 50, // Massive blow up like Twitter
+              rotate: 360, // Spin while blowing up
               opacity: 0,
               transition: { 
                 duration: 1.2, 
@@ -44,7 +45,6 @@ export function SplashLoader({ isLoading }: { isLoading: boolean }) {
             }}
             className="relative w-24 h-24"
           >
-            <div className="absolute inset-0 bg-[#007B85]/5 dark:bg-[#007B85]/10 blur-2xl rounded-full scale-150" />
             <img 
               src="/tropichat-logo.png" 
               alt="TropiChat" 
