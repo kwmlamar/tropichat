@@ -262,7 +262,7 @@ export async function getCurrentCustomer(): Promise<{ data: Customer | null; err
  * Always returns the personal profile of the logged-in user, 
  * regardless of which workspace they are currently acting in.
  */
-export async function getPersonalCustomer(): Promise<{ data: Customer | null; error: string | null }> {
+export const getPersonalCustomer = async (): Promise<{ data: Customer | null; error: string | null }> => {
   const { user } = await getUser()
   if (!user) return { data: null, error: 'Not authenticated' }
 
