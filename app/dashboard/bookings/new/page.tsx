@@ -4,7 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { CreateBookingForm } from "@/components/bookings/create-booking-form"
 
 
-export default function NewBookingPage() {
+import { Suspense } from "react"
+
+function NewBookingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -17,12 +19,23 @@ export default function NewBookingPage() {
         isPage={true}
         onClose={() => router.back()}
         onCreated={() => {
-          // You could redirect to the specific date here if you want
           router.push('/dashboard/bookings')
         }}
         initialDate={initialDate}
         initialTime={initialTime}
       />
     </div>
+  )
+}
+
+export default function NewBookingPage() {
+  return (
+    <Suspense fallback={
+      <div className="fixed inset-0 z-[200] bg-[#F8FAFB] dark:bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#007B85]" />
+      </div>
+    }>
+      <NewBookingContent />
+    </Suspense>
   )
 }
