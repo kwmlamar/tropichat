@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import {
   User,
@@ -92,7 +92,7 @@ const waCategoryOptions = [
   { value: "Other", label: "Other" },
 ]
 
-export default function SettingsPage() {
+function SettingsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialTab = searchParams.get("tab") || "profile"
@@ -1941,5 +1941,21 @@ function ChannelCard({
         </Button>
       )}
     </motion.div>
+  )
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-8">
+        <Skeleton className="h-7 w-32 mb-2 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+        <Skeleton className="h-4 w-48 mb-8 bg-slate-100 dark:bg-[#1A1A1A] rounded" />
+        <div className="flex gap-1 mb-8">
+          {Array(7).fill(0).map((_,i) => <Skeleton key={i} className="h-9 w-20 bg-slate-100 dark:bg-[#1A1A1A] rounded-xl" />)}
+        </div>
+      </div>
+    }>
+      <SettingsContent />
+    </Suspense>
   )
 }
