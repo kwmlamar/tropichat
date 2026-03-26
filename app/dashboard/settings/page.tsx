@@ -29,6 +29,7 @@ import {
   Plus,
   Trash,
   SealCheck,
+  ArrowsClockwise,
 } from "@phosphor-icons/react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
@@ -130,6 +131,7 @@ function SettingsContent() {
   const [metaLoading, setMetaLoading] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [disconnecting, setDisconnecting] = useState<MetaChannel | null>(null)
+  const [syncingId, setSyncingId] = useState<string | null>(null)
 
   // WhatsApp Business Profile state
   const [wpBusinessName, setWpBusinessName] = useState("")
@@ -277,6 +279,38 @@ function SettingsContent() {
       await fetchMetaConnectionStatus()
     }
     setDisconnecting(null)
+  }
+
+  const handleSyncHistory = async (channel: MetaChannel) => {
+    const channelInfo = metaStatus ? metaStatus[channel] : null
+    if (!channelInfo?.id) {
+      toast.error("Account not fully connected for sync")
+      return
+    }
+
+    setSyncingId(channelInfo.id)
+    try {
+      const { session } = await getSession()
+      const response = await fetch('/api/meta/sync-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ connectionId: channelInfo.id })
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        toast.success(`Synced ${result.conversations_synced} conversations from ${channel}!`)
+      } else {
+        toast.error(result.error || `Failed to sync ${channel}`)
+      }
+    } catch (err) {
+      toast.error(`Error syncing ${channel} history`)
+    } finally {
+      setSyncingId(null)
+    }
   }
 
   const handleSaveProfile = async () => {
@@ -1075,9 +1109,21 @@ function SettingsContent() {
                             {metaStatus.instagram.account_id?.slice(-4)}
                           </p>
                         </div>
-                        <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest">
-                          Active
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 px-2.5 text-[11px] font-bold text-[#007B85] hover:text-[#2F8488] hover:bg-teal-50 dark:hover:bg-teal-900/10 flex items-center gap-1"
+                            disabled={syncingId === metaStatus.instagram.id}
+                            onClick={() => handleSyncHistory("instagram")}
+                          >
+                            <ArrowsClockwise weight="bold" className={cn("h-3.5 w-3.5", syncingId === metaStatus.instagram.id && "animate-spin")} />
+                            {syncingId === metaStatus.instagram.id ? "Syncing..." : "Sync History"}
+                          </Button>
+                          <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest bg-teal-50 dark:bg-teal-900/10 px-2 py-1 rounded-md">
+                            Active
+                          </span>
+                        </div>
                       </div>
                     )}
                     {metaStatus.whatsapp?.connected && (
@@ -1110,9 +1156,21 @@ function SettingsContent() {
                             {metaStatus.messenger.account_name || "Messenger"}
                           </p>
                         </div>
-                        <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest">
-                          Active
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 px-2.5 text-[11px] font-bold text-[#007B85] hover:text-[#2F8488] hover:bg-teal-50 dark:hover:bg-teal-900/10 flex items-center gap-1"
+                            disabled={syncingId === metaStatus.messenger.id}
+                            onClick={() => handleSyncHistory("messenger")}
+                          >
+                            <ArrowsClockwise weight="bold" className={cn("h-3.5 w-3.5", syncingId === metaStatus.messenger.id && "animate-spin")} />
+                            {syncingId === metaStatus.messenger.id ? "Syncing..." : "Sync History"}
+                          </Button>
+                          <span className="text-[11px] font-bold text-[#007B85] uppercase tracking-widest bg-teal-50 dark:bg-teal-900/10 px-2 py-1 rounded-md">
+                            Active
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>

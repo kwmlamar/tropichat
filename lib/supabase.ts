@@ -314,10 +314,30 @@ export async function getPersonalCustomer(): Promise<{ data: Customer | null; er
       upsertError = res.error
     }
 
-    return { data: newData, error: upsertError?.message || null }
+    // Ensure newData exists for the return even if we had an error but gathered enough info
+    return { 
+      data: (newData || { 
+        id: user.id, 
+        full_name: name, 
+        contact_email: email,
+        business_name: updates.business_name,
+        is_trial: true 
+      }) as any as Customer, 
+      error: upsertError?.message || null 
+    }
   }
 
-  return { data, error: error?.message || null }
+  // Ensure even if record exists, we have fallback fields if they are null
+  const fallbackName = teamMember?.name || user.user_metadata?.full_name || user.user_metadata?.name || ''
+  const fallbackEmail = teamMember?.email || user.email || ''
+
+  const finalData = {
+    ...data,
+    full_name: data?.full_name || fallbackName,
+    contact_email: data?.contact_email || fallbackEmail
+  } as any as Customer
+
+  return { data: finalData, error: error?.message || null }
 }
 
 export async function updatePersonalProfile(updates: Partial<Customer>) {

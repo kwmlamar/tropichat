@@ -15,6 +15,7 @@ async function getAccessToken(): Promise<string | null> {
 // ==================== META CONNECTION STATUS ====================
 
 export interface ChannelStatus {
+  id?: string
   connected: boolean
   account_id?: string
   account_name?: string

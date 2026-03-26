@@ -229,7 +229,7 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
           trigger={
             <button className={cn("flex w-full min-w-0 items-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#111111] transition-colors overflow-hidden border border-transparent hover:border-gray-200 dark:hover:border-[#222222]", collapsed ? "justify-center p-2" : "gap-3 p-2 min-w-0")}>
               <Avatar
-                fallback={personalProfile?.full_name || personalProfile?.contact_email || "User"}
+                fallback={personalProfile?.full_name || personalProfile?.contact_email || "U"}
                 size="sm"
                 className="shrink-0 ring-2 ring-white dark:ring-[#222222]"
               />
@@ -237,7 +237,7 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
                 <>
                   <div className="flex-1 min-w-0 text-left overflow-hidden">
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                      {personalProfile?.full_name || personalProfile?.contact_email || "Loading..."}
+                      {personalProfile?.full_name || personalProfile?.contact_email || "User"}
                     </p>
                   </div>
                   <CaretDown className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />

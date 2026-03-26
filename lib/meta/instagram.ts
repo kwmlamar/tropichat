@@ -116,6 +116,65 @@ export async function getInstagramConversations(
   })
 }
 
+export interface InstagramMessage {
+  id: string
+  created_time: string
+  from: { id: string; username?: string }
+  to: { data: Array<{ id: string; username?: string }> }
+  message: string
+  attachments?: {
+    data: Array<{
+      id: string
+      type: 'image' | 'video' | 'audio' | 'file' | 'share' | 'story_mention' | 'video_share'
+      payload: { url: string }
+    }>
+  }
+}
+
+export interface InstagramMessagesResponse {
+  data: InstagramMessage[]
+  paging?: { cursors: { before: string; after: string }; next?: string }
+}
+
+export async function getInstagramMessages(
+  conversationId: string,
+  accessToken: string,
+  limit: number = 20,
+  after?: string
+): Promise<InstagramMessagesResponse> {
+  const params: Record<string, string> = {
+    fields: 'id,created_time,from,to,message,attachments{id,type,payload}',
+    limit: limit.toString(),
+  }
+  if (after) params.after = after
+
+  return metaApiRequest<InstagramMessagesResponse>({
+    method: 'GET',
+    path: `${conversationId}/messages`,
+    accessToken,
+    params,
+  })
+}
+
+export interface InstagramUserProfile {
+  id: string
+  name?: string
+  username?: string
+  profile_pic?: string
+}
+
+export async function getInstagramUserProfile(
+  userId: string,
+  accessToken: string
+): Promise<InstagramUserProfile> {
+  return metaApiRequest<InstagramUserProfile>({
+    method: 'GET',
+    path: userId,
+    accessToken,
+    params: { fields: 'id,name,username,profile_pic' },
+  })
+}
+
 // ==================== WEBHOOK PARSING ====================
 
 /**

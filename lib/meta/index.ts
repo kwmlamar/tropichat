@@ -24,6 +24,8 @@ export {
   sendInstagramText,
   sendInstagramMedia,
   getInstagramConversations,
+  getInstagramMessages,
+  getInstagramUserProfile,
   parseInstagramWebhook,
 } from './instagram'
 
@@ -32,6 +34,7 @@ export {
   sendMessengerMedia,
   sendMessengerButtonTemplate,
   getMessengerConversations,
+  getMessengerMessages,
   getMessengerUserProfile,
   parseMessengerWebhook,
 } from './messenger'

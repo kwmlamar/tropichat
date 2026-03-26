@@ -148,6 +148,46 @@ export async function getMessengerConversations(
   })
 }
 
+export interface MessengerMessage {
+  id: string
+  created_time: string
+  from: { id: string; name?: string; email?: string }
+  to: { data: Array<{ id: string; name?: string; email?: string }> }
+  message: string
+  attachments?: {
+    data: Array<{
+      id: string
+      type: 'image' | 'video' | 'audio' | 'file' | 'template' | 'fallback'
+      payload: { url?: string; title?: string }
+    }>
+  }
+}
+
+export interface MessengerMessagesResponse {
+  data: MessengerMessage[]
+  paging?: { cursors: { before: string; after: string }; next?: string }
+}
+
+export async function getMessengerMessages(
+  conversationId: string,
+  accessToken: string,
+  limit: number = 20,
+  after?: string
+): Promise<MessengerMessagesResponse> {
+  const params: Record<string, string> = {
+    fields: 'id,created_time,from,to,message,attachments{id,type,payload}',
+    limit: limit.toString(),
+  }
+  if (after) params.after = after
+
+  return metaApiRequest<MessengerMessagesResponse>({
+    method: 'GET',
+    path: `${conversationId}/messages`,
+    accessToken,
+    params,
+  })
+}
+
 /** Get the user profile for a PSID (Page-Scoped ID) */
 export async function getMessengerUserProfile(
   psid: string,

@@ -100,13 +100,22 @@ export async function GET(request: Request) {
     }
   }
 
+  // Fetch connected_accounts to get the IDs used in the inbox
+  const { data: caList } = await supabase
+    .from('connected_accounts')
+    .select('id, channel_type, channel_account_id, is_active')
+    .eq('user_id', customerId)
+
   // Build a status map for each channel
   const channels = ['whatsapp', 'instagram', 'messenger'] as const
   const status = Object.fromEntries(
     channels.map(ch => {
       const conn = connections?.find(c => c.channel === ch)
+      const ca = caList?.find(a => a.channel_type === ch && a.is_active)
+      
       return [ch, conn
         ? {
+            id: ca?.id || conn.id, // Prefer inbox connection ID
             connected: conn.is_active,
             account_id: conn.account_id,
             account_name: conn.account_name,
