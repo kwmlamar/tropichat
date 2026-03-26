@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { UnifiedConversationList } from "@/components/dashboard/unified-conversation-list"
 import { UnifiedMessageThread } from "@/components/dashboard/unified-message-thread"
@@ -26,7 +26,7 @@ import type {
   ChannelType,
 } from "@/types/unified-inbox"
 
-export default function InboxPage() {
+function InboxContent() {
   const router = useRouter()
   // State
   const [conversations, setConversations] = useState<ConversationWithAccount[]>([])
@@ -488,5 +488,17 @@ export default function InboxPage() {
         }}
       />
     </div>
+  )
+}
+
+export default function InboxPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full items-center justify-center bg-gray-50 dark:bg-black">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#007B85]" />
+      </div>
+    }>
+      <InboxContent />
+    </Suspense>
   )
 }
