@@ -6,14 +6,21 @@ import { useEffect, useState } from "react"
 
 export function SplashLoader({ isLoading }: { isLoading: boolean }) {
   const [show, setShow] = useState(true)
+  const [minTimePassed, setMinTimePassed] = useState(false)
+
+  // Ensure loader shows for at least a certain time to feel premium
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimePassed(true), 1200)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && minTimePassed) {
       // Small delay to ensure the zoom animation feels smooth after data is ready
-      const timer = setTimeout(() => setShow(false), 500)
+      const timer = setTimeout(() => setShow(false), 300)
       return () => clearTimeout(timer)
     }
-  }, [isLoading])
+  }, [isLoading, minTimePassed])
 
   return (
     <AnimatePresence>
