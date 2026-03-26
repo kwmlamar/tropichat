@@ -35,8 +35,15 @@ export default function DashboardLayout({
 
       // 2. Fetch personal customer (for current user identity)
       const { data: pData } = await getPersonalCustomer()
-      setPersonalProfile(pData)
+      
+      // ENSURE we have a valid profile object for the sidebar even if fetch had issues
+      const fallbackProfile = {
+        id: session.user.id,
+        full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || '',
+        contact_email: session.user.email || '',
+      } as Customer
 
+      setPersonalProfile(pData || fallbackProfile)
       setLoading(false)
     }
 
