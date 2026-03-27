@@ -17,7 +17,8 @@ import {
   Globe,
   FacebookLogo,
   InstagramLogo,
-  Check
+  Check,
+  Copy
 } from "@phosphor-icons/react"
 import { getSupabase } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
@@ -430,10 +431,21 @@ export default function LeadsPage() {
                   <tr key={lead.id} className="group hover:bg-gray-50/50 dark:hover:bg-[#111111] transition-all">
                     {visibleColumns.includes('business') && (
                       <td className="px-8 py-6">
-                        <div>
+                        <div className="flex items-center gap-2 group/name">
                           <div className="font-black text-[#213138] dark:text-white uppercase tracking-tight text-base">{lead.business_name}</div>
-                          <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Local Discovery</div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(lead.business_name);
+                              toast.success(`Business name copied: ${lead.business_name}`);
+                            }}
+                            className="p-1.5 rounded-lg bg-gray-50 dark:bg-[#111111] text-gray-400 hover:text-[#007B85] transition-all opacity-0 group-hover/name:opacity-100"
+                            title="Copy business name"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
                         </div>
+                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Local Discovery</div>
                       </td>
                     )}
                     {visibleColumns.includes('type') && (
