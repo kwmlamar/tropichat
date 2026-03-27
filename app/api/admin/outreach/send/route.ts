@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
-import { getSupabase } from "@/lib/supabase"
+import { createClient } from "@supabase/supabase-js"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 /**
  * STRATEGIC OUTREACH DISPATCH TERMINAL 🇧🇸🛰️
- * This route handles the high-volume, automated firing of "Bahamianized" scripts
- * to your prospect pipeline.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +15,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing Target Intelligence (Leads or Script)" }, { status: 400 })
     }
 
-    const supabase = getSupabase()
+    // Initialize with SERVICE ROLE KEY to bypass RLS for admin-level missions 🛸🛰️
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
     // 1. Fetch Script Intelligence
     const { data: script, error: sErr } = await supabase
