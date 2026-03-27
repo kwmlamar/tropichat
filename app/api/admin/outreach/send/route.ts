@@ -2,13 +2,17 @@ import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
 import { createClient } from "@supabase/supabase-js"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 /**
  * STRATEGIC OUTREACH DISPATCH TERMINAL 🇧🇸🛰️
  */
 export async function POST(req: NextRequest) {
   try {
+    const resendApiKey = process.env.RESEND_API_KEY
+    if (!resendApiKey) {
+      return NextResponse.json({ error: "Mission Failed: RESEND_API_KEY is not configured in environment satellites. 🛰️" }, { status: 500 })
+    }
+    
+    const resend = new Resend(resendApiKey)
     const { leadIds, scriptId, adminName = "Lamar" } = await req.json()
 
     if (!leadIds || !scriptId) {
