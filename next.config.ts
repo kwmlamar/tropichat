@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['lucide-react'], // Ensure modern icons transpile properly
+  turbopack: {
+    root: '.',
+  },
   images: {
+
     remotePatterns: [
       {
         protocol: 'https',

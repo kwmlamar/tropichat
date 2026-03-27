@@ -212,7 +212,7 @@ export default function ContactsPage() {
                     </td>
                     <td className="px-4 py-4 hidden md:table-cell">
                       <p className="text-[13px] text-gray-700 dark:text-[#A3A3A3]">
-                        {contact.last_message_at ? formatDistanceToNow(contact.last_message_at) + " ago" : "Never"}
+                        {contact.last_message_at ? formatDistanceToNow(contact.last_message_at) : "Never"}
                       </p>
                       {contact.last_message_at && <p className="text-[11px] text-gray-400 dark:text-[#525252]">{formatDate(contact.last_message_at)}</p>}
                     </td>

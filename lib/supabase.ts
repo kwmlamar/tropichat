@@ -47,11 +47,6 @@ export const getSupabase = () => {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      // Only bypass navigator.locks in development to avoid hangs during fast refresh.
-      // In production, standard locking is safer for session consistency.
-      lock: typeof window !== 'undefined' && window.location.hostname === 'localhost'
-        ? async (name: string, acquireTimeout: number, fn: () => Promise<any>) => await fn()
-        : undefined,
     },
     realtime: {
       params: {
@@ -145,15 +140,18 @@ export async function signUp(email: string, password: string, businessName: stri
 export async function signIn(email: string, password: string) {
   const client = getSupabase()
 
+  console.log("Supabase: Attempting signInWithPassword...")
   const { data, error } = await client.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
+    console.log("Supabase: SignIn Error:", error.message)
     return { data: null, error: error.message }
   }
 
+  console.log("Supabase: SignIn Success for user:", data.user.id)
   return { data, error: null }
 }
 

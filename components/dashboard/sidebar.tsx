@@ -18,12 +18,13 @@ import {
   ArrowLineLeft,
   ArrowLineRight,
   Crown,
+  ShieldCheck,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
-import { signOut, getUnreadConversationCount, subscribeToConversations } from "@/lib/supabase"
+import { signOut, getUnreadConversationCount, subscribeToConversations, getSupabase } from "@/lib/supabase"
 import { toast } from "sonner"
 import type { Customer } from "@/types/database"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -49,6 +50,7 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
   const pathname = usePathname()
   const router = useRouter()
   const [unreadCount, setUnreadCount] = useState(0)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   // Fetch unread conversation count
   const fetchUnreadCount = useCallback(async () => {
@@ -58,6 +60,25 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
 
   useEffect(() => {
     fetchUnreadCount()
+
+    // Fetch Role to determine if we show Admin Link
+    async function checkRole() {
+      const client = getSupabase()
+      const { data: { session } } = await client.auth.getSession()
+      if (!session) return
+
+      const { data: member } = await client
+        .from('team_members')
+        .select('role')
+        .eq('user_id', session.user.id)
+        .in('role', ['admin', 'owner'])
+        .limit(1)
+
+      if (member && member.length > 0) {
+        setIsAdmin(true)
+      }
+    }
+    checkRole()
   }, [fetchUnreadCount])
 
   // Subscribe to conversation changes to update count in real-time
@@ -139,12 +160,12 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
                 "flex items-center rounded-xl text-sm font-medium transition-all duration-200 relative",
                 collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5",
                 active
-                  ? "bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20"
+                  ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
               )}
               title={collapsed ? item.label : undefined}
             >
-              <Icon className={cn("shrink-0", active ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+              <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
               {!collapsed && item.label === "Chats" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
@@ -205,6 +226,24 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
           {!collapsed && <span>Collapse</span>}
         </button>
 
+        {/* Ghost Admin Link - Only for Pros */}
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className={cn(
+              "flex items-center rounded-xl text-sm font-bold transition-all duration-200 mb-1 w-full",
+              collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
+              isActive("/admin")
+                ? "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20"
+                : "text-amber-600/70 hover:bg-amber-50 dark:text-amber-500/60 dark:hover:bg-amber-500/5 hover:text-amber-600"
+            )}
+            title={collapsed ? "Admin Portal" : undefined}
+          >
+            <ShieldCheck weight="bold" className={cn("shrink-0", isActive("/admin") ? "text-amber-600" : "text-amber-500/50", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+            {!collapsed && <span>Admin Portal</span>}
+          </Link>
+        )}
+
         {/* Settings Button */}
         <Link
           href="/dashboard/settings"
@@ -213,12 +252,12 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
             "flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-1 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
             isActive("/dashboard/settings")
-              ? "bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20"
+              ? "bg-[#3A9B9F]/10 text-[#3A9B9F] dark:bg-[#3A9B9F]/20"
               : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#111111] dark:hover:text-gray-100"
           )}
           title={collapsed ? "Settings" : undefined}
         >
-          <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+          <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
         </Link>
 
