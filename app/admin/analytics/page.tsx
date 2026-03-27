@@ -67,6 +67,63 @@ export default function AnalyticsPage() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Revenue Conquest Card - March to December Target */}
+        <div className="lg:col-span-3 rounded-[2rem] border border-[#EA580C]/20 bg-white dark:bg-[#0C0C0C] p-10 shadow-xl shadow-[#EA580C]/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <Lightning weight="fill" className="h-40 w-40 text-[#EA580C]" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C]/10 border border-[#EA580C]/20 rounded-full">
+                <TrendUp weight="bold" className="h-4 w-4 text-[#EA580C]" />
+                <span className="text-[10px] font-black text-[#EA580C] uppercase tracking-[0.2em]">Strategic Revenue Target: Dec 2026</span>
+              </div>
+              <h2 className="text-5xl font-black text-[#213138] dark:text-white tracking-tighter tabular-nums">$51,000 <span className="text-2xl text-gray-400">MRR</span></h2>
+              <p className="text-sm font-bold text-gray-500 max-w-md leading-relaxed uppercase tracking-tight">
+                Projected monthly recurring revenue by the end of the year through <span className="text-[#EA580C]">Pan-Caribbean Outreach Dominance</span>.
+              </p>
+              
+              <div className="flex items-center gap-8 pt-4">
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Current Milestone</p>
+                  <p className="text-xl font-black text-[#213138] dark:text-white">{stats.activeUsers} / 1,000 <span className="text-sm text-[#EA580C]">users</span></p>
+                </div>
+                <div className="w-px h-10 bg-gray-200 dark:bg-white/10" />
+                <div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Projected Annual Run-Rate</p>
+                  <p className="text-xl font-black text-green-500">$612,000</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full md:w-80 space-y-6">
+               {/* First 10 User Tracker */}
+               <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 space-y-4">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-gray-400">Next Price Hike</span>
+                    <span className={cn(stats.activeUsers >= 10 ? "text-red-500" : "text-[#EA580C]")}>
+                      {stats.activeUsers >= 10 ? "MISSION UPDATE REQUIRED" : `${10 - stats.activeUsers} SLOTS LEFT`}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-black text-[#213138] dark:text-white">Founder's Rate: $29</span>
+                    <ArrowUpRight className="h-4 w-4 text-gray-400" />
+                    <span className="text-[13px] font-black text-gray-400">Premium: $39</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white dark:bg-black rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, (stats.activeUsers / 10) * 100)}%` }}
+                      className="h-full bg-gradient-to-r from-[#EA580C] to-[#F97316] rounded-full"
+                    />
+                  </div>
+                  <p className="text-[9px] text-gray-500 font-bold uppercase italic text-center">Automatic $10 increase after 10th conversion</p>
+               </div>
+            </div>
+          </div>
+        </div>
+
         {/* Conversion Card */}
         <div className="lg:col-span-2 rounded-[2rem] border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] p-8 shadow-sm">
           <div className="flex items-center justify-between mb-10">
@@ -82,7 +139,7 @@ export default function AnalyticsPage() {
               <div className="flex justify-between items-end">
                 <div>
                   <p className="text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-[#525252]">Leads Captured</p>
-                  <p className="text-2xl font-black text-[#213138] dark:text-white">{stats.totalMessages / 12} <span className="text-sm font-medium text-gray-400">prospects found</span></p>
+                  <p className="text-2xl font-black text-[#213138] dark:text-white">{stats.waitlistCount} <span className="text-sm font-medium text-gray-400">prospects found</span></p>
                 </div>
                 <div className="text-[10px] font-black text-[#3A9B9F] bg-[#3A9B9F]/10 px-2 py-1 rounded">PIPELINE PHASE</div>
               </div>
@@ -135,7 +192,7 @@ export default function AnalyticsPage() {
         <div className="rounded-[2rem] border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] p-8 shadow-sm flex flex-col">
           <div className="mb-10">
             <h3 className="text-xl font-black text-[#213138] dark:text-white flex items-center gap-2 font-poppins">
-              <ChartPieSlice weight="bold" className="h-6 w-6 text-[#FF8B66]" />
+              <ChartPieSlice weight="bold" className="h-6 w-6 text-[#EA580C]" />
               Channel Heat
             </h3>
             <p className="text-xs font-bold text-gray-500 dark:text-[#525252] mt-1">Platform dominance in Nassau</p>
