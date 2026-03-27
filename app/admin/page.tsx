@@ -105,6 +105,62 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleBlast = async () => {
+    const toastId = toast.loading("Launching Strategic Blast Mission... 🚀🇧🇸")
+    
+    try {
+      const supabase = getSupabase()
+      
+      // 1. Fetch READY email strategy
+      const { data: scripts } = await supabase
+        .from('outreach_scripts')
+        .select('id')
+        .eq('status', 'ready')
+        .eq('category', 'email')
+        .limit(1)
+
+      if (!scripts || scripts.length === 0) {
+        toast.error("No EMAIL scripts are MISSION READY. Check Outreach Command. 🛰️", { id: toastId })
+        return
+      }
+
+      // 2. Fetch COLD leads for this mission
+      const { data: coldLeads } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('status', 'cold')
+        .limit(25) // High-volume target
+
+      if (!coldLeads || coldLeads.length === 0) {
+        toast.error("No cold prospects available. Launch a Discovery Mission first! 🔎", { id: toastId })
+        return
+      }
+
+      // 3. Dispatch to Satellite API
+      const res = await fetch("/api/admin/outreach/send", {
+        method: "POST",
+        body: JSON.stringify({
+          leadIds: coldLeads.map(l => l.id),
+          scriptId: scripts[0].id,
+          adminName: "Lamar"
+        })
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        toast.success(`Mission Success! ${data.stats.sent} prospects blasted across the islands. 🌴🇧🇸`, { 
+          id: toastId,
+          description: `Total: ${data.stats.total} | Sent: ${data.stats.sent} | Failed: ${data.stats.failed}`
+        })
+      } else {
+        toast.error(`Mission Failed: ${data.error}`, { id: toastId })
+      }
+    } catch (err: any) {
+      toast.error("Satellite Communication Failure. 🛰️", { id: toastId })
+    }
+  }
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-16 max-w-7xl mx-auto">
       {/* Header */}
@@ -205,17 +261,22 @@ export default function AdminDashboard() {
                 <TrendingUp weight="bold" className="h-4 w-4" />
               </div>
             </button>
-            <button className="w-full flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1A1A1A] transition-colors text-left group">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#FF8B66] rounded-lg text-white">
-                  <Calendar weight="bold" className="h-5 w-5" />
+            <button 
+              onClick={handleBlast}
+              className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#EA580C] transition-all text-left group shadow-sm"
+            >
+              <div className="flex items-center gap-4">
+                <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[#EA580C] to-[#F97316] text-white shadow-lg shadow-[#EA580C]/20">
+                  <TrendingUp weight="bold" className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="font-bold text-[#213138] dark:text-white text-sm">Cold Outreach Blast</div>
-                  <div className="text-[12px] text-gray-500 dark:text-[#A3A3A3]">Send introductory messages to leads</div>
+                  <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">Cold Outreach Blast</div>
+                  <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">Automated Regional Dispatch</div>
                 </div>
               </div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-[#FF8B66] opacity-0 group-hover:opacity-100 transition-opacity">Broadcast</div>
+              <div className="h-8 w-8 rounded-full bg-[#EA580C]/10 flex items-center justify-center text-[#EA580C] opacity-0 group-hover:opacity-100 transition-all">
+                <TrendingUp weight="bold" className="h-4 w-4" />
+              </div>
             </button>
           </div>
 
