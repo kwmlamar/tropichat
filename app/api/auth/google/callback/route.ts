@@ -19,6 +19,7 @@ const adminSupabase = createClient(supabaseUrl, supabaseServiceKey)
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const code = searchParams.get('code')
+  const state = searchParams.get('state') // This is our userId
   const error = searchParams.get('error')
 
   if (error) {
@@ -61,38 +62,61 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Identity unknown' }, { status: 400 })
     }
 
-    // 3. Upsert into connected_accounts
-    // Note: We need the TropiChat User ID (workspace ID). 
-    // In a production app, we would get this from the Supabase session usually passed via Cookie or State param.
-    // For this deployment, we prioritize getting the account registered.
-    
-    const { data: account, error: accError } = await adminSupabase
+    // 3. Register or Update the account
+    // We try to find if it already exists to avoid upsert conflict issues
+    const { data: existingAccount } = await adminSupabase
       .from('connected_accounts')
-      .upsert({
-        channel_type: 'email',
-        channel_account_id: email,
-        channel_account_name: name,
-        access_token: tokens.access_token,
-        is_active: true,
-        metadata: {
-          provider: 'google',
-          refresh_token: tokens.refresh_token, // Store for long-term sync
-          email: email,
-          name: name,
-          avatar: profile.picture,
-          scopes: tokens.scope
-        }
-      }, { onConflict: 'channel_account_id' })
-      .select()
-      .single()
+      .select('id')
+      .eq('channel_type', 'email')
+      .eq('channel_account_id', email)
+      .maybeSingle()
 
-    if (accError) {
-      console.error('[Google Callback] Persistence Error:', accError)
-      return NextResponse.json({ error: 'Failed to register account' }, { status: 500 })
+    const accountData = {
+      user_id: state !== 'anonymous' ? state : null,
+      channel_type: 'email',
+      channel_account_id: email,
+      channel_account_name: name,
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token || null,
+      status: 'active',
+      is_active: true,
+      metadata: {
+        provider: 'google',
+        email: email,
+        name: name,
+        avatar: profile.picture,
+        scopes: tokens.scope
+      }
     }
 
-    // Success: Redirect back to Settings with a success badge
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings/channels?success=gmail_connected`)
+    let result;
+    if (existingAccount) {
+      result = await adminSupabase
+        .from('connected_accounts')
+        .update(accountData)
+        .eq('id', existingAccount.id)
+        .select()
+        .single()
+    } else {
+      result = await adminSupabase
+        .from('connected_accounts')
+        .insert(accountData)
+        .select()
+        .single()
+    }
+
+    if (result.error) {
+      console.error('[Google Callback] Persistence Error:', result.error)
+      // Provide more detail for debugging locally
+      return NextResponse.json({ 
+        error: 'Failed to register account', 
+        details: result.error.message,
+        hint: result.error.hint
+      }, { status: 500 })
+    }
+
+    // 4. Success — Redirect back to settings
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings?tab=integrations&email=connected&account=${email}`)
   } catch (err) {
     console.error('[Google Callback] Internal Error:', err)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

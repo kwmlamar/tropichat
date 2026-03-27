@@ -286,9 +286,16 @@ function SettingsContent() {
     }
   }
 
-  const handleConnectGoogle = () => {
+  const handleConnectGoogle = async () => {
     setConnecting(true)
-    window.location.href = "/api/auth/google/login"
+    const { getSupabase } = await import("@/lib/supabase")
+    const supabase = getSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user?.id) {
+      window.location.href = `/api/auth/google/login?userId=${session.user.id}`
+    } else {
+      window.location.href = "/api/auth/google/login"
+    }
   }
 
   const handleDisconnectChannel = async (channel: MetaChannel) => {
@@ -1195,7 +1202,7 @@ function SettingsContent() {
                       )}
                     </div>
 
-                    {!isAddingEmail && (
+                    {!isAddingEmail && emailAccounts.length === 0 && (
                       <div className="space-y-2">
                         <Button
                           className="w-full rounded-xl bg-white dark:bg-white text-black hover:bg-gray-100 border border-gray-200 font-bold"
@@ -1223,6 +1230,16 @@ function SettingsContent() {
                           Add Custom SMTP Domain
                         </Button>
                       </div>
+                    )}
+                    {emailAccounts.length > 0 && !isAddingEmail && (
+                      <Button
+                        variant="ghost"
+                        className="w-full text-xs text-gray-400 hover:text-[#007B85] border border-dashed border-gray-200 dark:border-[#222222] rounded-xl py-6"
+                        onClick={() => setIsAddingEmail(true)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Connect Another Email
+                      </Button>
                     )}
                   </motion.div>
                 </div>
@@ -1322,18 +1339,22 @@ function SettingsContent() {
                       </div>
                     )}
                     
-                    {/* Professional Email Identities */}
+                    {/* Professional Email & Gmail Identities */}
                     {emailAccounts.map((acc) => (
                       <div key={acc.id} className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
-                        <div className="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-[#007B85] flex-shrink-0">
-                          <Link weight="bold" className="h-5 w-5" />
+                        <div className="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-[#007B85] flex-shrink-0 overflow-hidden">
+                          {acc.metadata?.avatar || acc.profile_picture_url ? (
+                            <img src={acc.metadata?.avatar || acc.profile_picture_url} alt={acc.channel_account_id} className="h-full w-full object-cover" />
+                          ) : (
+                            <EnvelopeSimple weight="bold" className="h-5 w-5" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate">
-                            {acc.channel_account_id}
+                            {acc.channel_account_name || acc.channel_account_id}
                           </p>
                           <p className="text-[11px] text-gray-400 dark:text-gray-400">
-                            Professional Email · Status: {acc.status}
+                            {acc.metadata?.provider === 'google' ? 'Gmail' : 'Professional Email'} · {acc.channel_account_id}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">

@@ -9,7 +9,8 @@ import {
   Bell, 
   Plus, 
   DotsThreeVertical as MoreVertical, 
-  Camera 
+  Camera,
+  ArrowsClockwise
 } from "@phosphor-icons/react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -75,6 +76,28 @@ export function UnifiedConversationList({
     onSearch(e.target.value)
   }
 
+  const [isSyncing, setIsSyncing] = useState(false)
+  const handleSyncGmail = async () => {
+    if (isSyncing) return
+    setIsSyncing(true)
+    const toastId = toast.loading("Syncing Gmail...")
+    try {
+      const res = await fetch('/api/sync/gmail')
+      const data = await res.json()
+      if (data.syncedCount > 0) {
+        toast.success(`Synced ${data.syncedCount} new messages`, { id: toastId })
+        // Refresh the page or wait for real-time update
+        window.location.reload()
+      } else {
+        toast.info("No new messages found", { id: toastId })
+      }
+    } catch (err) {
+      toast.error("Failed to sync Gmail", { id: toastId })
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-black lg:border-r border-gray-200 dark:border-[#222222] relative overflow-hidden">
 
@@ -98,6 +121,14 @@ export function UnifiedConversationList({
           </h2>
  
           <div className="flex items-center gap-5">
+            <button 
+              onClick={handleSyncGmail}
+              disabled={isSyncing}
+              className={cn("text-[#213138] dark:text-gray-100 transition-colors hover:text-[#007B85]", isSyncing && "opacity-50")}
+              title="Sync Gmail"
+            >
+              <ArrowsClockwise className={cn("h-6 w-6", isSyncing && "animate-spin")} />
+            </button>
             <button className="text-[#213138] dark:text-gray-100">
               <Camera className="h-6 w-6" />
             </button>
@@ -139,6 +170,17 @@ export function UnifiedConversationList({
               className="pl-9 bg-gray-100 dark:bg-[#111] border-transparent dark:border-transparent hover:bg-gray-200 dark:hover:bg-[#1A1A1A] focus:bg-white dark:focus:bg-[#0C0C0C] focus:border-gray-200 dark:focus:border-[#007B85] focus:ring-0 transition-all rounded-xl dark:text-white dark:placeholder:text-[#525252]"
             />
           </div>
+          <button
+            onClick={handleSyncGmail}
+            disabled={isSyncing}
+            title="Sync Gmail"
+            className={cn(
+              "p-2 rounded-xl transition-colors flex-shrink-0 hover:bg-gray-100 dark:hover:bg-[#1A1A1A] text-gray-400 dark:text-[#525252]",
+              isSyncing && "text-[#007B85]"
+            )}
+          >
+            <ArrowsClockwise className={cn("h-4 w-4", isSyncing && "animate-spin")} />
+          </button>
           <button
             onClick={onToggleArchived}
             title={showArchived ? "Back to inbox" : "View archived"}
