@@ -9,15 +9,23 @@ import {
   TrendUp,
   Notebook,
   Trash,
-  CaretLeft
+  CaretLeft,
+  Funnel,
+  Eye,
+  EyeSlash,
+  Gear,
+  Globe,
+  FacebookLogo,
+  InstagramLogo,
+  Check
 } from "@phosphor-icons/react"
 import { getSupabase } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
 import { useDebounce } from "@/lib/hooks"
 import { toast } from "sonner"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Modal } from "@/components/ui/modal"
-import Link from "next/link" // Added Link import
+import Link from "next/link"
 
 type Lead = {
   id: string
@@ -35,17 +43,26 @@ type Lead = {
   created_at: string
 }
 
-import { 
-  Globe,
-  FacebookLogo,
-  InstagramLogo
-} from "@phosphor-icons/react"
-
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
+  const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false)
+  
+  // Persistent Settings
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("leads_visible_columns")
+      return saved ? JSON.parse(saved) : ['business', 'type', 'intelligence', 'origin', 'link', 'status', 'plan']
+    }
+    return ['business', 'type', 'intelligence', 'origin', 'link', 'status', 'plan']
+  })
+
+  const [activeSourceFilter, setActiveSourceFilter] = useState('all')
+  const [activeStatusFilter, setActiveStatusFilter] = useState('all')
+
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
   const [newLead, setNewLead] = useState({
     business_name: "",
@@ -57,6 +74,11 @@ export default function LeadsPage() {
   })
   const [searchQuery, setSearchQuery] = useState("")
   const debouncedSearch = useDebounce(searchQuery, 300)
+
+  // Persist column changes
+  useEffect(() => {
+    localStorage.setItem("leads_visible_columns", JSON.stringify(visibleColumns))
+  }, [visibleColumns])
 
   const fetchLeads = useCallback(async () => {
     setLoading(true)
@@ -170,6 +192,19 @@ export default function LeadsPage() {
     }
   }
 
+  const toggleColumn = (col: string) => {
+    setVisibleColumns(prev => 
+      prev.includes(col) ? prev.filter(c => c !== col) : [...prev, col]
+    )
+  }
+
+  // Filter Logic
+  const filteredLeads = leads.filter(l => {
+    const matchesSource = activeSourceFilter === 'all' || (l.source && l.source.toLowerCase().includes(activeSourceFilter))
+    const matchesStatus = activeStatusFilter === 'all' || l.status === activeStatusFilter
+    return matchesSource && matchesStatus
+  })
+
   const getNextStep = (status: Lead['status']) => {
     const steps = {
       cold: "Initial Reachout",
@@ -217,28 +252,121 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Search & Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-3 h-14 relative group">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" weight="bold" />
-          <input 
-            type="text"
-            placeholder="Search leads by name, phone or notes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-full pl-12 pr-6 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl text-sm font-bold text-[#213138] dark:text-white outline-none focus:ring-1 focus:ring-[#3A9B9F] transition-all"
-          />
+      {/* Search & Stats & Filters */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-3 h-14 relative group">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-[#3A9B9F] transition-colors" weight="bold" />
+            <input 
+              type="text"
+              placeholder="Search leads by name, phone or notes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-full pl-12 pr-6 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl text-sm font-bold text-[#213138] dark:text-white outline-none focus:ring-1 focus:ring-[#3A9B9F] transition-all"
+            />
+          </div>
+          <div className="flex items-center gap-2 h-14">
+              <button 
+                onClick={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
+                className={cn(
+                  "flex-1 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl px-4 h-full flex items-center justify-center gap-2 hover:border-[#3A9B9F] transition-all group",
+                  isColumnMenuOpen && "ring-1 ring-[#3A9B9F] border-[#3A9B9F]"
+                )}
+              >
+                <Gear weight="bold" className="h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F]" />
+                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest group-hover:text-[#3A9B9F]">Columns</span>
+              </button>
+              <button 
+                onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
+                className={cn(
+                  "flex-1 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl px-4 h-full flex items-center justify-center gap-2 hover:border-[#3A9B9F] transition-all group",
+                  isFilterMenuOpen && "ring-1 ring-[#3A9B9F] border-[#3A9B9F]"
+                )}
+              >
+                <Funnel weight="bold" className="h-4 w-4 text-gray-400 group-hover:text-[#3A9B9F]" />
+                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest group-hover:text-[#3A9B9F]">Source</span>
+              </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2 h-14">
-            <div className="flex-1 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl px-5 flex items-center justify-between">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active</span>
-                <span className="text-sm font-black text-[#213138] dark:text-white">{leads.length}</span>
-            </div>
-            <div className="flex-1 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl px-5 flex items-center justify-between">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest text-green-500">Won</span>
-                <span className="text-sm font-black text-[#213138] dark:text-white">{leads.filter(l => l.status === 'won').length}</span>
-            </div>
-        </div>
+
+        {/* Visibility & Source Filter Badges */}
+        <AnimatePresence>
+          {(isColumnMenuOpen || isFilterMenuOpen) && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-white dark:bg-[#0C0C0C]/50 border border-gray-100 dark:border-white/5 rounded-2xl p-4 overflow-hidden"
+            >
+              {isColumnMenuOpen && (
+                <div className="space-y-3">
+                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Columns</div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'business', label: 'Business' },
+                      { id: 'type', label: 'Mission / Type' },
+                      { id: 'intelligence', label: 'Contact Intelligence' },
+                      { id: 'origin', label: 'Origin' },
+                      { id: 'link', label: 'Mission Link' },
+                      { id: 'status', label: 'Pipeline Status' },
+                      { id: 'plan', label: 'Action Plan' }
+                    ].map(col => (
+                      <button
+                        key={col.id}
+                        onClick={() => toggleColumn(col.id)}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-tight border transition-all flex items-center gap-2",
+                          visibleColumns.includes(col.id) 
+                            ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85]"
+                            : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
+                        )}
+                      >
+                        {visibleColumns.includes(col.id) ? <Eye weight="bold" className="h-3 w-3" /> : <EyeSlash weight="bold" className="h-3 w-3" />}
+                        {col.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {isFilterMenuOpen && (
+                <div className={cn("space-y-3", isColumnMenuOpen && "mt-6 pt-6 border-t border-gray-100 dark:border-white/5")}>
+                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Discovery Origin</div>
+                  <div className="flex flex-wrap gap-2">
+                    {['all', 'google', 'instagram', 'facebook', 'notion', 'manual'].map(src => (
+                      <button
+                        key={src}
+                        onClick={() => setActiveSourceFilter(src)}
+                        className={cn(
+                          "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
+                          activeSourceFilter === src 
+                            ? "bg-[#EA580C]/10 border-[#EA580C]/20 text-[#EA580C]"
+                            : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
+                        )}
+                      >
+                        {src}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Total', value: leads.length, color: 'text-gray-400' },
+          { label: 'Won', value: leads.filter(l => l.status === 'won').length, color: 'text-green-500' },
+          { label: 'Contacted', value: leads.filter(l => l.status === 'contacted').length, color: 'text-[#EA580C]' },
+          { label: 'Cold', value: leads.filter(l => l.status === 'cold').length, color: 'text-blue-400' }
+        ].map(stat => (
+          <div key={stat.label} className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl px-5 py-4 flex items-center justify-between shadow-sm">
+            <span className={cn("text-[10px] font-black uppercase tracking-widest", stat.color)}>{stat.label}</span>
+            <span className="text-lg font-black text-[#213138] dark:text-white leading-none">{stat.value}</span>
+          </div>
+        ))}
       </div>
 
       {/* Data Core */}
@@ -247,19 +375,19 @@ export default function LeadsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50/50 dark:bg-[#080808]">
-                    <th scope="col" className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Business</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission / Type</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Contact Intelligence</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Origin</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission Link</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Pipeline Status</th>
-                    <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Action Plan</th>
+                    {visibleColumns.includes('business') && <th scope="col" className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Business</th>}
+                    {visibleColumns.includes('type') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission / Type</th>}
+                    {visibleColumns.includes('intelligence') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Contact Intelligence</th>}
+                    {visibleColumns.includes('origin') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Origin</th>}
+                    {visibleColumns.includes('link') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission Link</th>}
+                    {visibleColumns.includes('status') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Pipeline Status</th>}
+                    {visibleColumns.includes('plan') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Action Plan</th>}
                   </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-[#1C1C1C]">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-[#525252]">
+                  <td colSpan={visibleColumns.length} className="px-6 py-12 text-center text-gray-500 dark:text-[#525252]">
                     <div className="flex items-center justify-center gap-2">
                        <span className="w-2 h-2 rounded-full bg-[#3A9B9F] animate-bounce" />
                        <span className="w-2 h-2 rounded-full bg-[#3A9B9F] animate-bounce [animation-delay:0.2s]" />
@@ -267,94 +395,108 @@ export default function LeadsPage() {
                     </div>
                   </td>
                 </tr>
-              ) : leads.length === 0 ? (
+              ) : filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-[#525252] font-medium italic">
-                    No leads found. Run the prospector script to find some!
+                  <td colSpan={visibleColumns.length} className="px-6 py-12 text-center text-gray-500 dark:text-[#525252] font-medium italic text-xs uppercase tracking-widest font-black">
+                    {activeSourceFilter !== 'all' ? `No ${activeSourceFilter} Leads Detected` : "No Leads Found in Pipeline"}
                   </td>
                 </tr>
               ) : (
-                leads.map((lead) => (
+                filteredLeads.map((lead) => (
                   <tr key={lead.id} className="group hover:bg-gray-50/50 dark:hover:bg-[#111111] transition-all">
-                    <td className="px-8 py-6">
-                      <div>
-                        <div className="font-black text-[#213138] dark:text-white uppercase tracking-tight text-base">{lead.business_name}</div>
-                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Local Discovery</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-6 font-poppins text-xs font-bold text-gray-600 dark:text-[#A3A3A3]">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-[#525252] border border-gray-100 dark:border-white/5">
-                            {lead.category || "General"}
-                        </span>
-                    </td>
-                    <td className="px-6 py-6">
-                      <div className="text-sm text-[#213138] dark:text-gray-200 font-black tracking-tight">
-                        {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || 'Scan for phone...')}
-                      </div>
-                      <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 opacity-80">{lead.contact_email || 'No email decoded'}</div>
-                    </td>
-                    <td className="px-6 py-6 font-poppins text-xs font-bold text-gray-600 dark:text-[#A3A3A3]">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#323232] border border-gray-100 dark:border-white/5">
-                            {lead.source}
-                        </span>
-                    </td>
-                    <td className="px-6 py-6">
-                      {lead.external_link ? (
-                        <a 
-                          href={lead.external_link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className={cn(
-                            "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:scale-105 active:scale-95 text-[10px] font-black uppercase tracking-widest shadow-sm",
-                            lead.source.toLowerCase().includes('facebook') ? "bg-[#1877F2]/10 border-[#1877F2]/20 text-[#1877F2]" :
-                            lead.source.toLowerCase().includes('instagram') ? "bg-[#E4405F]/10 border-[#E4405F]/20 text-[#E4405F]" :
-                            "bg-blue-500/10 border-blue-500/20 text-blue-500"
-                          )}
+                    {visibleColumns.includes('business') && (
+                      <td className="px-8 py-6">
+                        <div>
+                          <div className="font-black text-[#213138] dark:text-white uppercase tracking-tight text-base">{lead.business_name}</div>
+                          <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Local Discovery</div>
+                        </div>
+                      </td>
+                    )}
+                    {visibleColumns.includes('type') && (
+                      <td className="px-6 py-6 transition-all">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-[#525252] border border-gray-100 dark:border-white/5">
+                              {lead.category || "General"}
+                          </span>
+                      </td>
+                    )}
+                    {visibleColumns.includes('intelligence') && (
+                      <td className="px-6 py-6 transition-all">
+                        <div className="text-sm text-[#213138] dark:text-gray-200 font-black tracking-tight">
+                          {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || 'Scan for phone...')}
+                        </div>
+                        <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 opacity-80">{lead.contact_email || 'No email decoded'}</div>
+                      </td>
+                    )}
+                    {visibleColumns.includes('origin') && (
+                      <td className="px-6 py-6 transition-all">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#323232] border border-gray-100 dark:border-white/5">
+                              {lead.source}
+                          </span>
+                      </td>
+                    )}
+                    {visibleColumns.includes('link') && (
+                      <td className="px-6 py-6 transition-all">
+                        {lead.external_link ? (
+                          <a 
+                            href={lead.external_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className={cn(
+                              "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:scale-105 active:scale-95 text-[10px] font-black uppercase tracking-widest shadow-sm",
+                              lead.source.toLowerCase().includes('facebook') ? "bg-[#1877F2]/10 border-[#1877F2]/20 text-[#1877F2]" :
+                              lead.source.toLowerCase().includes('instagram') ? "bg-[#E4405F]/10 border-[#E4405F]/20 text-[#E4405F]" :
+                              "bg-blue-500/10 border-blue-500/20 text-blue-500"
+                            )}
+                          >
+                            {lead.source.toLowerCase().includes('facebook') ? <FacebookLogo weight="bold" className="h-4 w-4" /> :
+                             lead.source.toLowerCase().includes('instagram') ? <InstagramLogo weight="bold" className="h-4 w-4" /> :
+                             <Globe weight="bold" className="h-4 w-4" />}
+                            Open Profile
+                          </a>
+                        ) : (
+                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#323232] italic opacity-50">Discovery Hub</span>
+                        )}
+                      </td>
+                    )}
+                    {visibleColumns.includes('status') && (
+                      <td className="px-6 py-6 transition-all">
+                        <select 
+                          value={lead.status}
+                          onChange={(e) => updateLeadStatus(lead.id, e.target.value as Lead['status'])}
+                          className="bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest px-3 py-1.5 outline-none focus:ring-1 focus:ring-[#3A9B9F] cursor-pointer transition-all"
                         >
-                          {lead.source.toLowerCase().includes('facebook') ? <FacebookLogo weight="bold" className="h-4 w-4" /> :
-                           lead.source.toLowerCase().includes('instagram') ? <InstagramLogo weight="bold" className="h-4 w-4" /> :
-                           <Globe weight="bold" className="h-4 w-4" />}
-                          Open Profile
-                        </a>
-                      ) : (
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#323232] italic opacity-50">Discovery Hub</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-6">
-                      <select 
-                        value={lead.status}
-                        onChange={(e) => updateLeadStatus(lead.id, e.target.value as Lead['status'])}
-                        className="bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest px-3 py-1.5 outline-none focus:ring-1 focus:ring-[#3A9B9F] cursor-pointer transition-all"
-                      >
-                        <option value="cold">Cold</option>
-                        <option value="contacted">Contacted</option>
-                        <option value="demo">Demo</option>
-                        <option value="callback">Callback</option>
-                        <option value="won">Won</option>
-                        <option value="lost">Lost</option>
-                      </select>
-                    </td>
-                    <td className="px-6 py-6">
-                      <div className="flex items-center gap-3">
-                        <div className="text-[10px] font-black text-[#3A9B9F] bg-[#3A9B9F]/10 px-3 py-1.5 rounded-full uppercase tracking-widest">
-                          {getNextStep(lead.status)}
+                          <option value="cold">Cold</option>
+                          <option value="contacted">Contacted</option>
+                          <option value="demo">Demo</option>
+                          <option value="callback">Callback</option>
+                          <option value="won">Won</option>
+                          <option value="lost">Lost</option>
+                        </select>
+                      </td>
+                    )}
+                    {visibleColumns.includes('plan') && (
+                      <td className="px-6 py-6 transition-all">
+                        <div className="flex items-center gap-3">
+                          <div className="text-[10px] font-black text-[#3A9B9F] bg-[#3A9B9F]/10 px-3 py-1.5 rounded-full uppercase tracking-widest">
+                            {getNextStep(lead.status)}
+                          </div>
+                          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
+                              <button 
+                              onClick={() => { setEditingLead(lead); setIsEditModalOpen(true); }}
+                              className="p-2 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl hover:text-[#3A9B9F] transition-all"
+                              >
+                              <Notebook className="h-4 w-4" />
+                              </button>
+                              <button 
+                              onClick={() => deleteLead(lead.id, lead.business_name)}
+                              className="p-2 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl hover:text-red-500 transition-all"
+                              >
+                              <Trash className="h-4 w-4" />
+                              </button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
-                            <button 
-                            onClick={() => { setEditingLead(lead); setIsEditModalOpen(true); }}
-                            className="p-2 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl hover:text-[#3A9B9F] transition-all"
-                            >
-                            <Notebook className="h-4 w-4" />
-                            </button>
-                            <button 
-                            onClick={() => deleteLead(lead.id, lead.business_name)}
-                            className="p-2 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl hover:text-red-500 transition-all"
-                            >
-                            <Trash className="h-4 w-4" />
-                            </button>
-                        </div>
-                      </div>
-                    </td>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
