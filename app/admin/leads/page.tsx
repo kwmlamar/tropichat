@@ -330,23 +330,47 @@ export default function LeadsPage() {
               )}
 
               {isFilterMenuOpen && (
-                <div className={cn("space-y-3", isColumnMenuOpen && "mt-6 pt-6 border-t border-gray-100 dark:border-white/5")}>
-                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Discovery Origin</div>
-                  <div className="flex flex-wrap gap-2">
-                    {['all', 'google', 'instagram', 'facebook', 'notion', 'manual'].map(src => (
-                      <button
-                        key={src}
-                        onClick={() => setActiveSourceFilter(src)}
-                        className={cn(
-                          "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
-                          activeSourceFilter === src 
-                            ? "bg-[#EA580C]/10 border-[#EA580C]/20 text-[#EA580C]"
-                            : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
-                        )}
-                      >
-                        {src}
-                      </button>
-                    ))}
+                <div className={cn("space-y-6", isColumnMenuOpen && "mt-6 pt-6 border-t border-gray-100 dark:border-white/5")}>
+                  <div className="space-y-3">
+                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Discovery Origin</div>
+                    <div className="flex flex-wrap gap-2">
+                      {['all', 'google', 'instagram', 'facebook', 'notion', 'manual'].map(src => (
+                        <button
+                          key={src}
+                          onClick={() => setActiveSourceFilter(src)}
+                          className={cn(
+                            "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
+                            activeSourceFilter === src 
+                              ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85]"
+                              : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
+                          )}
+                        >
+                          {src}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pipeline Mission Status</div>
+                    <div className="flex flex-wrap gap-2">
+                      {['all', 'cold', 'contacted', 'demo', 'callback', 'won', 'lost'].map(status => (
+                        <button
+                          key={status}
+                          onClick={() => setActiveStatusFilter(status)}
+                          className={cn(
+                            "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
+                            activeStatusFilter === status 
+                              ? (status === 'won' ? "bg-green-500/10 border-green-500/20 text-green-500" :
+                                 status === 'contacted' ? "bg-[#EA580C]/10 border-[#EA580C]/20 text-[#EA580C]" :
+                                 "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85]")
+                              : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
+                          )}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
