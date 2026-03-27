@@ -28,6 +28,7 @@ export default function AnalyticsPage() {
     activeUsers: 0,
     totalMessages: 0,
     conversionRate: 0,
+    currentMRR: 0,
   })
   const [loading, setLoading] = useState(true)
 
@@ -43,6 +44,7 @@ export default function AnalyticsPage() {
         activeUsers: wonCount || 0,
         totalMessages: (lCount || 0) * 12, 
         conversionRate: lCount && lCount > 0 ? Math.round((wonCount || 0) / lCount * 100) : 0,
+        currentMRR: (wonCount || 0) * 29, 
       })
       setLoading(false)
     }
@@ -79,7 +81,14 @@ export default function AnalyticsPage() {
                 <TrendUp weight="bold" className="h-4 w-4 text-[#EA580C]" />
                 <span className="text-[10px] font-black text-[#EA580C] uppercase tracking-[0.2em]">Strategic Revenue Target: Dec 2026</span>
               </div>
-              <h2 className="text-5xl font-black text-[#213138] dark:text-white tracking-tighter tabular-nums">$51,000 <span className="text-2xl text-gray-400">MRR</span></h2>
+              <h2 className="text-5xl font-black text-[#213138] dark:text-white tracking-tighter tabular-nums">
+                {stats.currentMRR > 0 ? (
+                  <>${stats.currentMRR.toLocaleString()} / $51,000</>
+                ) : (
+                  <>$51,000</>
+                )}
+                <span className="text-2xl text-gray-400 ml-2">MRR</span>
+              </h2>
               <p className="text-sm font-bold text-gray-500 max-w-md leading-relaxed uppercase tracking-tight">
                 Projected monthly recurring revenue by the end of the year through <span className="text-[#EA580C]">Pan-Caribbean Outreach Dominance</span>.
               </p>
@@ -203,7 +212,8 @@ export default function AnalyticsPage() {
               { id: 'whatsapp', name: 'WhatsApp', count: 120, percentage: 68 },
               { id: 'instagram', name: 'Instagram', count: 40, percentage: 22 },
               { id: 'messenger', name: 'Messenger', count: 18, percentage: 10 },
-            ].map(channel =>                <div 
+            ].map(channel => (
+                <div 
                     key={channel.id} 
                     className="group bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-2xl p-5 hover:border-[#3A9B9F] transition-all"
                 >
@@ -220,7 +230,7 @@ export default function AnalyticsPage() {
                     />
                   </div>
                 </div>
-            )}
+            ))}
           </div>
 
           <div className="mt-10 pt-8 border-t border-gray-100 dark:border-[#1C1C1C] text-center">
