@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
     let subject = "Quick question from TropiChat 🇧🇸"
     let body = content
 
-    if (content.startsWith("Subject:")) {
-      const parts = content.split("\n\n")
-      subject = parts[0].replace("Subject:", "").trim()
-      body = parts.slice(1).join("\n\n")
+    // Use regex to handle different newline styles (including double-escaped ones)
+    const subjectMatch = content.match(/^Subject:\s*(.*?)(\n\n|\r\n\r\n|\\n\\n)/i)
+    if (subjectMatch) {
+      subject = subjectMatch[1].trim()
+      body = content.substring(subjectMatch[0].length).trim()
     }
+
+    // Fallback if body is still somehow empty
+    if (!body) body = content
 
     // 3. Fetch Target Lead Data
     const { data: leads, error: lErr } = await supabase
@@ -59,10 +63,17 @@ export async function POST(req: NextRequest) {
 
     const results = []
 
-    // 4. Mission Execution: Multi-Lead Dispatch
-    for (const lead of leads) {
-      // 4a. Strategic Regional & Personalization Logic (Pan-Caribbean) 🇧🇸🇯🇲🛰️
-      const busName = lead.business_name || ""
+    // 4. Mission Execution: Multi-Lead Dispatch (Staggered Strategic Firing) 🛸🛰️
+    for (let i = 0; i < leads.length; i++) {
+        const lead = leads[i]
+        
+        // Add a small stagger (500ms) to stay under the 5 RPS rate limit 🌴🚀
+        if (i > 0) {
+          await new Promise(resolve => setTimeout(resolve, 500))
+        }
+
+        // 4a. Strategic Regional & Personalization Logic (Pan-Caribbean) 🇧🇸🇯🇲🛰️
+        const busName = lead.business_name || ""
       const location = lead.location || "the Caribbean"
       const residentTag = location === "Bahamas" ? "Bahamian" 
                           : location === "Jamaica" ? "Jamaican"
