@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { exec } from "child_process"
 import { promisify } from "util"
 import path from "path"
+import fs from "fs"
 
 const execPromise = promisify(exec)
 
@@ -15,8 +16,10 @@ export async function POST(req: Request) {
     const query = body.query || "Boutiques Nassau"
     const source = body.source || "google"
 
-    // Execute the python script using the project-local venv
-    const pythonPath = path.join(process.cwd(), "venv", "bin", "python3")
+    // Execute the python script using the project-local venv if it exists, otherwise use system python3
+    const venvPath = path.join(process.cwd(), "venv", "bin", "python3")
+    const pythonPath = fs.existsSync(venvPath) ? venvPath : "python3"
+    
     const { stdout, stderr } = await execPromise(`"${pythonPath}" "${scriptPath}" --run --query "${query}" --source "${source}"`)
 
     if (stderr) {
