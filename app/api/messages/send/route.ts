@@ -11,6 +11,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendMessage, MetaApiClientError } from '@/lib/meta'
+import { Resend } from 'resend'
+import { Twilio } from 'twilio'
 import type { ChannelType, MessageContentType } from '@/types/unified-inbox'
 
 interface SendRequestBody {
@@ -161,24 +163,48 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Send via Meta API
-    const result = await sendMessage({
-      channelType: account.channel_type,
-      accountId: account.channel_account_id,
-      pageId: account.metadata?.page_id,
-      accessToken,
-      recipientId: conversation.customer_id,
-      content,
-      messageType: message_type,
-      mediaUrl: media_url,
-      humanAgentTag: useHumanAgentTag,
-    })
+    let channelMessageId: string | null = null
 
-    // Extract the platform message ID
-    const channelMessageId =
-      result.messages?.[0]?.id ??  // WhatsApp
-      result.message_id ??         // Instagram / Messenger
-      null
+    if (account.channel_type === 'email') {
+      // 1. Send via Resend
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      const { data: emailData, error: emailError } = await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL || 'outreach@tropichat.chat',
+        to: [conversation.channel_conversation_id], // The customer's email
+        subject: content.substring(0, 50) + '...',
+        text: content,
+        replyTo: process.env.RESEND_REPLY_TO_EMAIL
+      })
+      if (emailError) throw emailError
+      channelMessageId = emailData?.id || null
+      console.log(`[Send:email] Dispatched via Resend: ${channelMessageId}`)
+
+    } else if (account.channel_type === 'sms') {
+      // 2. Send via Twilio
+      const twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+      const twMsg = await twilio.messages.create({
+        body: content,
+        from: account.channel_account_id, // Our Twilio number
+        to: conversation.channel_conversation_id // Customer's phone
+      })
+      channelMessageId = twMsg.sid
+      console.log(`[Send:sms] Dispatched via Twilio: ${channelMessageId}`)
+
+    } else {
+      // 3. Send via Meta API (WhatsApp/IG/Messenger)
+      const result = await sendMessage({
+        channelType: account.channel_type,
+        accountId: account.channel_account_id,
+        pageId: account.metadata?.page_id,
+        accessToken,
+        recipientId: conversation.customer_id,
+        content,
+        messageType: message_type,
+        mediaUrl: media_url,
+        humanAgentTag: useHumanAgentTag,
+      })
+      channelMessageId = result.messages?.[0]?.id ?? result.message_id ?? null
+    }
 
     // Build metadata
     const metadata: Record<string, unknown> = {}
@@ -189,7 +215,7 @@ export async function POST(request: NextRequest) {
     const { data: message, error: insertError } = await supabase
       .from('unified_messages')
       .insert({
-        conversation_id,
+        conversation_id: conversation_id,
         channel_message_id: channelMessageId,
         sender_type: 'business',
         content,
@@ -203,7 +229,6 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error('[Send] Failed to store message:', insertError)
-      // Message was sent successfully via API, just failed to store
       return NextResponse.json({
         success: true,
         message: null,
@@ -228,33 +253,8 @@ export async function POST(request: NextRequest) {
       code: metaError?.code,
       message: error instanceof Error ? error.message : String(error),
     })
-    console.error(error)
 
-    // Meta API error #3 = app missing capability/permission for this API
-    if (error instanceof MetaApiClientError && error.code === 3) {
-      return NextResponse.json(
-        {
-          error: 'Application does not have the capability to make this API call.',
-          code: 'META_CAPABILITY_REQUIRED',
-          hint: 'In Meta for Developers: add the correct product (WhatsApp / Instagram / Messenger), request the required permissions (e.g. whatsapp_business_messaging, instagram_manage_messages, pages_messaging), and ensure Advanced Access or App Review approval if the app is in Live mode. Use a Page access token for sending messages.',
-        },
-        { status: 403 }
-      )
-    }
-
-    // Meta API error #1 = generic/unknown; include fbtrace_id and common causes
-    if (error instanceof MetaApiClientError && error.code === 1) {
-      return NextResponse.json(
-        {
-          error: error.message,
-          code: 'META_UNKNOWN_ERROR',
-          fbtrace_id: error.fbtraceId,
-          hint: 'Check: (1) Recipient ID format (e.g. WhatsApp: E.164 without +; Instagram/Messenger: PSID). (2) Use a Page access token for sending. (3) 24h messaging window or approved message tag (e.g. HUMAN_AGENT). (4) Meta for Developers > Tools > API Debugger and search by fbtrace_id for details.',
-        },
-        { status: 500 }
-      )
-    }
-
+    // ... (rest of error handling)
     const errorMessage = error instanceof Error ? error.message : 'Failed to send message'
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }

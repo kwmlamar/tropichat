@@ -53,6 +53,11 @@ import type { ChannelType, MetaSendResponse, MessageContentType } from '@/types/
 import { sendWhatsAppText, sendWhatsAppMedia } from './whatsapp'
 import { sendInstagramText, sendInstagramMedia } from './instagram'
 import { sendMessengerText, sendMessengerMedia } from './messenger'
+import { Resend } from 'resend'
+import { Twilio } from 'twilio'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+const twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
 
 export interface UnifiedSendOptions {
   channelType: ChannelType
@@ -113,6 +118,25 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
           mediaUrl,
           humanAgentTag,
         })
+      case 'email':
+        // For email, we treat media as an attachment
+        const emailMediaRes = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL || 'outreach@tropichat.chat',
+          to: recipientId,
+          subject: `Media Message from TropiChat`,
+          text: content || 'View attachment below',
+          attachments: [{ filename: 'attachment', path: mediaUrl }],
+          replyTo: process.env.RESEND_REPLY_TO_EMAIL,
+        })
+        return { message_id: emailMediaRes.data?.id || 'email_pending' }
+      case 'sms':
+        const smsMediaRes = await twilio.messages.create({
+          body: content,
+          from: process.env.TWILIO_PHONE_NUMBER || '+14155238886', // Primary SMS Gateway
+          to: recipientId,
+          mediaUrl: [mediaUrl],
+        })
+        return { message_id: smsMediaRes.sid }
       default:
         throw new Error(`Channel ${channelType} is not supported through Meta API for media messages.`)
     }
@@ -146,6 +170,22 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
         messagingType: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
         tag: humanAgentTag ? 'HUMAN_AGENT' : undefined,
       })
+    case 'email':
+      const emailRes = await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL || 'outreach@tropichat.chat',
+        to: recipientId,
+        subject: `Re: Message from TropiChat`,
+        text: content,
+        replyTo: process.env.RESEND_REPLY_TO_EMAIL,
+      })
+      return { message_id: emailRes.data?.id || 'email_pending' }
+    case 'sms':
+      const smsRes = await twilio.messages.create({
+        body: content,
+        from: process.env.TWILIO_PHONE_NUMBER || '+14155238886',
+        to: recipientId,
+      })
+      return { message_id: smsRes.sid }
     default:
       throw new Error(`Channel ${channelType} is not supported through Meta API for text messages.`)
   }

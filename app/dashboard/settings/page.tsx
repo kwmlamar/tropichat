@@ -133,6 +133,13 @@ function SettingsContent() {
   const [disconnecting, setDisconnecting] = useState<MetaChannel | null>(null)
   const [syncingId, setSyncingId] = useState<string | null>(null)
 
+  // Email connection state
+  const [emailAccounts, setEmailAccounts] = useState<any[]>([])
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [isAddingEmail, setIsAddingEmail] = useState(false)
+  const [newEmail, setNewEmail] = useState("")
+  const [addingEmail, setAddingEmail] = useState(false)
+
   // WhatsApp Business Profile state
   const [wpBusinessName, setWpBusinessName] = useState("")
   const [wpDescription, setWpDescription] = useState("")
@@ -226,6 +233,14 @@ function SettingsContent() {
     setMetaLoading(false)
   }
 
+  const fetchEmailConnectionStatus = async () => {
+    setEmailLoading(true)
+    const { fetchEmailAccounts } = await import('@/lib/omni-connections')
+    const { data, error } = await fetchEmailAccounts()
+    if (data) setEmailAccounts(data)
+    setEmailLoading(false)
+  }
+
   // Fetch on mount if the initial tab is integrations, or show toast from callback
   useEffect(() => {
     const tab = searchParams.get("tab")
@@ -242,6 +257,7 @@ function SettingsContent() {
 
     if (tab === "integrations" || tab === "whatsapp") {
       fetchMetaConnectionStatus()
+      fetchEmailConnectionStatus()
     }
 
     if (tab === "whatsapp") {
@@ -279,6 +295,41 @@ function SettingsContent() {
       await fetchMetaConnectionStatus()
     }
     setDisconnecting(null)
+  }
+
+  const handleAddEmailAccount = async () => {
+    if (!newEmail || !newEmail.includes('@')) {
+      toast.error("Please enter a valid email address")
+      return
+    }
+
+    setAddingEmail(true)
+    const { addEmailAccount } = await import('@/lib/omni-connections')
+    const { data, error } = await addEmailAccount(newEmail)
+
+    if (error) {
+      toast.error(error)
+    } else {
+      toast.success("Professional email connected!")
+      setNewEmail("")
+      setIsAddingEmail(false)
+      fetchEmailConnectionStatus()
+    }
+    setAddingEmail(false)
+  }
+
+  const handleDisconnectEmail = async (id: string, email: string) => {
+    if (!confirm(`Disconnect ${email}?`)) return
+    
+    const { disconnectEmailAccount } = await import('@/lib/omni-connections')
+    const { error } = await disconnectEmailAccount(id)
+    
+    if (error) {
+      toast.error(error)
+    } else {
+      toast.success("Email disconnected")
+      fetchEmailConnectionStatus()
+    }
   }
 
   const handleSyncHistory = async (channel: MetaChannel) => {
@@ -651,7 +702,10 @@ function SettingsContent() {
         <Tabs value={activeTab} defaultValue={initialTab} onValueChange={(tab) => {
           setActiveTab(tab)
           router.push(`/dashboard/settings?tab=${tab}`)
-          if (tab === "integrations") fetchMetaConnectionStatus()
+          if (tab === "integrations") {
+            fetchMetaConnectionStatus()
+            fetchEmailConnectionStatus()
+          }
           if (tab === "whatsapp") {
             fetchWhatsAppProfile()
             fetchMetaConnectionStatus()
@@ -1077,15 +1131,83 @@ function SettingsContent() {
                     disconnecting={disconnecting === "messenger"}
                     onDisconnect={() => handleDisconnectChannel("messenger")}
                   />
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className={cn(
+                      "relative overflow-hidden p-6 rounded-[28px] transition-all duration-300",
+                      "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] shadow-[0_4px_20px_rgba(0,0,0,0.02)]",
+                      emailAccounts.length > 0 ? "ring-2 ring-teal-500/5 shadow-[0_8px_30px_rgba(58,155,159,0.08)]" : "opacity-60 grayscale-[0.5]"
+                    )}
+                  >
+                    {emailAccounts.length > 0 && (
+                      <div className="absolute -right-6 -top-6 w-24 h-24 blur-[40px] opacity-20 bg-teal-500 rounded-full" />
+                    )}
+                    <div className="flex items-start gap-4 mb-5">
+                      <div className="shrink-0 flex items-center justify-center bg-teal-50 dark:bg-teal-900/10 h-12 w-12 rounded-2xl">
+                        <Link weight="bold" className="h-6 w-6 text-[#007B85]" />
+                      </div>
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <h4 className="font-bold text-[#213138] dark:text-gray-100 text-lg leading-tight truncate">Professional Email</h4>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          {emailAccounts.length > 0 ? (
+                            <div className="flex items-center gap-1.5 text-[#007B85] text-xs font-bold uppercase tracking-wider">
+                              <div className="h-1.5 w-1.5 rounded-full bg-[#007B85] animate-pulse" />
+                              {emailAccounts.length} Connected
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                              <div className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+                              Not Connected
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="min-h-[48px] mb-5">
+                      {isAddingEmail ? (
+                        <div className="space-y-2">
+                          <Input 
+                            placeholder="hello@company.com" 
+                            className="h-9 text-xs rounded-xl"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" className="h-8 flex-1 bg-[#007B85] rounded-lg" onClick={handleAddEmailAccount} disabled={addingEmail}>
+                              {addingEmail && <CircleNotch className="animate-spin h-3 w-3 mr-1" />}
+                              Confirm
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8 flex-1 rounded-lg" onClick={() => setIsAddingEmail(false)}>Exit</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-400 dark:text-gray-500 italic leading-relaxed">
+                          Link your professional domain email to unify your inbox.
+                        </p>
+                      )}
+                    </div>
+                    {!isAddingEmail && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full rounded-xl bg-teal-50 dark:bg-teal-900/10 text-[#007B85] font-bold"
+                        onClick={() => setIsAddingEmail(true)}
+                      >
+                        <Plus weight="bold" className="h-3.5 w-3.5 mr-2" />
+                        Connect New Email
+                      </Button>
+                    )}
+                  </motion.div>
                 </div>
               )}
             </div>
 
             {/* Connected Account Details */}
-            {metaStatus &&
+            {(emailAccounts.length > 0 || (metaStatus &&
               (metaStatus.instagram?.connected ||
                 metaStatus.whatsapp?.connected ||
-                metaStatus.messenger?.connected) && (
+                metaStatus.messenger?.connected))) && (
                 <div>
                   <div className="h-px bg-gray-100 dark:bg-[#1C1C1C] mb-6" />
                   <p className="text-[10px] text-gray-400 dark:text-gray-400 uppercase tracking-widest font-medium mb-4 flex items-center gap-2">
@@ -1093,7 +1215,7 @@ function SettingsContent() {
                     Connected Accounts
                   </p>
                   <div className="space-y-2">
-                    {metaStatus.instagram?.connected && (
+                    {metaStatus && metaStatus.instagram?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
                         <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white flex-shrink-0">
                           <InstagramLogo weight="bold" className="h-5 w-5" />
@@ -1126,7 +1248,7 @@ function SettingsContent() {
                         </div>
                       </div>
                     )}
-                    {metaStatus.whatsapp?.connected && (
+                    {metaStatus && metaStatus.whatsapp?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
                         <div className="h-9 w-9 rounded-xl bg-[#25D366] flex items-center justify-center text-white flex-shrink-0">
                           <WhatsappLogo weight="bold" className="h-5 w-5" />
@@ -1146,7 +1268,7 @@ function SettingsContent() {
                         </span>
                       </div>
                     )}
-                    {metaStatus.messenger?.connected && (
+                    {metaStatus && metaStatus.messenger?.connected && (
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
                         <div className="h-9 w-9 rounded-xl bg-[#0084FF] flex items-center justify-center text-white flex-shrink-0">
                           <MessengerLogo weight="bold" className="h-5 w-5" />
@@ -1173,6 +1295,40 @@ function SettingsContent() {
                         </div>
                       </div>
                     )}
+                    
+                    {/* Professional Email Identities */}
+                    {emailAccounts.map((acc) => (
+                      <div key={acc.id} className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
+                        <div className="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-[#007B85] flex-shrink-0">
+                          <Link weight="bold" className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-gray-900 dark:text-white truncate">
+                            {acc.channel_account_id}
+                          </p>
+                          <p className="text-[11px] text-gray-400 dark:text-gray-400">
+                            Professional Email · Status: {acc.status}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 px-2.5 text-[11px] font-bold text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-1"
+                            onClick={() => handleDisconnectEmail(acc.id, acc.channel_account_id)}
+                          >
+                            <Trash weight="bold" className="h-3.5 w-3.5" />
+                            Disconnect
+                          </Button>
+                          <span className={cn(
+                            "text-[11px] font-bold uppercase tracking-widest px-2 py-1 rounded-md",
+                            acc.status === 'active' ? "text-[#007B85] bg-teal-50 dark:bg-teal-900/10" : "text-gray-400 bg-gray-50 dark:bg-gray-900"
+                          )}>
+                            {acc.status === 'active' ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

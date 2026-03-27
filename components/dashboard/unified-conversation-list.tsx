@@ -48,8 +48,8 @@ const channelFilters: { title: string; icon: any; value: ChannelType | "all"; di
   { title: "WhatsApp", icon: WhatsAppIcon, value: "whatsapp" },
   { title: "Instagram", icon: InstagramIcon, value: "instagram" },
   { title: "Facebook", icon: MessengerIcon, value: "messenger" },
-  { title: "Gmail", icon: EmailIcon, value: "email", disabled: true },
-  { title: "SMS", icon: SMSIcon, value: "sms", disabled: true },
+  { title: "Gmail", icon: EmailIcon, value: "email" },
+  { title: "SMS", icon: SMSIcon, value: "sms" },
 ]
 
 export function UnifiedConversationList({
@@ -164,10 +164,6 @@ export function UnifiedConversationList({
                 <button
                   key={filter.value}
                   onClick={() => {
-                    if (isDisabled) {
-                      toast.info(`${filter.title} integration coming soon!`)
-                      return
-                    }
                     onChannelFilter(filter.value)
                   }}
                   disabled={isDisabled}
@@ -233,7 +229,7 @@ export function UnifiedConversationList({
                   ? "No conversations match your search"
                   : showArchived
                     ? "Conversations you archive will appear here"
-                    : "Messages from WhatsApp, Instagram, and Messenger will appear here"}
+                    : "Messages from WhatsApp, Instagram, Messenger, Email and SMS will appear here"}
               </p>
             </div>
           ) : conversations.length === 0 && loading ? (

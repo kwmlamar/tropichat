@@ -246,6 +246,11 @@ export default function PageSelectionPage() {
   const [whatsapp, setWhatsapp] = useState<ChannelState<WhatsAppPhoneNumber>>({
     items: [], selectedId: null, loading: true, saving: false, connected: false, open: true,
   })
+  
+  // Email connection state
+  const [emails, setEmails] = useState<{ items: any[], loading: boolean, open: boolean }>({
+    items: [], loading: true, open: true
+  })
 
   useEffect(() => {
     async function init() {
@@ -274,6 +279,11 @@ export default function PageSelectionPage() {
       } else {
         setWhatsapp(s => ({ ...s, loading: false, connected: false }))
       }
+
+      // ── Email init ──
+      const { fetchEmailAccounts } = await import('@/lib/omni-connections')
+      const { data: emailData } = await fetchEmailAccounts()
+      setEmails({ items: emailData || [], loading: false, open: true })
     }
     init()
   }, [])
@@ -306,6 +316,19 @@ export default function PageSelectionPage() {
     if (error) toast.error(error)
     else { toast.success(`Switched to "${number?.display_number}"`); const { data } = await fetchWhatsAppNumbers(); setWhatsapp(s => ({ ...s, items: data })) }
     setWhatsapp(s => ({ ...s, saving: false }))
+  }
+
+  const handleToggleEmailCode = async (id: string, current: 'active' | 'inactive') => {
+    const { toggleEmailStatus } = await import('@/lib/omni-connections')
+    const { error } = await toggleEmailStatus(id, current)
+    if (error) toast.error(error)
+    else {
+      toast.success("Identity updated")
+      setEmails(prev => ({
+        ...prev,
+        items: prev.items.map(item => item.id === id ? { ...item, status: current === 'active' ? 'inactive' : 'active' } : item)
+      }))
+    }
   }
 
   const goToIntegrations = () => router.push("/dashboard/settings?tab=integrations")
@@ -495,6 +518,70 @@ export default function PageSelectionPage() {
                     }
                   />
                 ))
+              )}
+            </ChannelPanel>
+          </motion.div>
+
+          {/* Email Identities */}
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.18 }}>
+            <ChannelPanel
+              icon={<Link2 weight="bold" className="h-4 w-4" />}
+              iconBg="bg-teal-50 dark:bg-teal-900/10"
+              iconColor="text-[#007B85]"
+              title="Professional Email accounts"
+              subtitle={
+                emails.loading ? "Loading…" :
+                emails.items.length === 0 ? "No individual emails connected" :
+                `${emails.items.length} identit${emails.items.length !== 1 ? "ies" : "y"} available`
+              }
+              isConnected={emails.items.some(e => e.status === 'active')}
+              isOpen={emails.open}
+              onToggle={() => setEmails(s => ({ ...s, open: !s.open }))}
+            >
+              {emails.loading ? (
+                <><SkeletonRow /><SkeletonRow /></>
+              ) : emails.items.length === 0 ? (
+                <div className="py-6 text-center">
+                  <p className="text-[13px] font-medium text-gray-700 dark:text-[#A3A3A3] mb-1">No emails found</p>
+                  <p className="text-[12px] text-gray-400 dark:text-[#525252] mb-4 max-w-xs mx-auto">Connect your professional domain email in Settings.</p>
+                  <Button size="sm" variant="outline" className="h-8 rounded-lg" onClick={goToIntegrations}>Settings Hub</Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {emails.items.map(acc => (
+                    <div key={acc.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-900/10 flex items-center justify-center text-[#007B85]">
+                          <MessageCircle weight="bold" className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-[13px] font-semibold text-gray-900 dark:text-white uppercase tracking-tight">{acc.channel_account_id}</p>
+                          <p className="text-[11px] text-gray-400 dark:text-[#525252]">Status: {acc.status}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <span className={cn(
+                            "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md",
+                            acc.status === 'active' ? "text-[#007B85] bg-teal-50 dark:bg-teal-900/10" : "text-gray-400 bg-gray-50 dark:bg-gray-900"
+                          )}>
+                            {acc.status === 'active' ? 'Active' : 'Muted'}
+                          </span>
+                        <button 
+                          onClick={() => handleToggleEmailCode(acc.id, acc.status)}
+                          className={cn(
+                            "h-5 w-9 rounded-full relative transition-colors duration-200",
+                            acc.status === 'active' ? "bg-[#007B85]" : "bg-gray-200 dark:bg-[#1C1C1C]"
+                          )}
+                        >
+                          <div className={cn(
+                            "absolute top-1 h-3 w-3 rounded-full bg-white transition-all duration-200",
+                            acc.status === 'active' ? "right-1" : "left-1"
+                          )} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </ChannelPanel>
           </motion.div>
