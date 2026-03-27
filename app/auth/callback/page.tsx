@@ -58,6 +58,22 @@ export default function AuthCallbackPage() {
             console.error("[OAuth Callback] Customer insert error:", insertError)
           } else {
             console.log("[OAuth Callback] Customer record created")
+            
+            // Notify ADMIN (Lamar) about the new signage
+            const ADMIN_ID = "29227a12-ca82-4796-a9c4-30ec0c6fa0e4"
+            if (user.id !== ADMIN_ID) {
+              await client.from("notifications").insert({
+                customer_id: ADMIN_ID,
+                type: "system",
+                title: "New TropiChat Explorer! 🌴",
+                message: `${businessName} just signed up for TropiChat! 🚀`,
+                link: "/admin/leads",
+                metadata: {
+                  signup_id: user.id,
+                  email: user.email
+                }
+              })
+            }
           }
         } else {
           console.log("[OAuth Callback] Existing customer, skipping insert")
