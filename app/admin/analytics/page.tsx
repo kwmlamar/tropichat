@@ -208,9 +208,7 @@ export default function AnalyticsPage() {
                     className="group bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-2xl p-5 hover:border-[#3A9B9F] transition-all"
                 >
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-0.5 rounded-xl bg-white dark:bg-[#1C1C1C] border border-gray-100 dark:border-white/5 shadow-sm">
-                      <ChannelIcon channel={channel.id as any} size="md" />
-                    </div>
+                    <ChannelIcon channel={channel.id as any} size="xl" />
                     <span className="text-sm font-black text-[#213138] dark:text-white tabular-nums">{channel.count}</span>
                   </div>
                   <p className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-3">{channel.name}</p>
