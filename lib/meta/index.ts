@@ -113,6 +113,8 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
           mediaUrl,
           humanAgentTag,
         })
+      default:
+        throw new Error(`Channel ${channelType} is not supported through Meta API for media messages.`)
     }
   }
 
@@ -144,6 +146,8 @@ export async function sendMessage(options: UnifiedSendOptions): Promise<MetaSend
         messagingType: humanAgentTag ? 'MESSAGE_TAG' : 'RESPONSE',
         tag: humanAgentTag ? 'HUMAN_AGENT' : undefined,
       })
+    default:
+      throw new Error(`Channel ${channelType} is not supported through Meta API for text messages.`)
   }
 }
 
