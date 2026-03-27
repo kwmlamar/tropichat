@@ -51,6 +51,7 @@ export default function LeadsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false)
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false)
+  const [customerEmails, setCustomerEmails] = useState<Set<string>>(new Set())
   
   // Persistent Settings
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
@@ -101,6 +102,12 @@ export default function LeadsPage() {
       console.error(error)
     } else {
       setLeads(data || [])
+      
+      // Fetch customers to cross-reference
+      const { data: customerData } = await client.from('customers').select('contact_email')
+      if (customerData) {
+        setCustomerEmails(new Set(customerData.map(c => c.contact_email?.toLowerCase() || '')))
+      }
     }
     setLoading(false)
   }, [debouncedSearch])
@@ -445,7 +452,14 @@ export default function LeadsPage() {
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Local Discovery</div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Local Discovery</div>
+                          {lead.contact_email && customerEmails.has(lead.contact_email.toLowerCase()) && (
+                            <div className="px-1.5 py-0.5 bg-green-500/10 text-green-500 rounded text-[8px] font-black border border-green-500/20 animate-pulse">
+                              SIGNUP DETECTED
+                            </div>
+                          )}
+                        </div>
                       </td>
                     )}
                     {visibleColumns.includes('type') && (
