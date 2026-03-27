@@ -12,7 +12,8 @@ import {
   Check,
   Funnel,
   CaretDown,
-  Trash
+  Trash,
+  TrendUp
 } from "@phosphor-icons/react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
@@ -159,6 +160,58 @@ export default function OutreachPage() {
     }
   }
 
+  const handleBlast = async () => {
+    if (scripts.filter(s => s.status === 'ready' && s.category === 'email').length === 0) {
+      toast.error("No EMAIL scripts are currently MISSION READY. Upgrade your strategy first! 🛰️")
+      return
+    }
+
+    const toastId = toast.loading("Launching Strategic Blast Mission... 🚀🇧🇸")
+    
+    try {
+      const supabase = getSupabase()
+      // 1. Fetch COLD leads for the blast mission
+      const { data: coldLeads } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('status', 'cold')
+        .limit(25) // High-volume target
+
+      if (!coldLeads || coldLeads.length === 0) {
+        toast.error("No cold prospects available for this mission. Launch a Discovery Mission first! 🔎", { id: toastId })
+        return
+      }
+
+      // 2. Select the first READY script for this blast
+      const readyScript = scripts.find(s => s.status === 'ready' && s.category === 'email')
+      if (!readyScript) return
+
+      // 3. Dispatch the Mission to the Satellite API
+      const res = await fetch("/api/admin/outreach/send", {
+        method: "POST",
+        body: JSON.stringify({
+          leadIds: coldLeads.map(l => l.id),
+          scriptId: readyScript.id,
+          adminName: "Lamar"
+        })
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        toast.success(`Mission Success! ${data.stats.sent} prospects blasted across the islands. 🌴🇧🇸`, { 
+          id: toastId,
+          description: `Total: ${data.stats.total} | Sent: ${data.stats.sent} | Failed: ${data.stats.failed}`
+        })
+        fetchScripts()
+      } else {
+        toast.error(`Mission Failed: ${data.error}`, { id: toastId })
+      }
+    } catch (err: any) {
+      toast.error("Satellite Communication Failure. Check your Resend API Key. 🛰️", { id: toastId })
+    }
+  }
+
   return (
     <div className="w-full space-y-8 pb-12">
       {/* Header */}
@@ -174,13 +227,22 @@ export default function OutreachPage() {
             <p className="text-[12px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest mt-1">High-Conversion Intellectual Assets</p>
           </div>
         </div>
-        <button 
-          onClick={() => { setIsEditing(false); setFormData({ title: '', industry: 'general', subject: '', status: 'ready', content: '' }); setIsAddModalOpen(true) }}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl text-[13px] font-semibold transition-all shadow-sm active:scale-95"
-        >
-          <Plus weight="bold" className="h-4 w-4" />
-          Add New Script
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleBlast}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-tr from-[#EA580C] to-[#F97316] hover:brightness-110 text-white rounded-xl text-[13px] font-bold transition-all shadow-lg shadow-[#EA580C]/20 active:scale-95 group"
+          >
+            <TrendUp weight="bold" className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+            Cold Outreach Blast
+          </button>
+          <button 
+            onClick={() => { setIsEditing(false); setFormData({ title: '', industry: 'general', subject: '', status: 'ready', content: '' }); setIsAddModalOpen(true) }}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl text-[13px] font-semibold transition-all shadow-sm active:scale-95"
+          >
+            <Plus weight="bold" className="h-4 w-4" />
+            Add New Script
+          </button>
+        </div>
       </div>
 
       {/* Tab Controls */}
