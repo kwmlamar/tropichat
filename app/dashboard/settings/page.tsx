@@ -11,6 +11,7 @@ import {
   Key,
   FloppyDisk,
   CircleNotch,
+  EnvelopeSimple,
   Link,
   CheckCircle,
   XCircle,
@@ -283,6 +284,11 @@ function SettingsContent() {
     if (url) {
       window.location.href = url
     }
+  }
+
+  const handleConnectGoogle = () => {
+    setConnecting(true)
+    window.location.href = "/api/auth/google/login"
   }
 
   const handleDisconnectChannel = async (channel: MetaChannel) => {
@@ -1137,7 +1143,7 @@ function SettingsContent() {
                     className={cn(
                       "relative overflow-hidden p-6 rounded-[28px] transition-all duration-300",
                       "bg-white dark:bg-[#0A0A0A] border border-gray-100 dark:border-[#222222] shadow-[0_4px_20px_rgba(0,0,0,0.02)]",
-                      emailAccounts.length > 0 ? "ring-2 ring-teal-500/5 shadow-[0_8px_30px_rgba(58,155,159,0.08)]" : "opacity-60 grayscale-[0.5]"
+                      emailAccounts.length > 0 ? "ring-2 ring-teal-500/5 shadow-[0_8px_30px_rgba(58,155,159,0.08)]" : "opacity-100"
                     )}
                   >
                     {emailAccounts.length > 0 && (
@@ -1145,7 +1151,7 @@ function SettingsContent() {
                     )}
                     <div className="flex items-start gap-4 mb-5">
                       <div className="shrink-0 flex items-center justify-center bg-teal-50 dark:bg-teal-900/10 h-12 w-12 rounded-2xl">
-                        <Link weight="bold" className="h-6 w-6 text-[#007B85]" />
+                        <EnvelopeSimple weight="bold" className="h-6 w-6 text-[#007B85]" />
                       </div>
                       <div className="flex-1 min-w-0 pt-0.5">
                         <h4 className="font-bold text-[#213138] dark:text-gray-100 text-lg leading-tight truncate">Professional Email</h4>
@@ -1164,6 +1170,7 @@ function SettingsContent() {
                         </div>
                       </div>
                     </div>
+                    
                     <div className="min-h-[48px] mb-5">
                       {isAddingEmail ? (
                         <div className="space-y-2">
@@ -1182,21 +1189,40 @@ function SettingsContent() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-400 dark:text-gray-500 italic leading-relaxed">
-                          Link your professional domain email to unify your inbox.
+                        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                          Sync your Gmail or add your custom professional domain email.
                         </p>
                       )}
                     </div>
+
                     {!isAddingEmail && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full rounded-xl bg-teal-50 dark:bg-teal-900/10 text-[#007B85] font-bold"
-                        onClick={() => setIsAddingEmail(true)}
-                      >
-                        <Plus weight="bold" className="h-3.5 w-3.5 mr-2" />
-                        Connect New Email
-                      </Button>
+                      <div className="space-y-2">
+                        <Button
+                          className="w-full rounded-xl bg-white dark:bg-white text-black hover:bg-gray-100 border border-gray-200 font-bold"
+                          onClick={handleConnectGoogle}
+                          disabled={connecting}
+                        >
+                          {connecting ? (
+                            <CircleNotch className="animate-spin h-4 w-4 mr-2" />
+                          ) : (
+                            <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1.01.68-2.33 1.09-3.71 1.09-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                            </svg>
+                          )}
+                          Connect with Google
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full text-xs text-gray-400 hover:text-[#007B85]"
+                          onClick={() => setIsAddingEmail(true)}
+                        >
+                          Add Custom SMTP Domain
+                        </Button>
+                      </div>
                     )}
                   </motion.div>
                 </div>
