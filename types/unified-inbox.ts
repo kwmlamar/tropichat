@@ -2,7 +2,7 @@
 
 // ==================== ENUMS ====================
 
-export type ChannelType = 'whatsapp' | 'instagram' | 'messenger'
+export type ChannelType = 'whatsapp' | 'instagram' | 'messenger' | 'email' | 'sms'
 
 export type SenderType = 'customer' | 'business'
 

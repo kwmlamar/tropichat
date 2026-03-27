@@ -359,15 +359,13 @@ export default function SignupPage() {
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
               {/* Central Logo Orb */}
-              <div className="absolute z-20 w-20 h-20 rounded-[2.1rem] bg-white dark:bg-[#162228] flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.3)] ring-4 ring-[#213138] dark:ring-white/5">
-                <div className="w-18 h-18 relative">
-                  <Image
-                    src="/tropichat-logo.png"
-                    alt="TropiChat"
-                    fill
-                    unoptimized
-                    className="object-contain"
-                  />
+              <div className="absolute z-20 w-32 h-32 flex items-center justify-center transition-transform hover:scale-105 duration-500">
+                <div className="w-28 h-28 relative">
+                   <img 
+                     src="/tropichat-logo.png" 
+                     alt="TropiChat" 
+                     className="w-full h-full object-contain filter drop-shadow-2xl"
+                   />
                 </div>
               </div>
 
@@ -382,8 +380,8 @@ export default function SignupPage() {
                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 className="absolute w-44 h-44"
               >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-1.5">
-                  <WhatsAppBrandIcon className="w-full h-full" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-1.5 transition-transform hover:scale-110">
+                  <WhatsAppBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
               </motion.div>
 
@@ -393,11 +391,11 @@ export default function SignupPage() {
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute w-72 h-72"
               >
-                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
-                  <InstagramBrandIcon className="w-full h-full" />
+                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
+                  <InstagramBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
-                <div className="absolute top-[85.4%] left-[14.6%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
-                  <MessengerBrandIcon className="w-full h-full" />
+                <div className="absolute top-[85.4%] left-[14.6%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
+                  <MessengerBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
               </motion.div>
 
@@ -406,16 +404,19 @@ export default function SignupPage() {
                 transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
                 className="absolute w-[380px] h-[380px]"
               >
-                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle2 weight="bold" className="w-7 h-7 text-[#007B85]" />
+                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" 
+                     alt="Gmail" 
+                     className="w-full h-full drop-shadow-xl"
+                   />
                 </div>
-                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex flex-col items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <span className="text-[8px] font-bold text-slate-400 uppercase">Tags</span>
-                  <div className="flex gap-1 mt-1">
-                    <div className="w-2 h-2 rounded-full bg-teal-400 shadow-sm shadow-teal-400/50" />
-                    <div className="w-2 h-2 rounded-full bg-coral-400 shadow-sm shadow-coral-400/50" />
-                    <div className="w-2 h-2 rounded-full bg-purple-400 shadow-sm shadow-purple-400/50" />
-                  </div>
+                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/5/51/IMessage_logo.svg" 
+                     alt="SMS" 
+                     className="w-full h-full drop-shadow-xl"
+                   />
                 </div>
               </motion.div>
             </div>

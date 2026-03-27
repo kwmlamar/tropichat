@@ -6,10 +6,10 @@ import { Tags, UserCircle, Zap, UsersRound } from "lucide-react"
 const features = [
   {
     icon: Tags,
-    title: "One inbox. Every channel.",
+    title: "One inbox. Five channels.",
     outcome: "Never switch apps to find a conversation again.",
     description:
-      "All your messages from WhatsApp, Instagram DMs, and Facebook Messenger land in one unified inbox. Tag customers as VIP, New, or Payment Pending — and see every conversation across all platforms instantly.",
+      "All your messages from WhatsApp, Instagram, Messenger, Email, and SMS land in one unified inbox. Tag customers as VIP, New, or Payment Pending — and see every conversation across all platforms instantly.",
     gradient: "from-[#007B85] to-teal-600",
     iconBg: "bg-teal-50",
     badge: "Most Popular",
@@ -20,7 +20,7 @@ const features = [
     title: "Remember every customer.",
     outcome: "Deliver VIP service for all 500+ of them.",
     description:
-      "TropiChat automatically builds a profile for every person across every channel — order history, preferences, last contact, payment status. Whether they messaged on WhatsApp or Instagram, you see the full picture.",
+      "TropiChat automatically builds a profile for every person across all 5 channels — order history, preferences, last contact, payment status. Whether they messaged on WhatsApp, Email, or SMS, you see the full picture.",
     gradient: "from-violet-500 to-purple-600",
     iconBg: "bg-violet-50",
     badge: null,
@@ -31,7 +31,7 @@ const features = [
     title: "Stop typing the same thing 50× a day.",
     outcome: "Reply in 10 seconds instead of 2 minutes.",
     description:
-      "Save your most common responses — pricing, hours, menu, delivery info. One tap and it's sent, on any platform. Works seamlessly across WhatsApp, Instagram, and Facebook Messenger.",
+      "Save your most common responses — pricing, hours, menu, delivery info. One tap and it's sent, on any platform. Works seamlessly across WhatsApp, Instagram, Messenger, Email, and SMS.",
     gradient: "from-amber-400 to-orange-500",
     iconBg: "bg-amber-50",
     badge: null,

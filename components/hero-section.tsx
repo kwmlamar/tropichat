@@ -8,6 +8,8 @@ import {
   InstagramLogo as Instagram,
   ChatCircleDots as MessageCircle,
   Phone,
+  Envelope,
+  ChatTeardropDots as SmsIcon,
   MagnifyingGlass as Search,
   Gear as Settings,
   Users,
@@ -53,6 +55,24 @@ const conversations = [
     avatarColor: "bg-blue-500",
   },
   {
+    name: "Luxury Villas Bahamas",
+    preview: "Booking confirmation for Room 4...",
+    time: "8:42 AM",
+    unread: 1,
+    channel: "email",
+    avatar: "LV",
+    avatarColor: "bg-red-500",
+  },
+  {
+    name: "Island Transport",
+    preview: "Driver is 5 mins away from your...",
+    time: "8:30 AM",
+    unread: 0,
+    channel: "sms",
+    avatar: "IT",
+    avatarColor: "bg-[#007B85]",
+  },
+  {
     name: "Alaska Young",
     preview: "That's great to hear, thanks!",
     time: "7:12 AM",
@@ -86,6 +106,8 @@ const ChannelDot = ({ channel }: { channel: string }) => {
     wa: "bg-[#25D366]",
     ig: "bg-gradient-to-br from-pink-500 to-purple-600",
     fb: "bg-[#0084FF]",
+    email: "bg-red-500",
+    sms: "bg-[#007B85]",
   }
   return (
     <span
@@ -437,7 +459,7 @@ export function HeroSection() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="mb-10 max-w-2xl  text-lg text-slate-600 dark:text-gray-400 md:text-xl leading-relaxed"
         >
-          Bring WhatsApp, Instagram, and Facebook Messenger into one delightful app.{" "}
+          Bring WhatsApp, Instagram, Messenger, Email, and SMS into one delightful app.{" "}
           <span className="font-medium text-slate-800 dark:text-gray-200">
             Work anywhere, across all devices.
           </span>

@@ -245,6 +245,55 @@ export default function OutreachPage() {
         </div>
       </div>
 
+      {/* Growth Intelligence Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-[#007B85] rounded-3xl p-8 text-white relative overflow-hidden shadow-lg shadow-[#007B85]/20">
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2 opacity-80">
+              <TrendUp weight="bold" className="h-4 w-4" />
+              <span className="text-[11px] font-black uppercase tracking-[0.2em]">Monthly Recurring Revenue</span>
+            </div>
+            <div className="flex items-baseline gap-3">
+              <h2 className="text-5xl font-black tracking-tighter">$12,450.00</h2>
+              <span className="text-xl font-bold opacity-60">/ $51,000.00 Target</span>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <div className="px-4 py-2 bg-white/10 rounded-xl border border-white/10 backdrop-blur-md">
+                <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-0.5">Growth Velocity</div>
+                <div className="text-[14px] font-bold">+24% This Month</div>
+              </div>
+              <div className="px-4 py-2 bg-white/10 rounded-xl border border-white/10 backdrop-blur-md">
+                <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mb-0.5">Active Subscribers</div>
+                <div className="text-[14px] font-bold">142 Island Partners</div>
+              </div>
+            </div>
+          </div>
+          {/* Abstract background flare */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-[100px]" />
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-black/10 rounded-full blur-[60px]" />
+        </div>
+
+        <div className="bg-white dark:bg-[#0C0C0C] border border-gray-100 dark:border-white/5 rounded-3xl p-8 flex flex-col justify-between">
+          <div>
+            <div className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] mb-4">Total Platform Revenue</div>
+            <h3 className="text-3xl font-black text-[#213138] dark:text-white tracking-tight">$84,920.45</h3>
+          </div>
+          <div className="space-y-3 mt-8">
+            <div className="flex items-center justify-between text-[12px]">
+              <span className="text-gray-400 font-bold uppercase tracking-widest">Payout Status</span>
+              <span className="text-[#007B85] font-black uppercase">Mission Ready ✅</span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 dark:bg-[#1A1A1A] rounded-full overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: "24%" }}
+                className="h-full bg-[#007B85]"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Tab Controls */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <button 

@@ -6,7 +6,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { 
-  Envelope as Mail, 
+  Envelope, 
+  ChatTeardropDots as SmsIcon,
   Lock, 
   Eye, 
   EyeSlash as EyeOff, 
@@ -167,7 +168,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
               <div className="relative group">
-                <Mail weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
+                <Envelope weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
                 <Input
                   id="email"
                   type="email"
@@ -294,15 +295,13 @@ export default function LoginPage() {
             </h2>
 
             <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
-              <div className="absolute z-20 w-20 h-20 rounded-[2.1rem] bg-white dark:bg-[#162228] flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.3)] ring-4 ring-[#213138] dark:ring-white/5">
-                <div className="w-18 h-18 relative">
-                  <Image
-                    src="/tropichat-logo.png"
-                    alt="TropiChat"
-                    fill
-                    unoptimized
-                    className="object-contain"
-                  />
+              <div className="absolute z-20 w-32 h-32 flex items-center justify-center transition-transform hover:scale-105 duration-500">
+                <div className="w-28 h-28 relative">
+                   <img 
+                     src="/tropichat-logo.png" 
+                     alt="TropiChat" 
+                     className="w-full h-full object-contain filter drop-shadow-2xl"
+                   />
                 </div>
               </div>
 
@@ -315,8 +314,8 @@ export default function LoginPage() {
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                 className="absolute w-44 h-44"
               >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-1.5">
-                  <WhatsAppBrandIcon className="w-full h-full" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-1.5 transition-transform hover:scale-110">
+                  <WhatsAppBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
               </motion.div>
 
@@ -325,11 +324,11 @@ export default function LoginPage() {
                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                 className="absolute w-72 h-72"
               >
-                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
-                  <InstagramBrandIcon className="w-full h-full" />
+                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
+                  <InstagramBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
-                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5 p-2">
-                  <MessengerBrandIcon className="w-full h-full" />
+                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
+                  <MessengerBrandIcon className="w-full h-full drop-shadow-lg" />
                 </div>
               </motion.div>
 
@@ -338,21 +337,26 @@ export default function LoginPage() {
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
                 className="absolute w-[380px] h-[380px]"
               >
-                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <CheckCircle weight="bold" className="w-7 h-7 text-[#007B85]" />
+                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" 
+                     alt="Gmail" 
+                     className="w-full h-full drop-shadow-xl"
+                   />
                 </div>
-                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-xl bg-white dark:bg-[#162228] shadow-xl flex items-center justify-center -rotate-[inherit] ring-1 ring-slate-100 dark:ring-white/5">
-                  <div className="flex flex-col items-center">
-                    <div className="text-[10px] font-bold text-[#FF7E36]">VIP</div>
-                    <div className="w-6 h-1 rounded-full bg-[#FF7E36]/20 mt-0.5" />
-                  </div>
+                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
+                   <img 
+                     src="https://upload.wikimedia.org/wikipedia/commons/5/51/IMessage_logo.svg" 
+                     alt="SMS" 
+                     className="w-full h-full drop-shadow-xl"
+                   />
                 </div>
               </motion.div>
             </div>
 
             <div className="mt-12 text-center">
               <p className="text-white/70 max-w-sm mx-auto text-sm leading-relaxed">
-                Compatible with <span className="font-bold text-white">WhatsApp, Instagram, Facebook</span> and more for a smooth messaging experience.
+                Compatible with <span className="font-bold text-white">WhatsApp, Instagram, Facebook, Email, and SMS</span> for a smooth messaging experience.
               </p>
             </div>
 

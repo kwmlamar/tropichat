@@ -76,6 +76,32 @@ const channelConfig = {
     borderColor: "border-[#0084FF]/20",
     icon: (className: string) => <MessengerSvg className={className} />,
   },
+  email: {
+    label: "Email",
+    color: "text-[#EA4335]",
+    bg: "bg-[#EA4335]/10",
+    borderColor: "border-[#EA4335]/20",
+    icon: (className: string) => (
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" 
+        alt="Gmail" 
+        className={className}
+      />
+    ),
+  },
+  sms: {
+    label: "SMS",
+    color: "text-[#25D366]",
+    bg: "bg-[#25D366]/10",
+    borderColor: "border-[#25D366]/20",
+    icon: (className: string) => (
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/5/51/IMessage_logo.svg" 
+        alt="SMS" 
+        className={className}
+      />
+    ),
+  },
 }
 
 const sizeMap = {

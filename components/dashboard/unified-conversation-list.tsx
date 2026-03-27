@@ -19,6 +19,7 @@ import { ChannelIcon, channelConfig } from "./channel-icon"
 import { ExpandableTabs } from "@/components/ui/expandable-tabs"
 import { cn, formatDistanceToNow, getConversationDisplayName } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { toast } from "sonner"
 import type { ConversationWithAccount } from "@/types/unified-inbox"
 import type { ChannelType } from "@/types/unified-inbox"
 
@@ -39,12 +40,16 @@ const AllIcon = () => <Inbox className="w-5 h-5" />
 const WhatsAppIcon = () => channelConfig.whatsapp.icon("w-5 h-5")
 const InstagramIcon = () => channelConfig.instagram.icon("w-5 h-5")
 const MessengerIcon = () => channelConfig.messenger.icon("w-5 h-5")
+const EmailIcon = () => channelConfig.email.icon("w-5 h-5")
+const SMSIcon = () => channelConfig.sms.icon("w-5 h-5")
 
-const channelFilters: { title: string; icon: any; value: ChannelType | "all" }[] = [
+const channelFilters: { title: string; icon: any; value: ChannelType | "all"; disabled?: boolean }[] = [
   { title: "All", icon: AllIcon, value: "all" },
   { title: "WhatsApp", icon: WhatsAppIcon, value: "whatsapp" },
   { title: "Instagram", icon: InstagramIcon, value: "instagram" },
   { title: "Facebook", icon: MessengerIcon, value: "messenger" },
+  { title: "Gmail", icon: EmailIcon, value: "email", disabled: true },
+  { title: "SMS", icon: SMSIcon, value: "sms", disabled: true },
 ]
 
 export function UnifiedConversationList({
@@ -153,18 +158,28 @@ export function UnifiedConversationList({
           <div className="px-6 py-3 lg:border-b border-gray-100 dark:border-[#1C1C1C] flex items-center overflow-x-auto no-scrollbar gap-5">
             {channelFilters.map((filter) => {
               const isActive = currentChannelFilter === filter.value
+              const isDisabled = filter.disabled
+              
               return (
                 <button
                   key={filter.value}
-                  onClick={() => onChannelFilter(filter.value)}
+                  onClick={() => {
+                    if (isDisabled) {
+                      toast.info(`${filter.title} integration coming soon!`)
+                      return
+                    }
+                    onChannelFilter(filter.value)
+                  }}
+                  disabled={isDisabled}
                   className={cn(
                     "whitespace-nowrap font-medium transition-all duration-200 relative py-1 flex items-center justify-center",
                     filter.value === "all" ? "text-[15px]" : "px-1",
-                    isActive ? "text-[#007B85]" : "text-gray-500 dark:text-[#525252] hover:text-gray-800 dark:hover:text-gray-100"
+                    isActive ? "text-[#007B85]" : "text-gray-500 dark:text-[#525252] hover:text-gray-800 dark:hover:text-gray-100",
+                    isDisabled && "opacity-30 cursor-not-allowed grayscale-[80%]"
                   )}
                 >
                   {filter.value === "all" ? filter.title : <filter.icon />}
-                  {isActive && (
+                  {isActive && !isDisabled && (
                     <motion.div
                       layoutId="active-tab"
                       className="absolute inset-0 bg-white dark:bg-[#0C0C0C] rounded-xl -z-10 border border-gray-100 dark:border-[#1C1C1C]"
@@ -267,7 +282,6 @@ export function UnifiedConversationList({
                         <Avatar
                           src={conversation.customer_avatar_url}
                           fallback={getConversationDisplayName(conversation)}
-                          size="md"
                           className="h-[52px] w-[52px] rounded-full border-none"
                         />
                          <div className="absolute -bottom-0.5 -right-0.5">
