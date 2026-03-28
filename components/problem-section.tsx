@@ -30,7 +30,7 @@ const afterList = [
 
 export function ProblemSection() {
   return (
-    <section className="relative bg-white py-24 md:py-32 overflow-hidden px-6">
+    <section className="relative bg-white py-16 md:py-32 overflow-hidden px-4 md:px-6">
       <div className="container mx-auto max-w-6xl">
         
         {/* Section Header */}
@@ -40,11 +40,11 @@ export function ProblemSection() {
            viewport={{ once: true }}
            className="text-center mb-16 md:mb-24"
         >
-           <h2 className="text-4xl md:text-6xl font-black text-[#213138] tracking-tighter leading-none mb-6">
+           <h2 className="text-3xl md:text-6xl font-black text-[#213138] tracking-tighter leading-none mb-6">
               Your inbox: <br className="md:hidden" />
-              <span className="text-gray-300">a before & after</span>
+              <span className="text-gray-200">a before & after</span>
            </h2>
-           <p className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-[0.2em]">More sales, less stress.</p>
+           <p className="text-base md:text-xl font-bold text-slate-500 uppercase tracking-[0.2em]">More sales, less stress.</p>
         </motion.div>
 
         {/* Comparison Grid */}
@@ -55,17 +55,17 @@ export function ProblemSection() {
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="rounded-[2.5rem] bg-gray-50 p-10 md:p-12 border border-gray-100 flex flex-col"
+            className="rounded-[2rem] md:rounded-[2.5rem] bg-gray-50 p-8 md:p-12 border border-gray-100 flex flex-col"
           >
-             <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">Before TropiChat:</p>
-             <h3 className="text-4xl md:text-5xl font-black text-[#213138] leading-none mb-10 tracking-tighter">
+             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Before TropiChat:</p>
+             <h3 className="text-3xl md:text-5xl font-black text-[#213138] leading-none mb-10 tracking-tighter">
                 All work <br /> and no play
              </h3>
-             <ul className="space-y-6 flex-1">
+             <ul className="space-y-5 flex-1">
                 {beforeList.map((item, i) => (
                   <li key={i} className="flex items-start gap-4">
-                     <XCircle weight="fill" className="text-gray-300 h-6 w-6 shrink-0 mt-0.5" />
-                     <p className="text-sm md:text-base font-bold text-gray-400 uppercase tracking-wide leading-tight">{item}</p>
+                     <XCircle weight="fill" className="text-gray-300 h-5 w-5 shrink-0 mt-0.5" />
+                     <p className="text-xs md:text-base font-bold text-gray-400 uppercase tracking-wide leading-tight">{item}</p>
                   </li>
                 ))}
              </ul>
@@ -85,20 +85,20 @@ export function ProblemSection() {
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="rounded-[2.5rem] bg-[#007B85] p-10 md:p-12 text-white shadow-2xl shadow-teal-500/20 relative overflow-hidden flex flex-col"
+            className="rounded-[2rem] md:rounded-[2.5rem] bg-[#007B85] p-8 md:p-12 text-white shadow-2xl shadow-teal-500/20 relative overflow-hidden flex flex-col"
           >
              {/* Decorative Background Pulsing Glow */}
              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-32 -mt-32" />
              
-             <p className="text-xs font-black uppercase tracking-widest opacity-60 mb-6 relative z-10">After TropiChat:</p>
-             <h3 className="text-4xl md:text-5xl font-black leading-none mb-10 tracking-tighter relative z-10">
+             <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-6 relative z-10">After TropiChat:</p>
+             <h3 className="text-3xl md:text-5xl font-black leading-none mb-10 tracking-tighter relative z-10">
                 Less grind <br /> and more pay
              </h3>
-             <ul className="space-y-6 flex-1 relative z-10">
+             <ul className="space-y-5 flex-1 relative z-10">
                 {afterList.map((item, i) => (
                   <li key={i} className="flex items-start gap-4">
-                     <CheckCircle weight="fill" className="text-white h-6 w-6 shrink-0 mt-0.5" />
-                     <p className="text-sm md:text-base font-black uppercase tracking-wide leading-tight">{item}</p>
+                     <CheckCircle weight="fill" className="text-white h-5 w-5 shrink-0 mt-0.5" />
+                     <p className="text-xs md:text-base font-black uppercase tracking-wide leading-tight">{item}</p>
                   </li>
                 ))}
              </ul>

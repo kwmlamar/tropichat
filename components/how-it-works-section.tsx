@@ -41,7 +41,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="relative bg-[#FF7E36] py-24 md:py-32 overflow-hidden">
+    <section className="relative bg-[#FF7E36] py-16 md:py-32 overflow-hidden px-4 md:px-0">
       <div className="absolute top-0 left-0 right-0 h-px bg-white/20" />
 
       <div className="container mx-auto px-4">
@@ -56,7 +56,7 @@ export function HowItWorksSection() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white shadow-sm">
             How It Works
           </div>
-          <h2 className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
              Up and running in{" "}
              <span className="text-white/60 underline decoration-white/30 underline-offset-8">
                3 simple steps

@@ -83,7 +83,7 @@ export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true)
 
   return (
-    <section className="relative bg-white py-24 md:py-32 overflow-hidden px-6">
+    <section className="relative bg-white py-16 md:py-32 overflow-hidden px-4 md:px-6">
       <div className="container mx-auto max-w-7xl">
         
         {/* Header */}
@@ -92,10 +92,10 @@ export function PricingSection() {
              initial={{ opacity: 0, y: 20 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true }}
-             className="text-4xl md:text-7xl font-black text-[#213138] tracking-tighter leading-none mb-8"
+             className="text-3xl md:text-7xl font-black text-[#213138] tracking-tighter leading-none mb-8"
            >
               Scale with your <br />
-              <span className="text-gray-300">Caribbean success</span>
+              <span className="text-gray-200">Caribbean success</span>
            </motion.h2>
 
            {/* Toggle */}
@@ -125,9 +125,9 @@ export function PricingSection() {
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ delay: idx * 0.1 }}
-               className={`relative p-8 md:p-10 rounded-[2.5rem] border ${
+               className={`relative p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border ${
                  tier.popular 
-                 ? 'bg-[#007B85] text-white border-transparent shadow-2xl shadow-teal-500/20 z-10 scale-105' 
+                 ? 'bg-[#007B85] text-white border-transparent shadow-2xl shadow-teal-500/20 z-10 md:scale-105' 
                  : 'bg-gray-50 border-gray-100 text-[#213138]'
                } flex flex-col transition-all duration-300 hover:translate-y-[-8px]`}
              >

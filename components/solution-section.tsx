@@ -42,7 +42,7 @@ const steps = [
 
 export function SolutionSection() {
   return (
-    <section className="relative bg-[#050505] py-24 md:py-32 overflow-hidden px-6">
+    <section className="relative bg-[#050505] py-16 md:py-32 overflow-hidden px-4 md:px-6">
       <div className="container mx-auto max-w-6xl">
         
         {/* Section Header */}
@@ -50,13 +50,13 @@ export function SolutionSection() {
            initial={{ opacity: 0, y: 20 }}
            whileInView={{ opacity: 1, y: 0 }}
            viewport={{ once: true }}
-           className="text-center mb-20 md:mb-24"
+           className="text-center mb-16 md:mb-24"
         >
-           <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none mb-6">
+           <h2 className="text-3xl md:text-6xl font-black text-white tracking-tighter leading-none mb-6">
               Three steps <br className="md:hidden" />
               <span className="text-gray-500">to world-class scale</span>
            </h2>
-           <p className="text-lg md:text-xl font-bold text-[#007B85] uppercase tracking-[0.2em]">Simple. Fast. Profitable.</p>
+           <p className="text-base md:text-xl font-bold text-[#007B85] uppercase tracking-[0.2em]">Simple. Fast. Profitable.</p>
         </motion.div>
 
         {/* Steps Grid */}
@@ -68,7 +68,7 @@ export function SolutionSection() {
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ delay: idx * 0.2 }}
-               className="group p-10 bg-[#111111] rounded-[2.5rem] border border-white/5 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center relative"
+               className="group p-8 md:p-10 bg-[#111111] rounded-[2rem] md:rounded-[2.5rem] border border-white/5 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col items-center text-center relative"
              >
                 {/* Step Number Badge */}
                 <div className={`absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 ${step.color} text-white rounded-full flex items-center justify-center font-black text-xl shadow-lg ring-8 ring-[#050505]`}>
@@ -104,13 +104,13 @@ export function SolutionSection() {
            whileInView={{ opacity: 1 }}
            viewport={{ once: true }}
            transition={{ delay: 0.6 }}
-           className="mt-24 bg-[#007B85] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden"
+           className="mt-16 md:mt-24 bg-[#007B85] rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden"
         >
            {/* Visual Flourish */}
            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent" />
            <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/5 rounded-full blur-[100px]" />
            
-           <h3 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-8 relative z-10">
+           <h3 className="text-2xl md:text-5xl font-black text-white tracking-tighter mb-8 relative z-10">
               Ready to claim your <br className="hidden md:block" /> time back?
            </h3>
            

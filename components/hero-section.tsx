@@ -60,7 +60,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black pt-56 pb-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-black pt-32 md:pt-48 lg:pt-56 pb-20">
       
       {/* 📸 ULTRA-HD FULL-BLEED BACKGROUND IMAGE */}
       <div className="absolute inset-0 z-0">
@@ -96,9 +96,9 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-6xl md:text-8xl lg:text-9xl font-black text-white leading-[0.85] tracking-tighter mb-8"
+              className="text-5xl md:text-8xl lg:text-9xl font-black text-white leading-[0.95] md:leading-[0.85] tracking-tighter mb-8 max-w-[14ch]"
             >
-              Make the <br /> most out of <br />
+              Make the <br className="hidden sm:block" /> most out of <br className="hidden sm:block" />
               <span className="text-[#007B85] drop-shadow-2xl">every chat.</span>
             </motion.h1>
 
@@ -106,7 +106,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-xl md:text-2xl text-gray-300 font-bold max-w-xl mb-12 leading-tight uppercase tracking-wide"
+              className="text-lg md:text-2xl text-gray-300 font-bold max-w-xl mb-12 leading-tight uppercase tracking-wide opacity-90"
             >
               Sell more, engage better, and grow your Caribbean audience with powerful automations for Instagram, WhatsApp, and Messenger.
             </motion.p>
@@ -130,24 +130,24 @@ export function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="mt-20 flex flex-wrap items-center gap-10 opacity-60 text-white"
+              className="mt-16 md:mt-20 flex flex-wrap items-center justify-center sm:justify-start gap-8 md:gap-10 opacity-60 text-white"
             >
                <div className="flex items-center gap-2">
-                  <Whatsapp size={32} weight="fill" className="text-green-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase">WhatsApp</span>
+                  <Whatsapp size={28} weight="fill" className="text-green-500" />
+                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">WhatsApp</span>
                </div>
                <div className="flex items-center gap-2">
-                  <Instagram size={32} weight="fill" className="text-pink-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase">Instagram</span>
+                  <Instagram size={28} weight="fill" className="text-pink-500" />
+                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">Instagram</span>
                </div>
                <div className="flex items-center gap-2">
-                  <Messenger size={32} weight="fill" className="text-blue-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase">Messenger</span>
+                  <Messenger size={28} weight="fill" className="text-blue-500" />
+                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">Messenger</span>
                </div>
             </motion.div>
           </div>
 
-          <div className="relative lg:col-span-4 h-full min-h-[600px]">
+          <div className="relative lg:col-span-4 h-full min-h-[400px] md:min-h-[600px] hidden md:block">
              {/* Animated Chat Bubbles (Strategically placed over the entrepreneur) */}
              <FloatingBubble 
                 position={{ top: "35%", right: "8%" }} 

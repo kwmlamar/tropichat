@@ -54,7 +54,7 @@ const industries = [
 
 export function SocialProofSection() {
   return (
-    <section className="relative bg-[#007B85] py-24 md:py-40 overflow-hidden px-6">
+    <section className="relative bg-[#007B85] py-16 md:py-40 overflow-hidden px-4 md:px-6">
       {/* Background Decorative Element */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-50" />
       
@@ -74,7 +74,7 @@ export function SocialProofSection() {
              initial={{ opacity: 0, y: 20 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true }}
-             className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none"
+             className="text-3xl md:text-7xl font-black text-white tracking-tighter leading-none"
            >
               Powering the next <br />
               <span className="text-white/40">wave of local growth</span>
@@ -95,7 +95,7 @@ export function SocialProofSection() {
                 <div className="mb-6 inline-flex p-4 rounded-3xl bg-white/10 border border-white/20 group-hover:border-white transition-colors">
                    <stat.icon weight="fill" className={`h-8 w-8 text-white`} />
                 </div>
-                <h3 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-2 group-hover:scale-110 transition-transform duration-500">
+                <h3 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-2 group-hover:scale-110 transition-transform duration-500">
                    {stat.value}
                 </h3>
                 <p className="text-sm font-black uppercase tracking-widest text-white/60 mb-4">
@@ -109,7 +109,7 @@ export function SocialProofSection() {
         </div>
 
         {/* Industry Focus */}
-        <div className="border-t border-white/10 pt-24">
+        <div className="border-t border-white/10 pt-16 md:pt-24">
            <p className="text-center text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-12">Built for the region's top industries</p>
            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
               {industries.map((industry, idx) => (
@@ -126,12 +126,12 @@ export function SocialProofSection() {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mt-32 p-12 md:p-20 bg-black/20 rounded-[3rem] border border-white/10 text-center"
+          className="mt-16 md:mt-32 p-8 md:p-20 bg-black/20 rounded-[2.5rem] md:rounded-[3rem] border border-white/10 text-center"
         >
            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-white text-[10px] font-black uppercase tracking-widest mb-8">
               Limited Founder Access
            </div>
-           <h3 className="text-3xl md:text-6xl font-black text-white tracking-tighter mb-8 leading-none">
+           <h3 className="text-2xl md:text-6xl font-black text-white tracking-tighter mb-8 leading-none">
               Be one of our first <br className="hidden md:block" /> 10 success stories
            </h3>
            <p className="text-lg md:text-xl font-bold text-white/60 max-w-2xl mx-auto mb-12 uppercase tracking-wide">
