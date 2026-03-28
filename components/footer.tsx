@@ -53,11 +53,11 @@ export function Footer() {
               Helping Caribbean small businesses turn messaging chaos into organized success — across WhatsApp, Instagram &amp; Facebook Messenger.
             </p>
             <a
-              href="mailto:support@tropichat.com"
+              href="mailto:lamar@tropitech.org"
               className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#007B85]"
             >
               <Mail className="h-4 w-4" />
-              support@tropichat.com
+              lamar@tropitech.org
             </a>
             {/* Social icons */}
             <div className="mt-5 flex gap-2">

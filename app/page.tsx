@@ -23,7 +23,7 @@ export default function Home() {
   }, [router])
 
   return (
-    <>
+    <div className="light bg-white text-slate-900">
       <SiteHeader />
       <main className="min-h-screen">
         <HeroSection />
@@ -42,6 +42,6 @@ export default function Home() {
         </section>
         <Footer />
       </main>
-    </>
+    </div>
   )
 }

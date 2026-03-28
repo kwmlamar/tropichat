@@ -6,18 +6,17 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { 
-  Envelope, 
-  ChatTeardropDots as SmsIcon,
+  Envelope as Mail, 
   Lock, 
   Eye, 
   EyeSlash as EyeOff, 
   CircleNotch as Loader2, 
-  CheckCircle 
+  CaretLeft,
+  Translate
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { signIn, signInWithOAuth } from "@/lib/supabase"
 import { toast } from "sonner"
 
@@ -32,68 +31,17 @@ function GoogleIcon({ className }: { className?: string }) {
   )
 }
 
-function AppleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.05 20.28c-.96.95-2.12 1.18-3.08 1.18-.99 0-1.85-.29-2.73-.29-.86 0-1.78.3-2.73.3-1.01 0-2.2-.33-3.23-1.35C3.12 18.02 2 14.73 2 11.23c0-3.66 2.11-5.71 4.29-5.71 1.14 0 2.04.38 2.76.78.6.35 1.25.75 2 .75s1.4-.4 2-.75c.7-.42 1.6-.78 2.76-.78 1.83 0 3.42 1.39 4.19 3-.47.28-1.12.75-1.12 2.22 0 1.89 1.49 2.58 1.95 2.78-.32 1.14-1.04 2.59-1.86 3.51-.62.69-1.28 1.34-2.16 1.34-.88-.02-1.12-.51-2.16-.51-1.05 0-1.32.48-2.16.51-.01.01-.01.01-.01.01zM12 5.03c-.02-1.83 1.5-3.53 3.39-3.53.18 0 .37.02.54.06.12 1.98-1.51 3.69-3.39 3.69-.18 0-.37-.02-.54-.06z" />
-    </svg>
-  )
-}
-
-function MicrosoftIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24">
-      <path fill="#f35325" d="M1 1h10v10H1z" />
-      <path fill="#81bc06" d="M13 1h10v10H13z" />
-      <path fill="#05a6f0" d="M1 13h10v10H1z" />
-      <path fill="#ffba08" d="M13 13h10v10H13z" />
-    </svg>
-  )
-}
-
-function WhatsAppBrandIcon({ className }: { className?: string }) {
+function FacebookIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.072 1.761C6.462 1.761 1.9 6.323 1.9 11.933c0 1.79.467 3.538 1.353 5.074L1 22.423l5.589-1.465a10.124 10.124 0 004.483 1.056h.004c5.61 0 10.172-4.562 10.172-10.172 0-2.72-1.059-5.276-2.981-7.198a10.116 10.116 0 00-7.2-2.983z" fill="#25D366" />
-      <path d="M17.472 14.382c-.301-.15-1.767-.872-2.04-.971-.272-.099-.47-.149-.669.15-.198.299-.769.971-.942 1.171-.173.199-.347.225-.648.075-.301-.15-1.272-.469-2.422-1.496-.893-.797-1.495-1.782-1.67-2.081-.174-.3-.018-.462.13-.61.137-.133.3-.349.45-.523.15-.174.199-.298.298-.497.1-.199.05-.374-.025-.523-.075-.15-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.011c-.198 0-.52.074-.792.373-.272.299-1.04 1.016-1.04 2.479 0 1.463 1.065 2.877 1.213 3.076.149.199 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.766-.721 2.015-1.419.25-.699.25-1.296.174-1.419-.075-.123-.276-.199-.577-.349z" fill="white" />
-    </svg>
-  )
-}
-
-function InstagramBrandIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="5" fill="url(#insta_gradient_2)" />
-      <path d="M12 6.8c-2.8 0-5.1 2.3-5.1 5.2s2.3 5.2 5.1 5.2 5.1-2.3 5.1-5.2S14.8 6.8 12 6.8zm0 8.4c-1.8 0-3.3-1.5-3.3-3.2 0-1.8 1.5-3.2 3.3-3.2s3.3 1.4 3.3 3.2c0 1.7-1.4 3.2-3.3 3.2zM18.8 6.9c0 .6-.5 1.1-1.1 1.1-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1.6 0 1.1.5 1.1 1.1z" fill="white" />
-      <path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.3-2.3.5-.6.2-1.1.6-1.6 1.1-.5.5-.9 1-1.1 1.6-.2.6-.4 1.3-.5 2.3-.1 1-.1 1.4-.1 4.1s0 3.1.1 4.1c.1 1 .3 1.7.5 2.3.2.6.6 1.1 1.1 1.6.5.5 1 1 1.6 1.1.6.2 1.3.4 2.3.5 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c1-.1 1.7-.3 2.3-.5.6-.2 1.1-.6 1.6-1.1.5-.5.9-1 1.1-1.6.2-.6.4-1.3.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.3-1.7-.5-2.3-.2-.6-.6-1.1-1.1-1.6-.5-.5-1-1-1.6-1.1-.6-.2-1.3-.4-2.3-.5C15.1 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1.9.1 1.4.2 1.7.3.4.2.7.4 1 .7.3.3.5.6.7 1 .1.3.3.8.4 1.7.1 1 .1 1.3.1 4s0 3-.1 4c-.1.9-.2 1.4-.3 1.7-.2.4-.4.7-.7 1-.3.3-.6.5-1 .7-.3.1-.8.3-1.7.4-1 .1-1.3.1-4 .1s-3 0-4-.1c-.9-.1-1.4-.2-1.7-.3-.4-.2-.7-.4-1-.7-.3-.3-.5-.6-.7-1-.1-.3-.3-.8-.4-1.7-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-.9.2-1.4.3-1.7.2-.4.4-.7.7-1 .3-.3.6-.5 1-.7.3-.1.8-.3 1.7-.4 1-.1 1.3-.1 4-.1z" fill="white" />
-      <defs>
-        <linearGradient id="insta_gradient_2" x1="2.5" y1="21.5" x2="21.6" y2="2.5" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F58529" />
-          <stop offset="0.1" stopColor="#FEDA77" />
-          <stop offset="1" stopColor="#DD2A7B" />
-        </linearGradient>
-      </defs>
-    </svg>
-  )
-}
-
-function MessengerBrandIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C6.47715 2 2 6.14214 2 11.2462C2 14.1561 3.46014 16.7491 5.73693 18.4601C5.9318 18.6046 6.04907 18.8354 6.04907 19.0818L6.03541 21.2281C6.0289 21.464 6.27376 21.6247 6.4782 21.5061L8.9056 20.1098C9.04353 20.031 9.20818 20.0125 9.35914 20.0573C10.2081 20.3094 11.0877 20.4925 12 20.4925C17.5228 20.4925 22 16.3504 22 11.2462C22 6.14214 17.5228 2 12 2Z" fill="url(#messenger_gradient_2)" />
-      <path d="M6.3 12.87l3.295-5.242a.858.858 0 0 1 1.233-.243l3.053 2.29a.428.428 0 0 0 .513 0l3.664-2.793a.286.286 0 0 1 .428.37l-3.295 5.242a.858.858 0 0 1-1.233.243l-3.053-2.29a.428.428 0 0 0-.513 0l-3.664 2.793a.286.286 0 0 1-.428-.37z" fill="white" />
-      <defs>
-        <linearGradient id="messenger_gradient_2" x1="12" y1="20.4925" x2="12" y2="2" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0084FF" />
-          <stop offset="1" stopColor="#00C6FF" />
-        </linearGradient>
-      </defs>
+      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" fill="#1877F2"/>
     </svg>
   )
 }
 
 export default function LoginPage() {
   const router = useRouter()
+  const [useEmail, setUseEmail] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -103,15 +51,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
     const { data, error } = await signIn(email, password)
-
     if (error) {
       toast.error(error)
       setIsLoading(false)
       return
     }
-
     router.push("/dashboard")
   }
 
@@ -127,247 +72,229 @@ export default function LoginPage() {
   const anyLoading = isLoading || oauthLoading !== null
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFB] dark:bg-[#0A0A0A]">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-[#007B85]/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[120px] rounded-full" />
+    <div className="min-h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
+      
+      {/* ─── LEFT COLUMN: BRANDING & ILLUSTRATION ────────────────────────────── */}
+      <div className="hidden lg:flex w-full lg:w-[40%] xl:w-[45%] bg-[#FAF9F6] flex-col p-12 relative overflow-hidden">
+        
+        {/* Soft Aurora Glass Backgrounds */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+           <div className="absolute top-[10%] right-[-5%] w-[400px] h-[400px] bg-[#007B85]/10 blur-[100px] rounded-full" />
+           <div className="absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[100px] rounded-full" />
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#007B85]/5 blur-[150px] rounded-full" />
+        </div>
+
+        {/* Brand Logo */}
+        <div className="mb-20 relative z-10">
+          <Link href="/" className="inline-flex items-center gap-2 group">
+             <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+               <Image
+                 src="/tropichat-logo.png"
+                 alt="TropiChat"
+                 width={48}
+                 height={48}
+                 unoptimized
+                 className="h-8 w-8 object-contain transition-transform group-hover:rotate-12"
+               />
+             </div>
+             <span className="text-xl font-black tracking-tighter text-[#213138]">TropiChat</span>
+          </Link>
+        </div>
+
+        {/* Content Centered */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center relative z-10">
+           <motion.div
+             initial={{ opacity: 0, scale: 0.9 }}
+             animate={{ opacity: 1, scale: 1 }}
+             transition={{ duration: 0.8 }}
+             className="relative w-full max-w-[500px] aspect-square mb-12 bg-white rounded-[3.5rem] border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] overflow-hidden group"
+           >
+              <Image 
+                src="/tropichat_login_illustration.png" 
+                alt="Welcome back to your TropiChat Dashboard"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none" />
+           </motion.div>
+
+           <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ delay: 0.2 }}
+           >
+             <h1 className="text-4xl xl:text-5xl font-black text-[#213138] leading-[1.1] tracking-tighter mb-4">
+                Welcome back
+             </h1>
+             <p className="text-lg text-slate-400 font-bold max-w-[300px] mx-auto uppercase tracking-wide">
+                manage your customer <br /> interactions
+             </p>
+           </motion.div>
+        </div>
+
+        {/* Bottom Back Button */}
+        <div className="mt-auto relative z-10">
+           <Link 
+             href="/" 
+             className="inline-flex items-center gap-2 text-sm font-black text-slate-400 hover:text-[#007B85] transition-colors"
+           >
+              <CaretLeft weight="bold" /> Back
+           </Link>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-6xl bg-white dark:bg-[#0A0A0A] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-[#222222] overflow-hidden flex flex-col lg:flex-row min-h-[700px]"
-      >
-        <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center">
-          <div className="mb-10 lg:mb-12">
-            <Link href="/" className="inline-block">
+      {/* ─── RIGHT COLUMN: AUTH ACTIONS ──────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col bg-white">
+        
+        {/* Top Navigation */}
+        <div className="p-6 flex justify-between lg:justify-end items-center gap-6">
+           <div className="lg:hidden">
               <Image
                 src="/tropichat-logo.png"
                 alt="TropiChat"
-                width={64}
-                height={64}
+                width={32}
+                height={32}
                 unoptimized
-                className="h-14 w-14 object-contain transition-transform duration-300 hover:scale-110"
               />
-            </Link>
-          </div>
+           </div>
 
-          <div className="mb-10">
-            <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 dark:bg-teal-500/10 shadow-sm ring-1 ring-teal-100 dark:ring-teal-500/20">
-              <Lock weight="bold" className="h-7 w-7 text-[#007B85]" />
-            </div>
-            <h1 className="text-3xl font-bold text-[#213138] dark:text-white">
-              Login to your account!
-            </h1>
-            <p className="text-slate-500 dark:text-gray-400 mt-2">
-              Enter your registered email address and password to login!
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Email</Label>
-              <div className="relative group">
-                <Envelope weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="eg. pixelcot@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" title="Password" className="text-sm font-semibold text-slate-700 dark:text-gray-300">Password</Label>
-              <div className="relative group">
-                <Lock weight="bold" className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#007B85] transition-colors" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-12 pr-12 h-14 rounded-2xl border-slate-200 dark:border-white/10 focus-visible:ring-[#007B85] bg-slate-50/50 dark:bg-white/5 dark:text-white dark:placeholder-gray-500 transition-all font-medium"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff weight="bold" className="h-5 w-5" /> : <Eye weight="bold" className="h-5 w-5" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <label
-                  htmlFor="remember"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-500 dark:text-gray-400 cursor-pointer"
-                >
-                  Remember me
-                </label>
-              </div>
-              <Link
-                href="/forgot-password"
-                className="text-sm font-bold text-[#007B85] hover:underline"
+           <div className="flex items-center gap-4">
+              <button className="hidden sm:flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#213138]">
+                 <Translate weight="bold" /> English
+              </button>
+              <Button 
+                asChild
+                variant="outline" 
+                className="rounded-full border-[#007B85] text-[#007B85] hover:bg-[#007B85] hover:text-white px-8 h-12 text-[10px] font-black uppercase tracking-widest"
               >
-                Forgot Password?
-              </Link>
-            </div>
+                 <Link href="/signup">SIGN UP</Link>
+              </Button>
+           </div>
+        </div>
 
-            <Button
-              type="submit"
-              disabled={anyLoading}
-              className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white h-14 rounded-2xl text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98]"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 weight="bold" className="h-5 w-5 animate-spin" />
-                  Signing in...
-                </span>
+        {/* Content Area */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+           <div className="w-full max-w-sm space-y-10">
+              
+              {!useEmail ? (
+                /* ─── Social Logins Area ─── */
+                <div className="space-y-4">
+                   <h2 className="lg:hidden text-3xl font-black text-center mb-8">Sign in</h2>
+
+                   <Button
+                     onClick={() => handleOAuth("google")}
+                     disabled={anyLoading}
+                     className="w-full h-14 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-3 transition-all"
+                   >
+                      <GoogleIcon className="h-5 w-5" />
+                      Sign in with Google
+                   </Button>
+
+                   <Button
+                     disabled={anyLoading}
+                     className="w-full h-14 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-3 transition-all"
+                   >
+                      <FacebookIcon className="h-5 w-5" />
+                      Sign in with Facebook
+                   </Button>
+
+                   <div className="relative py-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-100" />
+                      </div>
+                      <div className="relative flex justify-center text-[10px] uppercase font-bold text-slate-400">
+                        <span className="bg-white px-4 tracking-widest leading-none">Or use email</span>
+                      </div>
+                   </div>
+
+                   <Button
+                     onClick={() => setUseEmail(true)}
+                     variant="ghost"
+                     className="w-full h-12 text-slate-400 hover:text-[#007B85] font-black uppercase tracking-widest text-[10px]"
+                   >
+                      Sign in with email
+                   </Button>
+                </div>
               ) : (
-                "Login"
+                /* ─── Email Form Area ─── */
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="space-y-6"
+                >
+                   <div className="flex items-center justify-between mb-4">
+                      <button 
+                        onClick={() => setUseEmail(false)}
+                        className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#007B85] flex items-center gap-1"
+                      >
+                         <CaretLeft weight="bold" /> Other options
+                      </button>
+                   </div>
+
+                   <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Work Email</Label>
+                        <Input 
+                          placeholder="name@company.com" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85]" 
+                          required
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between items-center group">
+                           <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Password</Label>
+                           <Link href="/forgot-password" className="text-[10px] font-black text-[#007B85] border-none p-0 h-auto hover:underline uppercase tracking-widest">
+                              Forgot?
+                           </Link>
+                        </div>
+                        <div className="relative">
+                          <Input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••••••" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85]" 
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            {showPassword ? <EyeOff weight="bold" /> : <Eye weight="bold" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all mt-4"
+                      >
+                         {isLoading ? <Loader2 className="animate-spin" /> : "SIGN IN"}
+                      </Button>
+                   </form>
+                </motion.div>
               )}
-            </Button>
-          </form>
 
-          <div className="mt-8">
-            <div className="relative mb-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-100 dark:border-[#222222]" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold text-slate-400 dark:text-gray-500">
-                <span className="bg-white dark:bg-[#0A0A0A] px-4">Or login with</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <Button
-                variant="outline"
-                onClick={() => handleOAuth("google")}
-                className="h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all hover:scale-[1.02]"
-              >
-                <GoogleIcon className="h-6 w-6" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all hover:scale-[1.02]"
-              >
-                <AppleIcon className="h-6 w-6 dark:text-white text-black" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-14 rounded-2xl border-slate-200 dark:border-[#3A3A3A] bg-transparent hover:bg-slate-50 dark:hover:bg-[#222222] hover:border-slate-300 dark:hover:border-[#4A4A4A] transition-all hover:scale-[1.02]"
-              >
-                <MicrosoftIcon className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
-
-          <p className="mt-10 text-center text-sm text-slate-500 dark:text-gray-400">
-            Don't have an account?{" "}
-            <Link
-              href="/signup"
-              className="text-[#007B85] font-bold hover:underline"
-            >
-              Sign up for free
-            </Link>
-          </p>
-        </div>
-
-        <div className="hidden lg:flex w-[45%] bg-[#213138] p-12 flex-col justify-center relative overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#007B85]/20 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#FF7E36]/10 blur-[100px] rounded-full" />
-          </div>
-
-          <div className="relative flex-1 flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold text-white text-center mb-4">
-              Manage All Messages <br />
-              <span className="text-[#007B85]">in One Place</span>
-            </h2>
-
-            <div className="relative mt-8 flex items-center justify-center w-[400px] h-[400px]">
-              <div className="absolute z-20 w-32 h-32 flex items-center justify-center transition-transform hover:scale-105 duration-500">
-                <div className="w-28 h-28 relative">
-                   <img 
-                     src="/tropichat-logo.png" 
-                     alt="TropiChat" 
-                     className="w-full h-full object-contain filter drop-shadow-2xl"
-                   />
-                </div>
-              </div>
-
-              <div className="absolute w-44 h-44 rounded-full border border-white/10" />
-              <div className="absolute w-72 h-72 rounded-full border border-white/20" />
-              <div className="absolute w-[380px] h-[380px] rounded-full border border-white/10" />
-
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute w-44 h-44"
-              >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-1.5 transition-transform hover:scale-110">
-                  <WhatsAppBrandIcon className="w-full h-full drop-shadow-lg" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="absolute w-72 h-72"
-              >
-                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
-                  <InstagramBrandIcon className="w-full h-full drop-shadow-lg" />
-                </div>
-                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center -rotate-[inherit] p-2 transition-transform hover:scale-110">
-                  <MessengerBrandIcon className="w-full h-full drop-shadow-lg" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[380px] h-[380px]"
-              >
-                <div className="absolute top-[14.6%] left-[85.4%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
-                   <img 
-                     src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" 
-                     alt="Gmail" 
-                     className="w-full h-full drop-shadow-xl"
-                   />
-                </div>
-                <div className="absolute top-[88%] left-[12%] -translate-x-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center -rotate-[inherit] transition-transform hover:scale-110">
-                   <img 
-                     src="https://upload.wikimedia.org/wikipedia/commons/5/51/IMessage_logo.svg" 
-                     alt="SMS" 
-                     className="w-full h-full drop-shadow-xl"
-                   />
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="mt-12 text-center">
-              <p className="text-white/70 max-w-sm mx-auto text-sm leading-relaxed">
-                Compatible with <span className="font-bold text-white">WhatsApp, Instagram, Facebook, Email, and SMS</span> for a smooth messaging experience.
+              {/* Legal Footer */}
+              <p className="text-[10px] text-center text-slate-400 font-medium leading-relaxed">
+                 By signing in, you agree to Manychat&#39;s <br />
+                 <Link href="/terms" className="text-[#007B85] hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-[#007B85] hover:underline">Privacy Policy</Link>
               </p>
-            </div>
-
-            <div className="mt-12 flex justify-center gap-2">
-              <div className="h-1.5 w-10 rounded-full bg-[#007B85]" />
-              <div className="h-1.5 w-5 rounded-full bg-white/10" />
-              <div className="h-1.5 w-5 rounded-full bg-white/10" />
-            </div>
-          </div>
+           </div>
         </div>
-      </motion.div>
+
+        {/* Footer Navigation (Mobile) */}
+        <div className="p-6 lg:hidden flex justify-center text-[10px] font-black uppercase tracking-widest text-slate-400 gap-6">
+           <Link href="/privacy">Privacy</Link>
+           <Link href="/terms">Terms</Link>
+           <Link href="/help">Help</Link>
+        </div>
+      </div>
     </div>
   )
 }
