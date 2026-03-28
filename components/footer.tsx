@@ -31,7 +31,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/5 bg-[#213138] dark:bg-[#0A0A0A] text-gray-400 overflow-hidden">
+    <footer className="relative border-t border-white/5 bg-black text-gray-400 overflow-hidden">
       {/* Subtle glow */}
       <div className="absolute left-1/2 -top-40 h-80 w-80 -translate-x-1/2 rounded-full bg-[#007B85]/10 blur-3xl pointer-events-none" />
 

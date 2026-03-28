@@ -56,6 +56,7 @@ export default function RevenueDashboard() {
       const { data: customers } = await client
         .from('customers')
         .select('plan, status')
+        .neq('id', '29227a12-ca82-4796-a9c4-30ec0c6fa0e4')
 
       if (customers) {
         const counts = { starter: 0, medium: 0, pro: 0, elite: 0, free: 0 }
@@ -222,9 +223,9 @@ export default function RevenueDashboard() {
 
           {/* Right Sidebar - Action & Summary */}
           <div className="lg:col-span-4 space-y-8">
-            <div className="bg-[#213138] dark:bg-[#111] text-white rounded-3xl p-8 relative overflow-hidden shadow-xl">
+            <div className="bg-white dark:bg-[#111] text-[#213138] dark:text-white rounded-3xl p-8 relative overflow-hidden shadow-sm border border-slate-200 dark:border-[#1A1A1A]">
               <div className="absolute top-0 right-0 p-8 opacity-10">
-                <TrendingUp size={120} strokeWidth={3} />
+                <TrendingUp size={120} strokeWidth={3} className="text-[#007B85]" />
               </div>
               
               <div className="relative z-10">
@@ -236,18 +237,18 @@ export default function RevenueDashboard() {
                 
                 <div className="space-y-6 mb-8">
                   <div className="flex items-center gap-4">
-                    <div className="h-2 flex-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-2 flex-1 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
                       <div className="h-full bg-[#007B85]" style={{ width: `${(metrics.currentMRR / metrics.goalMRR) * 100}%` }} />
                     </div>
-                    <span className="text-sm font-bold">{Math.round((metrics.currentMRR / metrics.goalMRR) * 100)}%</span>
+                    <span className="text-sm font-bold text-slate-500 dark:text-white">{Math.round((metrics.currentMRR / metrics.goalMRR) * 100)}%</span>
                   </div>
-                  <p className="text-sm opacity-70 leading-relaxed">
-                    You need to add ~110 users per month to stay on track for the $30k MRR aggressive growth goal.
+                  <p className="text-sm text-slate-500 dark:text-gray-400 leading-relaxed font-medium">
+                    You need to add <span className="text-[#213138] dark:text-white font-black">~110 users</span> per month to stay on track for the $30k MRR aggressive growth goal.
                   </p>
                 </div>
 
-                <button className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2">
-                  View Sales Roadmap <ChevronRight className="h-4 w-4" />
+                <button className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-[#007B85]/20 flex items-center justify-center gap-2">
+                   View Sales Roadmap <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>

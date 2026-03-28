@@ -1,149 +1,139 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { SearchX, MessageSquareX, Users, Eye } from "lucide-react"
+import { 
+  XCircle, 
+  CheckCircle, 
+  Clock, 
+  ChatCircleDots, 
+  TrendUp, 
+  Users,
+  Warning,
+  Lightning
+} from "@phosphor-icons/react"
 
-const problems = [
-  {
-    icon: SearchX,
-    title: "Hours lost hunting for a single message",
-    description:
-      "Thursday afternoon: you're checking WhatsApp, then Instagram DMs, then Facebook. Three apps. Three inboxes. Zero organization. That order from Ms. Johnson? Buried.",
-    stat: "2+ hours lost daily to inbox chaos",
-    accent: "from-red-500/20 to-rose-500/5",
-    iconBg: "bg-red-50",
-    iconColor: "text-red-500",
-    statColor: "text-red-600 bg-red-50",
-  },
-  {
-    icon: MessageSquareX,
-    title: "You ghost customers without meaning to",
-    description:
-      "A quote request on WhatsApp. A follow-up on Instagram. A third on Facebook. By Tuesday, messages are buried and they've already bought from the competition down the road.",
-    stat: "15–20% of sales lost to missed messages",
-    accent: "from-orange-500/20 to-amber-500/5",
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
-    statColor: "text-orange-700 bg-orange-50",
-  },
-  {
-    icon: Users,
-    title: "Your team has no idea what's going on",
-    description:
-      "Your helper replies on WhatsApp, not knowing the same customer followed up on Instagram. No shared view. No coordination. Just confused customers and a frustrated team.",
-    stat: "$500+/month lost to team miscommunication",
-    accent: "from-purple-500/20 to-violet-500/5",
-    iconBg: "bg-purple-50",
-    iconColor: "text-purple-500",
-    statColor: "text-purple-700 bg-purple-50",
-  },
-  {
-    icon: Eye,
-    title: "You can't see who owes what",
-    description:
-      "Facebook last week, WhatsApp yesterday — are they a regular? Did they pay? You're piecing together one customer's entire history across three different apps with no single source of truth.",
-    stat: "Zero visibility = zero growth strategy",
-    accent: "from-slate-500/20 to-gray-500/5",
-    iconBg: "bg-slate-50",
-    iconColor: "text-slate-600",
-    statColor: "text-slate-700 bg-slate-100",
-  },
+const beforeList = [
+  "Copy-pasting the same reply 40 times a day.",
+  "Losing hot leads in buried WhatsApp chats.",
+  "Missed sales because you were asleep.",
+  "Team has no idea who already replied.",
+  "Your inbox buried you deeper every hour."
 ]
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-}
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-}
+const afterList = [
+  "AI handles common questions instantly.",
+  "Leads are tagged, organized, and tracked.",
+  "Automations sell for you 24/7.",
+  "One shared inbox for your entire team.",
+  "Every interaction is a chance to convert."
+]
 
 export function ProblemSection() {
   return (
-    <section className="relative bg-[#F8FAFB] dark:bg-[#0A0A0A] py-24 md:py-32 overflow-hidden">
-      {/* Subtle top divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
-
-      <div className="container mx-auto px-4">
+    <section className="relative bg-white py-24 md:py-32 overflow-hidden px-6">
+      <div className="container mx-auto max-w-6xl">
+        
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+           initial={{ opacity: 0, y: 20 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           className="text-center mb-16 md:mb-24"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
-            Sound familiar?
+           <h2 className="text-4xl md:text-6xl font-black text-[#213138] tracking-tighter leading-none mb-6">
+              Your inbox: <br className="md:hidden" />
+              <span className="text-gray-300">a before & after</span>
+           </h2>
+           <p className="text-lg md:text-xl font-bold text-slate-500 uppercase tracking-[0.2em]">More sales, less stress.</p>
+        </motion.div>
+
+        {/* Comparison Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative items-stretch">
+          
+          {/* BEFORE CARD */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[2.5rem] bg-gray-50 p-10 md:p-12 border border-gray-100 flex flex-col"
+          >
+             <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">Before TropiChat:</p>
+             <h3 className="text-4xl md:text-5xl font-black text-[#213138] leading-none mb-10 tracking-tighter">
+                All work <br /> and no play
+             </h3>
+             <ul className="space-y-6 flex-1">
+                {beforeList.map((item, i) => (
+                  <li key={i} className="flex items-start gap-4">
+                     <XCircle weight="fill" className="text-gray-300 h-6 w-6 shrink-0 mt-0.5" />
+                     <p className="text-sm md:text-base font-bold text-gray-400 uppercase tracking-wide leading-tight">{item}</p>
+                  </li>
+                ))}
+             </ul>
+             
+             {/* Loss Indicator */}
+             <div className="mt-12 pt-10 border-t border-gray-200">
+                <div className="flex items-center gap-3 text-red-500 mb-2">
+                   <Warning weight="bold" size={20} />
+                   <span className="font-black text-sm uppercase tracking-widest">Revenue Drain</span>
+                </div>
+                <p className="text-3xl font-black text-[#213138] tracking-tighter">$2,000+ lost per month</p>
+             </div>
+          </motion.div>
+
+          {/* AFTER CARD */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="rounded-[2.5rem] bg-[#007B85] p-10 md:p-12 text-white shadow-2xl shadow-teal-500/20 relative overflow-hidden flex flex-col"
+          >
+             {/* Decorative Background Pulsing Glow */}
+             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-32 -mt-32" />
+             
+             <p className="text-xs font-black uppercase tracking-widest opacity-60 mb-6 relative z-10">After TropiChat:</p>
+             <h3 className="text-4xl md:text-5xl font-black leading-none mb-10 tracking-tighter relative z-10">
+                Less grind <br /> and more pay
+             </h3>
+             <ul className="space-y-6 flex-1 relative z-10">
+                {afterList.map((item, i) => (
+                  <li key={i} className="flex items-start gap-4">
+                     <CheckCircle weight="fill" className="text-white h-6 w-6 shrink-0 mt-0.5" />
+                     <p className="text-sm md:text-base font-black uppercase tracking-wide leading-tight">{item}</p>
+                  </li>
+                ))}
+             </ul>
+
+             {/* Gain Indicator */}
+             <div className="mt-12 pt-10 border-t border-white/10 relative z-10">
+                <div className="flex items-center gap-3 text-white/60 mb-2">
+                   <Lightning weight="fill" size={20} className="text-amber-300" />
+                   <span className="font-black text-sm uppercase tracking-widest">Growth Engine</span>
+                </div>
+                <p className="text-3xl font-black tracking-tighter">Scale beyond your phone</p>
+             </div>
+          </motion.div>
+
+          {/* Center Connector (Arrow) OR Floating Icon */}
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-16 h-16 bg-white dark:bg-[#050505] border-4 border-gray-100 dark:border-[#222222] rounded-full items-center justify-center shadow-xl">
+              <Lightning weight="fill" className="text-[#007B85] h-8 w-8 animate-pulse" />
           </div>
-          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
-            The daily struggle every
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-              Caribbean business knows
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-gray-400 leading-relaxed">
-            WhatsApp, Instagram, Facebook — every inbox competes for your attention. And it's costing you real money, every single day.
-          </p>
-        </motion.div>
 
-        {/* Problem Cards Grid */}
+        </div>
+
+        {/* Final Affirmation */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid gap-5 md:grid-cols-2"
+           initial={{ opacity: 0 }}
+           whileInView={{ opacity: 1 }}
+           viewport={{ once: true }}
+           transition={{ delay: 0.5 }}
+           className="mt-20 text-center"
         >
-          {problems.map((problem, index) => (
-            <motion.div
-              key={index}
-              variants={cardVariant}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200/50 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 dark:hover:border-[#333333] cursor-default flex flex-col justify-between"
-            >
-              <div>
-                {/* Title */}
-                <h3 className="mb-3 text-lg font-bold text-[#213138] dark:text-white leading-snug">
-                  {problem.title}
-                </h3>
-  
-                {/* Description */}
-                <p className="mb-8 text-slate-500 dark:text-gray-400 leading-relaxed text-[15px]">
-                  {problem.description}
-                </p>
-              </div>
-
-              {/* Minimalist Stat */}
-              <div className="pt-4 border-t border-slate-100 dark:border-[#111111] font-semibold text-sm text-slate-900 dark:text-white">
-                {problem.stat}
-              </div>
-            </motion.div>
-          ))}
+           <p className="text-xl md:text-2xl font-black text-[#213138] max-w-2xl mx-auto leading-tight">
+              Don't let manual work cap your growth. <br />
+              <span className="text-[#007B85]">TropiChat automates the conversation while you build the business.</span>
+           </p>
         </motion.div>
 
-        {/* Bottom callout */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-block rounded-2xl border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-8 py-6 shadow-sm">
-            <p className="text-xl font-bold text-[#213138] dark:text-white">
-              You're losing <span className="text-red-500"> $2,000+ </span> every month to messaging chaos.
-            </p>
-            <p className="mt-2 text-slate-500 dark:text-gray-400 text-base">
-              There's a better way — and it takes 5 minutes to set up.
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

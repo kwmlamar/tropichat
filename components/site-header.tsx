@@ -19,9 +19,7 @@ export function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
@@ -35,120 +33,108 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-white/80 dark:bg-black/80 backdrop-blur-lg shadow-sm border-b border-gray-100 dark:border-[#222222]"
-          : "bg-transparent"
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 pt-6`}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex h-20 items-center justify-between md:h-24">
-            {/* Logo */}
-            <a href="/" className="flex items-center group">
-              <Image
-                src="/tropichat-logo.png"
-                alt="TropiChat"
-                width={80}
-                height={80}
-                unoptimized
-                className="h-14 w-14 object-contain transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16"
-              />
-            </a>
+        <div 
+          className={`container mx-auto max-w-7xl h-20 rounded-full transition-all duration-500 flex items-center justify-between px-8 border ${
+            isScrolled 
+            ? "bg-white/90 dark:bg-black/90 backdrop-blur-xl border-gray-100 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)]" 
+            : "bg-black/20 backdrop-blur-md border-white/10 shadow-xl"
+          }`}
+        >
+          {/* Logo */}
+          <Link href="/" className="flex items-center group h-10 w-10 shrink-0">
+            <Image
+              src="/tropichat-logo.png"
+              alt="TropiChat"
+              width={50}
+              height={50}
+              unoptimized
+              className="h-full w-full object-contain transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+            />
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-2">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => scrollToSection(link.href)}
+                className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
+              >
+                {link.label}
+                <motion.span 
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  layoutId="nav-dot"
+                />
+              </button>
+            ))}
+          </nav>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link 
+              href="/login" 
+              className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#213138] dark:hover:text-white transition-colors"
+            >
+              Log In
+            </Link>
+            <Button
+              asChild
+              className="bg-[#007B85] text-white hover:bg-[#2F8488] text-[10px] font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-xl shadow-teal-500/20 hover:scale-105 transition-all"
+            >
+              <Link href="/signup">Free Trial</Link>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-3 bg-gray-50 dark:bg-white/5 rounded-full text-[#213138] dark:text-white"
+          >
+            {isMobileMenuOpen ? <X size={20} weight="bold" /> : <Menu size={20} weight="bold" />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-40 md:hidden bg-white dark:bg-black p-6 pt-32"
+          >
+            <div className="flex flex-col gap-8 text-center">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
                   onClick={() => scrollToSection(link.href)}
-                  className="relative px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors hover:text-gray-900 dark:hover:text-gray-100 group"
+                  className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
                 >
                   {link.label}
-                  {/* Hover underline */}
-                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-[#007B85] scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
                 </button>
               ))}
-            </nav>
-
-            {/* Desktop CTA */}
-            <div className="hidden md:flex items-center gap-3">
-              <Button
-                variant="ghost"
-                asChild
-                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#111111]"
+              <hr className="border-gray-100 dark:border-white/5" />
+              <Link
+                href="/login"
+                className="text-xl font-black text-slate-400"
               >
-                <Link href="/login">Log In</Link>
-              </Button>
+                Log In
+              </Link>
               <Button
                 asChild
-                className="bg-[#007B85] text-white hover:bg-[#2F8488] text-sm font-semibold px-5 shadow-sm hover:shadow-md transition-all duration-300"
+                className="bg-[#007B85] py-8 text-lg font-black uppercase tracking-widest rounded-full"
               >
-                <Link href="/signup">Start Free Trial</Link>
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                  Start Free Trial
+                </Link>
               </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X weight="bold" className="h-6 w-6" />
-              ) : (
-                <Menu weight="bold" className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-20 z-40 md:hidden"
-          >
-            <div className="bg-white/95 dark:bg-black/95 backdrop-blur-lg border-b border-gray-200 dark:border-[#222222] shadow-lg">
-              <div className="container mx-auto px-4 py-4">
-                <nav className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
-                    <button
-                      key={link.href}
-                      onClick={() => scrollToSection(link.href)}
-                      className="w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#111111] rounded-lg transition-colors"
-                    >
-                      {link.label}
-                    </button>
-                  ))}
-                  <hr className="my-2 border-gray-200 dark:border-[#222222]" />
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block w-full text-left px-4 py-3 text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#111111] rounded-lg transition-colors"
-                  >
-                    Log In
-                  </Link>
-                  <Button
-                    asChild
-                    className="mt-2 w-full bg-[#007B85] text-white hover:bg-[#2F8488] text-base font-semibold py-3 h-auto shadow-sm"
-                  >
-                    <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                      Start Free Trial
-                    </Link>
-                  </Button>
-                </nav>
-              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Spacer to prevent content from hiding behind fixed header */}
-      <div className="h-20 md:h-24" />
     </>
   )
 }

@@ -41,8 +41,8 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="relative bg-[#F8FAFB] dark:bg-[#0A0A0A] py-24 md:py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-[#222222] to-transparent" />
+    <section className="relative bg-[#FF7E36] py-24 md:py-32 overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-white/20" />
 
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -53,17 +53,17 @@ export function HowItWorksSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-gray-400 shadow-sm">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white shadow-sm">
             How It Works
           </div>
-          <h2 className="mb-4  text-4xl font-bold tracking-tight text-[#213138] dark:text-white md:text-5xl">
-            Up and running in{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#007B85] to-teal-700">
-              3 simple steps
-            </span>
+          <h2 className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl">
+             Up and running in{" "}
+             <span className="text-white/60 underline decoration-white/30 underline-offset-8">
+               3 simple steps
+             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600 dark:text-gray-400 leading-relaxed">
-            No complicated setup. No technical skills needed. Just connect and start organizing.
+          <p className="mx-auto mt-4 max-w-xl text-lg text-white/80 leading-relaxed font-bold uppercase tracking-wide">
+             No complicated setup. No technical skills needed. Just connect and start organizing.
           </p>
         </motion.div>
 
@@ -79,16 +79,14 @@ export function HowItWorksSection() {
                 transition={{ delay: index * 0.15, duration: 0.55 }}
                 className="group flex flex-col items-center text-center"
               >
-                {/* Number Badge */}
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#222222] text-sm font-bold text-slate-600 dark:text-gray-300 select-none shadow-sm">
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-white text-sm font-black text-[#FF7E36] select-none shadow-xl">
                   {step.number}
                 </div>
 
-                {/* Content */}
-                 <h3 className="mb-3 text-xl font-bold text-[#213138] dark:text-white">
+                <h3 className="mb-3 text-xl font-black text-white uppercase tracking-tight">
                   {step.title}
                 </h3>
-                 <p className="text-slate-500 dark:text-gray-400 leading-relaxed text-[15px]">
+                <p className="text-white/70 font-bold leading-relaxed text-[15px] uppercase tracking-wide">
                   {step.description}
                 </p>
               </motion.div>
@@ -104,8 +102,8 @@ export function HowItWorksSection() {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="mt-16 flex justify-center"
         >
-           <div className="inline-flex items-center gap-2.5 rounded-full border border-teal-200 dark:border-teal-900/30 bg-white dark:bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-teal-800 dark:text-teal-400 shadow-sm">
-            <Clock className="h-4 w-4 text-[#007B85]" />
+           <div className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-black text-white shadow-sm uppercase tracking-widest">
+            <Clock className="h-4 w-4" />
             Setup takes less than 5 minutes
           </div>
         </motion.div>
