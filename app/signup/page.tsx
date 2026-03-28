@@ -73,10 +73,10 @@ export default function SignupPage() {
   const anyLoading = isLoading || oauthLoading !== null
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
+    <div className="lg:h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
       
       {/* ─── LEFT COLUMN: BRANDING & ILLUSTRATION ────────────────────────────── */}
-      <div className="hidden lg:flex w-full lg:w-[40%] xl:w-[45%] bg-[#007B85] flex-col p-12 relative overflow-hidden">
+      <div className="hidden lg:flex w-full lg:w-[40%] xl:w-[45%] bg-[#007B85] flex-col p-8 relative overflow-hidden">
         
         {/* Decorative subtle background texture */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -85,14 +85,14 @@ export default function SignupPage() {
         </div>
 
         {/* Brand Logo */}
-        <div className="mb-20 relative z-10">
+        <div className="mb-10 relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 group">
              <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/20">
                <Image
                  src="/tropichat-logo.png"
                  alt="TropiChat"
-                 width={48}
-                 height={48}
+                 width={40}
+                 height={40}
                  unoptimized
                  className="h-8 w-8 object-contain transition-transform group-hover:rotate-12"
                />
@@ -107,7 +107,7 @@ export default function SignupPage() {
              initial={{ opacity: 0, scale: 0.9 }}
              animate={{ opacity: 1, scale: 1 }}
              transition={{ duration: 0.8 }}
-             className="relative w-full max-w-[500px] aspect-square mb-12 bg-white rounded-[3.5rem] shadow-2xl shadow-black/10 overflow-hidden group"
+             className="relative w-full max-w-[400px] aspect-square mb-8 bg-white rounded-[3rem] shadow-2xl shadow-black/10 overflow-hidden group"
            >
               <Image 
                 src="/tropichat_signup_illustration.png" 
@@ -124,10 +124,10 @@ export default function SignupPage() {
              animate={{ opacity: 1, y: 0 }}
              transition={{ delay: 0.2 }}
            >
-             <h1 className="text-4xl xl:text-5xl font-black text-white leading-[1.1] tracking-tighter mb-4">
+             <h1 className="text-4xl font-black text-white leading-[1.1] tracking-tighter mb-3">
                 Sign up for <br /> TropiChat
              </h1>
-             <p className="text-lg text-white/70 font-medium max-w-[280px]">
+             <p className="text-base text-white/70 font-medium max-w-[280px]">
                 Here for the first time? <br /> Let&#39;s get you settled in
              </p>
            </motion.div>
@@ -175,7 +175,7 @@ export default function SignupPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
            <div className="w-full max-w-sm space-y-10">
               
               {!useEmail ? (
