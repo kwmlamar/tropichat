@@ -28,6 +28,7 @@ export default function AdminDashboard() {
   const [leadsCount, setLeadsCount] = useState(0)
   const [usersCount, setUsersCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [revenueMetrics, setRevenueMetrics] = useState({ currentMRR: 0 })
   const [isScraping, setIsScraping] = useState(false)
   const [scrapeSource, setScrapeSource] = useState(() => {
     if (typeof window !== 'undefined') return localStorage.getItem("tropichat_last_source") || "google"
@@ -176,7 +177,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { name: 'Total Pipelines', value: leadsCount.toString(), icon: Inbox, color: "text-[#3A9B9F]", bg: "bg-gray-50 dark:bg-[#111111]", href: "/admin/leads" },
-          { name: 'Cold Prospects', value: (leadsCount - usersCount).toString(), icon: UserPlus, color: "text-[#3A9B9F]", bg: "bg-gray-50 dark:bg-[#111111]", href: "/admin/leads" },
+          { name: 'Goal: $51k Revenue', value: `$${revenueMetrics.currentMRR}`, icon: TrendingUp, color: "text-[#007B85]", bg: "bg-teal-50 dark:bg-teal-950/20", href: "/admin/revenue" },
           { name: 'Won Deals', value: usersCount.toString(), icon: Users, color: "text-[#FF8B66]", bg: "bg-gray-50 dark:bg-[#111111]", href: "/admin/analytics" },
           { name: 'Outreach Success', value: `${leadsCount > 0 ? Math.round((usersCount / leadsCount) * 100) : 0}%`, icon: TrendingUp, color: "text-green-500", bg: "bg-gray-50 dark:bg-[#111111]", href: "/admin/analytics" },
         ].map((item) => (
@@ -295,6 +296,24 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="h-8 w-8 rounded-full bg-[#FEDA77]/10 flex items-center justify-center text-[#FEDA77] opacity-0 group-hover:opacity-100 transition-all">
+                  <CaretRight weight="bold" className="h-4 w-4" />
+                </div>
+              </div>
+            </Link>
+
+            <h3 className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest pl-1 text-[11px] pt-4">Capital Growth</h3>
+            <Link href="/admin/revenue" className="block w-full group">
+              <div className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#007B85] transition-all text-left shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white shadow-lg shadow-teal-500/20">
+                    <TrendingUp weight="bold" className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">Revenue Dashboard</div>
+                    <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">Track the $51k Capital Goal</div>
+                  </div>
+                </div>
+                <div className="h-8 w-8 rounded-full bg-[#007B85]/10 flex items-center justify-center text-[#007B85] opacity-0 group-hover:opacity-100 transition-all">
                   <CaretRight weight="bold" className="h-4 w-4" />
                 </div>
               </div>
