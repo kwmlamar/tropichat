@@ -276,7 +276,7 @@ export default function SignupPage() {
 
               {/* Legal Footer */}
               <p className="text-[10px] text-center text-slate-400 font-medium leading-relaxed">
-                 By signing up, you agree to Manychat&#39;s <br />
+                 By signing up, you agree to TropiChat&#39;s <br />
                  <Link href="/terms" className="text-[#007B85] hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-[#007B85] hover:underline">Privacy Policy</Link>
               </p>
            </div>

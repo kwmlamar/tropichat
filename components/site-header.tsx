@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -17,6 +18,8 @@ const navLinks = [
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -25,9 +28,19 @@ export function SiteHeader() {
   }, [])
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href)
-    element?.scrollIntoView({ behavior: "smooth" })
     setIsMobileMenuOpen(false)
+    
+    // If we're not on the home page, navigate to home + anchor
+    if (pathname !== "/") {
+      router.push("/" + href)
+      return
+    }
+
+    // If we're already on the home page, smooth scroll
+    const element = document.querySelector(href)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   return (

@@ -22,6 +22,7 @@ const tiers = [
     features: [
       "Up to 500 contacts",
       "Unified Inbox (IG, WA, Messenger)",
+      "Instagram Comment Auto-Replies (Coming Soon)",
       "Basic AI Smart Replies",
       "Mobile App Access",
       "Community Support"
@@ -36,9 +37,10 @@ const tiers = [
     description: "For growing local businesses in the Bahamas.",
     features: [
       "Up to 2,500 contacts",
-      "Bulk Broadcast (WhatsApp)",
+      "Bulk WhatsApp Broadcasts",
+      "WhatsApp Link & QR Generator",
+      "Story Mention Auto-Replies (Coming Soon)",
       "Full CRM Profile Tracking",
-      "Custom Automated Tags",
       "Priority Email Support"
     ],
     cta: "Accelerate Growth",
@@ -52,9 +54,9 @@ const tiers = [
     features: [
       "Up to 10,000 contacts",
       "Unlimited Team Members",
-      "Advanced AI Conversations",
+      "AI Knowledge Base Training",
       "Booking & Payment Links",
-      "Sales Analytics Dashboard",
+      "Abandoned Cart Recovery",
       "Direct Founder Support"
     ],
     cta: "Scale Your Business",
@@ -69,9 +71,9 @@ const tiers = [
       "Unlimited Contacts",
       "White-label Dashboard",
       "Custom API Integrations",
-      "Full CRM Migration Support",
       "Dedicated Account Manager",
-      "24/7 VIP Multi-channel Support"
+      "24/7 VIP Multi-channel Support",
+      "Custom Bot Development"
     ],
     cta: "Request Demo",
     popular: false,
@@ -196,7 +198,7 @@ export function PricingSection() {
                  <CheckCircle weight="fill" className="text-amber-500 h-8 w-8" /> Risk Free
               </h4>
               <p className="text-sm font-bold text-slate-500 uppercase leading-relaxed tracking-wide">
-                 Start a 7-day free trial on any tier. No credit card required to begin.
+                 Start a 14-day free trial on any tier. No credit card required to begin.
               </p>
            </div>
         </div>

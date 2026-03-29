@@ -587,6 +587,24 @@ export default function PageSelectionPage() {
           </motion.div>
         </div>
 
+        {/* ── Finish Button ─────────────────────────────────────────────── */}
+        {(messenger.items.some(i => i.is_connected) || instagram.items.some(i => i.is_connected) || whatsapp.items.some(i => i.is_connected) || emails.items.some(i => i.status === 'active')) && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="pt-10 flex justify-center"
+          >
+            <Button
+              onClick={() => router.push("/dashboard")}
+              className="group px-8 py-6 rounded-2xl bg-[#213138] hover:bg-[#007B85] text-white font-bold text-base transition-all shadow-xl hover:shadow-teal-500/20"
+            >
+              Finish Setup 
+              <ArrowRight weight="bold" className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </motion.div>
+        )}
+
       </div>
     </div>
   )

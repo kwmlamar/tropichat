@@ -268,6 +268,10 @@ function SettingsContent() {
     if (metaResult === "connected") {
       toast.success("Meta account connected successfully!")
       fetchMetaConnectionStatus()
+      // Automatically redirect to page selection to complete the flow
+      setTimeout(() => {
+        router.push("/dashboard/page-selection")
+      }, 1500)
     } else if (metaResult === "error") {
       toast.error(metaMessage || "Failed to connect Meta account")
     }
