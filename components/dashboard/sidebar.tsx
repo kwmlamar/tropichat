@@ -35,6 +35,7 @@ interface SidebarProps {
   personalProfile: Customer | null
   isCollapsed: boolean
   setIsCollapsed: (value: boolean) => void
+  onOpenSettings: () => void
 }
 
 const navItems = [
@@ -46,7 +47,7 @@ const navItems = [
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
 ]
 
-export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed }: SidebarProps) {
+export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed, onOpenSettings }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [unreadCount, setUnreadCount] = useState(0)
@@ -245,9 +246,11 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
         )}
 
         {/* Settings Button */}
-        <Link
-          href="/dashboard/settings"
-          onClick={() => {}}
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            onOpenSettings()
+          }}
           className={cn(
             "flex items-center rounded-xl text-sm font-medium transition-all duration-200 mb-1 w-full",
             collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
@@ -259,7 +262,7 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
         >
           <GearSix className={cn("shrink-0", isActive("/dashboard/settings") ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
           {!collapsed && <span>Settings</span>}
-        </Link>
+        </button>
 
         {/* User Profile */}
         <Dropdown
@@ -287,7 +290,7 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
         >
           <DropdownItem
             icon={<GearSix className="h-4 w-4" />}
-            onClick={() => router.push("/dashboard/settings")}
+            onClick={onOpenSettings}
           >
             Settings
           </DropdownItem>

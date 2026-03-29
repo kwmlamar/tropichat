@@ -42,9 +42,10 @@ const moreItems = [
 interface MobileBottomNavProps {
   customer: Customer | null
   personalProfile: Customer | null
+  onOpenSettings: () => void
 }
 
-export function MobileBottomNav({ customer, personalProfile }: MobileBottomNavProps) {
+export function MobileBottomNav({ customer, personalProfile, onOpenSettings }: MobileBottomNavProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [showMore, setShowMore] = useState(false)
@@ -126,20 +127,45 @@ export function MobileBottomNav({ customer, personalProfile }: MobileBottomNavPr
               {moreItems.map((item) => {
                 const Icon = item.icon
                 const active = pathname.startsWith(item.href)
+                const isSettings = item.label === "Settings"
+                
                 return (
-                  <Link
+                  <div
                     key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 active:scale-[0.97]",
-                      active
-                        ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85] dark:bg-[#007B85]/20 dark:border-[#007B85]/30"
-                        : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
-                    )}
+                    onClick={(e) => {
+                      if (isSettings) {
+                        e.preventDefault()
+                        setShowMore(false)
+                        onOpenSettings()
+                      }
+                    }}
+                    className="w-full"
                   >
-                    <Icon weight="bold" className={cn("h-6 w-6", active ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500")} />
-                    <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
-                  </Link>
+                    {isSettings ? (
+                      <div
+                        className={cn(
+                          "flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 active:scale-[0.97] cursor-pointer",
+                          "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
+                        )}
+                      >
+                        <Icon weight="bold" className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                        <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex flex-col items-center gap-2.5 p-4 rounded-2xl border transition-all duration-200 active:scale-[0.97]",
+                          active
+                            ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85] dark:bg-[#007B85]/20 dark:border-[#007B85]/30"
+                            : "bg-gray-50 border-gray-100 text-gray-600 dark:bg-[#111111] dark:border-[#222222] dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#333333]"
+                        )}
+                      >
+                        <Icon weight="bold" className={cn("h-6 w-6", active ? "text-[#007B85]" : "text-gray-400 dark:text-gray-500")} />
+                        <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
+                      </Link>
+                    )}
+                  </div>
                 )
               })}
             </div>

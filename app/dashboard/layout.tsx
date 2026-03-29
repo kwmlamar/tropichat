@@ -1,9 +1,10 @@
 "use client"
-/* No-op edit to fix Turbopack caching */
+
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav"
+import { SettingsModal } from "@/components/dashboard/settings-modal"
 import { getSession, getCurrentCustomer, getPersonalCustomer } from "@/lib/supabase"
 import { SplashLoader } from "@/components/splash-loader"
 import type { Customer } from "@/types/database"
@@ -19,6 +20,7 @@ export default function DashboardLayout({
   const [personalProfile, setPersonalProfile] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
     async function checkAuth() {
@@ -61,6 +63,7 @@ export default function DashboardLayout({
         personalProfile={personalProfile}
         isCollapsed={isCollapsed} 
         setIsCollapsed={setIsCollapsed} 
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Main content */}
@@ -69,10 +72,22 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
-      {/* Mobile Bottom Navigation — hidden when a thread is active via body class */}
+
+      {/* Mobile Bottom Navigation */}
       <div className="bottom-nav-container">
-        <MobileBottomNav customer={customer} personalProfile={personalProfile} />
+        <MobileBottomNav 
+          customer={customer} 
+          personalProfile={personalProfile} 
+          onOpenSettings={() => setIsSettingsOpen(true)}
+        />
       </div>
+
+      {/* Global Settings Modal */}
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        user={personalProfile}
+      />
     </div>
   )
 }
