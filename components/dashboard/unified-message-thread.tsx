@@ -22,6 +22,7 @@ import {
   Shield,
   Smiley as Smile,
   CaretLeft as ChevronLeft,
+  Sparkle,
 } from "@phosphor-icons/react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -31,8 +32,10 @@ import { Input } from "@/components/ui/input"
 import { Avatar } from "@/components/ui/avatar"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { SkeletonMessage } from "@/components/ui/skeleton"
+import { toast } from "sonner"
 import { ChannelIcon, getChannelLabel } from "./channel-icon"
 import { cn, formatMessageTime, formatDateDivider, getConversationDisplayName } from "@/lib/utils"
+import { getAIResponseSuggestion } from "@/lib/unified-inbox"
 import type { UnifiedMessage, ConversationWithAccount, MessageDeliveryStatus } from "@/types/unified-inbox"
 
 interface UnifiedMessageThreadProps {
@@ -63,6 +66,7 @@ export function UnifiedMessageThread({
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -89,6 +93,22 @@ export function UnifiedMessageThread({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSend()
+    }
+  }
+  
+  const handleGenerateAISuggestion = async () => {
+    if (!conversation || isGeneratingAI) return
+    
+    setIsGeneratingAI(true)
+    const { suggestion, error } = await getAIResponseSuggestion(conversation.id)
+    setIsGeneratingAI(false)
+    
+    if (error) {
+      toast.error(error)
+    } else if (suggestion) {
+      setMessageText(suggestion)
+      // Focus textarea after a short delay to allow state to settle
+      setTimeout(() => textareaRef.current?.focus(), 50)
     }
   }
 
@@ -424,6 +444,28 @@ export function UnifiedMessageThread({
           </button>
         ) : (
           <div className="flex items-center gap-1 shrink-0 mb-0.5">
+            <button 
+              onClick={handleGenerateAISuggestion}
+              disabled={isGeneratingAI}
+              className={cn(
+                "p-2 text-[#007B85] hover:text-[#005B63] transition-all relative overflow-hidden group rounded-xl",
+                isGeneratingAI && "animate-pulse opacity-50"
+              )}
+              title="Generate Smart Reply"
+            >
+              {isGeneratingAI ? (
+                <div className="flex items-center justify-center">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  >
+                    <Sparkle weight="bold" className="w-6 h-6" />
+                  </motion.div>
+                </div>
+              ) : (
+                <Sparkle weight="bold" className="w-6 h-6 group-hover:scale-110 group-active:scale-90" />
+              )}
+            </button>
             <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
               <Camera className="w-6 h-6" />
             </button>

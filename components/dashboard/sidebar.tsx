@@ -15,6 +15,7 @@ import {
   CaretDown,
   Stack,
   CalendarBlank,
+  House,
   ArrowLineLeft,
   ArrowLineRight,
   Crown,
@@ -37,13 +38,12 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: "/dashboard", label: "Chats", icon: ChatCircleDots },
-  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
+  { href: "/dashboard/analytics", label: "Home", icon: House },
+  { href: "/dashboard", label: "Inbox", icon: ChatCircleDots },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
-  { href: "/dashboard/templates", label: "Templates", icon: FileText },
-  { href: "/dashboard/page-selection", label: "Page Selection", icon: Stack },
-  { href: "/dashboard/automations", label: "Automations", icon: Lightning },
-  { href: "/dashboard/analytics", label: "Analytics", icon: ChartBar },
+  { href: "/dashboard/automations", label: "Automation", icon: Lightning },
+  { href: "/dashboard/ai", label: "Tropi AI", icon: ShieldCheck },
+  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
 ]
 
 export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed }: SidebarProps) {
@@ -167,12 +167,12 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
             >
               <Icon className={cn("shrink-0", active ? "text-[#3A9B9F]" : "text-gray-400 dark:text-gray-500", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
               {!collapsed && <span>{item.label}</span>}
-              {!collapsed && item.label === "Chats" && unreadCount > 0 && (
+              {!collapsed && item.label === "Inbox" && unreadCount > 0 && (
                 <Badge variant="danger" size="sm" className="ml-auto">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </Badge>
               )}
-              {collapsed && item.label === "Chats" && unreadCount > 0 && (
+              {collapsed && item.label === "Inbox" && unreadCount > 0 && (
                 <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500" />
               )}
             </Link>

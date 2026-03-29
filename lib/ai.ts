@@ -1,112 +1,157 @@
-import OpenAI from 'openai'
-import { createClient } from '@supabase/supabase-js'
+import { GoogleGenerativeAI } from "@google/generative-ai"
+import { createClient } from "@supabase/supabase-js"
 
 /**
  * Sovereign AI Auto-Pilot Engine
  * 
+ * Powered by Gemini 1.5 Flash.
  * Processes incoming messages and generates high-fidelity,
  * context-aware responses tailored for the Caribbean business market.
  */
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'mock_key'
-})
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "mock_key")
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const adminSupabase = createClient(supabaseUrl, supabaseServiceKey)
 
-export async function processInboundWithAI(conversationId: string, incomingMessage: string) {
+/**
+ * Generate a smart reply suggestion for a human agent.
+ * This is used for the "Smart Reply" feature in the inbox.
+ */
+export async function generateSmartReplySuggestion(conversationId: string) {
   try {
-    // 1. Fetch conversation context (prospect info, channel, history)
+    // 1. Fetch conversation context
     const { data: conversation, error: convError } = await adminSupabase
-      .from('unified_conversations')
+      .from("unified_conversations")
       .select(`
         id, channel_type,
-        customer:customers(full_name, email, phone, metadata),
-        messages:unified_messages(content, sender_type, created_at)
+        customer_name,
+        messages:unified_messages(content, sender_type, sent_at)
       `)
-      .eq('id', conversationId)
+      .eq("id", conversationId)
       .single()
 
     if (convError || !conversation) {
-      console.error('[AI Pilot] Context recovery failed:', convError)
+      console.error("[AI Smart Reply] Context recovery failed:", convError)
       return null
     }
 
-    // 2. Synthesize Context
+    // 2. Synthesize history
     const history = (conversation.messages as any[]) || []
-    const lastFewMessages = history.slice(-5).map(m => 
-      `${m.sender_type === 'business' ? 'TropiChat' : 'Prospect'}: ${m.content}`
-    ).join('\n')
+    // Get last 10 messages for context
+    const lastFewMessages = history
+      .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
+      .slice(-10)
+      .map((m) => `${m.sender_type === "business" ? "Agent" : "Customer"}: ${m.content}`)
+      .join("\n")
 
-    const customerName = (conversation.customer as any)?.full_name || 'Prospect'
-    
-    // 3. System Prompt - TropiChat Brand Identity
+    if (lastFewMessages.length === 0) return null
+
+    // 3. System Prompt for Suggestion
     const systemPrompt = `
-      You are TropiChat AI, a powerful business intelligence and communication assistant for TropiTech Solutions.
-      Your mission is to help Caribbean businesses scale through omni-channel automation.
+      You are an expert customer service assistant for a business called "TropiChat". 
+      Your goal is to suggest a helpful, concise, and professional reply for an agent to send to a customer on ${conversation.channel_type}.
       
-      TONE: Professional, visionary, friendly, and strategic.
-      CONTEXT: You are responding to a prospect named ${customerName} on ${conversation.channel_type}.
-      GOAL: Guide them towards connecting their business or upgrading their communication workflow.
+      TONE: Helpful, friendly, efficient. 
+      CONTEXT: The customer's name is ${conversation.customer_name || "there"}.
       
       CONVERSATION HISTORY:
       ${lastFewMessages}
       
-      NEW MESSAGE FROM PROSPECT:
-      "${incomingMessage}"
-      
-      OBJECTIVE: Provide a concise, helpful response (under 3 sentences if possible).
-      If they ask about pricing: Mention the $29/mo Founder's Rate for Pro.
+      TASK: Suggest ONE reply that the agent can send next. 
+      - Keep it under 2 sentences.
+      - Don't use bullet points.
+      - If the customer just sent a greeting, suggest a friendly "How can I help you today?".
+      - If the customer asked a question, answer it based on the history or ask for clarification.
+      - Return ONLY the suggested text, no commentary.
     `
 
-    // 4. Generate Response (Mock check first)
-    if (!process.env.OPENAI_API_KEY) {
-      console.log('[AI Pilot] Mock Mode: No API Key. Returning default response.')
-      return `Hey ${customerName}! Thanks for reaching out. I've received your message about "${incomingMessage.slice(0, 20)}..." and our team (or my AI core) will get back to you in just a moment. Would you like to see our Pro features in the meantime?`
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      return "Hi! How can I help you with TropiChat today?"
     }
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: incomingMessage }
-      ],
-      max_tokens: 150,
-      temperature: 0.7
-    })
-
-    return response.choices[0].message.content
+    const result = await model.generateContent(systemPrompt)
+    const response = await result.response
+    return response.text().trim().replace(/^"/, "").replace(/"$/, "")
   } catch (error) {
-    console.error('[AI Pilot] Error:', error)
+    console.error("[AI Smart Reply] Error:", error)
     return null
   }
 }
 
 /**
- * Dispatch AI Response
- * 
- * Sends the generated response back through the originating channel.
+ * Automatic Pilot - Process inbound message and potentially respond
+ */
+export async function processInboundWithAI(conversationId: string, incomingMessage: string) {
+  try {
+    const { data: conversation, error: convError } = await adminSupabase
+      .from("unified_conversations")
+      .select(`
+        id, channel_type, customer_name,
+        messages:unified_messages(content, sender_type, sent_at)
+      `)
+      .eq("id", conversationId)
+      .single()
+
+    if (convError || !conversation) return null
+
+    const history = (conversation.messages as any[]) || []
+    const lastFewMessages = history
+      .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
+      .slice(-5)
+      .map((m) => `${m.sender_type === "business" ? "TropiChat" : "Prospect"}: ${m.content}`)
+      .join("\n")
+
+    const systemPrompt = `
+      You are TropiChat AI, a powerful business automation assistant.
+      Your mission is to help Caribbean businesses scale through omni-channel automation.
+      
+      TONE: Professional, visionary, friendly, and strategic.
+      CONTEXT: You are responding to a prospect named ${conversation.customer_name || "there"} on ${conversation.channel_type}.
+      
+      CONVERSATION HISTORY:
+      ${lastFewMessages}
+      
+      NEW MESSAGE: "${incomingMessage}"
+      
+      OBJECTIVE: Provide a concise, helpful response (max 2 sentences).
+      Mention that Pro starts at $29/mo if they ask about cost.
+    `
+
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.log("[AI Pilot] Mock Mode. Returning default.")
+      return `Hey! Thanks for messaging. I've received your inquiry and our team will get back to you soon. Want to see our Pro features ($29/mo)?`
+    }
+
+    const result = await model.generateContent(systemPrompt)
+    const response = await result.response
+    return response.text().trim()
+  } catch (error) {
+    console.error("[AI Pilot] Error:", error)
+    return null
+  }
+}
+
+/**
+ * Dispatch AI Response back through the channel
  */
 export async function dispatchAIResponse(conversationId: string, aiContent: string) {
-    // This will hit our existing /api/messages/send logic via internal fetch or direct lib call
-    // For now, we'll use a direct internal import or fetch call to /api/messages/send
-    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000'
-    
-    // Using service role for internal dispatch bypass
-    const response = await fetch(`${baseUrl}/api/messages/send`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
-        },
-        body: JSON.stringify({
-            conversation_id: conversationId,
-            content: aiContent,
-            message_type: 'text'
-        })
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"
+  
+  const response = await fetch(`${baseUrl}/api/messages/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
+    },
+    body: JSON.stringify({
+      conversation_id: conversationId,
+      content: aiContent,
+      message_type: "text"
     })
+  })
 
-    return response.json()
+  return response.json()
 }

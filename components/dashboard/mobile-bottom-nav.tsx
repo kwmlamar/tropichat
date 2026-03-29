@@ -14,6 +14,9 @@ import {
   Stack,
   SignOut,
   X,
+  GearSix,
+  ShieldCheck,
+  House,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useCallback } from "react"
@@ -23,18 +26,17 @@ import type { Customer } from "@/types/database"
 
 // Primary tabs displayed in the bottom bar
 const primaryTabs = [
-  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank, exact: false },
-  { href: "/dashboard", label: "Chats", icon: ChatCircleDots, exact: true },
-  { href: "/dashboard/settings", label: "Profile", icon: User, exact: false },
+  { href: "/dashboard/analytics", label: "Home", icon: House, exact: false },
+  { href: "/dashboard", label: "Inbox", icon: ChatCircleDots, exact: true },
+  { href: "/dashboard/ai", label: "Tropi AI", icon: ShieldCheck, exact: false },
 ]
 
 // Secondary items shown in the "More" sheet
 const moreItems = [
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
-  { href: "/dashboard/templates", label: "Templates", icon: FileText },
-  { href: "/dashboard/automations", label: "Automations", icon: Lightning },
-  { href: "/dashboard/analytics", label: "Analytics", icon: ChartBar },
-  { href: "/dashboard/page-selection", label: "Page Selection", icon: Stack },
+  { href: "/dashboard/automations", label: "Automation", icon: Lightning },
+  { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
+  { href: "/dashboard/settings", label: "Settings", icon: GearSix },
 ]
 
 interface MobileBottomNavProps {

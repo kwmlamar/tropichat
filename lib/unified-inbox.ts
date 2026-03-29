@@ -240,6 +240,41 @@ export async function sendUnifiedMessage(
   }
 }
 
+// ==================== AI FEATURES ====================
+
+/**
+ * Fetch an AI-generated smart reply suggestion for a conversation.
+ */
+export async function getAIResponseSuggestion(conversationId: string): Promise<{
+  suggestion: string | null
+  error: string | null
+}> {
+  const client = getSupabase()
+  const { data: { session } } = await client.auth.getSession()
+
+  if (!session) {
+    return { suggestion: null, error: 'Not authenticated' }
+  }
+
+  try {
+    const response = await fetch('/api/ai/smart-reply', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ conversationId }),
+    })
+
+    const data = await response.json()
+    if (!response.ok) return { suggestion: null, error: data.error || 'Failed to get suggestion' }
+
+    return { suggestion: data.suggestion, error: null }
+  } catch {
+    return { suggestion: null, error: 'Failed to connect to AI server' }
+  }
+}
+
 // ==================== REAL-TIME SUBSCRIPTIONS ====================
 
 /**
