@@ -469,14 +469,22 @@ export async function GET(request: Request) {
     console.log(`[meta/callback] Done. Saved ${savedCount} connection(s) for user ${userId}`)
 
     if (savedCount > 0) {
+      // Check if user is in onboarding
+      const { data: userData } = await supabase.from('customers').select('has_onboarded').eq('id', userId).single()
+      
+      if (userData && !userData.has_onboarded) {
+        return NextResponse.redirect(`${APP_URL}/onboarding?step=complete&meta=connected`)
+      }
+
       return NextResponse.redirect(
-        `${APP_URL}/dashboard/settings?tab=integrations&meta=connected`
+        `${APP_URL}/dashboard?meta=connected`
       )
     } else {
       return redirectWithError(
         grantedScopes.length === 0
           ? 'No permissions were granted. Please try again and accept all permissions.'
-          : 'Permissions were granted but no connections could be saved. Check server logs.'
+          : 'Permissions were granted but no connections could be saved. Check server logs.',
+        userId
       )
     }
 
@@ -486,9 +494,18 @@ export async function GET(request: Request) {
   }
 }
 
-function redirectWithError(message: string) {
+async function redirectWithError(message: string, userId?: string) {
   const APP_URL = process.env.NEXT_PUBLIC_APP_URL || ''
+  
+  if (userId) {
+     const supabase = createServiceClient()
+     const { data: userData } = await supabase.from('customers').select('has_onboarded').eq('id', userId).single()
+     if (userData && !userData.has_onboarded) {
+        return NextResponse.redirect(`${APP_URL}/onboarding?meta=error&message=${encodeURIComponent(message)}`)
+     }
+  }
+
   return NextResponse.redirect(
-    `${APP_URL}/dashboard/settings?tab=integrations&meta=error&message=${encodeURIComponent(message)}`
+    `${APP_URL}/dashboard?meta=error&message=${encodeURIComponent(message)}`
   )
 }

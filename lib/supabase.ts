@@ -83,6 +83,7 @@ export async function signUp(email: string, password: string, businessName: stri
     email,
     password,
     options: {
+      emailRedirectTo: `${window.location.origin}/onboarding`,
       data: {
         business_name: businessName,
         full_name: fullName,

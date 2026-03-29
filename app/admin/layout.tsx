@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav"
+import { SettingsModal } from "@/components/dashboard/settings-modal"
 import { getSession, getSupabase, getPersonalCustomer } from "@/lib/supabase"
 import { SplashLoader } from "@/components/splash-loader"
 import type { Customer } from "@/types/database"
@@ -19,6 +20,7 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true)
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
     async function checkAdminAuth() {
@@ -79,6 +81,7 @@ export default function AdminLayout({
         personalProfile={personalProfile}
         isCollapsed={isCollapsed} 
         setIsCollapsed={setIsCollapsed} 
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Main content */}
@@ -91,8 +94,18 @@ export default function AdminLayout({
       </div>
 
       <div className="bottom-nav-container md:hidden">
-        <MobileBottomNav customer={null} personalProfile={personalProfile} />
+        <MobileBottomNav 
+          customer={null} 
+          personalProfile={personalProfile} 
+          onOpenSettings={() => setIsSettingsOpen(true)}
+        />
       </div>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        user={personalProfile}
+      />
     </div>
   )
 }

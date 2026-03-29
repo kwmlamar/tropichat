@@ -1,0 +1,354 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import { 
+  InstagramLogo, 
+  WhatsappLogo, 
+  MessengerLogo, 
+  EnvelopeSimple, 
+  DeviceMobile, 
+  CheckCircle,
+  ArrowRight,
+  CaretRight,
+  House,
+  Sparkle,
+  Globe,
+  CircleNotch,
+  MagicWand,
+  ChatCircleText,
+  IdentificationCard,
+  Target,
+  ShieldCheck
+} from "@phosphor-icons/react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { getSession, getCurrentCustomer, updateCustomer } from "@/lib/supabase"
+import { initiateMetaConnect, getMetaStatus } from "@/lib/meta-connections"
+import { toast } from "sonner"
+import { SplashLoader } from "@/components/splash-loader"
+
+type Step = "welcome" | "channels" | "meta" | "complete"
+
+export default function OnboardingPage() {
+  const router = useRouter()
+  const [step, setStep] = useState<Step>("welcome")
+  const [loading, setLoading] = useState(true)
+  const [customer, setCustomer] = useState<any>(null)
+  const [businessName, setBusinessName] = useState("")
+  const [selectedChannels, setSelectedChannels] = useState<string[]>(["instagram", "whatsapp", "messenger"])
+  const [connecting, setConnecting] = useState(false)
+  const [isFinishing, setIsFinishing] = useState(false)
+
+  useEffect(() => {
+    async function load() {
+      const { session } = await getSession()
+      if (!session) {
+        router.push("/login")
+        return
+      }
+
+      const { data } = await getCurrentCustomer()
+      if (data) {
+        setCustomer(data)
+        setBusinessName(data.business_name || "")
+        // If they already onboarded, send them to dashboard
+        if ((data as any).has_onboarded) {
+          router.push("/dashboard")
+          return
+        }
+      }
+
+      // Check URL for step override
+      const params = new URLSearchParams(window.location.search)
+      if (params.get("meta") === "connected") {
+        setStep("complete")
+      } else if (params.get("step") === "meta") {
+        setStep("meta")
+      } else if (params.get("step") === "channels") {
+        setStep("channels")
+      }
+
+      setLoading(false)
+    }
+    load()
+  }, [router])
+
+  const handleNextStep = () => {
+    if (step === "welcome") setStep("channels")
+    else if (step === "channels") setStep("meta")
+  }
+
+  const handleConnect = async () => {
+    setConnecting(true)
+    const { url, error } = await initiateMetaConnect()
+    if (url) {
+      window.location.href = url
+    } else {
+      toast.error(error || "Failed to initiate Meta connection")
+      setConnecting(false)
+    }
+  }
+
+  const handleFinish = async () => {
+    setIsFinishing(true)
+    await updateCustomer({ has_onboarded: true } as any)
+    toast.success("Welcome to TropiChat!")
+    router.push("/dashboard")
+  }
+
+  if (loading) return <SplashLoader isLoading={true} />
+
+  const steps = [
+    { id: "welcome", label: "Identity" },
+    { id: "channels", label: "Channels" },
+    { id: "meta", label: "Connect" },
+    { id: "complete", label: "Finalize" }
+  ]
+
+  return (
+    <div className="min-h-screen bg-[#FDFDFD] dark:bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-[#007B85]/5 to-transparent pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#007B85]/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-pink-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+      {/* Progress Indicator */}
+      <div className="fixed top-12 flex items-center gap-2 z-20">
+         {steps.map((s, i) => (
+            <div 
+               key={s.id} 
+               className={cn(
+                  "h-1 rounded-full transition-all duration-500",
+                  steps.findIndex(x => x.id === step) >= i 
+                    ? "w-12 bg-[#007B85]" 
+                    : "w-4 bg-gray-200 dark:bg-white/5"
+               )}
+            />
+         ))}
+      </div>
+
+      <main className="w-full max-w-xl relative z-10">
+        <AnimatePresence mode="wait">
+          {step === "welcome" && (
+            <motion.div
+              key="welcome"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-12 text-center"
+            >
+              <div className="space-y-4">
+                <div className="h-20 w-20 bg-white dark:bg-[#080808] border border-gray-100 dark:border-white/5 shadow-2xl rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce-slow">
+                   <Sparkle weight="fill" className="h-10 w-10 text-[#007B85]" />
+                </div>
+                <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tighter leading-tight">
+                   Welcome to the <br /> <span className="text-[#007B85]">Future of Chat</span>
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400 font-medium max-w-sm mx-auto">
+                   Let's set up your workspace and connect your first customer channels.
+                </p>
+              </div>
+
+              <div className="space-y-2 text-left bg-white dark:bg-[#080808] p-8 rounded-[32px] border border-gray-100 dark:border-white/5 shadow-xl">
+                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Company Name</Label>
+                 <Input 
+                   value={businessName}
+                   onChange={e => setBusinessName(e.target.value)}
+                   placeholder="e.g. TropiTech Solutions"
+                   className="h-14 rounded-2xl border-gray-100 dark:border-white/10 dark:bg-[#111] text-lg font-bold"
+                 />
+                 <p className="text-[11px] text-gray-400 font-medium mt-2">This is how your workspace will be identified.</p>
+              </div>
+
+              <Button 
+                onClick={handleNextStep}
+                disabled={!businessName}
+                className="w-full h-16 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-3xl text-lg font-black shadow-xl shadow-[#007B85]/20 group transition-all"
+              >
+                Get Started
+                <ArrowRight weight="bold" className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </motion.div>
+          )}
+
+          {step === "channels" && (
+            <motion.div
+              key="channels"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-10"
+            >
+              <div className="text-center space-y-3">
+                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Choose your channels</h2>
+                <p className="text-gray-500 font-medium">Select the platforms you use to engage with customers.</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                 {[
+                   { id: "instagram", name: "Instagram", icon: InstagramLogo, color: "bg-pink-500" },
+                   { id: "whatsapp", name: "WhatsApp", icon: WhatsappLogo, color: "bg-green-500" },
+                   { id: "messenger", name: "Messenger", icon: MessengerLogo, color: "bg-blue-500" },
+                   { id: "email", name: "Email", icon: EnvelopeSimple, color: "bg-teal-500" },
+                   { id: "sms", name: "SMS", icon: DeviceMobile, color: "bg-orange-500" },
+                   { id: "website", name: "Web Chat", icon: Globe, color: "bg-purple-500" }
+                 ].map(ch => (
+                    <button
+                      key={ch.id}
+                      onClick={() => setSelectedChannels(prev => 
+                        prev.includes(ch.id) ? prev.filter(x => x !== ch.id) : [...prev, ch.id]
+                      )}
+                      className={cn(
+                        "p-6 rounded-[32px] border-2 transition-all flex flex-col items-center gap-4 text-center group",
+                        selectedChannels.includes(ch.id)
+                          ? "border-[#007B85] bg-[#007B85]/5 shadow-lg shadow-[#007B85]/5"
+                          : "border-gray-100 dark:border-white/5 bg-white dark:bg-[#080808] hover:border-gray-200 dark:hover:border-white/10"
+                      )}
+                    >
+                       <div className={cn(
+                         "h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
+                         selectedChannels.includes(ch.id) ? ch.color : "bg-gray-100 dark:bg-white/5"
+                       )}>
+                          <ch.icon weight="fill" className={cn("h-6 w-6", selectedChannels.includes(ch.id) ? "text-white" : "text-gray-400")} />
+                       </div>
+                       <div className="flex flex-col">
+                          <span className={cn("text-sm font-black", selectedChannels.includes(ch.id) ? "text-[#007B85]" : "text-gray-400")}>
+                             {ch.name}
+                          </span>
+                       </div>
+                       <div className={cn(
+                         "h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors",
+                         selectedChannels.includes(ch.id) ? "border-[#007B85] bg-[#007B85]" : "border-gray-200 dark:border-white/10"
+                       )}>
+                          {selectedChannels.includes(ch.id) && <CheckCircle weight="fill" className="h-3 w-3 text-white" />}
+                       </div>
+                    </button>
+                 ))}
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                 <Button 
+                   variant="ghost" 
+                   onClick={() => setStep("welcome")}
+                   className="flex-1 h-14 rounded-2xl font-black text-gray-400"
+                 >
+                   Back
+                 </Button>
+                 <Button 
+                   onClick={handleNextStep}
+                   className="flex-[2] h-14 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-black shadow-xl shadow-[#007B85]/20"
+                 >
+                   Next Step
+                 </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === "meta" && (
+            <motion.div
+              key="meta"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="space-y-12 text-center"
+            >
+               <div className="space-y-4">
+                  <div className="flex items-center justify-center -space-x-4 mb-8">
+                     <div className="h-16 w-16 bg-pink-500 rounded-3xl flex items-center justify-center shadow-xl rotate-[-6deg] relative z-20 border-4 border-[#FDFDFD] dark:border-[#050505]">
+                        <InstagramLogo weight="fill" className="h-8 w-8 text-white" />
+                     </div>
+                     <div className="h-16 w-16 bg-green-500 rounded-3xl flex items-center justify-center shadow-xl relative z-30 border-4 border-[#FDFDFD] dark:border-[#050505]">
+                        <WhatsappLogo weight="fill" className="h-8 w-8 text-white" />
+                     </div>
+                     <div className="h-16 w-16 bg-blue-500 rounded-3xl flex items-center justify-center shadow-xl rotate-[6deg] relative z-20 border-4 border-[#FDFDFD] dark:border-[#050505]">
+                        <MessengerLogo weight="fill" className="h-8 w-8 text-white" />
+                     </div>
+                  </div>
+                  <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Sync your Meta Channels</h2>
+                  <p className="text-gray-500 font-medium max-w-sm mx-auto">
+                    TropiChat is an official Meta partner. Connect once and manage everything on auto-pilot.
+                  </p>
+               </div>
+
+               <div className="space-y-4">
+                  <Button 
+                    onClick={handleConnect}
+                    disabled={connecting}
+                    className="w-full h-18 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-[24px] text-lg font-black shadow-2xl flex items-center justify-center gap-4 py-8 group transition-all active:scale-[0.98]"
+                  >
+                    {connecting ? <CircleNotch className="h-6 w-6 animate-spin" /> : (
+                      <>
+                        <svg className="h-7 w-7 fill-white" viewBox="0 0 24 24">
+                          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+                        </svg>
+                        Continue with Meta
+                      </>
+                    )}
+                  </Button>
+                  <button 
+                    onClick={() => setStep("complete")}
+                    className="text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors"
+                  >
+                    Set up manually later
+                  </button>
+               </div>
+
+               <div className="grid grid-cols-2 gap-6 pt-4">
+                  <div className="flex items-center gap-3 text-left">
+                     <ShieldCheck weight="fill" className="h-5 w-5 text-green-500" />
+                     <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Secure <br /> Connection</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-left">
+                     <MagicWand weight="fill" className="h-5 w-5 text-amber-500" />
+                     <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Instant <br /> Syncing</span>
+                  </div>
+               </div>
+            </motion.div>
+          )}
+
+          {step === "complete" && (
+            <motion.div
+              key="complete"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-12 text-center"
+            >
+               <div className="relative">
+                  <div className="absolute inset-0 bg-[#007B85]/20 blur-[100px] rounded-full scale-[2] pointer-events-none" />
+                  <div className="h-32 w-32 bg-[#007B85] rounded-[40px] shadow-2xl flex items-center justify-center mx-auto mb-10 relative z-10 border-4 border-white/20">
+                     <CheckCircle weight="fill" className="h-16 w-16 text-white" />
+                  </div>
+               </div>
+
+               <div className="space-y-3">
+                  <h2 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tighter">You're all set!</h2>
+                  <p className="text-gray-500 font-medium max-w-[280px] mx-auto leading-relaxed">
+                    Your workspace is ready. Time to dive in and start growing your business.
+                  </p>
+               </div>
+
+               <Button 
+                 onClick={handleFinish}
+                 disabled={isFinishing}
+                 className="w-full h-18 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-3xl text-xl font-black shadow-2xl shadow-[#007B85]/20 h-20"
+               >
+                 {isFinishing ? <CircleNotch className="h-6 w-6 animate-spin" /> : "Enter Dashboard"}
+               </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+
+      {/* Footer Branding */}
+      <div className="fixed bottom-12 flex flex-col items-center gap-2">
+         <Image src="/tropichat-logo.png" alt="TropiChat" width={24} height={24} unoptimized className="opacity-40 grayscale" />
+         <span className="text-[10px] font-bold text-gray-300 dark:text-white/10 uppercase tracking-[0.3em]">TropiChat Ecosystem</span>
+      </div>
+    </div>
+  )
+}

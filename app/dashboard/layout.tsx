@@ -33,6 +33,13 @@ export default function DashboardLayout({
 
       // 1. Fetch workspace customer (for shared stuff)
       const { data: wsData } = await getCurrentCustomer()
+      
+      // REDIRECT TO ONBOARDING IF NOT DONE
+      if (wsData && !(wsData as any).has_onboarded) {
+        router.push("/onboarding")
+        return
+      }
+      
       setCustomer(wsData)
 
       // 2. Fetch personal customer (for current user identity)
