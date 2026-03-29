@@ -764,7 +764,7 @@ function ChannelDetail({ channel, status, onRefresh }: { channel: MetaChannel, s
 
   const handleSync = async () => {
     toast.success(`Syncing ${channel} history...`)
-    const { session } = await getSupabase().auth.getSession()
+    const { data: { session } } = await getSupabase().auth.getSession()
     await fetch('/api/meta/sync-history', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' },
