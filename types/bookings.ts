@@ -48,6 +48,7 @@ export interface Booking {
   number_of_people: number
   status: BookingStatus
   notes: string | null
+  reference_code: string | null
   cancelled_at: string | null
   created_at: string
   updated_at: string

@@ -26,6 +26,8 @@ export interface BusinessHours {
 export interface BusinessProfile {
   id: string
   connected_account_id: string
+  user_id: string | null
+  handle: string | null
   business_name: string
   business_description: string | null
   business_category: string | null
@@ -42,6 +44,7 @@ export interface BusinessProfile {
 export interface Customer {
   id: string
   business_name: string
+  has_onboarded: boolean
   full_name: string | null
   contact_email: string
   password_hash?: string

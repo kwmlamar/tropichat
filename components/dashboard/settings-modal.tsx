@@ -44,7 +44,11 @@ import {
   Briefcase,
   ShareNetwork,
   BellRinging,
-  Warning
+  Warning,
+  CalendarBlank,
+  Copy,
+  CheckFat,
+  ArrowSquareOut
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -112,6 +116,7 @@ type Tab =
   | "email"
   | "sms"
   | "autoreply"
+  | "booking"
 
 const timezones = [
   { value: "America/Nassau", label: "Bahamas (Nassau)" },
@@ -163,6 +168,7 @@ export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
     { id: "team", label: "Team Members", icon: Users, section: "Account" },
     { id: "hours", label: "Business Hours", icon: Clock, section: "Workspace" },
     { id: "autoreply", label: "Auto-Reply", icon: ChatCircleDots, section: "Workspace" },
+    { id: "booking", label: "Booking Page", icon: CalendarBlank, section: "Workspace" },
     { id: "instagram", label: "Instagram", icon: InstagramLogo, section: "Channels" },
     { id: "whatsapp", label: "WhatsApp", icon: WhatsappLogo, section: "Channels" },
     { id: "messenger", label: "Messenger", icon: MessengerLogo, section: "Channels" },
@@ -306,6 +312,7 @@ function TabContent({ activeTab, customer, personalProfile, metaStatus, onRefres
     case "messenger": return <ChannelDetail channel="messenger" status={metaStatus?.messenger} onRefresh={onRefresh} />
     case "email": return <EmailSettings onRefresh={onRefresh} />
     case "sms": return <SMSSettings customer={customer} onRefresh={onRefresh} />
+    case "booking": return <BookingPageSettings />
     default: return null
   }
 }
@@ -1244,6 +1251,188 @@ function SMSSettings({ customer, onRefresh }: { customer: Customer | null, onRef
           </Button>
         </div>
       </div>
+    </div>
+  )
+}
+
+function BookingPageSettings() {
+  const [handle, setHandle] = useState("")
+  const [editHandle, setEditHandle] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tropichat.com"
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setLoading(false); return }
+      const res = await fetch("/api/bookings/handle", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      if (res.ok) {
+        const json = await res.json()
+        setHandle(json.handle ?? "")
+        setEditHandle(json.handle ?? "")
+      }
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const bookingUrl = handle ? `${appUrl}/book/${handle}` : null
+
+  const handleCopy = () => {
+    if (!bookingUrl) return
+    navigator.clipboard.writeText(bookingUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleSave = async () => {
+    const trimmed = editHandle.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "")
+    if (!trimmed) {
+      toast.error("Handle cannot be empty")
+      return
+    }
+    setSaving(true)
+    const supabase = getSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { setSaving(false); return }
+    const res = await fetch("/api/bookings/handle", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ handle: trimmed }),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+      toast.error(json.error || "Failed to save handle")
+    } else {
+      setHandle(json.handle)
+      setEditHandle(json.handle)
+      setEditing(false)
+      toast.success("Booking link updated")
+    }
+    setSaving(false)
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-5 w-40 rounded-xl" />
+        <Skeleton className="h-14 w-full rounded-2xl" />
+        <Skeleton className="h-14 w-full rounded-2xl" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Shareable Booking Link</h4>
+
+        {bookingUrl ? (
+          <div className="p-5 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/50 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 w-8 h-8 rounded-xl bg-[#007B85]/10 flex items-center justify-center shrink-0">
+                <CalendarBlank className="w-4 h-4 text-[#007B85]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold dark:text-white mb-0.5">Your booking page is live</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 break-all">{bookingUrl}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="flex-1 rounded-xl border-teal-200 dark:border-teal-800 text-[#007B85] dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/40"
+              >
+                {copied
+                  ? <><CheckFat className="w-4 h-4 mr-2" />Copied!</>
+                  : <><Copy className="w-4 h-4 mr-2" />Copy Link</>
+                }
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="rounded-xl border-teal-200 dark:border-teal-800 text-[#007B85] dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/40"
+              >
+                <a href={bookingUrl} target="_blank" rel="noopener noreferrer">
+                  <ArrowSquareOut className="w-4 h-4 mr-2" />Preview
+                </a>
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-dashed border-gray-300 dark:border-[#2C2C2C]">
+            <p className="text-[13px] text-gray-500 dark:text-gray-400">No booking link yet. Set a handle below to create your public booking page.</p>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Booking Handle</h4>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+          Your unique handle appears in your booking URL: <span className="font-mono text-gray-700 dark:text-gray-300">{appUrl}/book/<span className="text-[#007B85]">{handle || "your-handle"}</span></span>
+        </p>
+
+        {editing ? (
+          <div className="space-y-3">
+            <div className="flex gap-2 items-center">
+              <span className="text-[13px] text-gray-400 shrink-0">{appUrl}/book/</span>
+              <Input
+                value={editHandle}
+                onChange={e => setEditHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
+                placeholder="your-handle"
+                className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#080808] font-mono"
+                maxLength={60}
+                autoFocus
+              />
+            </div>
+            <p className="text-[11px] text-gray-400 italic">Only lowercase letters, numbers, hyphens, and underscores. 2–60 characters.</p>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleSave}
+                disabled={saving || editHandle.length < 2}
+                className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8 h-10"
+              >
+                {saving ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
+                Save Handle
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { setEditing(false); setEditHandle(handle) }}
+                className="rounded-xl"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="flex-1 p-3 rounded-xl bg-gray-50 dark:bg-[#080808] border border-gray-200 dark:border-[#1C1C1C] font-mono text-[14px] text-gray-700 dark:text-gray-300">
+              {handle || <span className="text-gray-400 dark:text-gray-600">not set</span>}
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setEditing(true)}
+              className="rounded-xl shrink-0"
+            >
+              {handle ? "Change" : "Set Handle"}
+            </Button>
+          </div>
+        )}
+      </section>
     </div>
   )
 }
