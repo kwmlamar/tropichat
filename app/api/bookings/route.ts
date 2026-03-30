@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import type { CreateBookingInput, UpdateBookingInput } from '@/types/bookings'
 
+const COCONUT_BOOKING_LIMIT = 20
+
 function getServiceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -72,6 +74,39 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getServiceClient()
+
+  // ── Plan enforcement: Coconut tier = 20 bookings/month cap ──────────────────
+  const { data: customer } = await db
+    .from('customers')
+    .select('plan')
+    .eq('id', userId)
+    .single()
+
+  if (!customer || customer.plan === 'coconut' || customer.plan === 'free') {
+    const now = new Date()
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+    const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
+
+    const { count } = await db
+      .from('bookings')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .neq('status', 'cancelled')
+      .gte('booking_date', monthStart)
+      .lte('booking_date', monthEnd)
+
+    if ((count ?? 0) >= COCONUT_BOOKING_LIMIT) {
+      return NextResponse.json(
+        {
+          error: `You've reached the ${COCONUT_BOOKING_LIMIT}-booking monthly limit on the Coconut (free) plan. Upgrade to Tropic or Island Pro for unlimited bookings.`,
+          code: 'PLAN_LIMIT_REACHED',
+          upgrade_required: true,
+        },
+        { status: 403 }
+      )
+    }
+  }
+  // ── End plan enforcement ────────────────────────────────────────────────────
 
   // Verify service belongs to user
   const { data: service } = await db

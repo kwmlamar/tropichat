@@ -10,6 +10,26 @@ const getServiceRoleClient = () => {
   )
 }
 
+// Map a Stripe price ID to a TropiChat plan name.
+// Falls back to "coconut" (free) if the price ID is unrecognised.
+function planFromPriceId(priceId: string): string {
+  const tropicMonthly  = process.env.STRIPE_PRICE_TROPIC_MONTHLY
+  const tropicAnnual   = process.env.STRIPE_PRICE_TROPIC_ANNUAL
+  const islandMonthly  = process.env.STRIPE_PRICE_ISLAND_PRO_MONTHLY
+  const islandAnnual   = process.env.STRIPE_PRICE_ISLAND_PRO_ANNUAL
+
+  if (priceId === tropicMonthly  || priceId === tropicAnnual)  return "tropic"
+  if (priceId === islandMonthly  || priceId === islandAnnual)  return "island_pro"
+  return "coconut"
+}
+
+function billingPeriodFromPriceId(priceId: string): string {
+  const tropicAnnual  = process.env.STRIPE_PRICE_TROPIC_ANNUAL
+  const islandAnnual  = process.env.STRIPE_PRICE_ISLAND_PRO_ANNUAL
+  if (priceId === tropicAnnual || priceId === islandAnnual) return "annual"
+  return "monthly"
+}
+
 export async function POST(req: Request) {
   const payload = await req.text()
   const sig = req.headers.get("Stripe-Signature")
@@ -21,9 +41,10 @@ export async function POST(req: Request) {
       sig!,
       process.env.STRIPE_WEBHOOK_SECRET!
     )
-  } catch (err: any) {
-    console.error(`Webhook Error: ${err.message}`)
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    console.error(`Webhook Error: ${msg}`)
+    return NextResponse.json({ error: `Webhook Error: ${msg}` }, { status: 400 })
   }
 
   const supabase = getServiceRoleClient()
@@ -35,32 +56,42 @@ export async function POST(req: Request) {
         const subscriptionId = session.subscription as string
         const customerId = session.customer as string
 
-        if (session.metadata?.supabase_user_id) {
-          const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        if (!session.metadata?.supabase_user_id) break
 
-          await supabase
-            .from("customers")
-            .update({
-              stripe_subscription_id: subscriptionId,
-              stripe_price_id: subscription.items.data[0].price.id,
-              stripe_current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-              plan: "professional", // Example: set plan based on price
-            })
-            .eq("id", session.metadata.supabase_user_id)
-        }
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        const priceId = subscription.items.data[0].price.id
+
+        await supabase
+          .from("customers")
+          .update({
+            stripe_customer_id: customerId,
+            stripe_subscription_id: subscriptionId,
+            stripe_price_id: priceId,
+            stripe_current_period_end: new Date(
+              (subscription as unknown as { current_period_end: number }).current_period_end * 1000
+            ).toISOString(),
+            plan: planFromPriceId(priceId),
+            billing_period: billingPeriodFromPriceId(priceId),
+          })
+          .eq("id", session.metadata.supabase_user_id)
         break
       }
 
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
+        const priceId = subscription.items.data[0].price.id
 
         await supabase
           .from("customers")
           .update({
             stripe_subscription_id: subscription.id,
-            stripe_price_id: subscription.items.data[0].price.id,
-            stripe_current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            stripe_price_id: priceId,
+            stripe_current_period_end: new Date(
+              (subscription as unknown as { current_period_end: number }).current_period_end * 1000
+            ).toISOString(),
+            plan: planFromPriceId(priceId),
+            billing_period: billingPeriodFromPriceId(priceId),
           })
           .eq("stripe_customer_id", customerId)
         break
@@ -75,14 +106,25 @@ export async function POST(req: Request) {
           .update({
             stripe_subscription_id: null,
             stripe_price_id: null,
-            plan: "free",
+            stripe_current_period_end: null,
+            plan: "coconut",
+            billing_period: "monthly",
           })
           .eq("stripe_customer_id", customerId)
         break
       }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice
+        const customerId = invoice.customer as string
+        // Log the failure — optionally downgrade or mark as past_due
+        console.warn(`[stripe] payment failed for customer: ${customerId}`)
+        break
+      }
     }
-  } catch (err: any) {
-    console.error("Error processing webhook:", err)
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    console.error("Error processing webhook:", msg)
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 })
   }
 

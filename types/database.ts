@@ -1,7 +1,7 @@
 // Database types for TropiChat Supabase schema
 
 export type CustomerStatus = 'active' | 'inactive' | 'suspended' | 'trial'
-export type CustomerPlan = 'free' | 'starter' | 'professional' | 'enterprise'
+export type CustomerPlan = 'free' | 'coconut' | 'tropic' | 'island_pro' | 'starter' | 'professional' | 'enterprise'
 export type ConversationStatus = 'open' | 'pending' | 'resolved' | 'archived'
 export type ConversationPriority = 'low' | 'normal' | 'high' | 'urgent'
 export type MessageDirection = 'inbound' | 'outbound'
@@ -63,6 +63,7 @@ export interface Customer {
   stripe_subscription_id: string | null
   stripe_price_id: string | null
   stripe_current_period_end: string | null
+  billing_period: 'monthly' | 'annual' | null
   created_at: string
   updated_at: string
 }

@@ -571,55 +571,316 @@ function NotificationSettings() {
   )
 }
 
+const PLANS = [
+  {
+    id: "coconut",
+    name: "Coconut",
+    subtitle: "Get started free",
+    price: { monthly: 0, annual: 0 },
+    features: [
+      "20 bookings / month",
+      "Public booking page",
+      "WhatsApp + Instagram inbox",
+      "Basic analytics",
+    ],
+    cta: "Current plan",
+    highlight: false,
+  },
+  {
+    id: "tropic",
+    name: "Tropic",
+    subtitle: "For growing businesses",
+    price: { monthly: 29, annual: 290 },
+    features: [
+      "Unlimited bookings",
+      "Priority support",
+      "Advanced automation",
+      "All Coconut features",
+    ],
+    cta: "Upgrade to Tropic",
+    highlight: true,
+    priceEnvMonthly: "NEXT_PUBLIC_STRIPE_PRICE_TROPIC_MONTHLY",
+    priceEnvAnnual: "NEXT_PUBLIC_STRIPE_PRICE_TROPIC_ANNUAL",
+  },
+  {
+    id: "island_pro",
+    name: "Island Pro",
+    subtitle: "For teams & agencies",
+    price: { monthly: 59, annual: 590 },
+    features: [
+      "Everything in Tropic",
+      "Multi-staff accounts",
+      "Custom domain",
+      "Full analytics suite",
+    ],
+    cta: "Upgrade to Island Pro",
+    highlight: false,
+    priceEnvMonthly: "NEXT_PUBLIC_STRIPE_PRICE_ISLAND_PRO_MONTHLY",
+    priceEnvAnnual: "NEXT_PUBLIC_STRIPE_PRICE_ISLAND_PRO_ANNUAL",
+  },
+]
+
 function BillingSettings({ customer }: { customer: any }) {
-  const [usage, setUsage] = useState({ contacts: 0, messages: 0 })
+  const [usage, setUsage] = useState({ contacts: 0, messages: 0, bookings: 0 })
   const [loading, setLoading] = useState(true)
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly")
+  const [upgrading, setUpgrading] = useState<string | null>(null)
+  const [managingPortal, setManagingPortal] = useState(false)
+
+  const currentPlan: string = customer?.plan || "coconut"
+  const isCoconut = currentPlan === "coconut" || currentPlan === "free"
 
   useEffect(() => {
     async function fetchUsage() {
       const data = await getWorkspaceUsage()
       if (!data.error) {
-        setUsage({ contacts: data.contactsCount, messages: data.messagesCount })
+        setUsage(prev => ({ ...prev, contacts: data.contactsCount, messages: data.messagesCount }))
       }
+
+      // Fetch monthly booking count
+      const supabase = getSupabase()
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+      const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { count } = await supabase
+          .from("bookings")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .neq("status", "cancelled")
+          .gte("booking_date", monthStart)
+          .lte("booking_date", monthEnd)
+        setUsage(prev => ({ ...prev, bookings: count ?? 0 }))
+      }
+
       setLoading(false)
     }
     fetchUsage()
   }, [])
 
+  const handleUpgrade = async (planId: string) => {
+    setUpgrading(planId)
+    try {
+      const plan = PLANS.find(p => p.id === planId)
+      if (!plan || planId === "coconut") return
+
+      const priceId = billingPeriod === "annual"
+        ? process.env[plan.priceEnvAnnual ?? ""]
+        : process.env[plan.priceEnvMonthly ?? ""]
+
+      if (!priceId) {
+        toast.error("Pricing not configured. Contact support.")
+        return
+      }
+
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { toast.error("Not authenticated"); return }
+
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ priceId }),
+      })
+      const json = await res.json()
+      if (json.url) {
+        window.location.href = json.url
+      } else {
+        toast.error(json.error || "Failed to start checkout")
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.")
+    } finally {
+      setUpgrading(null)
+    }
+  }
+
+  const handleManagePortal = async () => {
+    setManagingPortal(true)
+    try {
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { toast.error("Not authenticated"); return }
+
+      const res = await fetch("/api/stripe/portal", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      const json = await res.json()
+      if (json.url) {
+        window.location.href = json.url
+      } else {
+        toast.error(json.error || "Failed to open billing portal")
+      }
+    } catch {
+      toast.error("Something went wrong.")
+    } finally {
+      setManagingPortal(false)
+    }
+  }
+
+  const planLabel = currentPlan === "coconut" || currentPlan === "free"
+    ? "Coconut — Free"
+    : currentPlan === "tropic"
+    ? `Tropic — $${billingPeriod === "annual" ? "290/yr" : "29/mo"}`
+    : `Island Pro — $${billingPeriod === "annual" ? "590/yr" : "59/mo"}`
+
   return (
-    <div className="space-y-10">
-      <div className="p-8 rounded-[32px] bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white overflow-hidden relative shadow-xl">
+    <div className="space-y-8">
+      {/* Current plan banner */}
+      <div className="p-7 rounded-[28px] bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white overflow-hidden relative shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20" />
         <div className="relative z-10">
-          <p className="text-xs font-black uppercase tracking-[0.2em] mb-4 opacity-80">Workspace Plan</p>
-          <div className="flex items-end gap-2 mb-6">
-            <h3 className="text-5xl font-black">{customer?.plan_name || "Free"}</h3>
-            <span className="text-lg font-bold opacity-80 pb-1.5">{customer?.billing_period || "Monthly"}</span>
-          </div>
-          <div className="space-y-3 mb-8">
-            <div className="flex items-center gap-2 text-sm font-bold opacity-90">
-              <CheckCircle weight="fill" className="h-4 w-4" />
-              {usage.contacts} / 1,000 Contacts Used
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-3 opacity-70">Active Plan</p>
+          <h3 className="text-3xl font-black mb-1">{planLabel}</h3>
+          {customer?.stripe_current_period_end && (
+            <p className="text-xs opacity-70 mb-4">
+              Renews {new Date(customer.stripe_current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+            </p>
+          )}
+
+          {/* Booking usage bar (Coconut only) */}
+          {isCoconut && (
+            <div className="mb-5">
+              <div className="flex justify-between text-xs font-bold mb-1 opacity-90">
+                <span>Bookings this month</span>
+                <span>{usage.bookings} / 20</span>
+              </div>
+              <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all duration-700",
+                    usage.bookings >= 20 ? "bg-red-400" : "bg-white"
+                  )}
+                  style={{ width: `${Math.min((usage.bookings / 20) * 100, 100)}%` }}
+                />
+              </div>
+              {usage.bookings >= 20 && (
+                <p className="text-xs font-bold mt-1 text-red-200">Monthly limit reached — upgrade to continue accepting bookings.</p>
+              )}
             </div>
-            <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-white transition-all duration-1000" 
-                style={{ width: `${Math.min((usage.contacts / 1000) * 100, 100)}%` }} 
-              />
-            </div>
-          </div>
-          <Button className="w-full bg-white text-[#007B85] hover:bg-white/90 rounded-2xl font-black py-6 transition-transform active:scale-[0.98]">
-            Manage Subscription
-          </Button>
+          )}
+
+          {currentPlan !== "coconut" && currentPlan !== "free" ? (
+            <Button
+              onClick={handleManagePortal}
+              disabled={managingPortal}
+              className="bg-white text-[#007B85] hover:bg-white/90 rounded-2xl font-black py-5 w-full transition-transform active:scale-[0.98]"
+            >
+              {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
+              Manage Subscription
+            </Button>
+          ) : null}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-5 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
+      {/* Billing period toggle */}
+      <div className="flex items-center justify-center gap-3">
+        <button
+          onClick={() => setBillingPeriod("monthly")}
+          className={cn(
+            "px-4 py-2 rounded-xl text-sm font-black transition-all",
+            billingPeriod === "monthly"
+              ? "bg-[#007B85] text-white"
+              : "bg-gray-100 dark:bg-[#111] text-gray-500 dark:text-gray-400"
+          )}
+        >
+          Monthly
+        </button>
+        <button
+          onClick={() => setBillingPeriod("annual")}
+          className={cn(
+            "px-4 py-2 rounded-xl text-sm font-black transition-all flex items-center gap-2",
+            billingPeriod === "annual"
+              ? "bg-[#007B85] text-white"
+              : "bg-gray-100 dark:bg-[#111] text-gray-500 dark:text-gray-400"
+          )}
+        >
+          Annual
+          <span className="text-[10px] font-black bg-green-500 text-white px-1.5 py-0.5 rounded-full">-17%</span>
+        </button>
+      </div>
+
+      {/* Pricing cards */}
+      <div className="grid grid-cols-1 gap-4">
+        {PLANS.map(plan => {
+          const isCurrent = plan.id === currentPlan || (plan.id === "coconut" && (currentPlan === "free" || !currentPlan))
+          const price = billingPeriod === "annual" ? plan.price.annual : plan.price.monthly
+          const priceLabel = plan.id === "coconut"
+            ? "Free"
+            : billingPeriod === "annual"
+            ? `$${price}/yr`
+            : `$${price}/mo`
+
+          return (
+            <div
+              key={plan.id}
+              className={cn(
+                "p-5 rounded-2xl border-2 transition-all",
+                plan.highlight
+                  ? "border-[#007B85] bg-[#007B85]/5 dark:bg-[#007B85]/10"
+                  : "border-gray-100 dark:border-[#1C1C1C]",
+                isCurrent && "ring-2 ring-[#007B85]/30"
+              )}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-base font-black dark:text-white">{plan.name}</p>
+                    {plan.highlight && (
+                      <span className="text-[10px] font-black bg-[#007B85] text-white px-2 py-0.5 rounded-full uppercase tracking-wide">Popular</span>
+                    )}
+                    {isCurrent && (
+                      <span className="text-[10px] font-black bg-gray-200 dark:bg-[#222] text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full uppercase tracking-wide">Current</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-0.5">{plan.subtitle}</p>
+                </div>
+                <p className="text-xl font-black text-[#007B85]">{priceLabel}</p>
+              </div>
+
+              <ul className="space-y-1.5 mb-4">
+                {plan.features.map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <CheckCircle weight="fill" className="h-3.5 w-3.5 text-[#007B85] flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              {!isCurrent && plan.id !== "coconut" && (
+                <Button
+                  onClick={() => handleUpgrade(plan.id)}
+                  disabled={upgrading === plan.id}
+                  className={cn(
+                    "w-full rounded-xl font-black text-sm py-4 transition-transform active:scale-[0.98]",
+                    plan.highlight
+                      ? "bg-[#007B85] hover:bg-[#2F8488] text-white"
+                      : "bg-gray-900 hover:bg-black text-white dark:bg-white dark:hover:bg-gray-200 dark:text-gray-900"
+                  )}
+                >
+                  {upgrading === plan.id
+                    ? <CircleNotch className="h-4 w-4 animate-spin" />
+                    : plan.cta
+                  }
+                </Button>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Usage summary */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="p-4 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Messages Sent</p>
           <p className="text-2xl font-black text-[#007B85]">{usage.messages.toLocaleString()}</p>
         </div>
-        <div className="p-5 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
+        <div className="p-4 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Contacts Stored</p>
           <p className="text-2xl font-black text-[#007B85]">{usage.contacts.toLocaleString()}</p>
         </div>

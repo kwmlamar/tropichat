@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
+const COCONUT_BOOKING_LIMIT = 20
+
 function getServiceClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -60,6 +62,38 @@ export async function POST(req: NextRequest) {
   if (!service) {
     return NextResponse.json({ error: "Service not found or unavailable" }, { status: 404 })
   }
+
+  // ── Plan enforcement: Coconut tier = 20 bookings/month cap ──────────────────
+  const { data: merchantCustomer } = await db
+    .from("customers")
+    .select("plan")
+    .eq("id", merchant_user_id)
+    .single()
+
+  if (!merchantCustomer || merchantCustomer.plan === "coconut" || merchantCustomer.plan === "free") {
+    const now = new Date()
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+    const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
+
+    const { count: monthlyCount } = await db
+      .from("bookings")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", merchant_user_id)
+      .neq("status", "cancelled")
+      .gte("booking_date", monthStart)
+      .lte("booking_date", monthEnd)
+
+    if ((monthlyCount ?? 0) >= COCONUT_BOOKING_LIMIT) {
+      return NextResponse.json(
+        {
+          error: "This business has reached its monthly booking limit. Please contact them directly to book.",
+          code: "MERCHANT_PLAN_LIMIT_REACHED",
+        },
+        { status: 403 }
+      )
+    }
+  }
+  // ── End plan enforcement ────────────────────────────────────────────────────
 
   // Capacity check: count existing bookings for this service/date/time
   const normalizedTime = booking_time.length === 5 ? booking_time + ":00" : booking_time
