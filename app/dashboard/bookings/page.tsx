@@ -31,6 +31,13 @@ import { Badge } from "@/components/ui/badge"
 
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const DAY_NAMES   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+type StatusFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled'
+const STATUS_TABS: { key: StatusFilter; label: string; dot: string }[] = [
+  { key: 'all',       label: 'All',        dot: '' },
+  { key: 'pending',   label: 'Requests',   dot: 'bg-[#FF7E36]' },
+  { key: 'confirmed', label: 'Confirmed',  dot: 'bg-[#007B85]' },
+  { key: 'completed', label: 'Completed',  dot: 'bg-indigo-500' },
+]
 
 function getDaysInMonth(y: number, m: number) { return new Date(y, m + 1, 0).getDate() }
 function getFirstDay(y: number, m: number)    { return new Date(y, m, 1).getDay() }
@@ -43,6 +50,9 @@ function StatusBadge({ status }: { status: string }) {
   )
   if (status === "pending") return (
     <span className="text-[10px] font-semibold text-[#FF7E36] uppercase tracking-widest">Pending</span>
+  )
+  if (status === "completed") return (
+    <span className="text-[10px] font-semibold text-indigo-500 uppercase tracking-widest">Completed</span>
   )
   return <span className="text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest">{status}</span>
 }
@@ -64,6 +74,7 @@ const STATUS_DOT: Record<string, string> = {
   confirmed: "bg-[#007B85]",
   pending:   "bg-[#FF7E36]",
   cancelled: "bg-gray-300 dark:bg-[#333]",
+  completed: "bg-indigo-400",
 }
 
 function MonthView({ calendarDays, bookingsForDay, isToday, onBookingClick }: any) {
@@ -166,6 +177,7 @@ export default function BookingsPage() {
   const [services, setServices]   = useState<BookingService[]>([])
   const [loading, setLoading]     = useState(true)
   const [filterService, setFilter]= useState("all")
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [customerPlan, setPlan]   = useState("free")
   const [isMobile, setIsMobile]   = useState(false)
   const [selectedDate, setSelDate]= useState<Date>(today)
@@ -201,7 +213,11 @@ export default function BookingsPage() {
     return () => { client.removeChannel(ch) }
   }, [fetchBookings])
 
-  const filtered = bookings.filter(b => filterService === "all" || b.service_id === filterService)
+  const filtered = bookings.filter(b =>
+    (filterService === "all" || b.service_id === filterService) &&
+    (statusFilter === "all" || b.status === statusFilter)
+  )
+  const pendingCount = bookings.filter(b => b.status === 'pending').length
 
   const calendarDays = useMemo(() => {
     const n = getDaysInMonth(viewYear, viewMonth)
@@ -447,12 +463,37 @@ export default function BookingsPage() {
           </div>
         </motion.div>
 
+        {/* Status filter tabs */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.04 }}
+          className="flex items-center gap-1 bg-gray-100 dark:bg-[#111] p-1 rounded-xl border border-gray-200 dark:border-[#1C1C1C] self-start">
+          {STATUS_TABS.map(tab => {
+            const count = tab.key === 'all' ? bookings.length : bookings.filter(b => b.status === tab.key).length
+            return (
+              <button key={tab.key} onClick={() => setStatusFilter(tab.key)}
+                className={cn("flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200",
+                  statusFilter === tab.key
+                    ? "bg-white dark:bg-[#1C1C1C] text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]"
+                )}>
+                {tab.dot && <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", tab.dot)} />}
+                {tab.label}
+                {count > 0 && (
+                  <span className={cn("text-[10px] font-bold tabular-nums",
+                    tab.key === 'pending' && count > 0 ? "text-[#FF7E36]" : "text-gray-400 dark:text-[#525252]")}>
+                    {count}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </motion.div>
+
         {/* Stats */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.06 }}
           className="grid grid-cols-3 gap-4">
-          <StatCard title="Confirmed" val={filtered.filter(b => b.status==="confirmed").length} accent="#007B85" />
-          <StatCard title="Pending"   val={filtered.filter(b => b.status==="pending").length}   accent="#FF7E36" />
-          <StatCard title="Guests"    val={filtered.filter(b => b.status!=="cancelled").reduce((s,b)=>s+b.number_of_people,0)} accent="#007B85" />
+          <StatCard title="Confirmed" val={bookings.filter(b => b.status==="confirmed").length} accent="#007B85" />
+          <StatCard title="Requests"  val={pendingCount}   accent="#FF7E36" />
+          <StatCard title="Guests"    val={bookings.filter(b => b.status!=="cancelled").reduce((s,b)=>s+b.number_of_people,0)} accent="#007B85" />
         </motion.div>
 
         {/* Calendar card — the signature element of bookings */}

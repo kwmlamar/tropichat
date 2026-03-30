@@ -27,19 +27,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { getSession, getCurrentCustomer, updateCustomer } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, getSupabase, getWorkspaceId, updateCustomer } from "@/lib/supabase"
+import type { Customer } from "@/types/database"
 import { initiateMetaConnect, getMetaStatus } from "@/lib/meta-connections"
 import { toast } from "sonner"
 import { SplashLoader } from "@/components/splash-loader"
 
-type Step = "welcome" | "channels" | "meta" | "complete"
+type Step = "welcome" | "profile" | "channels" | "meta" | "complete"
 
 export default function OnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState<Step>("welcome")
   const [loading, setLoading] = useState(true)
-  const [customer, setCustomer] = useState<any>(null)
+  const [customer, setCustomer] = useState<Customer | null>(null)
   const [businessName, setBusinessName] = useState("")
+  const [businessDescription, setBusinessDescription] = useState("")
+  const [profilePicUrl, setProfilePicUrl] = useState("")
   const [selectedChannels, setSelectedChannels] = useState<string[]>(["instagram", "whatsapp", "messenger"])
   const [connecting, setConnecting] = useState(false)
   const [isFinishing, setIsFinishing] = useState(false)
@@ -56,10 +59,37 @@ export default function OnboardingPage() {
       if (data) {
         setCustomer(data)
         setBusinessName(data.business_name || "")
+        setProfilePicUrl(data.avatar_url || "")
         // If they already onboarded, send them to dashboard
-        if ((data as any).has_onboarded) {
+        if (data.has_onboarded) {
           router.push("/dashboard")
           return
+        }
+      }
+
+      const supabase = getSupabase()
+      const { customerId } = await getWorkspaceId()
+      if (customerId) {
+        const { data: connectedAccount } = await supabase
+          .from("connected_accounts")
+          .select("id")
+          .eq("user_id", customerId)
+          .eq("channel_type", "whatsapp")
+          .eq("is_active", true)
+          .maybeSingle()
+
+        if (connectedAccount?.id) {
+          const { data: businessProfile } = await supabase
+            .from("business_profiles")
+            .select("business_name,business_description,profile_picture_url")
+            .eq("connected_account_id", connectedAccount.id)
+            .maybeSingle()
+
+          if (businessProfile) {
+            setBusinessName(businessProfile.business_name || data?.business_name || "")
+            setBusinessDescription(businessProfile.business_description || "")
+            setProfilePicUrl(businessProfile.profile_picture_url || data?.avatar_url || "")
+          }
         }
       }
 
@@ -71,6 +101,8 @@ export default function OnboardingPage() {
         setStep("meta")
       } else if (params.get("step") === "channels") {
         setStep("channels")
+      } else if (params.get("step") === "profile") {
+        setStep("profile")
       }
 
       setLoading(false)
@@ -79,7 +111,8 @@ export default function OnboardingPage() {
   }, [router])
 
   const handleNextStep = () => {
-    if (step === "welcome") setStep("channels")
+    if (step === "welcome") setStep("profile")
+    else if (step === "profile") setStep("channels")
     else if (step === "channels") setStep("meta")
   }
 
@@ -96,15 +129,70 @@ export default function OnboardingPage() {
 
   const handleFinish = async () => {
     setIsFinishing(true)
-    await updateCustomer({ has_onboarded: true } as any)
-    toast.success("Welcome to TropiChat!")
-    router.push("/dashboard")
+    try {
+      const { error: customerError } = await updateCustomer({
+        has_onboarded: true,
+        business_name: businessName,
+        avatar_url: profilePicUrl || null
+      })
+
+      if (customerError) {
+        throw new Error(customerError)
+      }
+
+      const supabase = getSupabase()
+      const { customerId, error: workspaceError } = await getWorkspaceId()
+      if (workspaceError) {
+        throw new Error(workspaceError)
+      }
+
+      if (customerId) {
+        const { data: connectedAccount, error: accountError } = await supabase
+          .from("connected_accounts")
+          .select("id")
+          .eq("user_id", customerId)
+          .eq("channel_type", "whatsapp")
+          .eq("is_active", true)
+          .maybeSingle()
+
+        if (accountError) {
+          throw new Error(accountError.message)
+        }
+
+        if (connectedAccount?.id) {
+          const { error: profileError } = await supabase
+            .from("business_profiles")
+            .upsert(
+              {
+                connected_account_id: connectedAccount.id,
+                business_name: businessName,
+                business_description: businessDescription || null,
+                profile_picture_url: profilePicUrl || null
+              },
+              { onConflict: "connected_account_id" }
+            )
+
+          if (profileError) {
+            throw new Error(profileError.message)
+          }
+        }
+      }
+
+      toast.success("Welcome to TropiChat!")
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Onboarding finish failed:", error)
+      toast.error("Failed to finish onboarding. Please try again.")
+    } finally {
+      setIsFinishing(false)
+    }
   }
 
   if (loading) return <SplashLoader isLoading={true} />
 
   const steps = [
     { id: "welcome", label: "Identity" },
+    { id: "profile", label: "Profile" },
     { id: "channels", label: "Channels" },
     { id: "meta", label: "Connect" },
     { id: "complete", label: "Finalize" }
@@ -150,7 +238,7 @@ export default function OnboardingPage() {
                    Welcome to the <br /> <span className="text-[#007B85]">Future of Chat</span>
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 font-medium max-w-sm mx-auto">
-                   Let's set up your workspace and connect your first customer channels.
+                   Let&apos;s set up your workspace and connect your first customer channels.
                 </p>
               </div>
 
@@ -249,6 +337,93 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
+          {step === "profile" && (
+            <motion.div
+              key="profile"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-10"
+            >
+              <div className="text-center space-y-3">
+                <div className="h-16 w-16 bg-white dark:bg-[#080808] border border-gray-100 dark:border-white/5 shadow-xl rounded-3xl flex items-center justify-center mx-auto">
+                  <IdentificationCard weight="fill" className="h-8 w-8 text-[#007B85]" />
+                </div>
+                <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Build your brand profile</h2>
+                <p className="text-gray-500 font-medium max-w-md mx-auto">
+                  Add a short business description and logo URL so customers recognize your brand instantly.
+                </p>
+              </div>
+
+              <div className="space-y-5 bg-white dark:bg-[#080808] p-8 rounded-[32px] border border-gray-100 dark:border-white/5 shadow-xl">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Business Description</Label>
+                  <textarea
+                    value={businessDescription}
+                    onChange={e => setBusinessDescription(e.target.value)}
+                    placeholder="What makes your business special?"
+                    className="w-full h-28 resize-none rounded-2xl border border-gray-100 dark:border-white/10 dark:bg-[#111] p-4 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#007B85]/40"
+                  />
+                  <p className="text-[11px] text-gray-400 font-medium">Shown on your connected business profile.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Profile Picture URL</Label>
+                  <Input
+                    value={profilePicUrl}
+                    onChange={e => setProfilePicUrl(e.target.value)}
+                    placeholder="https://example.com/logo.png"
+                    className="h-14 rounded-2xl border-gray-100 dark:border-white/10 dark:bg-[#111] text-sm font-medium"
+                  />
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0.5, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="rounded-3xl border border-[#007B85]/20 bg-[#007B85]/5 p-5 flex items-center gap-4"
+                >
+                  <div className="h-14 w-14 rounded-2xl bg-white border border-[#007B85]/20 overflow-hidden flex items-center justify-center">
+                    {profilePicUrl ? (
+                      <Image
+                        src={profilePicUrl}
+                        alt="Business profile preview"
+                        width={56}
+                        height={56}
+                        unoptimized
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <House weight="fill" className="h-6 w-6 text-[#007B85]" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-gray-800 dark:text-gray-100 truncate">{businessName || "Your Business Name"}</p>
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 line-clamp-2">
+                      {businessDescription || "Your business description preview will appear here."}
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+
+              <div className="flex gap-4 pt-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setStep("welcome")}
+                  className="flex-1 h-14 rounded-2xl font-black text-gray-400"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleNextStep}
+                  disabled={!businessDescription.trim()}
+                  className="flex-[2] h-14 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-2xl font-black shadow-xl shadow-[#007B85]/20"
+                >
+                  Continue
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
           {step === "meta" && (
             <motion.div
               key="meta"
@@ -326,7 +501,7 @@ export default function OnboardingPage() {
                </div>
 
                <div className="space-y-3">
-                  <h2 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tighter">You're all set!</h2>
+                  <h2 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white tracking-tighter">You&apos;re all set!</h2>
                   <p className="text-gray-500 font-medium max-w-[280px] mx-auto leading-relaxed">
                     Your workspace is ready. Time to dive in and start growing your business.
                   </p>

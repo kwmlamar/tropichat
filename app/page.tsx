@@ -9,6 +9,7 @@ import { SolutionSection } from "@/components/solution-section"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { SocialProofSection } from "@/components/social-proof-section"
 import { PricingSection } from "@/components/pricing-section"
+import { TrustHighlights } from "@/components/trust-highlights"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
         <section id="pricing">
           <PricingSection />
         </section>
+        <TrustHighlights />
         <Footer />
       </main>
     </>

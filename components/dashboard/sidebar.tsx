@@ -20,6 +20,7 @@ import {
   ArrowLineRight,
   Crown,
   ShieldCheck,
+  Brain,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Avatar } from "@/components/ui/avatar"
@@ -242,6 +243,24 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
           >
             <ShieldCheck weight="bold" className={cn("shrink-0", isActive("/admin") ? "text-amber-600" : "text-amber-500/50", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
             {!collapsed && <span>Admin Portal</span>}
+          </Link>
+        )}
+
+        {/* Intelligence Link - Only for Admins */}
+        {isAdmin && (
+          <Link
+            href="/admin/intelligence"
+            className={cn(
+              "flex items-center rounded-xl text-sm font-bold transition-all duration-200 mb-1 w-full",
+              collapsed ? "justify-center py-3" : "gap-3 px-3 py-2.5 text-left",
+              isActive("/admin/intelligence")
+                ? "bg-[#007B85]/10 text-[#007B85]"
+                : "text-gray-400 hover:bg-gray-100 hover:text-[#007B85] dark:text-gray-500 dark:hover:bg-[#111111] dark:hover:text-[#007B85]"
+            )}
+            title={collapsed ? "AI Intelligence" : undefined}
+          >
+            <Brain weight="fill" className={cn("shrink-0", isActive("/admin/intelligence") ? "text-[#007B85]" : "text-gray-500/50", collapsed ? "h-6 w-6" : "h-5.5 w-5.5")} />
+            {!collapsed && <span>Intelligence</span>}
           </Link>
         )}
 

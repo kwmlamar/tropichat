@@ -1,6 +1,6 @@
 // Booking system types for TropiChat
 
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled'
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed'
 
 // ============================================================
 // Database row types
@@ -48,6 +48,7 @@ export interface Booking {
   number_of_people: number
   status: BookingStatus
   notes: string | null
+  merchant_note: string | null
   reference_code: string | null
   cancelled_at: string | null
   created_at: string
@@ -111,6 +112,29 @@ export interface UpdateBookingInput {
   number_of_people?: number
   status?: BookingStatus
   notes?: string
+  merchant_note?: string
+}
+
+// ============================================================
+// Availability blocks (simple blocked dates)
+// ============================================================
+
+export interface AvailabilityBlock {
+  id: string
+  user_id: string
+  block_date: string    // 'YYYY-MM-DD'
+  start_time: string | null  // 'HH:MM:SS' or null for full day
+  end_time: string | null    // 'HH:MM:SS' or null for full day
+  reason: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateAvailabilityBlockInput {
+  block_date: string
+  start_time?: string
+  end_time?: string
+  reason?: string
 }
 
 // ============================================================

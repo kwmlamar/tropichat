@@ -2,21 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { 
-  Plus, 
-  PencilSimple as Pencil, 
-  Trash, 
-  Clock, 
-  Users, 
-  CurrencyDollar as DollarSign, 
-  ToggleLeft, 
-  ToggleRight, 
-  CaretDown as ChevronDown, 
-  CaretUp as ChevronUp, 
-  X, 
-  Check, 
-  Palette, 
+  Plus,
+  PencilSimple as Pencil,
+  Trash,
+  Clock,
+  Users,
+  CurrencyDollar as DollarSign,
+  ToggleLeft,
+  ToggleRight,
+  CaretDown as ChevronDown,
+  CaretUp as ChevronUp,
+  X,
+  Check,
+  Palette,
   CaretLeft as ArrowLeft,
-  CircleNotch
+  CircleNotch,
+  CalendarX,
+  Warning,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,8 +28,9 @@ import { useRouter } from "next/navigation"
 import {
   getServices, createService, updateService, deleteService,
   getAvailabilitySlots, createAvailabilitySlot, updateAvailabilitySlot, deleteAvailabilitySlot,
+  getAvailabilityBlocks, createAvailabilityBlock, deleteAvailabilityBlock,
 } from "@/lib/bookings"
-import type { BookingService, AvailabilitySlot, CreateServiceInput, CreateAvailabilitySlotInput } from "@/types/bookings"
+import type { BookingService, AvailabilitySlot, AvailabilityBlock, CreateServiceInput, CreateAvailabilitySlotInput } from "@/types/bookings"
 import { DAY_LABELS } from "@/types/bookings"
 import { toast } from "sonner"
 
@@ -292,6 +295,16 @@ export default function AvailabilityPage() {
   const [addingSlotForService, setAddingSlotForService] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
 
+  // ── Availability Blocks ──
+  const [blocks, setBlocks] = useState<AvailabilityBlock[]>([])
+  const [addingBlock, setAddingBlock] = useState(false)
+  const [blockDate, setBlockDate] = useState('')
+  const [blockStartTime, setBlockStartTime] = useState('')
+  const [blockEndTime, setBlockEndTime] = useState('')
+  const [blockReason, setBlockReason] = useState('')
+  const [blockFullDay, setBlockFullDay] = useState(true)
+  const [savingBlock, setSavingBlock] = useState(false)
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
     check(); window.addEventListener("resize", check); return () => window.removeEventListener("resize", check)
@@ -299,12 +312,14 @@ export default function AvailabilityPage() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
-    const [{ data: s }, { data: sl }] = await Promise.all([
+    const [{ data: s }, { data: sl }, { data: bl }] = await Promise.all([
       getServices(false),
       getAvailabilitySlots(),
+      getAvailabilityBlocks(),
     ])
-    setServices(s)
-    setSlots(sl)
+    setServices(s ?? [])
+    setSlots(sl ?? [])
+    setBlocks(bl ?? [])
     setLoading(false)
   }, [])
 
@@ -363,6 +378,47 @@ export default function AvailabilityPage() {
     if (error) { toast.error(error); return }
     setSlots(prev => prev.filter(s => s.id !== slot.id))
     toast.success('Slot removed')
+  }
+
+  // ---- BLOCK ACTIONS ----
+  const handleAddBlock = async () => {
+    if (!blockDate) { toast.error('Date is required'); return }
+    setSavingBlock(true)
+    const { data: block, error } = await createAvailabilityBlock({
+      block_date: blockDate,
+      start_time: (!blockFullDay && blockStartTime) ? blockStartTime : undefined,
+      end_time: (!blockFullDay && blockEndTime) ? blockEndTime : undefined,
+      reason: blockReason.trim() || undefined,
+    })
+    setSavingBlock(false)
+    if (error || !block) { toast.error(error ?? 'Failed to add block'); return }
+    setBlocks(prev => [...prev, block].sort((a, b) => a.block_date.localeCompare(b.block_date)))
+    setAddingBlock(false)
+    setBlockDate('')
+    setBlockStartTime('')
+    setBlockEndTime('')
+    setBlockReason('')
+    setBlockFullDay(true)
+    toast.success('Date blocked')
+  }
+
+  const handleDeleteBlock = async (block: AvailabilityBlock) => {
+    const { error } = await deleteAvailabilityBlock(block.id)
+    if (error) { toast.error(error); return }
+    setBlocks(prev => prev.filter(b => b.id !== block.id))
+    toast.success('Block removed')
+  }
+
+  const formatBlockLabel = (block: AvailabilityBlock) => {
+    const date = new Date(block.block_date + 'T12:00:00').toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+    })
+    if (!block.start_time || !block.end_time) return `${date} — All day`
+    const t = (s: string) => {
+      const [h, m] = s.split(':').map(Number)
+      return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'pm' : 'am'}`
+    }
+    return `${date} · ${t(block.start_time)} – ${t(block.end_time)}`
   }
 
   const slotsForService = (serviceId: string) => slots.filter(s => s.service_id === serviceId)
@@ -711,12 +767,142 @@ export default function AvailabilityPage() {
             })}
           </div>
         )}
+
+        {/* ── Blocked Dates Section ────────────────────────────────────────── */}
+        <div className="bg-white dark:bg-[#0A0A0A] rounded-3xl border border-gray-100 dark:border-[#222222] overflow-hidden shadow-sm">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50 dark:border-[#111111]">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                <CalendarX weight="bold" className="h-4 w-4 text-red-500" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">Blocked Dates</h2>
+                <p className="text-xs text-gray-400 dark:text-[#525252]">Mark dates or times as unavailable</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setAddingBlock(b => !b)}
+              variant="outline"
+              className="bg-white dark:bg-[#0A0A0A] border-gray-200 dark:border-[#222222] text-gray-600 dark:text-gray-400 rounded-xl text-xs"
+            >
+              <Plus weight="bold" className="h-3.5 w-3.5 mr-1" />
+              Block Date
+            </Button>
+          </div>
+
+          {/* Add block form */}
+          {addingBlock && (
+            <div className="px-6 py-5 border-b border-gray-50 dark:border-[#111111] space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Date *</label>
+                  <Input
+                    type="date"
+                    value={blockDate}
+                    onChange={e => setBlockDate(e.target.value)}
+                    className="h-10 rounded-xl border-gray-200 dark:border-[#222222] bg-gray-50 dark:bg-[#111]"
+                  />
+                </div>
+                <div className="col-span-2 sm:col-span-1 flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer pb-2">
+                    <input
+                      type="checkbox"
+                      checked={blockFullDay}
+                      onChange={e => setBlockFullDay(e.target.checked)}
+                      className="rounded border-gray-300 text-[#007B85] focus:ring-[#007B85]"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Full day block</span>
+                  </label>
+                </div>
+              </div>
+
+              {!blockFullDay && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Start Time</label>
+                    <Input
+                      type="time"
+                      value={blockStartTime}
+                      onChange={e => setBlockStartTime(e.target.value)}
+                      className="h-10 rounded-xl border-gray-200 dark:border-[#222222] bg-gray-50 dark:bg-[#111]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">End Time</label>
+                    <Input
+                      type="time"
+                      value={blockEndTime}
+                      onChange={e => setBlockEndTime(e.target.value)}
+                      className="h-10 rounded-xl border-gray-200 dark:border-[#222222] bg-gray-50 dark:bg-[#111]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Reason (internal only)</label>
+                <Input
+                  value={blockReason}
+                  onChange={e => setBlockReason(e.target.value)}
+                  placeholder="E.g. National holiday, closed for maintenance..."
+                  className="h-10 rounded-xl border-gray-200 dark:border-[#222222] bg-gray-50 dark:bg-[#111]"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleAddBlock}
+                  disabled={savingBlock || !blockDate}
+                  className="bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl"
+                >
+                  {savingBlock ? <CircleNotch className="h-4 w-4 animate-spin mr-1.5" /> : <Check weight="bold" className="h-4 w-4 mr-1.5" />}
+                  Save Block
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => { setAddingBlock(false); setBlockDate(''); setBlockReason('') }}
+                  className="rounded-xl border-gray-200 dark:border-[#222222]"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Block list */}
+          <div className="p-4">
+            {blocks.length === 0 ? (
+              <p className="text-center text-sm text-gray-400 dark:text-[#525252] py-6">No blocked dates. Customers can book any available slot.</p>
+            ) : (
+              <div className="space-y-2">
+                {blocks.map(block => (
+                  <div key={block.id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50/50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20">
+                    <Warning weight="bold" className="h-4 w-4 text-red-400 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{formatBlockLabel(block)}</p>
+                      {block.reason && (
+                        <p className="text-xs text-gray-400 dark:text-[#525252] truncate">{block.reason}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteBlock(block)}
+                      className="p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                    >
+                      <X weight="bold" className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         </div>
       </div>
 
       {isMobile && (
         <div className="p-4 safe-area-bottom border-t border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0A0A0A] mt-auto">
-          <button 
+          <button
             onClick={() => {
               setAddingService(true)
               setTimeout(() => {

@@ -10,13 +10,15 @@ import {
   CalendarBlank as CalendarDays,
   Clock,
   Users,
-  Warning as AlertTriangle,
   ArrowSquareOut as ExternalLink,
   PaperPlaneRight as Send,
   CheckCircle as CheckCircle2,
   Trash as Trash2,
   ChatCircleDots as MessageSquare,
-  CircleNotch as Loader2
+  CircleNotch as Loader2,
+  CheckSquare,
+  XCircle,
+  SealCheck,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -34,9 +36,10 @@ interface BookingDetailsModalProps {
 }
 
 const STATUS_STYLES = {
-  confirmed: 'bg-teal-500 text-white shadow-lg shadow-teal-500/20',
-  pending: 'bg-coral-500 text-white shadow-lg shadow-coral-500/20',
-  cancelled: 'bg-gray-400 text-white shadow-lg shadow-gray-400/20',
+  confirmed:  'bg-teal-500 text-white shadow-lg shadow-teal-500/20',
+  pending:    'bg-[#FF7E36] text-white shadow-lg shadow-orange-500/20',
+  cancelled:  'bg-gray-400 text-white shadow-lg shadow-gray-400/20',
+  completed:  'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20',
 }
 
 export function BookingDetailsModal({
@@ -47,14 +50,53 @@ export function BookingDetailsModal({
   onSendMessage,
   onGoToConversation,
 }: BookingDetailsModalProps) {
-  const [cancelling, setCancelling] = useState(false)
-  const [confirming, setConfirming] = useState(false)
+  const [cancelling, setCancelling]         = useState(false)
+  const [confirming, setConfirming]         = useState(false)
+  const [completing, setCompleting]         = useState(false)
+  const [showDeclineForm, setShowDecline]   = useState(false)
+  const [declineNote, setDeclineNote]       = useState('')
+  const [declining, setDeclining]           = useState(false)
   const [showConfirmMsg, setShowConfirmMsg] = useState(false)
-  const [confirmMsg, setConfirmMsg] = useState('')
+  const [confirmMsg, setConfirmMsg]         = useState('')
 
   if (!open || !booking) return null
 
   const service = booking.service
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+
+  const handleConfirm = async () => {
+    setConfirming(true)
+    const { data, error } = await updateBooking(booking.id, { status: 'confirmed' })
+    setConfirming(false)
+    if (error || !data) { toast.error(error ?? 'Failed to confirm'); return }
+    toast.success('Booking confirmed — customer notified by email')
+    onUpdated?.(data)
+  }
+
+  const handleDecline = async () => {
+    setDeclining(true)
+    const { data, error } = await updateBooking(booking.id, {
+      status: 'cancelled',
+      merchant_note: declineNote.trim() || undefined,
+    })
+    setDeclining(false)
+    if (error || !data) { toast.error(error ?? 'Failed to decline'); return }
+    toast.success(booking.customer_email ? 'Booking declined — customer notified by email' : 'Booking declined')
+    setShowDecline(false)
+    setDeclineNote('')
+    onUpdated?.(data)
+    onClose()
+  }
+
+  const handleComplete = async () => {
+    setCompleting(true)
+    const { data, error } = await updateBooking(booking.id, { status: 'completed' })
+    setCompleting(false)
+    if (error || !data) { toast.error(error ?? 'Failed to mark complete'); return }
+    toast.success('Booking marked as completed')
+    onUpdated?.(data)
+  }
 
   const handleCancel = async () => {
     if (!confirm('Cancel this booking? This cannot be undone.')) return
@@ -65,15 +107,6 @@ export function BookingDetailsModal({
     toast.success('Booking cancelled')
     onUpdated?.({ ...booking, status: 'cancelled', cancelled_at: new Date().toISOString() })
     onClose()
-  }
-
-  const handleConfirm = async () => {
-    setConfirming(true)
-    const { data, error } = await updateBooking(booking.id, { status: 'confirmed' })
-    setConfirming(false)
-    if (error || !data) { toast.error(error ?? 'Failed to confirm'); return }
-    toast.success('Booking confirmed')
-    onUpdated?.(data)
   }
 
   const handleShowConfirmMsg = () => {
@@ -94,6 +127,8 @@ export function BookingDetailsModal({
     setShowConfirmMsg(false)
     toast.success('Message sent')
   }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <AnimatePresence>
@@ -130,7 +165,7 @@ export function BookingDetailsModal({
                 </h2>
                 <div className={cn(
                   "inline-flex text-[9px] px-2.5 py-1 rounded-full font-black mt-1 uppercase tracking-widest",
-                  STATUS_STYLES[booking.status]
+                  STATUS_STYLES[booking.status] ?? STATUS_STYLES.cancelled
                 )}>
                   {booking.status}
                 </div>
@@ -142,11 +177,9 @@ export function BookingDetailsModal({
             >
               <X weight="bold" className="h-5 w-5" />
             </button>
-
-
           </div>
 
-          <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar">
+          <div className="p-5 sm:p-8 space-y-4 sm:space-y-6 overflow-y-auto">
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-gray-50/50 dark:bg-[#111111]/50 border border-gray-100 dark:border-[#222222] p-3 text-center transition-transform hover:scale-[1.02]">
@@ -173,16 +206,23 @@ export function BookingDetailsModal({
               </div>
             </div>
 
+            {/* Reference code */}
+            {booking.reference_code && (
+              <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#1C1C1C]">
+                <span className="text-[11px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">Ref</span>
+                <span className="text-[13px] font-bold text-[#007B85] tracking-wider">{booking.reference_code}</span>
+              </div>
+            )}
+
             {/* Pricing Highlight */}
             {service?.price && (
               <div className="rounded-3xl bg-[#213138] p-6 text-white relative overflow-hidden group shadow-xl">
-
                 <div className="relative z-10 flex justify-between items-end">
                   <div>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-1">Estimated Total</p>
                     <p className="text-3xl font-black tracking-tighter">
-                      ${service.price_type === 'per_person' 
-                        ? (service.price * booking.number_of_people).toFixed(2) 
+                      ${service.price_type === 'per_person'
+                        ? (service.price * booking.number_of_people).toFixed(2)
                         : service.price.toFixed(2)}
                     </p>
                   </div>
@@ -228,11 +268,62 @@ export function BookingDetailsModal({
               <div className="rounded-3xl bg-teal-50/30 dark:bg-teal-900/10 border border-teal-100/50 dark:border-teal-900/20 p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText weight="bold" className="h-4 w-4 text-[#007B85] opacity-60" />
-                  <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">Internal Notes</p>
+                  <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">Customer Notes</p>
                 </div>
-                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">"{booking.notes}"</p>
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">&ldquo;{booking.notes}&rdquo;</p>
               </div>
             )}
+
+            {/* Merchant note (shown after decline) */}
+            {booking.merchant_note && booking.status === 'cancelled' && (
+              <div className="rounded-3xl bg-red-50/30 dark:bg-red-900/10 border border-red-100/50 dark:border-red-900/20 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle weight="bold" className="h-4 w-4 text-red-400 opacity-60" />
+                  <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">Decline Reason</p>
+                </div>
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">&ldquo;{booking.merchant_note}&rdquo;</p>
+              </div>
+            )}
+
+            {/* Decline form */}
+            <AnimatePresence>
+              {showDeclineForm && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="rounded-[24px] border border-red-100 dark:border-red-900/30 bg-red-50/20 dark:bg-red-900/10 p-5 space-y-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] font-black text-red-500 uppercase tracking-widest">Decline Reason (optional)</p>
+                    <button onClick={() => setShowDecline(false)} className="text-gray-400 hover:text-gray-600">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                  <textarea
+                    value={declineNote}
+                    onChange={e => setDeclineNote(e.target.value)}
+                    placeholder="E.g. We're fully booked on this date — please try another time."
+                    rows={3}
+                    className="w-full rounded-2xl border border-gray-100 dark:border-[#222222] bg-white/50 dark:bg-black/50 px-4 py-3 text-xs font-medium dark:text-gray-300 leading-relaxed resize-none focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-400 shadow-inner placeholder:text-gray-400"
+                  />
+                  {booking.customer_email && (
+                    <p className="text-[10px] text-gray-400 dark:text-[#525252]">
+                      Customer will receive a decline email at <strong className="text-gray-600 dark:text-gray-400">{booking.customer_email}</strong>
+                      {declineNote.trim() && ' with your message'}.
+                    </p>
+                  )}
+                  <Button
+                    onClick={handleDecline}
+                    disabled={declining}
+                    className="w-full h-11 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold border-none"
+                  >
+                    {declining ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <XCircle weight="bold" className="h-4 w-4 mr-2" />}
+                    {declining ? 'Declining…' : 'Decline Booking'}
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Confirmation composer */}
             <AnimatePresence>
@@ -244,7 +335,7 @@ export function BookingDetailsModal({
                   className="rounded-[24px] border border-teal-100 dark:border-teal-900/30 bg-teal-50/20 dark:bg-teal-900/10 p-5 space-y-4"
                 >
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">Confirmation Message</p>
+                    <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">WhatsApp Confirmation</p>
                     <button onClick={() => setShowConfirmMsg(false)} className="text-gray-400 hover:text-gray-600">
                       <X className="h-3 w-3" />
                     </button>
@@ -257,7 +348,7 @@ export function BookingDetailsModal({
                   />
                   <Button
                     onClick={handleSendConfirmMsg}
-                    className="w-full h-11 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-bold shadow-lg shadow-teal-500/20 hover-lift border-none"
+                    className="w-full h-11 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-bold shadow-lg shadow-teal-500/20 border-none"
                     disabled={!booking.conversation_id}
                   >
                     <Send weight="bold" className="h-4 w-4 mr-2" />
@@ -269,20 +360,51 @@ export function BookingDetailsModal({
 
             {/* Actions */}
             <div className="space-y-2 pt-1">
-              {booking.status === 'pending' && (
+              {/* Accept pending booking */}
+              {booking.status === 'pending' && !showDeclineForm && (
                 <Button
                   onClick={handleConfirm}
                   disabled={confirming}
-                  className="w-full bg-[#007B85] hover:bg-[#2F8488] text-white"
+                  className="w-full h-11 bg-[#007B85] hover:bg-[#2F8488] text-white rounded-xl font-bold border-none"
                 >
-                  {confirming ? 'Confirming…' : 'Confirm Booking'}
+                  {confirming
+                    ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Confirming…</>
+                    : <><CheckSquare weight="bold" className="h-4 w-4 mr-2" />Accept Booking{booking.customer_email ? ' & Notify' : ''}</>
+                  }
                 </Button>
               )}
 
-              {!showConfirmMsg && booking.conversation_id && onSendMessage && (
+              {/* Decline pending booking */}
+              {booking.status === 'pending' && !showDeclineForm && (
+                <Button
+                  onClick={() => setShowDecline(true)}
+                  variant="outline"
+                  className="w-full h-11 border-red-100 dark:border-red-900/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl font-bold bg-transparent"
+                >
+                  <XCircle weight="bold" className="h-4 w-4 mr-2" />
+                  Decline Booking
+                </Button>
+              )}
+
+              {/* Mark confirmed booking as completed */}
+              {booking.status === 'confirmed' && (
+                <Button
+                  onClick={handleComplete}
+                  disabled={completing}
+                  className="w-full h-11 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold border-none"
+                >
+                  {completing
+                    ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Updating…</>
+                    : <><SealCheck weight="bold" className="h-4 w-4 mr-2" />Mark as Completed</>
+                  }
+                </Button>
+              )}
+
+              {/* WhatsApp message */}
+              {!showConfirmMsg && !showDeclineForm && booking.conversation_id && onSendMessage && (
                 <Button variant="outline" onClick={handleShowConfirmMsg} className="w-full border-gray-100 dark:border-[#222222] bg-white dark:bg-[#0A0A0A] text-gray-600 dark:text-gray-400">
                   <Send weight="bold" className="h-4 w-4 mr-1.5" />
-                  Send Confirmation Message
+                  Send WhatsApp Message
                 </Button>
               )}
 
@@ -297,11 +419,12 @@ export function BookingDetailsModal({
                 </Button>
               )}
 
-              {booking.status !== 'cancelled' && (
+              {/* Generic cancel (for confirmed bookings) */}
+              {booking.status === 'confirmed' && !showDeclineForm && (
                 <button
                   onClick={handleCancel}
                   disabled={cancelling}
-                  className="w-full text-sm text-red-500 hover:text-red-700 py-2 transition-colors"
+                  className="w-full text-sm text-red-400 hover:text-red-600 py-2 transition-colors"
                 >
                   {cancelling ? 'Cancelling…' : 'Cancel Booking'}
                 </button>

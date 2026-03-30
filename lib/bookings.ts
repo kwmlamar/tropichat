@@ -1,10 +1,11 @@
 // Client-side helpers for the booking system
 import { getSupabase } from '@/lib/supabase'
 import type {
-  Booking, BookingService, AvailabilitySlot,
+  Booking, BookingService, AvailabilitySlot, AvailabilityBlock,
   CreateBookingInput, UpdateBookingInput,
   CreateServiceInput, UpdateServiceInput,
   CreateAvailabilitySlotInput, UpdateAvailabilitySlotInput,
+  CreateAvailabilityBlockInput,
   AvailabilityCheckResult,
 } from '@/types/bookings'
 
@@ -205,4 +206,40 @@ export function generateConfirmationMessage(
   const formattedTime = formatBookingTime(time)
   const firstName = customerName.split(' ')[0]
   return `Hi ${firstName}! Your ${serviceName} booking is confirmed for ${formattedDate} at ${formattedTime} for ${numberOfPeople} ${numberOfPeople === 1 ? 'person' : 'people'}. We'll send a reminder the day before. Looking forward to seeing you! 🌴`
+}
+
+// ============================================================
+// AVAILABILITY BLOCKS
+// ============================================================
+
+export async function getAvailabilityBlocks(from?: string, to?: string): Promise<{ data: AvailabilityBlock[] | null; error: string | null }> {
+  const headers = await authHeader()
+  const params = new URLSearchParams()
+  if (from) params.set('from', from)
+  if (to)   params.set('to', to)
+  const qs = params.toString()
+  const res = await fetch(`/api/availability-blocks${qs ? `?${qs}` : ''}`, { headers })
+  const json = await res.json()
+  if (!res.ok) return { data: null, error: json.error ?? 'Failed to fetch blocks' }
+  return { data: json.data, error: null }
+}
+
+export async function createAvailabilityBlock(input: CreateAvailabilityBlockInput): Promise<{ data: AvailabilityBlock | null; error: string | null }> {
+  const headers = await authHeader()
+  const res = await fetch('/api/availability-blocks', {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  const json = await res.json()
+  if (!res.ok) return { data: null, error: json.error ?? 'Failed to create block' }
+  return { data: json.data, error: null }
+}
+
+export async function deleteAvailabilityBlock(id: string): Promise<{ error: string | null }> {
+  const headers = await authHeader()
+  const res = await fetch(`/api/availability-blocks/${id}`, { method: 'DELETE', headers })
+  const json = await res.json()
+  if (!res.ok) return { error: json.error ?? 'Failed to delete block' }
+  return { error: null }
 }

@@ -10,14 +10,19 @@ import {
   Star, 
   Crown,
   WhatsappLogo,
-  Robot
+  ShieldCheck,
+  Robot,
+  ChartBar,
+  CaretRight
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const tiers = [
   {
     name: "Starter",
-    price: 15,
+    monthlyPrice: 15,
+    annualPrice: 12,
     description: "Perfect for personal brands & side hustles.",
     features: [
       "Up to 500 contacts",
@@ -33,8 +38,9 @@ const tiers = [
   },
   {
     name: "Medium",
-    price: 35,
-    description: "For growing local businesses in the Bahamas.",
+    monthlyPrice: 35,
+    annualPrice: 28,
+    description: "For growing businesses in the Caribbean.",
     features: [
       "Up to 2,500 contacts",
       "Bulk WhatsApp Broadcasts",
@@ -49,7 +55,8 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: 75,
+    monthlyPrice: 75,
+    annualPrice: 60,
     description: "The gold standard for scaling teams.",
     features: [
       "Up to 10,000 contacts",
@@ -61,11 +68,12 @@ const tiers = [
     ],
     cta: "Scale Your Business",
     popular: true,
-    color: "teal"
+    color: "main"
   },
   {
     name: "Elite",
-    price: 150,
+    monthlyPrice: 150,
+    annualPrice: 120,
     description: "World-class automation for top enterprises.",
     features: [
       "Unlimited Contacts",
@@ -77,7 +85,7 @@ const tiers = [
     ],
     cta: "Request Demo",
     popular: false,
-    color: "amber"
+    color: "dark"
   }
 ]
 
@@ -85,7 +93,7 @@ export function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true)
 
   return (
-    <section className="relative bg-white py-16 md:py-32 overflow-hidden px-4 md:px-6">
+    <section className="relative bg-[#F9FAFB] py-16 md:py-32 overflow-hidden px-4 md:px-6" id="pricing">
       <div className="container mx-auto max-w-7xl">
         
         {/* Header */}
@@ -94,113 +102,93 @@ export function PricingSection() {
              initial={{ opacity: 0, y: 20 }}
              whileInView={{ opacity: 1, y: 0 }}
              viewport={{ once: true }}
-             className="text-3xl md:text-7xl font-black text-[#213138] tracking-tighter leading-none mb-8"
+             className="text-4xl md:text-7xl font-black text-[#213138] tracking-tighter leading-none mb-8"
            >
               Scale with your <br />
-              <span className="text-gray-200">Caribbean success</span>
+              <span className="text-gray-300">Caribbean success</span>
            </motion.h2>
 
            {/* Toggle */}
-           <div className="flex items-center justify-center gap-4">
-              <span className={`text-sm font-black uppercase tracking-widest ${!isAnnual ? 'text-[#007B85]' : 'text-gray-400'}`}>Monthly</span>
+           <div className="flex items-center justify-center gap-4 bg-white/50 w-fit mx-auto px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+              <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", !isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>Monthly</span>
               <button 
                 onClick={() => setIsAnnual(!isAnnual)}
-                className="w-16 h-8 bg-gray-100 rounded-full p-1 relative transition-colors"
+                className="w-14 h-7 bg-gray-100 rounded-full p-1 relative transition-colors"
+                aria-label="Toggle annual pricing"
               >
                  <motion.div 
-                   animate={{ x: isAnnual ? 32 : 0 }}
-                   className="w-6 h-6 bg-[#007B85] rounded-full shadow-lg"
+                   animate={{ x: isAnnual ? 28 : 0 }}
+                   className="w-5 h-5 bg-[#007B85] rounded-full shadow-md"
                  />
               </button>
-              <span className={`text-sm font-black uppercase tracking-widest ${isAnnual ? 'text-[#007B85]' : 'text-gray-400'}`}>
-                Annual <span className="text-[#007B85] font-black underline decoration-dotted decoration-2 underline-offset-4 ml-1">Save 20%</span>
+              <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>
+                Annual <span className="text-[#007B85] font-black underline decoration-2 underline-offset-4 ml-1">Save 20%</span>
               </span>
            </div>
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-           {tiers.map((tier, idx) => (
-             <motion.div
-               key={idx}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ delay: idx * 0.1 }}
-               className={`relative p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border ${
-                 tier.popular 
-                 ? 'bg-[#007B85] text-white border-transparent shadow-2xl shadow-teal-500/20 z-10 md:scale-105' 
-                 : 'bg-gray-50 border-gray-100 text-[#213138]'
-               } flex flex-col transition-all duration-300 hover:translate-y-[-8px]`}
-             >
-                {tier.popular && (
-                  <div className="absolute top-0 right-10 -translate-y-1/2 bg-amber-400 text-[#213138] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl">
-                     <Star weight="fill" /> Recommended
-                  </div>
-                )}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
+          {tiers.map((tier, idx) => (
+            <motion.div
+              key={tier.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className={cn(
+                "relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-300 group overflow-hidden",
+                tier.popular 
+                  ? "bg-[#007B85] text-white scale-105 shadow-2xl z-10" 
+                  : "bg-white border border-gray-100 hover:border-[#007B85]/30 hover:shadow-xl text-[#213138]"
+              )}
+            >
+              {tier.popular && (
+                <div className="absolute top-6 right-6 flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full">
+                  <Star weight="fill" className="h-3 w-3 text-amber-300" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Recommended</span>
+                </div>
+              )}
 
-                <p className={`text-xs font-black uppercase tracking-widest mb-2 ${tier.popular ? 'text-white/60' : 'text-[#007B85]'}`}>
+              <div className="mb-8">
+                <p className={cn("text-xs font-black uppercase tracking-[0.2em] mb-4", tier.popular ? "text-white/70" : "text-gray-400")}>
                   {tier.name}
                 </p>
-                <div className="flex items-baseline gap-1 mb-4">
-                   <span className="text-5xl font-black tracking-tighter text-inherit">
-                      ${isAnnual ? Math.floor(tier.price * 0.8) : tier.price}
-                   </span>
-                   <span className="text-xs font-black uppercase tracking-widest opacity-60">/mo</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl md:text-5xl font-black tabular-nums tracking-tighter">
+                    ${isAnnual ? tier.annualPrice : tier.monthlyPrice}
+                  </span>
+                  <span className={cn("text-sm font-bold", tier.popular ? "text-white/60" : "text-gray-400")}>/mo</span>
                 </div>
-                <p className="text-sm font-bold leading-relaxed mb-8 opacity-80">
-                   {tier.description}
+                <p className={cn("text-sm font-medium mt-3 leading-relaxed", tier.popular ? "text-white/80" : "text-gray-500")}>
+                  {tier.description}
                 </p>
+              </div>
 
-                <ul className="space-y-4 mb-10 flex-1">
-                   {tier.features.map((feature, fidx) => (
-                     <li key={fidx} className="flex items-start gap-3">
-                        <CheckCircle weight="fill" className={`h-5 w-5 shrink-0 mt-0.5 ${tier.popular ? 'text-white' : 'text-[#007B85]'}`} />
-                        <span className="text-sm font-bold leading-tight">{feature}</span>
-                     </li>
-                   ))}
-                </ul>
+              <div className="flex-1 space-y-4 mb-10">
+                {tier.features.map((feature) => (
+                  <div key={feature} className="flex items-start gap-3">
+                    <CheckCircle weight="fill" className={cn("h-5 w-5 shrink-0 mt-0.5", tier.popular ? "text-white" : "text-[#007B85]")} />
+                    <span className={cn("text-[13px] font-bold leading-snug", tier.popular ? "text-white" : "text-[#213138]")}>
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
 
-                <Button 
-                   onClick={() => window.location.href = '/signup'}
-                   className={`w-full py-6 rounded-2xl font-black uppercase tracking-widest text-xs transition-all ${
-                     tier.popular
-                     ? 'bg-white text-[#007B85] hover:bg-white/90 shadow-xl'
-                     : 'bg-[#213138] text-white hover:bg-[#007B85]'
-                   }`}
-                >
-                   {tier.cta} <ArrowRight weight="bold" className="ml-2" />
-                </Button>
-             </motion.div>
-           ))}
-        </div>
-
-        {/* Trust Badges */}
-        <div className="mt-24 border-t border-gray-100 pt-16 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-           <div>
-              <h4 className="flex items-center justify-center md:justify-start gap-3 text-xl font-black text-[#213138] tracking-tighter mb-4">
-                 <WhatsappLogo weight="fill" className="text-[#25D366] h-8 w-8" /> WhatsApp Official
-              </h4>
-              <p className="text-sm font-bold text-slate-500 uppercase leading-relaxed tracking-wide">
-                 Official Meta Partner integration. Your account is 100% safe and secure.
-              </p>
-           </div>
-           <div>
-              <h4 className="flex items-center justify-center md:justify-start gap-3 text-xl font-black text-[#213138] tracking-tighter mb-4">
-                 <Robot weight="fill" className="text-[#007B85] h-8 w-8" /> AI Intelligence
-              </h4>
-              <p className="text-sm font-bold text-slate-500 uppercase leading-relaxed tracking-wide">
-                 Powered by Gemini 1.5 Flash. Smart, fast, and always on brand.
-              </p>
-           </div>
-           <div>
-              <h4 className="flex items-center justify-center md:justify-start gap-3 text-xl font-black text-[#213138] tracking-tighter mb-4">
-                 <CheckCircle weight="fill" className="text-amber-500 h-8 w-8" /> Risk Free
-              </h4>
-              <p className="text-sm font-bold text-slate-500 uppercase leading-relaxed tracking-wide">
-                 Start a 14-day free trial on any tier. No credit card required to begin.
-              </p>
-           </div>
+              <Button 
+                variant={tier.popular ? "default" : "secondary"}
+                className={cn(
+                  "w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all",
+                  tier.popular 
+                    ? "bg-white text-[#007B85] hover:bg-gray-100 hover:scale-[1.02]" 
+                    : "bg-[#213138] text-white hover:bg-[#1a262c] hover:scale-[1.02]"
+                )}
+              >
+                {tier.cta} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </motion.div>
+          ))}
         </div>
 
       </div>
