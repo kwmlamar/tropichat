@@ -84,7 +84,7 @@ function SignupForm() {
     const billingParam = searchParams.get('billing') || 'monthly'
     
     const { error } = await signInWithOAuth(provider, {
-      redirectTo: `${window.location.origin}/onboarding?plan=${planParam}&billing=${billingParam}`
+      redirectTo: `${window.location.origin}/auth/callback?plan=${planParam}&billing=${billingParam}`
     })
     
     if (error) {

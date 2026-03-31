@@ -203,7 +203,7 @@ export async function signInWithOAuth(provider: OAuthProvider, options?: { redir
   const { data, error } = await client.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: options?.redirectTo || `${window.location.origin}/onboarding`,
+      redirectTo: options?.redirectTo || `${window.location.origin}/auth/callback`,
     },
   })
   return { data, error: error?.message || null }
