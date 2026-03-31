@@ -107,6 +107,7 @@ export async function signUp(email: string, password: string, businessName: stri
         status: 'trial',
         plan: 'free',
         timezone: 'America/Nassau',
+        trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
       })
 
     if (customerError) {
@@ -293,7 +294,8 @@ export const getPersonalCustomer = async (): Promise<{ data: Customer | null; er
       full_name: name,
       business_name: data?.business_name || user.user_metadata?.business_name || '',
       contact_email: email,
-      is_trial: true,
+      status: 'trial',
+      trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     }
 
     // Attempt upsert (onConflict is ID)

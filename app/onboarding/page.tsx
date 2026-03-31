@@ -133,7 +133,9 @@ export default function OnboardingPage() {
       const { error: customerError } = await updateCustomer({
         has_onboarded: true,
         business_name: businessName,
-        avatar_url: profilePicUrl || null
+        avatar_url: profilePicUrl || null,
+        status: customer?.status || 'trial',
+        trial_ends_at: customer?.trial_ends_at || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
       })
 
       if (customerError) {
