@@ -4,7 +4,7 @@ import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { 
   Envelope as Mail, 
   Lock, 
@@ -12,7 +12,8 @@ import {
   EyeSlash as EyeOff, 
   CircleNotch as Loader2, 
   CaretLeft,
-  Translate
+  Translate,
+  Star
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -85,6 +86,8 @@ function SignupForm() {
   }
 
   const anyLoading = isLoading || oauthLoading !== null
+  const selectedPlan = searchParams.get('plan')
+  const selectedBilling = searchParams.get('billing')
 
   return (
     <div className="lg:h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
@@ -159,7 +162,7 @@ function SignupForm() {
       </div>
 
       {/* ─── RIGHT COLUMN: AUTH ACTIONS ──────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col bg-white">
+      <div className="flex-1 flex flex-col bg-white overflow-y-auto">
         
         {/* Top Navigation */}
         <div className="p-6 flex justify-between lg:justify-end items-center gap-6">
@@ -190,8 +193,38 @@ function SignupForm() {
 
         {/* Content Area */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
-           <div className="w-full max-w-sm space-y-10">
+           <div className="w-full max-w-sm space-y-8">
               
+              {/* Plan Selection Badge */}
+              <AnimatePresence mode="wait">
+                {selectedPlan && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center text-center space-y-2 mb-2 bg-[#007B85]/5 border border-[#007B85]/20 p-5 rounded-[2rem] relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                       <Star weight="fill" className="h-12 w-12 text-[#007B85]" />
+                    </div>
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-[#007B85] text-white rounded-full shadow-lg shadow-[#007B85]/20 z-10">
+                      <Star weight="fill" className="h-3 w-3 text-amber-300" />
+                      <span className="text-[9px] font-black uppercase tracking-[0.15em] leading-none">
+                        14-Day Free Trial
+                      </span>
+                    </div>
+                    <div className="flex flex-col z-10">
+                      <span className="text-2xl font-black text-[#213138] capitalize tracking-tighter">
+                        {selectedPlan} <span className="text-[#007B85]">Tier</span>
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.1em] mt-1">
+                        Renews {selectedBilling === 'annual' ? 'Annually' : 'Monthly'} thereafter
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {!useEmail ? (
                 /* ─── Social Logins Area ─── */
                 <div className="space-y-4">
@@ -233,13 +266,15 @@ function SignupForm() {
                 </div>
               ) : (
                 /* ─── Email Form Area ─── */
-                <motion.div
+                <motion.form
+                   onSubmit={handleSubmit}
                    initial={{ opacity: 0, x: 20 }}
                    animate={{ opacity: 1, x: 0 }}
                    className="space-y-6"
                 >
                    <div className="flex items-center justify-between mb-4">
                       <button 
+                        type="button"
                         onClick={() => setUseEmail(false)}
                         className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#007B85] flex items-center gap-1"
                       >
@@ -254,16 +289,19 @@ function SignupForm() {
                           placeholder="Your full name" 
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85]" 
+                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85] font-medium"
+                          required
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Work Email</Label>
                         <Input 
+                          type="email"
                           placeholder="name@company.com" 
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85]" 
+                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85] font-medium"
+                          required 
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -273,19 +311,21 @@ function SignupForm() {
                           placeholder="Min 8 characters" 
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85]" 
+                          className="h-14 rounded-xl border-slate-200 focus:ring-[#007B85] focus:border-[#007B85] font-medium"
+                          required
+                          minLength={8}
                         />
                       </div>
                    </div>
 
                    <Button
-                     onClick={handleSubmit}
+                     type="submit"
                      disabled={isLoading}
-                     className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all"
+                     className="w-full h-14 bg-[#007B85] hover:bg-[#2F8488] text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#007B85]/20"
                    >
                       {isLoading ? <Loader2 className="animate-spin" /> : "CREATE ACCOUNT"}
                    </Button>
-                </motion.div>
+                </motion.form>
               )}
 
               {/* Legal Footer */}
