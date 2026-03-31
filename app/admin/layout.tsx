@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav"
 import { SettingsModal } from "@/components/dashboard/settings-modal"
-import { getSession, getSupabase, getPersonalCustomer } from "@/lib/supabase"
+import { getSession, getPersonalCustomer } from "@/lib/supabase"
 import { SplashLoader } from "@/components/splash-loader"
 import type { Customer } from "@/types/database"
 import { cn } from "@/lib/utils"
@@ -22,6 +22,9 @@ export default function AdminLayout({
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
+  // Only these emails can access the admin hub
+  const ADMIN_EMAILS = ["classicalsineus@gmail.com"]
+
   useEffect(() => {
     async function checkAdminAuth() {
       const { session } = await getSession()
@@ -31,18 +34,9 @@ export default function AdminLayout({
         return
       }
 
-      const client = getSupabase()
-      
-      // Check if user has admin/owner roles in team_members
-      const { data: memberData } = await client
-        .from('team_members')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .in('role', ['admin', 'owner'])
-        .limit(1)
-
-      if (!memberData || memberData.length === 0) {
-        // Not an admin, redirect to dashboard
+      // Strict email-based admin access control
+      const userEmail = session.user.email?.toLowerCase() || ""
+      if (!ADMIN_EMAILS.includes(userEmail)) {
         router.push("/dashboard")
         return
       }

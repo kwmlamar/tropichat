@@ -60,8 +60,19 @@ export default function AuthCallbackPage() {
             avatar_url: avatarUrl,
             trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
           })
+
+          // Create team_members owner record (mirrors email signUp flow)
+          await client.from("team_members").insert({
+            customer_id: user.id,
+            user_id: user.id,
+            role: "owner",
+            name: businessName,
+            email: user.email || "",
+            status: "active",
+            is_active: true,
+          })
           
-          console.log("[OAuth Callback] Customer record created with intent:", storedPlan)
+          console.log("[OAuth Callback] Customer + team_member records created with intent:", storedPlan)
         }
 
         // 3. Construct final redirect URL
