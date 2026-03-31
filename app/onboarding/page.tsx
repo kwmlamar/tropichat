@@ -93,8 +93,26 @@ export default function OnboardingPage() {
         }
       }
 
-      // Check URL for step override
+      // Check URL for plan selection or step override
       const params = new URLSearchParams(window.location.search)
+      const planParam = params.get("plan")
+      const billingParam = params.get("billing")
+
+      // Catch and apply plan intent (especially for Social Auth users)
+      if (planParam && data && data.plan === 'free') {
+          try {
+            await updateCustomer({ 
+                plan: planParam as any,
+                billing_period: (billingParam || 'monthly') as any 
+            })
+            // Update local state to reflect the change immediately
+            setCustomer(prev => prev ? { ...prev, plan: planParam as any } : null)
+            toast.success(`Welcome to the ${planParam} plan trial!`)
+          } catch (e) {
+            console.error("Failed to auto-provision plan:", e)
+          }
+      }
+
       if (params.get("meta") === "connected") {
         setStep("complete")
       } else if (params.get("step") === "meta") {

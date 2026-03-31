@@ -78,7 +78,15 @@ function SignupForm() {
 
   const handleOAuth = async (provider: 'google') => {
     setOauthLoading(provider)
-    const { error } = await signInWithOAuth(provider)
+    
+    // Get current selection to carry over during social login
+    const planParam = searchParams.get('plan') || 'free'
+    const billingParam = searchParams.get('billing') || 'monthly'
+    
+    const { error } = await signInWithOAuth(provider, {
+      redirectTo: `${window.location.origin}/onboarding?plan=${planParam}&billing=${billingParam}`
+    })
+    
     if (error) {
       toast.error(error)
       setOauthLoading(null)

@@ -196,23 +196,17 @@ export async function getUser() {
   return { user, error: error?.message || null }
 }
 
-export type OAuthProvider = 'google'
+export type OAuthProvider = 'google' | 'facebook'
 
-export async function signInWithOAuth(provider: OAuthProvider) {
+export async function signInWithOAuth(provider: OAuthProvider, options?: { redirectTo?: string }) {
   const client = getSupabase()
-
   const { data, error } = await client.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: options?.redirectTo || `${window.location.origin}/onboarding`,
     },
   })
-
-  if (error) {
-    return { data: null, error: error.message }
-  }
-
-  return { data, error: null }
+  return { data, error: error?.message || null }
 }
 
 export async function resetPassword(email: string) {
