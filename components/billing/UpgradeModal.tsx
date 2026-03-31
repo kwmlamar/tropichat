@@ -14,14 +14,18 @@ interface UpgradeModalProps {
   onConfirm: (tier: PlanTier, interval: BillingInterval) => Promise<void>
 }
 
-const TIER_LABELS: Record<Exclude<PlanTier, "coconut">, string> = {
-  tropic: "🌴 Tropic",
-  island_pro: "🏝️ Island Pro",
+const TIER_LABELS: Record<PlanTier, string> = {
+  starter: "🚀 Starter",
+  medium: "🌴 Medium",
+  pro: "🏝️ Pro",
+  elite: "👑 Elite",
 }
 
-const PRICES: Record<Exclude<PlanTier, "coconut">, { monthly: number; annual: number }> = {
-  tropic: { monthly: 29, annual: 290 },
-  island_pro: { monthly: 59, annual: 590 },
+const PRICES: Record<PlanTier, { monthly: number; annual: number }> = {
+  starter: { monthly: 15, annual: 144 },
+  medium: { monthly: 35, annual: 336 },
+  pro: { monthly: 75, annual: 720 },
+  elite: { monthly: 150, annual: 1440 },
 }
 
 export function UpgradeModal({
@@ -34,10 +38,8 @@ export function UpgradeModal({
   const [step, setStep] = useState<"confirm" | "success">("confirm")
   const [isProcessing, setIsProcessing] = useState(false)
 
-  if (tier === "coconut") return null
-
-  const label = TIER_LABELS[tier as Exclude<PlanTier, "coconut">]
-  const prices = PRICES[tier as Exclude<PlanTier, "coconut">]
+  const label = TIER_LABELS[tier]
+  const prices = PRICES[tier]
   const price = billingInterval === "annual" ? prices.annual : prices.monthly
   const priceLabel = billingInterval === "annual" ? `$${price}/yr` : `$${price}/mo`
 

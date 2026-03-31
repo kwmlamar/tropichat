@@ -11,20 +11,25 @@ interface UpgradeSuccessProps {
 }
 
 const TIER_DETAILS: Record<PlanTier, { name: string; emoji: string; benefits: string[] }> = {
-  coconut: {
-    name: "Coconut",
-    emoji: "🥥",
-    benefits: [],
+  starter: {
+    name: "Starter",
+    emoji: "🚀",
+    benefits: ["500 contacts", "Unified Inbox", "Basic AI smart replies", "Mobile app access"],
   },
-  tropic: {
-    name: "Tropic",
+  medium: {
+    name: "Medium",
     emoji: "🌴",
-    benefits: ["100 bookings / month", "Analytics unlocked", "Custom booking link", "Priority support"],
+    benefits: ["2,500 contacts", "Bulk WhatsApp broadcasts", "QR Code generator", "CRM profile tracking"],
   },
-  island_pro: {
-    name: "Island Pro",
+  pro: {
+    name: "Pro",
     emoji: "🏝️",
-    benefits: ["Unlimited bookings", "Multi-staff accounts", "White-label options", "Full analytics suite"],
+    benefits: ["10,000 contacts", "Unlimited team members", "AI knowledge base", "Booking & payment links"],
+  },
+  elite: {
+    name: "Elite",
+    emoji: "👑",
+    benefits: ["Unlimited contacts", "White-label dashboard", "Custom API access", "24/7 VIP support"],
   },
 }
 
