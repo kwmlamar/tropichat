@@ -267,7 +267,7 @@ export default function OnboardingPage() {
                  <Input 
                    value={businessName}
                    onChange={e => setBusinessName(e.target.value)}
-                   placeholder="e.g. TropiTech Solutions"
+                   placeholder="e.g. Island Breeze Boutique"
                    className="h-14 rounded-2xl border-gray-100 dark:border-white/10 dark:bg-[#111] text-lg font-bold"
                  />
                  <p className="text-[11px] text-gray-400 font-medium mt-2">This is how your workspace will be identified.</p>

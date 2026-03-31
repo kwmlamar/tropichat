@@ -128,7 +128,9 @@ export function isTrialExpired(status: string | undefined, trialEndsAt: string |
  * Returns the "blocked" reason if any.
  */
 export function getAccessStatus(customer: { status?: string, plan?: string, trial_ends_at?: string | null } | null) {
-  if (!customer) return { isBlocked: true, reason: 'unauthenticated' };
+  // If no customer data is available yet, don't block. 
+  // The loading splash handled by the layout is the gatekeeper.
+  if (!customer) return { isBlocked: false, reason: null };
   
   const expired = isTrialExpired(customer.status, customer.trial_ends_at);
   
