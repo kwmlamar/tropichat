@@ -15,13 +15,8 @@ import { Footer } from "@/components/footer"
 export default function Home() {
   const router = useRouter()
 
-  useEffect(() => {
-    // Check if we arrived here via a magic link or invitation (fragment contains access_token)
-    if (window.location.hash.includes('access_token=') || window.location.hash.includes('type=invite')) {
-      console.log("Invitation fragment detected on home page, redirecting to /accept-invite")
-      router.replace(`/accept-invite${window.location.hash}`)
-    }
-  }, [router])
+  // Removed legacy invitation catch-all logic that was hijacking OAuth logins.
+  // Invitations are now handled directly by the /accept-invite page.
 
   return (
     <>

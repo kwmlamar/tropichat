@@ -79,13 +79,23 @@ export default function AuthCallbackPage() {
           console.log("[OAuth Callback] Existing customer, skipping insert")
         }
 
-        router.push("/dashboard")
+        // Extract plan intent from the callback URL itself (carried from sign-up)
+        const params = new URLSearchParams(window.location.search)
+        const plan = params.get("plan")
+        const billing = params.get("billing")
+        const queryString = (plan || billing) ? `?${params.toString()}` : ""
+
+        // If they need to onboard, the dashboard layout will handle it, 
+        // but we'll try to target onboarding directly if they are new.
+        if (!existing) {
+          router.push(`/onboarding${queryString}`)
+        } else {
+          router.push(`/dashboard${queryString}`)
+        }
       }
     )
 
-    // Fallback: if the session is already established (e.g. page refresh),
-    // onAuthStateChange may fire INITIAL_SESSION instead of SIGNED_IN.
-    // Check after a short delay.
+    // Fallback: if the session is already established
     const fallbackTimer = setTimeout(async () => {
       if (processed.current) return
 
@@ -93,7 +103,9 @@ export default function AuthCallbackPage() {
       if (session) {
         console.log("[OAuth Callback] Fallback: session found, redirecting")
         processed.current = true
-        router.push("/dashboard")
+        const params = new URLSearchParams(window.location.search)
+        const queryString = (params.get("plan") || params.get("billing")) ? `?${params.toString()}` : ""
+        router.push(`/dashboard${queryString}`)
       } else {
         console.log("[OAuth Callback] Fallback: no session, redirecting to login")
         router.push("/login")
