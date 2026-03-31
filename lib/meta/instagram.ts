@@ -269,10 +269,12 @@ export function parseInstagramWebhook(payload: unknown): {
         events.push({ event, accountId: entry.id })
       }
     } else if (entry.changes && entry.changes.length > 0) {
-      // Format B — account ID is the recipient ID inside the change value
+      // Format B — account ID is the recipient ID inside the change value (or sender ID if it's an echo)
       for (const change of entry.changes) {
         if (change.field === 'messages' && change.value) {
-          events.push({ event: change.value, accountId: change.value.recipient.id })
+          const isEcho = !!change.value.message?.is_echo
+          const accountId = isEcho ? change.value.sender.id : change.value.recipient.id
+          events.push({ event: change.value, accountId })
         }
       }
     }

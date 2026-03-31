@@ -322,13 +322,26 @@ export async function handleIncomingMessage(
         unread_count: 1,
       })
       .select('id')
-      .single()
+      .maybeSingle()
 
     if (insertError || !newConv) {
-      console.error(`[Webhook:${event.channel_type}] Failed to create conversation:`, insertError)
-      return
+      // If insert failed (likely due to race condition where another webhook created it), try finding it once more
+      const { data: altConv } = await db
+        .from('unified_conversations')
+        .select('id, customer_name')
+        .eq('connected_account_id', account.id)
+        .eq('channel_conversation_id', channelConvId)
+        .single()
+      
+      if (!altConv) {
+        console.error(`[Webhook:${event.channel_type}] Failed to create or find conversation:`, insertError)
+        return
+      }
+      conversationDbId = altConv.id
+      resolvedName = altConv.customer_name
+    } else {
+      conversationDbId = newConv.id
     }
-    conversationDbId = newConv.id
   } else {
     conversationDbId = conversation.id
     resolvedName = conversation.customer_name
@@ -377,19 +390,9 @@ export async function handleIncomingMessage(
     event.channel_type === 'whatsapp' ? event.customer_id : undefined
   )
 
-  // 3.5 Check if message already exists to avoid duplicate notifications/automations
-  const { data: existingMsg } = await db
-    .from('unified_messages')
-    .select('id')
-    .eq('conversation_id', conversationDbId)
-    .eq('channel_message_id', event.message.id)
-    .maybeSingle()
-
-  // 4. Insert or merge the message (DB trigger updates conversation stats)
-  const isNewMessage = !existingMsg
+  // 4. Insert message (ignore duplicates to prevent double notifications)
   const senderType = event.sender_type || 'customer'
-
-  const { error: msgError } = await db.from('unified_messages').upsert({
+  const { data: insertedMsg, error: msgError } = await db.from('unified_messages').insert({
     conversation_id: conversationDbId,
     channel_message_id: event.message.id,
     sender_type: senderType,
@@ -398,15 +401,14 @@ export async function handleIncomingMessage(
     sent_at: event.message.timestamp,
     status: 'delivered',
     metadata: event.message.metadata ?? {},
-  }, {
-    onConflict: 'conversation_id,channel_message_id',
-    ignoreDuplicates: true
-  })
+  }).select('id').maybeSingle()
 
-  if (msgError) {
+  if (msgError && msgError.code !== '23505') {
     console.error(`[Webhook:${event.channel_type}] Failed to insert message:`, msgError)
     return
-  } 
+  }
+
+  const isNewMessage = !!insertedMsg
 
   // Only run side effects (notifications, automations) for NEW messages from CUSTOMERS
   if (isNewMessage && senderType === 'customer') {

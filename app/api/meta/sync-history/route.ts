@@ -29,7 +29,8 @@ export async function POST(request: Request) {
 
   if (connErr || !connection) return NextResponse.json({ error: 'Connection not found or access denied' }, { status: 404 })
 
-  const { channel_type, access_token, channel_account_id } = connection
+  const { channel_type, access_token, channel_account_id, metadata } = connection
+  const pageId = (metadata as any)?.page_id
 
   // 3. Logic based on channel
   if (channel_type === 'whatsapp') {
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
 
     for (const conv of conversations) {
       // Find the participant that is NOT the account itself
-      const participant = conv.participants.data.find((p: any) => p.id !== channel_account_id)
+      const participant = conv.participants.data.find((p: any) => p.id !== channel_account_id && p.id !== pageId)
       if (!participant) continue
 
       let customerName = (participant as any).name || (participant as any).username || 'Customer'
@@ -98,10 +99,10 @@ export async function POST(request: Request) {
       let metaMessages: any[] = []
       try {
         if (channel_type === 'instagram') {
-          const res = await getInstagramMessages(conv.id, access_token, 15)
+          const res = await getInstagramMessages(conv.id, access_token, 30)
           metaMessages = res.data
         } else if (channel_type === 'messenger') {
-          const res = await getMessengerMessages(conv.id, access_token, 15)
+          const res = await getMessengerMessages(conv.id, access_token, 30)
           metaMessages = res.data
         }
       } catch (err) {
@@ -111,7 +112,7 @@ export async function POST(request: Request) {
       // Upsert messages
       let syncedCount = 0
       for (const msg of metaMessages) {
-        const isFromBusiness = msg.from.id === channel_account_id
+        const isFromBusiness = msg.from.id === channel_account_id || msg.from.id === pageId
         
         // Map attachments if present
         const attachments = msg.attachments?.data || []
