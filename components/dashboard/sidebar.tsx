@@ -65,20 +65,16 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
   useEffect(() => {
     fetchUnreadCount()
 
-    // Fetch Role to determine if we show Admin Link
+    // Check Admin Role using email allowlist
     async function checkRole() {
       const client = getSupabase()
       const { data: { session } } = await client.auth.getSession()
       if (!session) return
 
-      const { data: member } = await client
-        .from('team_members')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .in('role', ['admin', 'owner'])
-        .limit(1)
-
-      if (member && member.length > 0) {
+      const ADMIN_EMAILS = ["classicalsineus@gmail.com"]
+      const userEmail = session.user.email?.toLowerCase() || ""
+      
+      if (ADMIN_EMAILS.includes(userEmail)) {
         setIsAdmin(true)
       }
     }
