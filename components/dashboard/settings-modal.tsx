@@ -576,22 +576,22 @@ function NotificationSettings() {
   )
 }
 
-const STRIPE_PRICE_ENV: Record<PlanTier, { monthly: string; annual: string }> = {
+const STRIPE_PRICE_ENV: Record<PlanTier, { monthly: string | undefined; annual: string | undefined }> = {
   starter: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL",
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY,
+    annual: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL,
   },
   medium: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_ANNUAL",
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_MONTHLY,
+    annual: process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_ANNUAL,
   },
   pro: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL",
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY,
+    annual: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL,
   },
   elite: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_ELITE_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_ELITE_ANNUAL",
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE_MONTHLY,
+    annual: process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE_ANNUAL,
   },
 }
 
@@ -650,8 +650,8 @@ function BillingSettings({ customer }: { customer: any }) {
     try {
       const envKeys = STRIPE_PRICE_ENV[tier]
       const priceId = interval === "annual"
-        ? process.env[envKeys.annual]
-        : process.env[envKeys.monthly]
+        ? envKeys.annual
+        : envKeys.monthly
 
 
       if (!priceId) {

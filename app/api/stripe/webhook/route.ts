@@ -11,22 +11,33 @@ const getServiceRoleClient = () => {
 }
 
 // Map a Stripe price ID to a TropiChat plan name.
-// Falls back to "coconut" (free) if the price ID is unrecognised.
+// Falls back to "starter" if the price ID is unrecognised.
 function planFromPriceId(priceId: string): string {
-  const tropicMonthly  = process.env.STRIPE_PRICE_TROPIC_MONTHLY
-  const tropicAnnual   = process.env.STRIPE_PRICE_TROPIC_ANNUAL
-  const islandMonthly  = process.env.STRIPE_PRICE_ISLAND_PRO_MONTHLY
-  const islandAnnual   = process.env.STRIPE_PRICE_ISLAND_PRO_ANNUAL
+  const starterMonthly = process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY
+  const starterAnnual  = process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL
+  const mediumMonthly  = process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_MONTHLY
+  const mediumAnnual   = process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_ANNUAL
+  const proMonthly     = process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY
+  const proAnnual      = process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL
+  const eliteMonthly   = process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE_MONTHLY
+  const eliteAnnual    = process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE_ANNUAL
 
-  if (priceId === tropicMonthly  || priceId === tropicAnnual)  return "tropic"
-  if (priceId === islandMonthly  || priceId === islandAnnual)  return "island_pro"
-  return "coconut"
+  if (priceId === starterMonthly || priceId === starterAnnual) return "starter"
+  if (priceId === mediumMonthly  || priceId === mediumAnnual)  return "medium"
+  if (priceId === proMonthly     || priceId === proAnnual)     return "pro"
+  if (priceId === eliteMonthly   || priceId === eliteAnnual)   return "elite"
+  return "starter"
 }
 
 function billingPeriodFromPriceId(priceId: string): string {
-  const tropicAnnual  = process.env.STRIPE_PRICE_TROPIC_ANNUAL
-  const islandAnnual  = process.env.STRIPE_PRICE_ISLAND_PRO_ANNUAL
-  if (priceId === tropicAnnual || priceId === islandAnnual) return "annual"
+  if (
+    priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL ||
+    priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_ANNUAL ||
+    priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL ||
+    priceId === process.env.NEXT_PUBLIC_STRIPE_PRICE_ELITE_ANNUAL
+  ) {
+    return "annual"
+  }
   return "monthly"
 }
 
@@ -107,7 +118,7 @@ export async function POST(req: Request) {
             stripe_subscription_id: null,
             stripe_price_id: null,
             stripe_current_period_end: null,
-            plan: "coconut",
+            plan: "starter",
             billing_period: "monthly",
           })
           .eq("stripe_customer_id", customerId)
