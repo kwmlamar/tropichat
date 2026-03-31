@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -39,7 +39,7 @@ function FacebookIcon({ className }: { className?: string }) {
   )
 }
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [useEmail, setUseEmail] = useState(false)
@@ -234,9 +234,9 @@ export default function SignupPage() {
               ) : (
                 /* ─── Email Form Area ─── */
                 <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="space-y-6"
+                   initial={{ opacity: 0, x: 20 }}
+                   animate={{ opacity: 1, x: 0 }}
+                   className="space-y-6"
                 >
                    <div className="flex items-center justify-between mb-4">
                       <button 
@@ -304,5 +304,17 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen w-screen flex items-center justify-center bg-white">
+        <Loader2 className="h-8 w-8 text-[#007B85] animate-spin" />
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   )
 }
