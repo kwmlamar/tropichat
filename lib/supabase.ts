@@ -1061,3 +1061,29 @@ export async function removeTeamMember(id: string): Promise<{ error: string | nu
   const json = await res.json()
   return { error: json.error || null }
 }
+export async function uploadFile(file: File, bucket: string = 'avatars'): Promise<{ url: string | null; error: string | null }> {
+  try {
+    const client = getSupabase()
+    const { user } = await getUser()
+    if (!user) return { url: null, error: 'Not authenticated' }
+
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${user.id}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    const filePath = `${fileName}`
+
+    const { error: uploadError } = await client.storage
+      .from(bucket)
+      .upload(filePath, file)
+
+    if (uploadError) throw uploadError
+
+    const { data: { publicUrl } } = client.storage
+      .from(bucket)
+      .getPublicUrl(filePath)
+
+    return { url: publicUrl, error: null }
+  } catch (error: any) {
+    console.error('Upload error:', error)
+    return { url: null, error: error.message || 'Failed to upload' }
+  }
+}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
@@ -21,13 +21,14 @@ import {
   ChatCircleText,
   IdentificationCard,
   Target,
-  ShieldCheck
+  ShieldCheck,
+  UploadSimple
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { getSession, getCurrentCustomer, getSupabase, getWorkspaceId, updateCustomer } from "@/lib/supabase"
+import { getSession, getCurrentCustomer, getSupabase, getWorkspaceId, updateCustomer, uploadFile } from "@/lib/supabase"
 import type { Customer } from "@/types/database"
 import { initiateMetaConnect, getMetaStatus } from "@/lib/meta-connections"
 import { toast } from "sonner"
@@ -46,6 +47,11 @@ export default function OnboardingPage() {
   const [selectedChannels, setSelectedChannels] = useState<string[]>(["instagram", "whatsapp", "messenger"])
   const [connecting, setConnecting] = useState(false)
   const [isFinishing, setIsFinishing] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+
+  const searchParams = useSearchParams()
+  const planParam = searchParams.get("plan")
+  const billingParam = searchParams.get("billing")
 
   useEffect(() => {
     async function load() {
@@ -145,6 +151,22 @@ export default function OnboardingPage() {
     }
   }
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    const { url, error } = await uploadFile(file)
+    
+    if (error) {
+       toast.error(error)
+    } else if (url) {
+       setProfilePicUrl(url)
+       toast.success("Logo uploaded!")
+    }
+    setIsUploading(false)
+  }
+
   const handleFinish = async () => {
     setIsFinishing(true)
     try {
@@ -153,6 +175,7 @@ export default function OnboardingPage() {
         business_name: businessName,
         avatar_url: profilePicUrl || null,
         status: customer?.status || 'trial',
+        plan: (planParam || customer?.plan || 'free') as any, // Explicitly preserve plan selection
         trial_ends_at: customer?.trial_ends_at || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
       })
 
@@ -387,14 +410,49 @@ export default function OnboardingPage() {
                   <p className="text-[11px] text-gray-400 font-medium">Shown on your connected business profile.</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Profile Picture URL</Label>
-                  <Input
-                    value={profilePicUrl}
-                    onChange={e => setProfilePicUrl(e.target.value)}
-                    placeholder="https://example.com/logo.png"
-                    className="h-14 rounded-2xl border-gray-100 dark:border-white/10 dark:bg-[#111] text-sm font-medium"
-                  />
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Business Logo</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="relative group">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleImageUpload}
+                        className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                        disabled={isUploading}
+                      />
+                      <Button
+                        variant="outline"
+                        className="h-28 w-28 rounded-3xl border-dashed border-2 border-gray-100 dark:border-white/10 hover:border-[#007B85] bg-gray-50 dark:bg-[#111] flex flex-col items-center justify-center gap-2 transition-all group-hover:bg-[#007B85]/5"
+                      >
+                        {isUploading ? (
+                          <CircleNotch className="h-6 w-6 animate-spin text-[#007B85]" />
+                        ) : profilePicUrl ? (
+                          <div className="h-full w-full relative">
+                            <Image src={profilePicUrl} alt="Logo" fill className="object-cover rounded-[22px]" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[22px]">
+                               <UploadSimple weight="bold" className="h-6 w-6 text-white" />
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="h-10 w-10 rounded-2xl bg-[#007B85]/10 flex items-center justify-center">
+                               <UploadSimple weight="bold" className="h-5 w-5 text-[#007B85]" />
+                            </div>
+                            <span className="text-[10px] font-black uppercase text-gray-400">Upload Logo</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                       <p className="text-sm font-black text-gray-800 dark:text-gray-200">
+                         {profilePicUrl ? "Logo Selected" : "Add your brand logo"}
+                       </p>
+                       <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
+                         Upload a square image (PNG, JPG) for your workspace and chat profiles.
+                       </p>
+                    </div>
+                  </div>
                 </div>
 
                 <motion.div

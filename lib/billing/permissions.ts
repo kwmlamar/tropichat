@@ -28,10 +28,10 @@ export interface PlanPermissions {
 export function normalizePlan(plan: string | undefined): PlanTier {
   const p = plan?.toLowerCase() || 'starter';
   if (p === 'coconut' || p === 'free') return 'free';
-  if (p === 'tropic' || p === 'starter') return 'starter';
-  if (p === 'island_pro' || p === 'medium') return 'medium';
-  if (p === 'professional' || p === 'pro') return 'pro';
-  if (p === 'enterprise' || p === 'elite') return 'elite';
+  if (p === 'starter' || p === 'tropic') return 'starter'; // Tropic was the old starter
+  if (p === 'medium' || p === 'island_pro') return 'medium'; 
+  if (p === 'pro' || p === 'professional') return 'pro';
+  if (p === 'elite' || p === 'enterprise') return 'elite';
   return 'starter';
 }
 

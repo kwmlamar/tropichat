@@ -616,10 +616,10 @@ function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: ()
   const currentPlan = useMemo(() => {
     const raw = customer?.plan?.toLowerCase() || "starter"
     if (raw === "coconut" || raw === "free") return "starter"
-    if (raw === "tropic" || raw === "starter") return "starter"
-    if (raw === "island_pro" || raw === "medium") return "medium"
-    if (raw === "professional" || raw === "pro") return "pro"
-    if (raw === "enterprise" || raw === "elite") return "elite"
+    if (raw === "starter" || raw === "tropic") return "starter"
+    if (raw === "medium" || raw === "island_pro") return "medium"
+    if (raw === "pro" || raw === "professional") return "pro"
+    if (raw === "elite" || raw === "enterprise") return "elite"
     return "starter"
   }, [customer?.plan]) as PlanTier
 
