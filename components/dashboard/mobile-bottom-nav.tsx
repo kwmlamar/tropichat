@@ -31,6 +31,8 @@ const primaryTabs = [
   { href: "/dashboard/ai", label: "Tropi AI", icon: ShieldCheck, exact: false },
 ]
 
+
+
 // Secondary items shown in the "More" sheet
 const moreItems = [
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   X, 
@@ -575,16 +576,25 @@ function NotificationSettings() {
   )
 }
 
-const STRIPE_PRICE_ENV: Record<Exclude<PlanTier, "coconut">, { monthly: string; annual: string }> = {
-  tropic: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_TROPIC_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_TROPIC_ANNUAL",
+const STRIPE_PRICE_ENV: Record<PlanTier, { monthly: string; annual: string }> = {
+  starter: {
+    monthly: "NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY",
+    annual: "NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL",
   },
-  island_pro: {
-    monthly: "NEXT_PUBLIC_STRIPE_PRICE_ISLAND_PRO_MONTHLY",
-    annual: "NEXT_PUBLIC_STRIPE_PRICE_ISLAND_PRO_ANNUAL",
+  medium: {
+    monthly: "NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_MONTHLY",
+    annual: "NEXT_PUBLIC_STRIPE_PRICE_MEDIUM_ANNUAL",
+  },
+  pro: {
+    monthly: "NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY",
+    annual: "NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL",
+  },
+  elite: {
+    monthly: "NEXT_PUBLIC_STRIPE_PRICE_ELITE_MONTHLY",
+    annual: "NEXT_PUBLIC_STRIPE_PRICE_ELITE_ANNUAL",
   },
 }
+
 
 function BillingSettings({ customer }: { customer: any }) {
   const [bookingCount, setBookingCount] = useState(0)
@@ -594,8 +604,19 @@ function BillingSettings({ customer }: { customer: any }) {
   const [upgradeModalTier, setUpgradeModalTier] = useState<PlanTier | null>(null)
   const [managingPortal, setManagingPortal] = useState(false)
 
-  const currentPlan = (customer?.plan === "free" ? "coconut" : customer?.plan ?? "coconut") as PlanTier
-  const isCoconut = currentPlan === "coconut"
+  // Map legacy plan names to new tiers for UI consistency
+  const currentPlan = useMemo(() => {
+    const raw = customer?.plan?.toLowerCase() || "starter"
+    if (raw === "coconut" || raw === "free") return "starter"
+    if (raw === "tropic" || raw === "starter") return "starter"
+    if (raw === "island_pro" || raw === "medium") return "medium"
+    if (raw === "professional" || raw === "pro") return "pro"
+    if (raw === "enterprise" || raw === "elite") return "elite"
+    return "starter"
+  }, [customer?.plan]) as PlanTier
+
+  const isStarter = currentPlan === "starter"
+
 
   useEffect(() => {
     async function fetchUsage() {
@@ -623,13 +644,15 @@ function BillingSettings({ customer }: { customer: any }) {
   }, [])
 
   const handleUpgrade = async (tier: PlanTier, interval: BillingInterval) => {
-    if (tier === "coconut") return
+    if (tier as any === "coconut") return
+
     setUpgradingTier(tier)
     try {
-      const envKeys = STRIPE_PRICE_ENV[tier as Exclude<PlanTier, "coconut">]
+      const envKeys = STRIPE_PRICE_ENV[tier]
       const priceId = interval === "annual"
         ? process.env[envKeys.annual]
         : process.env[envKeys.monthly]
+
 
       if (!priceId) {
         toast.error("Pricing not configured. Contact support.")
@@ -685,77 +708,122 @@ function BillingSettings({ customer }: { customer: any }) {
   }
 
   const planDisplayName =
-    currentPlan === "coconut" ? "Coconut — Free"
-    : currentPlan === "tropic" ? `Tropic — $${billingInterval === "annual" ? "290/yr" : "29/mo"}`
-    : `Island Pro — $${billingInterval === "annual" ? "590/yr" : "59/mo"}`
+    currentPlan === "starter" ? `Starter — ${customer?.plan === 'free' ? 'Free Trial' : '$15/mo'}`
+    : currentPlan === "medium" ? `Medium — $${billingInterval === "annual" ? "28/mo" : "35/mo"}`
+    : currentPlan === "pro" ? `Pro — $${billingInterval === "annual" ? "60/mo" : "75/mo"}`
+    : `Elite — $${billingInterval === "annual" ? "120/mo" : "150/mo"}`
+
 
   return (
-    <div className="space-y-8">
-      {/* Current plan banner */}
-      <div className="p-6 rounded-2xl bg-[#0F172A] border border-white/10 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-[#F4C430]/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
+    <div className="space-y-10">
+      {/* Current plan banner - Premium Glassmorphism */}
+      <div className="p-8 rounded-[32px] bg-white dark:bg-[#0F172A] border border-gray-100 dark:border-white/10 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden relative group">
+        {/* Decorative backdrop elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4C430]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-[#F4C430]/20 transition-all duration-700" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#007B85]/5 rounded-full blur-3xl -ml-12 -mb-12 pointer-events-none group-hover:bg-[#007B85]/10 transition-all duration-700" />
+        
         <div className="relative z-10">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 text-white/50">Active Plan</p>
-          <h3 className="text-2xl font-black mb-1 text-white">{planDisplayName}</h3>
-          {customer?.stripe_current_period_end && (
-            <p className="text-xs text-white/50 mb-4">
-              Renews {new Date(customer.stripe_current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-            </p>
-          )}
+          <div className="flex items-center gap-2 mb-4">
+            <span className="px-2 py-0.5 bg-[#F4C430]/20 text-[#213138] dark:text-[#F4C430] text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-[#F4C430]/30">
+              Active Plan
+            </span>
+          </div>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-1">
+              <h3 className="text-3xl font-black tracking-tight text-[#213138] dark:text-white" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
+                {planDisplayName.split(' — ')[0]}
+              </h3>
+              <p className="text-[15px] font-bold text-[#007B85]">
+                {planDisplayName.split(' — ')[1]}
+              </p>
+              {customer?.stripe_current_period_end && (
+                <div className="flex items-center gap-1.5 mt-4 text-xs font-medium text-gray-400 dark:text-gray-500">
+                  <Clock weight="bold" className="h-3.5 w-3.5" />
+                  Renews {new Date(customer.stripe_current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                </div>
+              )}
+            </div>
 
-          {isCoconut && (
-            <div className="mb-5">
-              <UsageBar used={bookingCount} limit={20} label="Bookings this month" />
+            {!isStarter || customer?.plan !== 'free' ? (
+              <Button
+                onClick={handleManagePortal}
+                disabled={managingPortal}
+                className="bg-[#213138] dark:bg-white text-white dark:text-[#0F172A] hover:opacity-90 rounded-2xl font-black py-4 px-8 h-auto transition-all active:scale-[0.98] shadow-lg shadow-black/10"
+              >
+                {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : <CreditCard weight="bold" className="h-4 w-4 mr-2" />}
+                Manage Billing
+              </Button>
+            ) : null}
+          </div>
+
+          {isStarter && customer?.plan === 'free' && (
+            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5">
+              <UsageBar used={bookingCount} limit={20} label="Free Bookings this month" />
             </div>
           )}
-
-          {!isCoconut && (
-            <Button
-              onClick={handleManagePortal}
-              disabled={managingPortal}
-              className="bg-[#F4C430] text-[#0F172A] hover:bg-[#F4C430]/90 rounded-xl font-black py-2.5 w-full mt-2 transition-transform active:scale-[0.98]"
-            >
-              {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
-              Manage Billing →
-            </Button>
-          )}
         </div>
       </div>
 
-      {/* Billing interval toggle */}
-      <div className="flex justify-center">
-        <PricingToggle value={billingInterval} onChange={setBillingInterval} />
-      </div>
-
-      {/* Pricing cards */}
-      <div className="grid grid-cols-1 gap-4">
-        {(["coconut", "tropic", "island_pro"] as PlanTier[]).map((tier) => (
-          <PricingCard
-            key={tier}
-            tier={tier}
-            isHighlighted={tier === "tropic"}
-            isCurrentPlan={tier === currentPlan}
-            billingInterval={billingInterval}
-            isUpgrading={upgradingTier === tier}
-            onUpgrade={(t) => setUpgradeModalTier(t)}
-          />
-        ))}
-      </div>
-
-      {/* Usage summary */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Messages Sent</p>
-          <p className="text-2xl font-black text-[#F4C430]">{usage.messages.toLocaleString()}</p>
+      {/* Pricing Header */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h4 className="text-lg font-black text-[#213138] dark:text-white" style={{ fontFamily: "var(--font-plus-jakarta)" }}>Available Plans</h4>
+            <p className="text-sm text-gray-500 font-medium">Choose the best fit for your growing business.</p>
+          </div>
+          <PricingToggle value={billingInterval} onChange={setBillingInterval} />
         </div>
-        <div className="p-4 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] dark:bg-[#080808]">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Contacts Stored</p>
-          <p className="text-2xl font-black text-[#F4C430]">{usage.contacts.toLocaleString()}</p>
+
+        {/* Pricing cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(["starter", "medium", "pro", "elite"] as PlanTier[]).map((tier) => (
+            <PricingCard
+              key={tier}
+              tier={tier}
+              isHighlighted={tier === "pro"}
+              isCurrentPlan={tier === currentPlan}
+              billingInterval={billingInterval}
+              isUpgrading={upgradingTier === tier}
+              onUpgrade={(t) => setUpgradeModalTier(t)}
+            />
+          ))}
         </div>
       </div>
+
+      {/* Usage section */}
+      <div className="space-y-4">
+        <h4 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">Usage Analytics</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-6 rounded-[24px] border border-gray-100 dark:border-white/5 dark:bg-[#080808] hover:border-[#F4C430]/30 transition-colors group">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 flex items-center justify-center bg-[#F4C430]/10 rounded-2xl group-hover:scale-110 transition-transform">
+                <ChatCircleDots weight="bold" className="h-5 w-5 text-[#F4C430]" />
+              </div>
+              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Messages Sent</p>
+            </div>
+            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
+              {usage.messages.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="p-6 rounded-[24px] border border-gray-100 dark:border-white/5 dark:bg-[#080808] hover:border-[#007B85]/30 transition-colors group">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 flex items-center justify-center bg-[#007B85]/10 rounded-2xl group-hover:scale-110 transition-transform">
+                <Users weight="bold" className="h-5 w-5 text-[#007B85]" />
+              </div>
+              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Contacts Stored</p>
+            </div>
+            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
+              {usage.contacts.toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
+
 
       {/* Upgrade modal */}
-      {upgradeModalTier && upgradeModalTier !== "coconut" && (
+      {upgradeModalTier && (
         <UpgradeModal
           tier={upgradeModalTier}
           billingInterval={billingInterval}
