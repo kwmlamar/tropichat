@@ -14,6 +14,7 @@ import type {
   MessageStatusUpdate,
   MessageDeliveryStatus,
   MessageMetadata,
+  SenderType,
 } from '@/types/unified-inbox'
 
 // ==================== SEND MESSAGES ====================
@@ -268,51 +269,52 @@ export function parseMessengerWebhook(payload: unknown): {
   for (const entry of data.entry) {
     const pageId = entry.id
 
-    for (const event of entry.messaging) {
-      // Skip echo messages (messages sent by our page)
-      if (event.message?.is_echo) continue
+      for (const event of entry.messaging) {
+        if (event.message) {
+          const msg = event.message
+          const isEcho = !!msg.is_echo
+          const senderType: SenderType = isEcho ? 'business' : 'customer'
+          const customerId = isEcho ? event.recipient.id : event.sender.id
 
-      // Incoming message
-      if (event.message) {
-        const msg = event.message
-        const metadata: Partial<MessageMetadata> = {}
-        let content: string | null = msg.text ?? null
-        let type: MessageContentType = 'text'
+          const metadata: Partial<MessageMetadata> = {}
+          let content: string | null = msg.text ?? null
+          let type: MessageContentType = 'text'
 
-        if (msg.reply_to) {
-          metadata.reply_to_message_id = msg.reply_to.mid
-        }
-
-        if (msg.quick_reply) {
-          metadata.raw_payload = { quick_reply: msg.quick_reply }
-        }
-
-        if (msg.attachments && msg.attachments.length > 0) {
-          const attachment = msg.attachments[0]
-          type = mapMessengerAttachmentType(attachment.type)
-          if (attachment.payload.url) {
-            metadata.media_url = attachment.payload.url
+          if (msg.reply_to) {
+            metadata.reply_to_message_id = msg.reply_to.mid
           }
-          // Sticker detection
-          if (attachment.payload.sticker_id) {
-            type = 'sticker'
-          }
-          if (!content) content = attachment.payload.title ?? `[${attachment.type}]`
-        }
 
-        messages.push({
-          channel_type: 'messenger',
-          account_id: pageId,
-          customer_id: event.sender.id,
-          message: {
-            id: msg.mid,
-            type,
-            content,
-            timestamp: new Date(event.timestamp).toISOString(),
-            metadata,
-          },
-        })
-      }
+          if (msg.quick_reply) {
+            metadata.raw_payload = { quick_reply: msg.quick_reply }
+          }
+
+          if (msg.attachments && msg.attachments.length > 0) {
+            const attachment = msg.attachments[0]
+            type = mapMessengerAttachmentType(attachment.type)
+            if (attachment.payload.url) {
+              metadata.media_url = attachment.payload.url
+            }
+            // Sticker detection
+            if (attachment.payload.sticker_id) {
+              type = 'sticker'
+            }
+            if (!content) content = attachment.payload.title ?? `[${attachment.type}]`
+          }
+
+          messages.push({
+            channel_type: 'messenger',
+            account_id: pageId,
+            customer_id: customerId,
+            sender_type: senderType,
+            message: {
+              id: msg.mid,
+              type,
+              content,
+              timestamp: new Date(event.timestamp).toISOString(),
+              metadata,
+            },
+          })
+        }
 
       // Postback (button tap)
       if (event.postback) {

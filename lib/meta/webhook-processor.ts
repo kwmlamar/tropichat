@@ -377,11 +377,22 @@ export async function handleIncomingMessage(
     event.channel_type === 'whatsapp' ? event.customer_id : undefined
   )
 
-  // 4. Insert the message (DB trigger updates conversation stats)
+  // 3.5 Check if message already exists to avoid duplicate notifications/automations
+  const { data: existingMsg } = await db
+    .from('unified_messages')
+    .select('id')
+    .eq('conversation_id', conversationDbId)
+    .eq('channel_message_id', event.message.id)
+    .maybeSingle()
+
+  // 4. Insert or merge the message (DB trigger updates conversation stats)
+  const isNewMessage = !existingMsg
+  const senderType = event.sender_type || 'customer'
+
   const { error: msgError } = await db.from('unified_messages').upsert({
     conversation_id: conversationDbId,
     channel_message_id: event.message.id,
-    sender_type: 'customer',
+    sender_type: senderType,
     content: event.message.content,
     message_type: event.message.type,
     sent_at: event.message.timestamp,
@@ -394,7 +405,11 @@ export async function handleIncomingMessage(
 
   if (msgError) {
     console.error(`[Webhook:${event.channel_type}] Failed to insert message:`, msgError)
-  } else {
+    return
+  } 
+
+  // Only run side effects (notifications, automations) for NEW messages from CUSTOMERS
+  if (isNewMessage && senderType === 'customer') {
     // 5. Trigger push notification for browser/mobile
     const channelAbbr = event.channel_type === 'whatsapp' ? 'WA' : 
                       event.channel_type === 'instagram' ? 'IG' : 'Messenger'
@@ -416,6 +431,10 @@ export async function handleIncomingMessage(
 
     // 7. Process Auto-Reply (Offline Message)
     await processAutoReply(db, account, conversationDbId, event)
+  } else if (isNewMessage && senderType === 'business') {
+    console.log(`[Webhook:${event.channel_type}] Recorded echo message (sent via external app)`)
+  } else if (!isNewMessage) {
+    console.log(`[Webhook:${event.channel_type}] Skipping duplicate notification for ${event.message.id}`)
   }
 }
 

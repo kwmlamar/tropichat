@@ -187,6 +187,8 @@ export interface IncomingWebhookEvent {
   customer_id: string
   customer_name?: string
   /** The message itself */
+  /** Whether this message was sent by the customer or the business (for echoes) */
+  sender_type?: SenderType
   message: {
     id: string
     type: MessageContentType

@@ -14,6 +14,7 @@ import type {
   MessageStatusUpdate,
   MessageDeliveryStatus,
   MessageMetadata,
+  SenderType,
 } from '@/types/unified-inbox'
 
 // ==================== SEND MESSAGES ====================
@@ -277,12 +278,12 @@ export function parseInstagramWebhook(payload: unknown): {
     }
 
     for (const { event, accountId } of events) {
-      // Skip echo messages (messages sent by us)
-      if (event.message?.is_echo) continue
-
-      // Incoming message
       if (event.message) {
         const msg = event.message
+        const isEcho = !!msg.is_echo
+        const senderType: SenderType = isEcho ? 'business' : 'customer'
+        const customerId = isEcho ? event.recipient.id : event.sender.id
+
         const metadata: Partial<MessageMetadata> = {}
         let content: string | null = msg.text ?? null
         let type: MessageContentType = 'text'
@@ -301,7 +302,8 @@ export function parseInstagramWebhook(payload: unknown): {
         messages.push({
           channel_type: 'instagram',
           account_id: accountId,
-          customer_id: event.sender.id,
+          customer_id: customerId,
+          sender_type: senderType,
           message: {
             id: msg.mid,
             type,
