@@ -10,8 +10,10 @@ interface UpgradeModalProps {
   tier: PlanTier
   billingInterval: BillingInterval
   isOpen: boolean
+  isTrial?: boolean
   onClose: () => void
   onConfirm: (tier: PlanTier, interval: BillingInterval) => Promise<void>
+  onTrialUpgrade?: (tier: PlanTier) => Promise<void>
 }
 
 const TIER_LABELS: Record<PlanTier, string> = {
@@ -32,8 +34,10 @@ export function UpgradeModal({
   tier,
   billingInterval,
   isOpen,
+  isTrial,
   onClose,
   onConfirm,
+  onTrialUpgrade,
 }: UpgradeModalProps) {
   const [step, setStep] = useState<"confirm" | "success">("confirm")
   const [isProcessing, setIsProcessing] = useState(false)
@@ -46,8 +50,14 @@ export function UpgradeModal({
   const handleConfirm = async () => {
     setIsProcessing(true)
     try {
-      await onConfirm(tier, billingInterval)
+      if (isTrial && onTrialUpgrade) {
+        await onTrialUpgrade(tier)
+      } else {
+        await onConfirm(tier, billingInterval)
+      }
       setStep("success")
+    } catch {
+      // toast is handled in parent
     } finally {
       setIsProcessing(false)
     }
@@ -59,89 +69,82 @@ export function UpgradeModal({
   }
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={step === "confirm" ? handleClose : undefined}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[110]"
           />
 
-          {/* Sheet (mobile) / Dialog (tablet+) */}
           <motion.div
-            initial={{ y: "100%", opacity: 0.8 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-0 inset-x-0 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:bottom-auto md:w-[420px] z-50 bg-[#0F172A] rounded-t-3xl md:rounded-3xl overflow-hidden border border-white/10"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[420px] z-[120] bg-white dark:bg-[#080808] rounded-[28px] overflow-hidden border border-gray-100 dark:border-[#1C1C1C] shadow-2xl"
           >
             {step === "success" ? (
               <UpgradeSuccess tier={tier} onContinue={handleClose} />
             ) : (
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-black text-white">{label} — {priceLabel}</h3>
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 flex items-center justify-center bg-[#3A9B9F]/10 rounded-xl">
+                      <ShieldCheck weight="bold" className="h-6 w-6 text-[#3A9B9F]" />
+                    </div>
+                    <h3 className="text-[17px] font-black text-gray-900 dark:text-white">Review Plan</h3>
+                  </div>
                   <button
                     onClick={handleClose}
-                    aria-label="Close"
-                    className="p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4C430]"
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#111] text-gray-400 transition-colors"
                   >
-                    <X className="h-4 w-4" />
+                    <X weight="bold" className="h-4 w-4" />
                   </button>
                 </div>
 
-                {/* Plan summary */}
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-5">
+                <div className="p-5 rounded-2xl bg-gray-50/50 dark:bg-[#111]/50 border border-gray-100 dark:border-[#1C1C1C] mb-8 space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/70">Plan</span>
-                    <span className="text-sm font-bold text-white">{label}</span>
+                    <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Plan</span>
+                    <span className="text-[15px] font-black text-gray-900 dark:text-white">{label}</span>
                   </div>
-                  <div className="flex justify-between items-center mt-1.5">
-                    <span className="text-sm text-white/70">Billing</span>
-                    <span className="text-sm font-bold text-white capitalize">{billingInterval}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[13px] font-bold text-gray-500 uppercase tracking-widest">Billing</span>
+                    <span className="text-[15px] font-black text-gray-900 dark:text-white capitalize">{billingInterval}</span>
                   </div>
-                  <div className="flex justify-between items-center mt-1.5 pt-2 border-t border-white/10">
-                    <span className="text-sm font-bold text-white">Total</span>
-                    <span className="text-base font-black text-[#F4C430]">{priceLabel}</span>
+                  <div className="pt-4 border-t border-gray-100 dark:border-[#222] flex justify-between items-center">
+                    <span className="text-[14px] font-black text-gray-900 dark:text-white">Total</span>
+                    <span className="text-[20px] font-black text-[#3A9B9F]">{isTrial ? "Trial Access" : priceLabel}</span>
                   </div>
                 </div>
 
-                {/* Stripe redirect note */}
-                <p className="text-xs text-white/40 mb-5 text-center">
-                  You&apos;ll be redirected to Stripe to complete payment securely.
+                <p className="text-[12px] font-medium text-gray-500 mb-8 text-center leading-relaxed">
+                  {isTrial 
+                    ? "As part of your 14-day free trial, you can instantly test this tier without a credit card."
+                    : "You'll be redirected to Stripe to securely complete your payment."}
                 </p>
 
-                {/* Security badge */}
-                <div className="flex items-center justify-center gap-1.5 text-xs text-white/40 mb-6">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  <span>Secured by Stripe</span>
-                </div>
-
-                {/* CTA */}
                 <motion.button
                   onClick={handleConfirm}
                   disabled={isProcessing}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-[#F4C430] text-[#0F172A] font-black py-3.5 rounded-xl text-sm transition-opacity disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4C430]"
+                  className="w-full bg-[#3A9B9F] text-white font-black py-4 rounded-[18px] text-[15px] transition-all hover:bg-[#2F8488] shadow-lg shadow-[#3A9B9F]/20 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <span className="flex items-center justify-center gap-2">
-                      <CircleNotch className="h-4 w-4 animate-spin" />
+                      <CircleNotch className="h-5 w-5 animate-spin" />
                       Processing…
                     </span>
                   ) : (
-                    `Pay ${priceLabel} →`
+                    isTrial ? `Start ${label.split(' ')[1]} Trial →` : `Subscribe to ${label.split(' ')[1]} →`
                   )}
                 </motion.button>
 
                 <button
                   onClick={handleClose}
-                  className="w-full mt-3 text-sm text-white/40 hover:text-white/60 transition-colors py-2 focus-visible:outline-none"
+                  className="w-full mt-4 text-[13px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors py-2"
                 >
                   Cancel
                 </button>

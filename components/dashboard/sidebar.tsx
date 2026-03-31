@@ -36,7 +36,7 @@ interface SidebarProps {
   personalProfile: Customer | null
   isCollapsed: boolean
   setIsCollapsed: (value: boolean) => void
-  onOpenSettings: () => void
+  onOpenSettings: (tab?: string) => void
 }
 
 const navItems = [
@@ -195,12 +195,12 @@ export function Sidebar({ customer, personalProfile, isCollapsed, setIsCollapsed
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
               Get unlimited team members, analytics, and more.
             </p>
-            <Link
-              href="/dashboard/settings?tab=billing"
+            <button
+              onClick={() => onOpenSettings('billing')}
               className="block w-full text-center text-xs font-semibold text-white bg-[#FF7E36] hover:bg-[#ff7b52] rounded-lg py-2 transition-all shadow-sm"
             >
               View Plans
-            </Link>
+            </button>
           </div>
         </div>
       )}

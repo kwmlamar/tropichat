@@ -102,11 +102,13 @@ import { PricingCard, type PlanTier, type BillingInterval } from "@/components/b
 import { PricingToggle } from "@/components/billing/PricingToggle"
 import { UsageBar } from "@/components/billing/UsageBar"
 import { UpgradeModal } from "@/components/billing/UpgradeModal"
+import { PERMISSIONS, normalizePlan } from "@/lib/billing/permissions"
 
 interface SettingsModalProps {
   isOpen: boolean
   onClose: () => void
   user: any
+  initialTab?: string
 }
 
 type Tab = 
@@ -133,9 +135,15 @@ const timezones = [
 
 const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const
 
-export function SettingsModal({ isOpen, onClose, user }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>("profile")
   const router = useRouter()
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab as Tab)
+    }
+  }, [initialTab, isOpen])
 
   // Data states
   const [customer, setCustomer] = useState<Customer | null>(null)
@@ -310,7 +318,7 @@ function TabContent({ activeTab, customer, personalProfile, metaStatus, onRefres
     case "hours": return <BusinessHoursSettings customer={customer} onRefresh={onRefresh} />
     case "autoreply": return <AutoReplySettings customer={customer} onRefresh={onRefresh} />
     case "notifications": return <NotificationSettings />
-    case "billing": return <BillingSettings customer={customer} />
+    case "billing": return <BillingSettings customer={customer} onRefresh={onRefresh} />
     case "team": return <TeamSettings />
     case "instagram": return <ChannelDetail channel="instagram" status={metaStatus?.instagram} onRefresh={onRefresh} />
     case "whatsapp": return <WhatsAppSettings status={metaStatus?.whatsapp} onRefresh={onRefresh} />
@@ -596,7 +604,7 @@ const STRIPE_PRICE_ENV: Record<PlanTier, { monthly: string | undefined; annual: 
 }
 
 
-function BillingSettings({ customer }: { customer: any }) {
+function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: () => void }) {
   const [bookingCount, setBookingCount] = useState(0)
   const [usage, setUsage] = useState({ contacts: 0, messages: 0 })
   const [billingInterval, setBillingInterval] = useState<BillingInterval>("monthly")
@@ -707,6 +715,18 @@ function BillingSettings({ customer }: { customer: any }) {
     }
   }
 
+  const handleTrialUpgrade = async (tier: PlanTier) => {
+    try {
+      const { error } = await updateCustomer({ plan: tier as any })
+      if (error) throw error
+      toast.success(`Upgraded to ${tier} trial!`)
+      setUpgradeModalTier(null)
+      onRefresh()
+    } catch {
+      toast.error("Failed to update trial plan")
+    }
+  }
+
   const planDisplayName =
     currentPlan === "starter" ? `Starter — ${customer?.plan === 'free' ? 'Free Trial' : '$15/mo'}`
     : currentPlan === "medium" ? `Medium — $${billingInterval === "annual" ? "28/mo" : "35/mo"}`
@@ -751,9 +771,13 @@ function BillingSettings({ customer }: { customer: any }) {
           ) : null}
         </div>
 
-        {isStarter && customer?.plan === 'free' && (
+        {customer && (
           <div className="mt-6 pt-6 border-t border-gray-100 dark:border-[#1C1C1C]">
-            <UsageBar used={bookingCount} limit={20} label="Free Bookings this month" />
+            <UsageBar 
+              used={usage.contacts} 
+              limit={PERMISSIONS[currentPlan]?.maxContacts || 500} 
+              label="Contacts Used" 
+            />
           </div>
         )}
       </div>
@@ -783,6 +807,18 @@ function BillingSettings({ customer }: { customer: any }) {
           ))}
         </div>
       </div>
+
+      {upgradeModalTier && (
+        <UpgradeModal
+          tier={upgradeModalTier}
+          billingInterval={billingInterval}
+          isOpen={!!upgradeModalTier}
+          isTrial={customer?.plan === 'free'}
+          onClose={() => setUpgradeModalTier(null)}
+          onConfirm={handleUpgrade}
+          onTrialUpgrade={handleTrialUpgrade}
+        />
+      )}
 
       {/* Usage section */}
       <div className="space-y-4">

@@ -23,8 +23,14 @@ export default function DashboardLayout({
   const [loading, setLoading] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [initialSettingsTab, setInitialSettingsTab] = useState<string | undefined>(undefined)
 
   const access = getAccessStatus(customer)
+
+  const handleOpenSettings = (tab?: string) => {
+    setInitialSettingsTab(tab)
+    setIsSettingsOpen(true)
+  }
 
   useEffect(() => {
     async function checkAuth() {
@@ -72,7 +78,7 @@ export default function DashboardLayout({
       {!loading && access.isBlocked && (
         <AccountBlocker 
             reason={access.reason as any} 
-            onOpenBilling={() => setIsSettingsOpen(true)} 
+            onOpenBilling={() => handleOpenSettings('billing')} 
         />
       )}
 
@@ -82,7 +88,7 @@ export default function DashboardLayout({
         personalProfile={personalProfile}
         isCollapsed={isCollapsed} 
         setIsCollapsed={setIsCollapsed} 
-        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSettings={handleOpenSettings}
       />
 
       {/* Main content */}
@@ -97,7 +103,7 @@ export default function DashboardLayout({
         <MobileBottomNav 
           customer={customer} 
           personalProfile={personalProfile} 
-          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenSettings={() => handleOpenSettings()}
         />
       </div>
 
@@ -106,6 +112,7 @@ export default function DashboardLayout({
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
         user={personalProfile}
+        initialTab={initialSettingsTab}
       />
     </div>
   )
