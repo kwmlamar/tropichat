@@ -37,6 +37,7 @@ export interface BusinessProfile {
   contact_phone: string | null
   contact_email: string | null
   profile_picture_url: string | null
+  whatsapp_number: string | null
   updated_at: string
 }
 

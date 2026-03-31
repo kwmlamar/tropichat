@@ -157,19 +157,50 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create booking. Please try again." }, { status: 500 })
   }
 
-  // Send confirmation email if email was provided (fire-and-forget)
+  // Look up merchant's business profile for email + WhatsApp number (fire-and-forget safe)
+  const { data: merchantProfile } = await db
+    .from("business_profiles")
+    .select("business_name, contact_email, whatsapp_number")
+    .eq("user_id", merchant_user_id)
+    .maybeSingle()
+
+  const merchantEmail = merchantProfile?.contact_email ?? null
+  const merchantBusinessName = merchantProfile?.business_name ?? service.name
+  const merchantWhatsapp = merchantProfile?.whatsapp_number ?? null
+  const refCode = reference_code ?? data.id.slice(0, 8).toUpperCase()
+
+  // Send customer confirmation email (fire-and-forget)
   if (customer_email && data) {
     sendConfirmationEmail({
       to: customer_email,
       customerName: customer_name,
-      businessName: service.name,
+      businessName: merchantBusinessName,
       bookingDate: booking_date,
       bookingTime: normalizedTime,
       serviceName: service.name,
-      referenceCode: reference_code ?? data.id.slice(0, 8).toUpperCase(),
+      referenceCode: refCode,
       durationMinutes: service.duration_minutes,
     }).catch((err) => {
       console.error("[booking confirmation email] failed:", err)
+    })
+  }
+
+  // Send merchant new-booking alert email (fire-and-forget)
+  if (merchantEmail) {
+    sendMerchantAlertEmail({
+      to: merchantEmail,
+      merchantBusinessName,
+      customerName: customer_name,
+      customerPhone: customer_phone ?? null,
+      customerEmail: customer_email ?? null,
+      bookingDate: booking_date,
+      bookingTime: normalizedTime,
+      serviceName: service.name,
+      referenceCode: refCode,
+      numberOfPeople: Number(number_of_people),
+      whatsappNumber: merchantWhatsapp,
+    }).catch((err) => {
+      console.error("[merchant alert email] failed:", err)
     })
   }
 
@@ -243,6 +274,108 @@ async function sendConfirmationEmail(params: EmailParams) {
       from: "TropiChat Bookings <bookings@tropichat.app>",
       to: [params.to],
       subject: `Your booking is confirmed — Ref: ${params.referenceCode}`,
+      html,
+    }),
+  })
+}
+
+interface MerchantAlertParams {
+  to: string
+  merchantBusinessName: string
+  customerName: string
+  customerPhone: string | null
+  customerEmail: string | null
+  bookingDate: string
+  bookingTime: string
+  serviceName: string
+  referenceCode: string
+  numberOfPeople: number
+  whatsappNumber: string | null
+}
+
+async function sendMerchantAlertEmail(params: MerchantAlertParams) {
+  const resendApiKey = process.env.RESEND_API_KEY
+  if (!resendApiKey) return
+
+  const [y, m, d] = params.bookingDate.split("-").map(Number)
+  const date = new Date(y, m - 1, d)
+  const dateStr = date.toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  })
+
+  const [h, mi] = params.bookingTime.split(":").map(Number)
+  const ampm = h >= 12 ? "PM" : "AM"
+  const h12 = h % 12 || 12
+  const timeStr = `${h12}:${String(mi).padStart(2, "0")} ${ampm}`
+
+  // Build WhatsApp click-to-chat link for merchant to contact the customer
+  const waText = encodeURIComponent(
+    `Hi ${params.customerName}, this is ${params.merchantBusinessName}! I saw your booking request for ${params.serviceName} on ${dateStr} at ${timeStr} (Ref: ${params.referenceCode}). Looking forward to seeing you!`
+  )
+  const customerPhone = params.customerPhone?.replace(/[^\d]/g, "") ?? null
+  const whatsappLink = customerPhone
+    ? `https://wa.me/${customerPhone}?text=${waText}`
+    : null
+
+  const whatsappSection = whatsappLink
+    ? `
+      <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
+        <p style="color: #166534; font-size: 14px; font-weight: 700; margin: 0 0 12px;">💬 Reply via WhatsApp</p>
+        <p style="color: #4b7c5e; font-size: 13px; margin: 0 0 16px;">Tap below to send ${params.customerName} a WhatsApp message confirming their booking.</p>
+        <a href="${whatsappLink}" style="display: inline-block; background: #25D366; color: white; font-weight: 900; font-size: 14px; padding: 12px 28px; border-radius: 12px; text-decoration: none;">
+          Open WhatsApp Chat
+        </a>
+      </div>`
+    : ""
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; padding: 20px;">
+  <div style="max-width: 520px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+    <div style="background: #0F172A; padding: 24px; text-align: center;">
+      <p style="color: rgba(255,255,255,0.5); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 4px;">New Booking</p>
+      <p style="color: #F4C430; font-size: 22px; font-weight: 900; margin: 0;">${params.merchantBusinessName}</p>
+    </div>
+    <div style="padding: 32px 24px;">
+      <h1 style="font-size: 20px; font-weight: 900; color: #111; margin: 0 0 4px;">🎉 New booking received!</h1>
+      <p style="color: #64748b; margin: 0 0 24px;">A customer just booked via TropiChat. Details below.</p>
+
+      <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Customer</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${params.customerName}</td></tr>
+          ${params.customerPhone ? `<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Phone</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${params.customerPhone}</td></tr>` : ""}
+          ${params.customerEmail ? `<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Email</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${params.customerEmail}</td></tr>` : ""}
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Service</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${params.serviceName}</td></tr>
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Date</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${dateStr}</td></tr>
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Time</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${timeStr}</td></tr>
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Guests</td><td style="padding: 8px 0; font-weight: 700; color: #111; text-align: right;">${params.numberOfPeople}</td></tr>
+          <tr><td style="padding: 8px 0; color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">Ref #</td><td style="padding: 8px 0; font-weight: 900; color: #007B85; text-align: right;">${params.referenceCode}</td></tr>
+        </table>
+      </div>
+
+      ${whatsappSection}
+
+      <p style="color: #64748b; font-size: 13px; line-height: 1.6;">Log in to your TropiChat dashboard to confirm or manage this booking.</p>
+    </div>
+    <div style="padding: 16px 24px; border-top: 1px solid #f1f5f9; text-align: center;">
+      <p style="color: #94a3b8; font-size: 12px; margin: 0;">Powered by <strong style="color: #007B85;">TropiChat</strong></p>
+    </div>
+  </div>
+</body>
+</html>`
+
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: "TropiChat Bookings <bookings@tropichat.app>",
+      to: [params.to],
+      subject: `New booking: ${params.customerName} — ${params.serviceName} on ${dateStr}`,
       html,
     }),
   })

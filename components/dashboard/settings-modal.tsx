@@ -1402,6 +1402,8 @@ function BookingPageSettings() {
   const [saving, setSaving] = useState(false)
   const [editing, setEditing] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [whatsappNumber, setWhatsappNumber] = useState("")
+  const [savingWhatsapp, setSavingWhatsapp] = useState(false)
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tropichat.com"
 
@@ -1418,6 +1420,7 @@ function BookingPageSettings() {
         const json = await res.json()
         setHandle(json.handle ?? "")
         setEditHandle(json.handle ?? "")
+        setWhatsappNumber(json.whatsapp_number ?? "")
       }
       setLoading(false)
     }
@@ -1461,6 +1464,31 @@ function BookingPageSettings() {
       toast.success("Booking link updated")
     }
     setSaving(false)
+  }
+
+  const handleSaveWhatsapp = async () => {
+    setSavingWhatsapp(true)
+    const supabase = getSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { setSavingWhatsapp(false); return }
+    // Strip everything except digits and leading +
+    const cleaned = whatsappNumber.trim().replace(/[^\d+]/g, "")
+    const res = await fetch("/api/bookings/handle", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ handle: handle || undefined, whatsapp_number: cleaned || null }),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+      toast.error(json.error || "Failed to save WhatsApp number")
+    } else {
+      setWhatsappNumber(json.whatsapp_number ?? "")
+      toast.success("WhatsApp number saved")
+    }
+    setSavingWhatsapp(false)
   }
 
   if (loading) {
@@ -1572,6 +1600,46 @@ function BookingPageSettings() {
             </Button>
           </div>
         )}
+      </section>
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">WhatsApp Contact Number</h4>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+          Customers will see a &quot;WhatsApp us&quot; button on your booking page. Enter your number in international format, e.g. <span className="font-mono text-gray-700 dark:text-gray-300">+12425550100</span>.
+        </p>
+        <div className="space-y-3">
+          <div className="flex gap-2 items-center">
+            <WhatsappLogo className="w-5 h-5 text-[#25D366] shrink-0" />
+            <Input
+              value={whatsappNumber}
+              onChange={e => setWhatsappNumber(e.target.value)}
+              placeholder="+1 242 555 0100"
+              className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#080808]"
+              maxLength={20}
+            />
+          </div>
+          <Button
+            onClick={handleSaveWhatsapp}
+            disabled={savingWhatsapp}
+            className="bg-[#25D366] hover:bg-[#1ebe58] text-white rounded-xl px-8 h-10"
+          >
+            {savingWhatsapp ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : <WhatsappLogo className="h-4 w-4 mr-2" />}
+            Save WhatsApp Number
+          </Button>
+          {whatsappNumber && (
+            <p className="text-xs text-[#25D366]">
+              Customers can reach you at{" "}
+              <a
+                href={`https://wa.me/${whatsappNumber.replace(/[^\d]/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                wa.me/{whatsappNumber.replace(/[^\d]/g, "")}
+              </a>
+            </p>
+          )}
+        </div>
       </section>
     </div>
   )
