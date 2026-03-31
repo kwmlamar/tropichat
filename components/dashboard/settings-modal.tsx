@@ -813,7 +813,7 @@ function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: ()
           tier={upgradeModalTier}
           billingInterval={billingInterval}
           isOpen={!!upgradeModalTier}
-          isTrial={customer?.plan === 'free'}
+          isTrial={customer?.status === 'trial' || customer?.plan === 'free'}
           onClose={() => setUpgradeModalTier(null)}
           onConfirm={handleUpgrade}
           onTrialUpgrade={handleTrialUpgrade}
