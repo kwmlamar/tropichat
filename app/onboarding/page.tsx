@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -36,7 +36,7 @@ import { SplashLoader } from "@/components/splash-loader"
 
 type Step = "welcome" | "profile" | "channels" | "meta" | "complete"
 
-export default function OnboardingPage() {
+function OnboardingContent() {
   const router = useRouter()
   const [step, setStep] = useState<Step>("welcome")
   const [loading, setLoading] = useState(true)
@@ -605,3 +605,12 @@ export default function OnboardingPage() {
     </div>
   )
 }
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<SplashLoader isLoading={true} />}>
+      <OnboardingContent />
+    </Suspense>
+  )
+}
+
