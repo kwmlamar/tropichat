@@ -126,7 +126,6 @@ export async function signUp(
         contact_email: email,
         status: 'trial',
         plan: plan,
-        billing_period: billingPeriod,
         timezone: 'America/Nassau',
         trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
       })

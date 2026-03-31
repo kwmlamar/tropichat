@@ -48,18 +48,21 @@ export default function AuthCallbackPage() {
           const businessName = meta.full_name || meta.name || meta.email?.split("@")[0] || "My Business"
           const avatarUrl = meta.avatar_url || meta.picture || null
 
-          await client.from("customers").insert({
+          const { error: insertError } = await client.from("customers").insert({
             id: user.id,
             business_name: businessName,
             contact_email: user.email || `${providerName}_${user.id}@tropichat.local`,
             status: "trial",
             plan: (storedPlan || 'free') as any,
-            billing_period: (storedBilling || 'monthly') as any,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             facebook_id: providerName === "facebook" ? meta.provider_id || null : null,
             avatar_url: avatarUrl,
             trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
           })
+
+          if (insertError) {
+            console.error("[OAuth Callback] Failed to create customer:", insertError)
+          }
 
           // Create team_members owner record (mirrors email signUp flow)
           await client.from("team_members").insert({
