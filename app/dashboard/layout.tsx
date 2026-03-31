@@ -7,6 +7,8 @@ import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav"
 import { SettingsModal } from "@/components/dashboard/settings-modal"
 import { getSession, getCurrentCustomer, getPersonalCustomer } from "@/lib/supabase"
 import { SplashLoader } from "@/components/splash-loader"
+import { AccountBlocker } from "@/components/billing/PlanGate"
+import { getAccessStatus } from "@/lib/billing/permissions"
 import type { Customer } from "@/types/database"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +23,8 @@ export default function DashboardLayout({
   const [loading, setLoading] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+  const access = getAccessStatus(customer)
 
   useEffect(() => {
     async function checkAuth() {
@@ -63,6 +67,14 @@ export default function DashboardLayout({
     <div className="h-screen h-[100dvh] bg-gray-50 dark:bg-black flex overflow-hidden">
       {/* Premium Entry Splash Loader — Sit on top */}
       <SplashLoader isLoading={loading} />
+
+      {/* Account Blocker Paywall */}
+      {!loading && access.isBlocked && (
+        <AccountBlocker 
+            reason={access.reason as any} 
+            onOpenBilling={() => setIsSettingsOpen(true)} 
+        />
+      )}
 
       {/* Dashboard UI — Renders in background immediately while loader reveals */}
       <Sidebar 

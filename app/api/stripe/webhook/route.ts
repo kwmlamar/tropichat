@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         if (!session.metadata?.supabase_user_id) break
 
         const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-        const priceId = subscription.items.data[0].price.id
+        const priceId = (subscription as any).items.data[0].price.id
 
         await supabase
           .from("customers")
@@ -79,8 +79,9 @@ export async function POST(req: Request) {
             stripe_subscription_id: subscriptionId,
             stripe_price_id: priceId,
             stripe_current_period_end: new Date(
-              (subscription as unknown as { current_period_end: number }).current_period_end * 1000
+              (subscription as any).current_period_end * 1000
             ).toISOString(),
+            status: (subscription as any).status,
             plan: planFromPriceId(priceId),
             billing_period: billingPeriodFromPriceId(priceId),
           })
@@ -99,8 +100,9 @@ export async function POST(req: Request) {
             stripe_subscription_id: subscription.id,
             stripe_price_id: priceId,
             stripe_current_period_end: new Date(
-              (subscription as unknown as { current_period_end: number }).current_period_end * 1000
+              (subscription as any).current_period_end * 1000
             ).toISOString(),
+            status: subscription.status,
             plan: planFromPriceId(priceId),
             billing_period: billingPeriodFromPriceId(priceId),
           })
@@ -118,6 +120,7 @@ export async function POST(req: Request) {
             stripe_subscription_id: null,
             stripe_price_id: null,
             stripe_current_period_end: null,
+            status: "canceled",
             plan: "starter",
             billing_period: "monthly",
           })
@@ -128,7 +131,12 @@ export async function POST(req: Request) {
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
         const customerId = invoice.customer as string
-        // Log the failure — optionally downgrade or mark as past_due
+        
+        await supabase
+          .from("customers")
+          .update({ status: "past_due" })
+          .eq("stripe_customer_id", customerId)
+
         console.warn(`[stripe] payment failed for customer: ${customerId}`)
         break
       }

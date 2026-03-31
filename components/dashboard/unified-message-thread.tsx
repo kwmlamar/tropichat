@@ -36,6 +36,7 @@ import { toast } from "sonner"
 import { ChannelIcon, getChannelLabel } from "./channel-icon"
 import { cn, formatMessageTime, formatDateDivider, getConversationDisplayName } from "@/lib/utils"
 import { getAIResponseSuggestion } from "@/lib/unified-inbox"
+import { PlanGate } from "@/components/billing/PlanGate"
 import type { UnifiedMessage, ConversationWithAccount, MessageDeliveryStatus } from "@/types/unified-inbox"
 
 interface UnifiedMessageThreadProps {
@@ -48,6 +49,7 @@ interface UnifiedMessageThreadProps {
   hasMore?: boolean
   onCreateBooking?: () => void
   customerName?: string | null
+  plan?: string
   onBack?: () => void
 }
 
@@ -62,6 +64,7 @@ export function UnifiedMessageThread({
   hasMore,
   onCreateBooking,
   customerName,
+  plan,
   onBack,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
@@ -237,14 +240,16 @@ export function UnifiedMessageThread({
         <div className="flex items-center gap-2">
           {/* Create Booking button */}
           {onCreateBooking && (
-            <button
-              onClick={onCreateBooking}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85] hover:bg-[#007B85]/20 transition-colors text-xs font-medium"
-              title="Create a booking from this conversation"
-            >
-              <CalendarPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Book</span>
-            </button>
+            <PlanGate plan={plan} feature="canUseBookingPage" variant="inline">
+              <button
+                onClick={onCreateBooking}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#3A9B9F]/10 text-[#3A9B9F] hover:bg-[#3A9B9F]/20 transition-colors text-xs font-black uppercase tracking-widest"
+                title="Create a booking from this conversation"
+              >
+                <CalendarPlus className="h-4 w-4" />
+                <span className="hidden sm:inline">Book</span>
+              </button>
+            </PlanGate>
           )}
 
 
@@ -444,28 +449,30 @@ export function UnifiedMessageThread({
           </button>
         ) : (
           <div className="flex items-center gap-1 shrink-0 mb-0.5">
-            <button 
-              onClick={handleGenerateAISuggestion}
-              disabled={isGeneratingAI}
-              className={cn(
-                "p-2 text-[#007B85] hover:text-[#005B63] transition-all relative overflow-hidden group rounded-xl",
-                isGeneratingAI && "animate-pulse opacity-50"
-              )}
-              title="Generate Smart Reply"
-            >
-              {isGeneratingAI ? (
-                <div className="flex items-center justify-center">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                  >
-                    <Sparkle weight="bold" className="w-6 h-6" />
-                  </motion.div>
-                </div>
-              ) : (
-                <Sparkle weight="bold" className="w-6 h-6 group-hover:scale-110 group-active:scale-90" />
-              )}
-            </button>
+            <PlanGate plan={plan} feature="canUseSmartReply" variant="inline">
+              <button 
+                onClick={handleGenerateAISuggestion}
+                disabled={isGeneratingAI}
+                className={cn(
+                  "p-2 text-[#3A9B9F] hover:text-[#2F8488] transition-all relative overflow-hidden group rounded-xl",
+                  isGeneratingAI && "animate-pulse opacity-50"
+                )}
+                title="Generate Smart Reply"
+              >
+                {isGeneratingAI ? (
+                  <div className="flex items-center justify-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    >
+                      <Sparkle weight="bold" className="w-6 h-6" />
+                    </motion.div>
+                  </div>
+                ) : (
+                  <Sparkle weight="bold" className="w-6 h-6 group-hover:scale-110 group-active:scale-90" />
+                )}
+              </button>
+            </PlanGate>
             <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
               <Camera className="w-6 h-6" />
             </button>

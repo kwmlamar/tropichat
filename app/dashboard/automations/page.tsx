@@ -32,6 +32,7 @@ import {
 import { formatDistanceToNow, cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
+import { PlanGate } from "@/components/billing/PlanGate"
 import type { AutomationRule, TriggerType, ActionType } from "@/types/database"
 
 const triggerOptions = [
@@ -323,66 +324,41 @@ export default function AutomationsPage() {
           )}
         </motion.div>
 
-        {/* ── Paywall ─────────────────────────────────────────────────────── */}
-        {!loading && customerPlan === "free" && (
+        {/* ── Automations Content ────────────────────────────────────────── */}
+        <PlanGate
+          plan={customerPlan}
+          feature="canUseAutomations"
+          variant="blur"
+          onUpgradeClick={() => router.push("/dashboard/settings?tab=billing")}
+        >
+          {/* Stats row */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.06 }}
-            className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-6 sm:p-12 text-center"
-            style={{ borderLeftColor: "#FF7E36", borderLeftWidth: 2 }}
+            className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
           >
-            <div className="max-w-sm mx-auto">
-              <div className="w-12 h-12 rounded-xl bg-[#FF7E36]/10 flex items-center justify-center mx-auto mb-5">
-                <Zap className="h-5 w-5 text-[#FF7E36]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#213138] dark:text-white  mb-2">
-                Professional Feature
-              </h3>
-              <p className="text-[14px] text-gray-500 dark:text-[#525252] mb-8 leading-relaxed">
-                Unlock automations to auto-reply, route conversations, and trigger campaigns while you sleep.
-              </p>
-              <button
-                onClick={() => router.push("/dashboard/settings?tab=billing")}
-                className="flex items-center gap-2 px-6 py-2.5 bg-[#213138] dark:bg-[#007B85] hover:bg-[#1a272e] dark:hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+            {[
+              { label: "Active",     value: activeCount,                    accent: "#3A9B9F" },
+              { label: "Total Runs", value: totalRuns,                      accent: "#FF7E36" },
+              { label: "Hours Saved",value: Math.floor(totalRuns * 0.1),   accent: "#3A9B9F" },
+            ].map((s, i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
+                style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}
               >
-                Upgrade to Professional
-                <ArrowRight weight="bold" className="h-4 w-4" />
-              </button>
-            </div>
+                <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-bold mb-1.5 sm:mb-2 text-center sm:text-left">
+                  {s.label}
+                </p>
+                <p className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tabular-nums text-center sm:text-left tracking-tight">
+                  {s.value}
+                </p>
+              </div>
+            ))}
           </motion.div>
-        )}
 
-        {!loading && customerPlan !== "free" && (
-          <>
-            {/* ── Stats row ─────────────────────────────────────────────── */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.06 }}
-              className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4"
-            >
-              {[
-                { label: "Active",     value: activeCount,                    accent: "#007B85" },
-                { label: "Total Runs", value: totalRuns,                      accent: "#FF7E36" },
-                { label: "Hours Saved",value: Math.floor(totalRuns * 0.1),   accent: "#007B85" },
-              ].map((s, i) => (
-                <div
-                  key={i}
-                  className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200"
-                  style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}
-                >
-                  <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 sm:mb-2 text-center sm:text-left">
-                    {s.label}
-                  </p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tabular-nums text-center sm:text-left">
-                    {s.value}
-                  </p>
-                </div>
-              ))}
-            </motion.div>
-
-            {/* ── Automation cards ──────────────────────────────────────── */}
+          <div className="mt-8">
             {loading ? (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {Array(3).fill(0).map((_, i) => (
@@ -409,41 +385,36 @@ export default function AutomationsPage() {
                   <div className="inline-flex flex-col items-start gap-0 mb-8 text-left">
                     <div className="flex items-center gap-2.5">
                       <div className="w-6 h-6 rounded-md bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#2A2A2A] flex items-center justify-center">
-                        <span className="text-[8px] font-black text-gray-400 dark:text-[#525252]">IF</span>
+                        <span className="text-[8px] font-black text-gray-400 dark:text-[#525252] tracking-widest">IF</span>
                       </div>
-                      <span className="text-[13px] text-gray-400 dark:text-[#525252]">message contains "hi"</span>
+                      <span className="text-[13px] font-bold text-gray-400 dark:text-[#525252]">message contains "hi"</span>
                     </div>
                     <div className="ml-3 h-4 border-l border-dashed border-gray-200 dark:border-[#222]" />
                     <div className="flex items-center gap-2.5">
-                      <div className="w-6 h-6 rounded-md bg-[#007B85] flex items-center justify-center">
-                        <span className="text-[8px] font-black text-white">DO</span>
+                      <div className="w-6 h-6 rounded-md bg-[#3A9B9F] flex items-center justify-center">
+                        <span className="text-[8px] font-black text-white tracking-widest uppercase">DO</span>
                       </div>
-                      <span className="text-[13px] text-gray-400 dark:text-[#525252]">send a welcome message</span>
+                      <span className="text-[13px] font-bold text-gray-400 dark:text-[#525252]">send a welcome message</span>
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-[#213138] dark:text-white  mb-2">
+                  <h3 className="text-xl font-black text-[#213138] dark:text-white uppercase tracking-tight mb-2">
                     No automations yet
                   </h3>
-                  <p className="text-[13px] text-gray-500 dark:text-[#525252] mb-6 leading-relaxed">
+                  <p className="text-[13px] font-medium text-gray-500 dark:text-[#525252] mb-6 leading-relaxed">
                     Build rules that respond for you — 24 hours a day.
                   </p>
                   <button
                     onClick={handleCreateAutomation}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[#007B85] hover:bg-[#2F8488] text-white text-sm font-semibold rounded-xl transition-colors duration-200 mx-auto"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3A9B9F] hover:bg-[#2F8488] text-white text-[13px] font-black uppercase tracking-widest rounded-xl transition-colors duration-200 mx-auto"
                   >
                     <Plus weight="bold" className="h-4 w-4" />
-                    Create your first automation
+                    Create Workflow
                   </button>
                 </div>
               </motion.div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.12 }}
-                className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"
-              >
+              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {automations.map((automation, i) => (
                   <motion.div
                     key={automation.id}
@@ -459,10 +430,11 @@ export default function AutomationsPage() {
                     />
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </>
-        )}
+          </div>
+        </PlanGate>
+
 
         {/* ── Create / Edit modal ──────────────────────────────────────────── */}
         <Modal

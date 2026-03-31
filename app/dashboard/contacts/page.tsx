@@ -7,7 +7,9 @@ import {
   DownloadSimple as Download, 
   DotsThreeVertical as MoreVertical, 
   Phone, 
-  Tag 
+  Tag,
+  Megaphone,
+  Upload
 } from "@phosphor-icons/react"
 import { Avatar } from "@/components/ui/avatar"
 import { Modal, ModalFooter } from "@/components/ui/modal"
@@ -17,12 +19,13 @@ import { Button } from "@/components/ui/button"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getContacts, updateContact } from "@/lib/supabase"
+import { getContacts, updateContact, getCurrentCustomer } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
 import { useDebounce } from "@/lib/hooks"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
-import type { Contact } from "@/types/database"
+import type { Contact, Customer } from "@/types/database"
+import { PlanGate } from "@/components/billing/PlanGate"
 
 // ─── Channel dot — identity of this page ─────────────────────────────────────
 // Platform color lives ONLY in a small dot. No colored icon boxes.
@@ -46,13 +49,14 @@ function PresenceDot({ lastMessageAt }: { lastMessageAt: string | null }) {
   return (
     <span className={cn(
       "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[#0C0C0C]",
-      active ? "bg-[#007B85]" : "bg-gray-200 dark:bg-[#333]"
+      active ? "bg-[#3A9B9F]" : "bg-gray-200 dark:bg-[#333]"
     )} />
   )
 }
 
 export default function ContactsPage() {
   const [contacts, setContacts]             = useState<Contact[]>([])
+  const [customer, setCustomer]             = useState<Customer | null>(null)
   const [loading, setLoading]               = useState(true)
   const [searchQuery, setSearchQuery]       = useState("")
   const [selectedContacts, setSelected]     = useState<string[]>([])
@@ -63,9 +67,16 @@ export default function ContactsPage() {
   useEffect(() => {
     async function fetch() {
       setLoading(true)
-      const { data, error } = await getContacts(debouncedSearch)
-      if (error) toast.error("Failed to load contacts")
-      else setContacts(data)
+      const [contRes, custRes] = await Promise.all([
+        getContacts(debouncedSearch),
+        getCurrentCustomer()
+      ])
+      
+      if (contRes.error) toast.error("Failed to load contacts")
+      else setContacts(contRes.data)
+      
+      if (custRes.data) setCustomer(custRes.data)
+      
       setLoading(false)
     }
     fetch()
@@ -77,7 +88,7 @@ export default function ContactsPage() {
   const handleBlock = async (contact: Contact) => {
     const { error } = await updateContact(contact.id, { is_blocked: !contact.is_blocked })
     if (error) { toast.error("Failed to update contact"); return }
-    setContacts(p => p.map(c => c.id === contact.id ? { ...c, is_blocked: !c.is_blocked } : c))
+    setContacts(p => p.map(c => c.id === contact.id ? { ...c, is_blocked: !contact.is_blocked } : c))
     toast.success(contact.is_blocked ? "Contact unblocked" : "Contact blocked")
   }
 
@@ -93,7 +104,7 @@ export default function ContactsPage() {
   }
 
   const stats = [
-    { label: "Total",     value: contacts.length,                                    accent: "#007B85" },
+    { label: "Total",     value: contacts.length,                                    accent: "#3A9B9F" },
     { label: "WhatsApp",  value: contacts.filter(c => c.channel_type==="whatsapp").length,  accent: "#25D366" },
     { label: "Instagram", value: contacts.filter(c => c.channel_type==="instagram").length,  accent: "#E1306C" },
     { label: "Messenger", value: contacts.filter(c => c.channel_type==="messenger").length,  accent: "#0084FF" },
@@ -106,17 +117,37 @@ export default function ContactsPage() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-widest font-medium mb-1 flex items-center gap-1.5">
-              <span className="w-1 h-1 rounded-full bg-[#007B85] inline-block" />CRM
+            <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-1 flex items-center gap-1.5">
+              CRM
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#213138] dark:text-white tracking-tight">Contacts</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#213138] dark:text-white tracking-tight uppercase">Contacts</h1>
           </div>
-          {selectedContacts.length > 0 && (
-            <button onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-medium rounded-xl transition-colors duration-200 shadow-sm active:scale-95">
-              <Download weight="bold" className="h-3.5 w-3.5 text-[#007B85]" />Export ({selectedContacts.length})
-            </button>
-          )}
+          
+          <div className="flex items-center gap-3">
+            <PlanGate plan={customer?.plan} feature="canWhiteLabel" variant="inline">
+              <button 
+                className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-[#3A9B9F] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-sm">
+                <Upload weight="bold" className="h-3.5 w-3.5" />Import
+              </button>
+            </PlanGate>
+
+            {selectedContacts.length > 0 && (
+              <div className="flex items-center gap-3">
+                <PlanGate plan={customer?.plan} feature="canBulkBroadcast" variant="inline">
+                  <button 
+                    onClick={() => {}}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-[#3A9B9F] text-white text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-[#3A9B9F]/20">
+                    <Megaphone weight="fill" className="h-3.5 w-3.5" />Bulk Message
+                  </button>
+                </PlanGate>
+
+                <button onClick={handleExport}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-bold rounded-xl transition-colors duration-200 shadow-sm active:scale-95">
+                  <Download weight="bold" className="h-3.5 w-3.5" />Export ({selectedContacts.length})
+                </button>
+              </div>
+            )}
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.06 }}
@@ -124,8 +155,8 @@ export default function ContactsPage() {
           {stats.map((s, i) => (
             <div key={i} className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-4 sm:p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 shadow-sm"
               style={{ borderLeftColor: s.accent, borderLeftWidth: 2 }}>
-              <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-widest font-medium mb-1.5 sm:mb-2">{s.label}</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
+              <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-1.5 sm:mb-2">{s.label}</p>
+              <p className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tabular-nums tracking-tighter">
                 {loading ? "—" : s.value}
               </p>
             </div>
@@ -137,16 +168,16 @@ export default function ContactsPage() {
             <Search weight="bold" className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-[#525252]" />
             <input type="text" placeholder="Search by name, phone, or email…" value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#007B85] transition-colors duration-200" />
+              className="w-full h-11 pl-11 pr-4 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-xl text-[13px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none focus:border-[#3A9B9F] transition-colors duration-200" />
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.14 }}
-          className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl overflow-hidden">
+          className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto hidden sm:block">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#111]">
+                <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50/50 dark:bg-[#111]">
                   <th className="w-12 px-5 py-3.5">
                     <Checkbox 
                       checked={selectedContacts.length === contacts.length && contacts.length > 0}
@@ -154,7 +185,7 @@ export default function ContactsPage() {
                     />
                   </th>
                   {[["Contact",""],["Channel",""],["Last Active","hidden md:table-cell"],["Messages","hidden lg:table-cell"],["Tags","hidden lg:table-cell"]].map(([col, cls]) => (
-                    <th key={col} className={cn("px-4 py-3.5 text-left text-[10px] font-semibold text-gray-400 dark:text-[#525252] uppercase tracking-widest", cls)}>
+                    <th key={col} className={cn("px-4 py-3.5 text-left text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em]", cls)}>
                       {col}
                     </th>
                   ))}
@@ -301,7 +332,7 @@ export default function ContactsPage() {
           </div>
           {!loading && contacts.length > 0 && (
             <div className="px-5 py-3 border-t border-gray-100 dark:border-[#1C1C1C]">
-              <p className="text-[11px] text-gray-400 dark:text-[#525252]">
+              <p className="text-[11px] text-gray-400 dark:text-[#525252] font-medium tracking-wide">
                 {contacts.length} contact{contacts.length !== 1 ? "s" : ""}
                 {selectedContacts.length > 0 && ` · ${selectedContacts.length} selected`}
               </p>
@@ -317,7 +348,7 @@ export default function ContactsPage() {
             <div><Label>Email</Label><Input type="email" value={editingContact.email || ""} onChange={e => setEditing({ ...editingContact, email: e.target.value })} className="mt-1" /></div>
             <ModalFooter>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-              <Button className="bg-[#007B85] hover:bg-[#2F8488] text-white" onClick={async () => {
+              <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white" onClick={async () => {
                 const { error } = await updateContact(editingContact.id, { name: editingContact.name, email: editingContact.email })
                 if (error) toast.error("Failed to update contact")
                 else { setContacts(p => p.map(c => c.id === editingContact.id ? editingContact : c)); toast.success("Contact updated"); setIsModalOpen(false) }

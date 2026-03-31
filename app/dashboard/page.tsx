@@ -44,6 +44,7 @@ function InboxContent() {
 
   const [customerName, setCustomerName] = useState<string | null>(null)
   const [customerHandle, setCustomerHandle] = useState<string | null>(null)
+  const [customerPlan, setCustomerPlan] = useState<string | undefined>(undefined)
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
@@ -97,6 +98,7 @@ function InboxContent() {
         const { data: customerData } = await getCurrentCustomer()
         if (!ignore) {
           setCustomerName(customerData?.business_name || null)
+          setCustomerPlan(customerData?.plan)
           // Fetch booking handle
           try {
             const handleRes = await fetch("/api/bookings/handle", {
@@ -468,6 +470,7 @@ function InboxContent() {
             hasMore={hasMoreMessages}
             onCreateBooking={() => setBookingModalOpen(true)}
             customerName={customerName}
+            plan={customerPlan}
             onBack={() => {
               setSelectedConversation(null)
               router.replace('/dashboard')
