@@ -83,8 +83,12 @@ function SignupForm() {
     const planParam = searchParams.get('plan') || 'free'
     const billingParam = searchParams.get('billing') || 'monthly'
     
+    // Store selection in local storage to preserve across OAuth redirects
+    localStorage.setItem('tp_plan', planParam)
+    localStorage.setItem('tp_billing', billingParam)
+    
     const { error } = await signInWithOAuth(provider, {
-      redirectTo: `${window.location.origin}/auth/callback?plan=${planParam}&billing=${billingParam}`
+      redirectTo: `${window.location.origin}/auth/callback`
     })
     
     if (error) {
