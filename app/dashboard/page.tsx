@@ -19,6 +19,8 @@ import { getCurrentCustomer } from "@/lib/supabase"
 import { useDebounce } from "@/lib/hooks"
 import { generateId, cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { AnimatePresence, motion } from "framer-motion"
+import { LaunchPad, shouldShowLaunchPad } from "@/components/onboarding/LaunchPad"
 import type {
   ConversationWithAccount,
   UnifiedMessage,
@@ -42,6 +44,8 @@ function InboxContent() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
 
   const [customerName, setCustomerName] = useState<string | null>(null)
+  const [customerHandle, setCustomerHandle] = useState<string | null>(null)
+  const [showLaunchPad, setShowLaunchPad] = useState(false)
   const debouncedSearch = useDebounce(searchQuery, 300)
 
   const searchParams = useSearchParams()
@@ -92,7 +96,24 @@ function InboxContent() {
         if (!ignore) setAccountIds(accountsData.map((a) => a.id))
 
         const { data: customerData } = await getCurrentCustomer()
-        if (!ignore) setCustomerName(customerData?.business_name || null)
+        if (!ignore) {
+          setCustomerName(customerData?.business_name || null)
+          // Fetch booking handle for LaunchPad
+          try {
+            const handleRes = await fetch("/api/bookings/handle", {
+              headers: { "Content-Type": "application/json" }
+            })
+            if (handleRes.ok) {
+              const handleJson = await handleRes.json()
+              setCustomerHandle(handleJson.handle ?? null)
+            }
+          } catch {/* ignore */}
+          // Show LaunchPad if triggered by ?launchpad=true or not yet completed
+          const launchpadParam = new URLSearchParams(window.location.search).get("launchpad")
+          if (launchpadParam === "true" || shouldShowLaunchPad()) {
+            setShowLaunchPad(true)
+          }
+        }
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return
         console.error("Failed to fetch dashboard data:", err)
@@ -468,6 +489,34 @@ function InboxContent() {
           onArchive={handleArchive}
         />
       </div>
+
+      {/* LaunchPad overlay — shown post-onboarding until completed */}
+      <AnimatePresence>
+        {showLaunchPad && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={() => setShowLaunchPad(false)}
+            />
+            <motion.div
+              initial={{ y: "100%", opacity: 0.8 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed bottom-0 inset-x-0 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:bottom-auto md:w-[420px] z-50 bg-[#0F172A] rounded-t-3xl md:rounded-3xl overflow-y-auto max-h-[90vh] border border-white/10 p-6"
+            >
+              <LaunchPad
+                businessName={customerName ?? "Your Business"}
+                existingHandle={customerHandle}
+                onClose={() => setShowLaunchPad(false)}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Create Booking Modal — opened from conversation thread */}
       <CreateBookingModal

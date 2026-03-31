@@ -179,7 +179,7 @@ export default function OnboardingPage() {
       }
 
       toast.success("Welcome to TropiChat!")
-      router.push("/dashboard")
+      router.push("/dashboard?launchpad=true")
     } catch (error) {
       console.error("Onboarding finish failed:", error)
       toast.error("Failed to finish onboarding. Please try again.")
