@@ -76,7 +76,7 @@ function SignupForm() {
     router.push("/login")
   }
 
-  const handleOAuth = async (provider: 'google') => {
+  const handleOAuth = async (provider: 'google' | 'facebook') => {
     setOauthLoading(provider)
     
     // Get current selection to carry over during social login
@@ -248,6 +248,7 @@ function SignupForm() {
                    </Button>
 
                    <Button
+                     onClick={() => handleOAuth("facebook")}
                      disabled={anyLoading}
                      className="w-full h-14 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-bold rounded-xl flex items-center justify-center gap-3 transition-all"
                    >
