@@ -1,6 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type {
   Customer,
+  CustomerPlan,
   Contact,
   Conversation,
   Message,
@@ -9,6 +10,18 @@ import type {
   ConversationWithContact,
   Notification
 } from '@/types/database'
+
+export type {
+  Customer,
+  CustomerPlan,
+  Contact,
+  Conversation,
+  Message,
+  MessageTemplate,
+  AutomationRule,
+  ConversationWithContact,
+  Notification
+}
 
 // Waitlist type for landing page
 export type WaitlistEntry = {
@@ -76,7 +89,14 @@ export const createSupabaseClient = () => {
 
 // ==================== AUTH FUNCTIONS ====================
 
-export async function signUp(email: string, password: string, businessName: string, fullName: string) {
+export async function signUp(
+  email: string, 
+  password: string, 
+  businessName: string, 
+  fullName: string,
+  plan: CustomerPlan = 'free',
+  billingPeriod: 'monthly' | 'annual' = 'monthly'
+) {
   const client = getSupabase()
 
   const { data: authData, error: authError } = await client.auth.signUp({
@@ -105,7 +125,8 @@ export async function signUp(email: string, password: string, businessName: stri
         full_name: fullName,
         contact_email: email,
         status: 'trial',
-        plan: 'free',
+        plan: plan,
+        billing_period: billingPeriod,
         timezone: 'America/Nassau',
         trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
       })

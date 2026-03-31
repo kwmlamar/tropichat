@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   CheckCircle, 
@@ -176,17 +177,22 @@ export function PricingSection() {
                 ))}
               </div>
 
-              <Button 
-                variant={tier.popular ? "default" : "secondary"}
-                className={cn(
-                  "w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all",
-                  tier.popular 
-                    ? "bg-white text-[#007B85] hover:bg-gray-100 hover:scale-[1.02]" 
-                    : "bg-[#213138] text-white hover:bg-[#1a262c] hover:scale-[1.02]"
-                )}
+              <Link 
+                href={`/signup?plan=${tier.name.toLowerCase()}&billing=${isAnnual ? 'annual' : 'monthly'}`}
+                className="w-full"
               >
-                {tier.cta} <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+                <Button 
+                  variant={tier.popular ? "default" : "secondary"}
+                  className={cn(
+                    "w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all",
+                    tier.popular 
+                      ? "bg-white text-[#007B85] hover:bg-gray-100 hover:scale-[1.02]" 
+                      : "bg-[#213138] text-white hover:bg-[#1a262c] hover:scale-[1.02]"
+                  )}
+                >
+                  {tier.cta} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </motion.div>
           ))}
         </div>

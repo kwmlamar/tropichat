@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signUp, signInWithOAuth } from "@/lib/supabase"
+import { signUp, signInWithOAuth, type CustomerPlan } from "@/lib/supabase"
 import { toast } from "sonner"
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -41,6 +41,7 @@ function FacebookIcon({ className }: { className?: string }) {
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [useEmail, setUseEmail] = useState(false)
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -51,7 +52,20 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    const { error } = await signUp(email, password, "", fullName)
+    
+    // Get plan and billing from search params
+    const planParam = searchParams.get('plan') as CustomerPlan | null
+    const billingParam = searchParams.get('billing') as 'monthly' | 'annual' | null
+    
+    const { error } = await signUp(
+      email, 
+      password, 
+      "", 
+      fullName, 
+      planParam || 'free', 
+      billingParam || 'monthly'
+    )
+    
     if (error) {
       toast.error(error)
       setIsLoading(false)
