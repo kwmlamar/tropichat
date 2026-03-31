@@ -716,53 +716,46 @@ function BillingSettings({ customer }: { customer: any }) {
 
   return (
     <div className="space-y-10">
-      {/* Current plan banner - Premium Glassmorphism */}
-      <div className="p-8 rounded-[32px] bg-white dark:bg-[#0F172A] border border-gray-100 dark:border-white/10 shadow-xl shadow-gray-200/50 dark:shadow-none overflow-hidden relative group">
-        {/* Decorative backdrop elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4C430]/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-[#F4C430]/20 transition-all duration-700" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#007B85]/5 rounded-full blur-3xl -ml-12 -mb-12 pointer-events-none group-hover:bg-[#007B85]/10 transition-all duration-700" />
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="px-2 py-0.5 bg-[#F4C430]/20 text-[#213138] dark:text-[#F4C430] text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-[#F4C430]/30">
-              Active Plan
-            </span>
-          </div>
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-1">
-              <h3 className="text-3xl font-black tracking-tight text-[#213138] dark:text-white" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
-                {planDisplayName.split(' — ')[0]}
-              </h3>
-              <p className="text-[15px] font-bold text-[#007B85]">
-                {planDisplayName.split(' — ')[1]}
-              </p>
-              {customer?.stripe_current_period_end && (
-                <div className="flex items-center gap-1.5 mt-4 text-xs font-medium text-gray-400 dark:text-gray-500">
-                  <Clock weight="bold" className="h-3.5 w-3.5" />
-                  Renews {new Date(customer.stripe_current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-                </div>
-              )}
+      {/* Current plan card */}
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-[#3A9B9F]/10 border border-[#3A9B9F]/20">
+                Active Plan
+              </span>
             </div>
-
-            {!isStarter || customer?.plan !== 'free' ? (
-              <Button
-                onClick={handleManagePortal}
-                disabled={managingPortal}
-                className="bg-[#213138] dark:bg-white text-white dark:text-[#0F172A] hover:opacity-90 rounded-2xl font-black py-4 px-8 h-auto transition-all active:scale-[0.98] shadow-lg shadow-black/10"
-              >
-                {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : <CreditCard weight="bold" className="h-4 w-4 mr-2" />}
-                Manage Billing
-              </Button>
-            ) : null}
+            <h3 className="text-2xl font-black text-[#213138] dark:text-white">
+              {planDisplayName.split(' — ')[0]}
+            </h3>
+            <p className="text-sm font-bold text-gray-500 dark:text-[#525252]">
+              {planDisplayName.split(' — ')[1]}
+            </p>
+            {customer?.stripe_current_period_end && (
+              <div className="flex items-center gap-1.5 pt-2 text-[11px] font-medium text-gray-400">
+                <Clock weight="bold" className="h-3.5 w-3.5" />
+                Next bill on {new Date(customer.stripe_current_period_end).toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+              </div>
+            )}
           </div>
 
-          {isStarter && customer?.plan === 'free' && (
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5">
-              <UsageBar used={bookingCount} limit={20} label="Free Bookings this month" />
-            </div>
-          )}
+          {!isStarter || customer?.plan !== 'free' ? (
+            <Button
+              onClick={handleManagePortal}
+              disabled={managingPortal}
+              className="bg-[#213138] dark:bg-white text-white dark:text-[#0C0C0C] hover:opacity-90 rounded-xl font-bold h-10 px-6"
+            >
+              {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : <CreditCard weight="bold" className="h-4 w-4 mr-2" />}
+              Manage Billing
+            </Button>
+          ) : null}
         </div>
+
+        {isStarter && customer?.plan === 'free' && (
+          <div className="mt-6 pt-6 border-t border-gray-100 dark:border-[#1C1C1C]">
+            <UsageBar used={bookingCount} limit={20} label="Free Bookings this month" />
+          </div>
+        )}
       </div>
 
       {/* Pricing Header */}
@@ -793,28 +786,28 @@ function BillingSettings({ customer }: { customer: any }) {
 
       {/* Usage section */}
       <div className="space-y-4">
-        <h4 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">Usage Analytics</h4>
+        <h4 className="text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em]">Usage Analytics</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-6 rounded-[24px] border border-gray-100 dark:border-white/5 dark:bg-[#080808] hover:border-[#F4C430]/30 transition-colors group">
+          <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 flex items-center justify-center bg-[#F4C430]/10 rounded-2xl group-hover:scale-110 transition-transform">
-                <ChatCircleDots weight="bold" className="h-5 w-5 text-[#F4C430]" />
+              <div className="h-10 w-10 flex items-center justify-center bg-[#3A9B9F]/10 rounded-xl">
+                <ChatCircleDots weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
               </div>
-              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Messages Sent</p>
+              <p className="text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest text-balance">Messages Sent</p>
             </div>
-            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
+            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter">
               {usage.messages.toLocaleString()}
             </p>
           </div>
 
-          <div className="p-6 rounded-[24px] border border-gray-100 dark:border-white/5 dark:bg-[#080808] hover:border-[#007B85]/30 transition-colors group">
+          <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 flex items-center justify-center bg-[#007B85]/10 rounded-2xl group-hover:scale-110 transition-transform">
-                <Users weight="bold" className="h-5 w-5 text-[#007B85]" />
+              <div className="h-10 w-10 flex items-center justify-center bg-[#3A9B9F]/10 rounded-xl">
+                <Users weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
               </div>
-              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Contacts Stored</p>
+              <p className="text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest">Contacts Stored</p>
             </div>
-            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter" style={{ fontFamily: "var(--font-plus-jakarta)" }}>
+            <p className="text-4xl font-black text-[#213138] dark:text-white tabular-nums tracking-tighter">
               {usage.contacts.toLocaleString()}
             </p>
           </div>
