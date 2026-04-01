@@ -100,20 +100,20 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[10ch]"
+              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[15ch]"
             >
-              Sell more <br className="hidden sm:block" /> 
-              on <span className="text-[#007B85] drop-shadow-2xl">WhatsApp.</span>
+              Stop Losing <br className="hidden sm:block" /> 
+              Customers <span className="text-[#007B85] drop-shadow-2xl italic">Immediately.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-xl md:text-3xl text-gray-300 font-bold max-w-xl mb-12 leading-tight uppercase tracking-tight opacity-90"
+              className="text-xl md:text-3xl text-gray-300 font-bold max-w-2xl mb-12 leading-tight uppercase tracking-tight opacity-90"
             >
-              One place for all your chats. <br />
-              Reply faster. Make more money.
+              TropiChat answers your WhatsApp and IG messages automatically — <br className="hidden md:block" />
+              so you never miss a sale while you're busy.
             </motion.p>
 
             <motion.div
@@ -124,9 +124,9 @@ export function HeroSection() {
             >
               <Button
                 onClick={goToSignup}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-widest"
               >
-                START FOR FREE
+                START FREE — SET UP IN 60 SECONDS
               </Button>
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#007B85] opacity-80 pl-4">
                 14-Day Free Trial • No Credit Card Required

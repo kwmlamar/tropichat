@@ -11,22 +11,22 @@ import {
 const steps = [
   {
     icon: LinkIcon,
-    label: "LINK",
-    sub: "One Click",
+    label: "CONNECT",
+    sub: "WhatsApp in one click",
     color: "bg-blue-500",
     shadow: "shadow-blue-500/40"
   },
   {
     icon: ChatIcon,
-    label: "CHAT",
-    sub: "All Inbox",
+    label: "ALL MESSAGES",
+    sub: "One place - no switching apps",
     color: "bg-[#007B85]",
     shadow: "shadow-teal-500/40"
   },
   {
     icon: SellIcon,
-    label: "SELL",
-    sub: "Go Big",
+    label: "AUTO-REPLY",
+    sub: "Never miss a sale again",
     color: "bg-amber-500",
     shadow: "shadow-amber-500/40"
   },

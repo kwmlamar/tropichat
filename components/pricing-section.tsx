@@ -21,15 +21,15 @@ import { cn } from "@/lib/utils"
 
 const tiers = [
   {
-    name: "Starter",
+    name: "Busy Solopreneur",
     monthlyPrice: 15,
     annualPrice: 12,
-    description: "Perfect for personal brands & side hustles.",
+    description: "Stop losing customers while you work. Auto-reply for WhatsApp + IG.",
     features: [
       "Up to 500 contacts",
-      "Unified Inbox (IG, WA, Messenger)",
-      "Instagram Comment Auto-Replies (Coming Soon)",
-      "Basic AI Smart Replies",
+      "All messages in one place (WhatsApp + IG)",
+      "Auto-reply to common questions",
+      "AI Smart Replies (handles the typing for you)",
       "Mobile App Access",
       "Community Support"
     ],
@@ -38,16 +38,16 @@ const tiers = [
     color: "slate"
   },
   {
-    name: "Medium",
+    name: "Growing Shop",
     monthlyPrice: 35,
     annualPrice: 28,
-    description: "For growing businesses in the Caribbean.",
+    description: "For shops that need more sales without hiring more staff.",
     features: [
       "Up to 2,500 contacts",
-      "Bulk WhatsApp Broadcasts",
-      "WhatsApp Link & QR Generator",
-      "Story Mention Auto-Replies (Coming Soon)",
-      "Full CRM Profile Tracking",
+      "Broadcast messages to all customers",
+      "WhatsApp QR code for your shop",
+      "Automatic story mention replies",
+      "Customer history & notes (know who's buying)",
       "Priority Email Support"
     ],
     cta: "Accelerate Growth",
@@ -55,16 +55,16 @@ const tiers = [
     color: "teal"
   },
   {
-    name: "Pro",
+    name: "Team + Sales Growth",
     monthlyPrice: 75,
     annualPrice: 60,
     description: "The gold standard for scaling teams.",
     features: [
       "Up to 10,000 contacts",
       "Unlimited Team Members",
-      "AI Knowledge Base Training",
-      "Booking & Payment Links",
-      "Abandoned Cart Recovery",
+      "AI trained on your business specifically",
+      "Direct Booking & Payment links",
+      "Follow up with people who didn't book",
       "Direct Founder Support"
     ],
     cta: "Scale Your Business",
@@ -72,15 +72,15 @@ const tiers = [
     color: "main"
   },
   {
-    name: "Elite (Managed)",
+    name: "Done-For-You Partner",
     monthlyPrice: 399,
     annualPrice: 349,
-    description: "Your dedicated Caribbean Sales Partner. We do the work, you get the sales.",
+    description: "We do the work, you get the sales. Your dedicated Caribbean Sales Partner.",
     features: [
-      "Full Done-For-You Setup",
-      "Managed WhatsApp & IG Sales",
-      "Custom AI Strategy & Training",
-      "Weekly Revenue Reporting",
+      "Full Setup done by us",
+      "We manage your WhatsApp & IG sales",
+      "Custom AI strategy built for you",
+      "Weekly reports on money made",
       "24/7 Priority Sales Support",
       "Unlimited Contacts & Growth"
     ],
@@ -88,8 +88,6 @@ const tiers = [
     popular: false,
     color: "dark"
   }
-
-
 ]
 
 export function PricingSection() {
