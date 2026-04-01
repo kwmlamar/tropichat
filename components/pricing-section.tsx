@@ -29,7 +29,7 @@ const tiers = [
       "Up to 500 contacts",
       "All messages in one place (WhatsApp + IG)",
       "Auto-reply to common questions",
-      "AI Smart Replies (handles the typing for you)",
+      "AI auto-replies using your saved answers",
       "Mobile App Access",
       "Community Support"
     ],

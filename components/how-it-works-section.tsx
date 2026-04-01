@@ -26,7 +26,7 @@ const steps = [
   {
     icon: SellIcon,
     label: "AUTO-REPLY",
-    sub: "Never miss a sale again",
+    sub: "Reply instantly using your saved answers",
     color: "bg-amber-500",
     shadow: "shadow-amber-500/40"
   },

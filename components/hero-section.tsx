@@ -113,8 +113,22 @@ export function HeroSection() {
               className="text-xl md:text-3xl text-gray-300 font-bold max-w-2xl mb-12 leading-tight uppercase tracking-tight opacity-90"
             >
               TropiChat answers your WhatsApp and IG messages automatically — <br className="hidden md:block" />
-              so you never miss a sale while you're busy.
+              so you reply to every customer instantly while you're busy.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="flex items-center gap-6 mb-12 opacity-60"
+            >
+               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Trusted by:</span>
+               <div className="flex gap-4">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Tour Operators</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Barbershops</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Boutiques</span>
+               </div>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
