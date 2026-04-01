@@ -15,7 +15,10 @@ import {
   Globe,
   FacebookLogo,
   FloppyDisk,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Plus,
+  Users,
+  TrendUp
 } from "@phosphor-icons/react"
 import { getSupabase } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
@@ -380,6 +383,74 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
               <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed italic">
                  Observe their {lead.source} presence. Mention how slow their current response time is to create a gap for AI.
               </p>
+            </div>
+
+            <div className="md:col-span-2 bg-[#007B85] rounded-[2.5rem] p-10 text-white shadow-xl shadow-teal-500/20 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Phone size={120} weight="fill" className="-mr-10 -mt-10" />
+              </div>
+              
+              <div className="relative z-10 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-2xl font-black tracking-tight uppercase italic">The "Lamar Standard" Opener</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 mt-1">Kill the corporate friction. Be the neighbor.</p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText("Mornin, mornin! this lamar, i set businesses up with a 24/7 sales agent. you got 2 minutes to check she out?");
+                      toast.success("Script Copied to Clipboard");
+                    }}
+                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/10"
+                  >
+                    <Plus weight="bold" className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8">
+                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
+                    "Mornin, mornin! this <span className="underline decoration-[#007B85]/30">lamar</span>, you wanna <span className="text-[#007B85]">save more time</span> AND <span className="text-[#007B85]">make more money</span>? I help you handle every message automatically so you don't miss any sales. You got 2 minutes?"
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-4">
+                  <a 
+                    href={`tel:${lead.contact_phone}`}
+                    className="flex items-center gap-3 px-8 py-4 bg-white text-[#007B85] rounded-2xl font-black uppercase text-[12px] tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95"
+                  >
+                    <Phone weight="fill" className="h-4 w-4" /> Start Mission Call
+                  </a>
+                  <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/60">
+                    Target: {lead.contact_phone || "No Phone Protocol Found"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-[2rem] p-8 space-y-4 shadow-sm border-l-4 border-l-amber-500">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-500/10 rounded-xl">
+                    <Users size={20} className="text-amber-600" weight="bold" />
+                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-600">The "Job Security" Flip</h4>
+                </div>
+                <p className="text-[13px] font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                  "I'm not taking your job; I'm giving you an army. Stop being the 'WhatsApp Secretary' at 2 AM. I handle the boring stuff so you can be the Marketing Director."
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-[2rem] p-8 space-y-4 shadow-sm border-l-4 border-l-blue-500">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-xl">
+                    <TrendUp size={20} className="text-blue-600" weight="bold" />
+                  </div>
+                  <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-600">The "Ad-Closing" Pivot</h4>
+                </div>
+                <p className="text-[13px] font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                  "Ad agencies get the attention, but I CLOSE THE DEAL. If you spend money on ads but miss the WhatsApp message, you're throwing money away."
+                </p>
+              </div>
             </div>
           </div>
         </div>

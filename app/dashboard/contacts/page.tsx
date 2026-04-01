@@ -9,7 +9,10 @@ import {
   Phone, 
   Tag as TagIcon,
   Megaphone,
-  Upload
+  Upload,
+  ChatCircle,
+  ShieldCheck,
+  CursorClick
 } from "@phosphor-icons/react"
 import { Avatar } from "@/components/ui/avatar"
 import { Modal, ModalFooter } from "@/components/ui/modal"
