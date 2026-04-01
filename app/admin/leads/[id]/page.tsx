@@ -59,12 +59,27 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
     category: ""
   })
   const debouncedNotes = useDebounce(notes, 1500)
+  const debouncedProfile = useDebounce(profile, 1500)
 
   useEffect(() => {
     if (lead && debouncedNotes !== lead.notes && !loading) {
       handleSaveNotes()
     }
   }, [debouncedNotes])
+
+  useEffect(() => {
+    if (lead && JSON.stringify(debouncedProfile) !== JSON.stringify({
+      business_name: lead.business_name || "",
+      contact_phone: lead.contact_phone || "",
+      contact_email: lead.contact_email || "",
+      instagram_handle: lead.instagram_handle || "",
+      facebook_page: lead.facebook_page || "",
+      location: lead.location || "",
+      category: lead.category || ""
+    }) && !loading) {
+      handleSaveProfile()
+    }
+  }, [debouncedProfile])
 
   useEffect(() => {
     fetchLead()
@@ -228,18 +243,17 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
               <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
                 <CheckCircle weight="fill" className="text-[#007B85]" /> Contact Intel
               </h3>
-              <button 
-                onClick={handleSaveProfile}
-                disabled={savingProfile}
-                className="p-2 text-[#007B85] hover:bg-[#007B85]/10 rounded-xl transition-all disabled:opacity-50"
-                title="Save Profile"
-              >
+              <div className={cn(
+                "flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                savingProfile ? "text-[#007B85] opacity-100" : "text-gray-300 opacity-40"
+              )}>
                 {savingProfile ? (
-                  <div className="h-4 w-4 border-2 border-[#007B85]/30 border-t-[#007B85] rounded-full animate-spin" />
+                  <div className="h-3 w-3 border-2 border-[#007B85]/30 border-t-[#007B85] rounded-full animate-spin" />
                 ) : (
-                  <FloppyDisk weight="bold" className="h-4 w-4" />
+                  <CheckCircle weight="bold" className="h-3 w-3" />
                 )}
-              </button>
+                <span>{savingProfile ? "Syncing" : "Synced"}</span>
+              </div>
             </div>
 
             <div className="space-y-6">
