@@ -112,21 +112,28 @@ export function PricingSection() {
            </motion.h2>
 
            {/* Toggle */}
-           <div className="flex items-center justify-center gap-4 bg-white/50 w-fit mx-auto px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
-              <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", !isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>Monthly</span>
-              <button 
-                onClick={() => setIsAnnual(!isAnnual)}
-                className="w-14 h-7 bg-gray-100 rounded-full p-1 relative transition-colors"
-                aria-label="Toggle annual pricing"
-              >
-                 <motion.div 
-                   animate={{ x: isAnnual ? 28 : 0 }}
-                   className="w-5 h-5 bg-[#007B85] rounded-full shadow-md"
-                 />
-              </button>
-              <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>
-                Annual <span className="text-[#007B85] font-black underline decoration-2 underline-offset-4 ml-1">Save 20%</span>
-              </span>
+           <div className="flex flex-col items-center gap-6">
+              <div className="flex items-center justify-center gap-4 bg-white/50 w-fit mx-auto px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+                 <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", !isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>Monthly</span>
+                 <button 
+                   onClick={() => setIsAnnual(!isAnnual)}
+                   className="w-14 h-7 bg-gray-100 rounded-full p-1 relative transition-colors"
+                   aria-label="Toggle annual pricing"
+                 >
+                    <motion.div 
+                      animate={{ x: isAnnual ? 28 : 0 }}
+                      className="w-5 h-5 bg-[#007B85] rounded-full shadow-md"
+                    />
+                 </button>
+                 <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>
+                   Annual <span className="text-[#007B85] font-black underline decoration-2 underline-offset-4 ml-1">Save 20%</span>
+                 </span>
+              </div>
+              
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-[#007B85]/5 border border-[#007B85]/10 rounded-full">
+                 <CheckCircle weight="fill" className="h-4 w-4 text-[#007B85]" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#007B85]">14-Day Free Trial • Cancel Anytime</span>
+              </div>
            </div>
         </div>
 

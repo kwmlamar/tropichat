@@ -120,14 +120,17 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto"
+              className="flex flex-col items-start gap-4"
             >
               <Button
                 onClick={goToSignup}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95"
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
               >
                 START FOR FREE
               </Button>
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#007B85] opacity-80 pl-4">
+                14-Day Free Trial • No Credit Card Required
+              </p>
             </motion.div>
 
             {/* Integration Logos */}
