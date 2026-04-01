@@ -14,6 +14,11 @@ import {
   subscribeToUnifiedMessages,
   subscribeToUnifiedConversations,
   getConnectedAccounts,
+  getUnifiedTags,
+  createUnifiedTag,
+  deleteUnifiedTag,
+  addTagToConversation,
+  removeTagFromConversation,
 } from "@/lib/unified-inbox"
 import { getCurrentCustomer } from "@/lib/supabase"
 import { useDebounce } from "@/lib/hooks"
@@ -25,6 +30,7 @@ import type {
   UnifiedMessage,
   UnifiedConversation,
   ChannelType,
+  Tag,
 } from "@/types/unified-inbox"
 
 function InboxContent() {
@@ -37,6 +43,8 @@ function InboxContent() {
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [channelFilter, setChannelFilter] = useState<ChannelType | "all">("all")
+  const [tagFilter, setTagFilter] = useState<string | null>(null)
+  const [allTags, setAllTags] = useState<Tag[]>([])
   const [hasMoreMessages, setHasMoreMessages] = useState(true)
   const [accountIds, setAccountIds] = useState<string[]>([])
   const [showArchived, setShowArchived] = useState(false)
@@ -111,6 +119,10 @@ function InboxContent() {
           } catch {/* ignore */}
         }
 
+        // Fetch Tags
+        const { data: tagsData } = await getUnifiedTags()
+        if (!ignore) setAllTags(tagsData)
+
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return
         console.error("Failed to fetch dashboard data:", err)
@@ -132,14 +144,19 @@ function InboxContent() {
         toast.error("Failed to load conversations")
         console.error(error)
       } else {
-        setConversations(data)
+        // Apply tag filter client-side if active
+        let finalData = data
+        if (tagFilter) {
+          finalData = data.filter(c => c.tags?.some(t => t.id === tagFilter))
+        }
+        setConversations(finalData)
       }
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return
       console.error("Failed to fetch conversations:", err)
     }
     if (mountedRef.current) setLoadingConversations(false)
-  }, [channelFilter, debouncedSearch, showArchived])
+  }, [channelFilter, debouncedSearch, showArchived, tagFilter])
 
   useEffect(() => {
     fetchConversations()
@@ -431,6 +448,86 @@ function InboxContent() {
     }
   }
 
+  // Tag Handlers
+  const handleAddTag = async (conversationId: string, tagId: string) => {
+    const { error } = await addTagToConversation(conversationId, tagId)
+    if (error) {
+      toast.error("Failed to add tag")
+      return
+    }
+    
+    // Update local state
+    const tag = allTags.find(t => t.id === tagId)
+    if (!tag) return
+
+    setConversations(prev => prev.map(c => 
+      c.id === conversationId 
+        ? { ...c, tags: [...(c.tags || []), tag] } 
+        : c
+    ))
+    
+    if (selectedConversation?.id === conversationId) {
+      setSelectedConversation(prev => prev ? {
+        ...prev,
+        tags: [...(prev.tags || []), tag]
+      } : null)
+    }
+  }
+
+  const handleRemoveTag = async (conversationId: string, tagId: string) => {
+    const { error } = await removeTagFromConversation(conversationId, tagId)
+    if (error) {
+      toast.error("Failed to remove tag")
+      return
+    }
+
+    setConversations(prev => prev.map(c => 
+      c.id === conversationId 
+        ? { ...c, tags: (c.tags || []).filter(t => t.id !== tagId) } 
+        : c
+    ))
+
+    if (selectedConversation?.id === conversationId) {
+      setSelectedConversation(prev => prev ? {
+        ...prev,
+        tags: (prev.tags || []).filter(t => t.id !== tagId)
+      } : null)
+    }
+  }
+
+  const handleCreateTag = async (name: string, color: string) => {
+    const { data, error } = await createUnifiedTag(name, color)
+    if (error || !data) {
+      toast.error("Failed to create tag")
+      return
+    }
+    setAllTags(prev => [...prev, data])
+    toast.success(`Tag "${name}" created`)
+  }
+
+  const handleDeleteTag = async (tagId: string) => {
+    const { error } = await deleteUnifiedTag(tagId)
+    if (error) {
+      toast.error("Failed to delete tag")
+      return
+    }
+    
+    // Update local state
+    setAllTags(prev => prev.filter(t => t.id !== tagId))
+    setConversations(prev => prev.map(c => ({
+      ...c,
+      tags: (c.tags || []).filter(t => t.id !== tagId)
+    })))
+    if (selectedConversation) {
+      setSelectedConversation(prev => prev ? {
+        ...prev,
+        tags: (prev.tags || []).filter(t => t.id !== tagId)
+      } : null)
+    }
+    setTagFilter(prev => prev === tagId ? null : prev)
+    toast.success("Tag deleted")
+  }
+
   return (
     <div className="flex h-full">
       {/* Conversation List */}
@@ -448,6 +545,10 @@ function InboxContent() {
           currentChannelFilter={channelFilter}
           showArchived={showArchived}
           onToggleArchived={handleToggleArchived}
+          tags={allTags}
+          tagFilter={tagFilter}
+          onTagFilter={setTagFilter}
+          onCreateTag={handleCreateTag}
         />
       </div>
 
@@ -471,11 +572,16 @@ function InboxContent() {
             onCreateBooking={() => setBookingModalOpen(true)}
             customerName={customerName}
             plan={customerPlan}
-            onBack={() => {
-              setSelectedConversation(null)
-              router.replace('/dashboard')
-            }}
-          />
+              onBack={() => {
+                setSelectedConversation(null)
+                router.replace('/dashboard')
+              }}
+              allTags={allTags}
+              onAddTag={(tagId) => selectedConversation && handleAddTag(selectedConversation.id, tagId)}
+              onRemoveTag={(tagId) => selectedConversation && handleRemoveTag(selectedConversation.id, tagId)}
+              onCreateTag={handleCreateTag}
+              onDeleteTag={handleDeleteTag}
+            />
         </div>
       </div>
 

@@ -23,6 +23,7 @@ import {
   Smiley as Smile,
   CaretLeft as ChevronLeft,
   Sparkle,
+  Trash,
 } from "@phosphor-icons/react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -37,7 +38,9 @@ import { ChannelIcon, getChannelLabel } from "./channel-icon"
 import { cn, formatMessageTime, formatDateDivider, getConversationDisplayName } from "@/lib/utils"
 import { getAIResponseSuggestion } from "@/lib/unified-inbox"
 import { PlanGate } from "@/components/billing/PlanGate"
+import { Tag } from "@/types/unified-inbox"
 import type { UnifiedMessage, ConversationWithAccount, MessageDeliveryStatus } from "@/types/unified-inbox"
+import { Tag as TagIcon, X } from "@phosphor-icons/react"
 
 interface UnifiedMessageThreadProps {
   conversation: ConversationWithAccount | null
@@ -51,6 +54,11 @@ interface UnifiedMessageThreadProps {
   customerName?: string | null
   plan?: string
   onBack?: () => void
+  allTags?: Tag[]
+  onAddTag?: (tagId: string) => void
+  onRemoveTag?: (tagId: string) => void
+  onCreateTag?: (name: string, color: string) => void
+  onDeleteTag?: (tagId: string) => void
 }
 
 
@@ -66,6 +74,11 @@ export function UnifiedMessageThread({
   customerName,
   plan,
   onBack,
+  allTags = [],
+  onAddTag,
+  onRemoveTag,
+  onCreateTag,
+  onDeleteTag,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
@@ -78,9 +91,13 @@ export function UnifiedMessageThread({
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
   }, [messages])
 
+  const [newTagName, setNewTagName] = useState("")
+  const [selectedColor, setSelectedColor] = useState("#3A9B9F")
+  const [isCreatingTag, setIsCreatingTag] = useState(false)
+
+  const tagColors = ['#3A9B9F', '#FF7E36', '#9B59B6', '#E74C3C', '#2ECC71', '#F1C40F', '#007B85', '#E1306C', '#0084FF']
+
   // Sync reason state when conversation changes
-  useEffect(() => {
-  }, [conversation?.id])
 
   const handleSend = async () => {
     if (!messageText.trim() || isSending) return
@@ -251,6 +268,116 @@ export function UnifiedMessageThread({
               </button>
             </PlanGate>
           )}
+
+          {/* Tags Dropdown */}
+          <Dropdown
+            align="right"
+            trigger={
+              <button className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 transition-colors text-xs font-black uppercase tracking-widest">
+                <TagIcon weight="bold" className="h-4 w-4" />
+                <span className="hidden sm:inline">Tags</span>
+              </button>
+            }
+          >
+            <div className="p-2 min-w-[220px]">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-2 flex justify-between items-center">
+                <span>Assign Tags</span>
+                {isCreatingTag && (
+                  <button onClick={() => setIsCreatingTag(false)} className="text-[9px] text-[#007B85] hover:underline">Cancel</button>
+                )}
+              </p>
+              
+              {!isCreatingTag ? (
+                <>
+                  <div className="space-y-0.5 mb-2 max-h-[200px] overflow-y-auto no-scrollbar">
+                    {allTags.map(tag => {
+                      const isAssigned = conversation.tags?.some(t => t.id === tag.id)
+                      return (
+                        <div key={tag.id} className="group/tag flex items-center gap-1">
+                          <button
+                            onClick={() => isAssigned ? onRemoveTag?.(tag.id) : onAddTag?.(tag.id)}
+                            className={cn(
+                              "flex-1 flex items-center justify-between px-2 py-1.5 rounded-lg text-sm transition-all text-left",
+                              isAssigned ? "bg-[#007B85]/5 dark:bg-[#007B85]/10 font-bold" : "hover:bg-gray-50 dark:hover:bg-white/5"
+                            )}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: tag.color }} />
+                              <span className="text-gray-700 dark:text-gray-300 text-[13px]">{tag.name}</span>
+                            </div>
+                            {isAssigned && <Check weight="bold" className="h-3 w-3 text-[#007B85]" />}
+                          </button>
+                          
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); if(confirm(`Delete tag "${tag.name}"?`)) onDeleteTag?.(tag.id) }}
+                            className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover/tag:opacity-100 transition-all"
+                            title="Delete this tag"
+                          >
+                            <Trash weight="bold" className="h-3 w-3" />
+                          </button>
+                        </div>
+                      )
+                    })}
+                    {allTags.length === 0 && (
+                      <p className="text-[11px] text-gray-400 px-2 py-4 text-center italic">No tags created yet</p>
+                    )}
+                  </div>
+                  <DropdownSeparator />
+                  <button 
+                    onClick={() => setIsCreatingTag(true)}
+                    className="w-full flex items-center gap-2 px-2 py-2 text-xs font-bold text-[#007B85] hover:bg-[#007B85]/5 rounded-lg transition-all"
+                  >
+                    <Plus weight="bold" className="h-3 w-3" />
+                    New Tag
+                  </button>
+                </>
+              ) : (
+                <div className="space-y-3 p-1">
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Tag Name</p>
+                    <input 
+                      autoFocus
+                      placeholder="e.g. Follow-up"
+                      value={newTagName}
+                      onChange={(e) => setNewTagName(e.target.value)}
+                      className="w-full bg-gray-50 dark:bg-white/5 border-transparent focus:border-[#007B85] rounded-lg px-2 py-1.5 text-xs text-gray-900 dark:text-white outline-none border transition-all"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Color</p>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {tagColors.map(color => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={cn(
+                            "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center",
+                            selectedColor === color ? "border-gray-900 dark:border-white scale-110 shadow-sm" : "border-transparent hover:scale-105"
+                          )}
+                          style={{ backgroundColor: color }}
+                        >
+                          {selectedColor === color && <Check weight="bold" className="h-2.5 w-2.5 text-white" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <button 
+                    disabled={!newTagName.trim()}
+                    onClick={() => {
+                      onCreateTag?.(newTagName.trim(), selectedColor)
+                      setNewTagName("")
+                      setIsCreatingTag(false)
+                    }}
+                    className="w-full py-2 bg-[#007B85] text-white text-[11px] font-black uppercase tracking-widest rounded-lg shadow-sm hover:bg-[#00666D] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                  >
+                    Create Tag
+                  </button>
+                </div>
+              )}
+            </div>
+          </Dropdown>
 
 
           <Dropdown

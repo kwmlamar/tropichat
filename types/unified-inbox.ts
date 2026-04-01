@@ -58,6 +58,22 @@ export interface UnifiedConversation {
   // Joined relations
   connected_account?: ConnectedAccount
   messages?: UnifiedMessage[]
+  tags?: Tag[]
+}
+
+export interface Tag {
+  id: string
+  customer_id: string
+  name: string
+  color: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ConversationTag {
+  conversation_id: string
+  tag_id: string
+  created_at: string
 }
 
 export interface UnifiedMessage {

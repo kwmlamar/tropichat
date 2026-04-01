@@ -21,7 +21,7 @@ import { ExpandableTabs } from "@/components/ui/expandable-tabs"
 import { cn, formatDistanceToNow, getConversationDisplayName } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
-import type { ConversationWithAccount } from "@/types/unified-inbox"
+import type { ConversationWithAccount, Tag } from "@/types/unified-inbox"
 import type { ChannelType } from "@/types/unified-inbox"
 
 interface UnifiedConversationListProps {
@@ -34,6 +34,10 @@ interface UnifiedConversationListProps {
   currentChannelFilter: ChannelType | "all"
   showArchived: boolean
   onToggleArchived: () => void
+  tags: Tag[]
+  tagFilter: string | null
+  onTagFilter: (tagId: string | null) => void
+  onCreateTag: (name: string, color: string) => void
 }
 
 // Wrapper icons for ExpandableTabs
@@ -63,6 +67,10 @@ export function UnifiedConversationList({
   currentChannelFilter,
   showArchived,
   onToggleArchived,
+  tags,
+  tagFilter,
+  onTagFilter,
+  onCreateTag,
 }: UnifiedConversationListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isScrolled, setIsScrolled] = useState(false)
@@ -233,24 +241,43 @@ export function UnifiedConversationList({
           </div>
         )}
 
-        {/* Archived row */}
-        {!loading && !searchQuery && (
-          <button 
-            onClick={onToggleArchived}
-            className="w-full flex items-center gap-6 py-3 px-6 text-left hover:bg-gray-50 dark:hover:bg-[#0C0C0C] transition-colors group border-b border-gray-100 dark:border-[#1C1C1C]/50"
-          >
-            <div className="flex-shrink-0 w-8 flex justify-center">
-              <Archive className="h-5 w-5 text-gray-400 dark:text-[#525252] group-hover:text-[#007B85] transition-colors" />
-            </div>
-            <span className="text-[16px] font-semibold text-gray-900 dark:text-white">
-              {showArchived ? "Back to Chats" : "Archived"}
-            </span>
-            {showArchived && conversations.length > 0 && (
-              <span className="ml-auto text-[13px] font-bold text-[#007B85]">
-                {conversations.length}
-              </span>
-            )}
-          </button>
+        {/* Tag Filters Row */}
+        {!showArchived && tags.length > 0 && (
+          <div className="px-6 py-2 border-b border-gray-100 dark:border-[#1C1C1C] flex items-center overflow-x-auto no-scrollbar gap-2">
+            <button
+              onClick={() => onTagFilter(null)}
+              className={cn(
+                "px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap",
+                tagFilter === null
+                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
+                  : "bg-gray-100 text-gray-400 dark:bg-[#111] dark:text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+              )}
+            >
+              All Tags
+            </button>
+            {tags.map((tag) => (
+              <button
+                key={tag.id}
+                onClick={() => onTagFilter(tagFilter === tag.id ? null : tag.id)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5",
+                  tagFilter === tag.id
+                    ? "ring-2 ring-offset-2 dark:ring-offset-black transition-all"
+                    : "opacity-70 hover:opacity-100"
+                )}
+                style={{ 
+                  backgroundColor: tagFilter === tag.id ? tag.color : `${tag.color}15`,
+                  color: tagFilter === tag.id ? '#fff' : tag.color
+                }}
+              >
+                <div 
+                  className="w-1.5 h-1.5 rounded-full" 
+                  style={{ backgroundColor: tagFilter === tag.id ? '#fff' : tag.color }} 
+                />
+                {tag.name}
+              </button>
+            ))}
+          </div>
         )}
 
         {/* Conversation list container */}
@@ -345,22 +372,36 @@ export function UnifiedConversationList({
                           </span>
                         </div>
  
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-1.5">
                           <p className={cn(
                             "text-[15px] truncate leading-[1.3] pr-4",
                             conversation.unread_count > 0 ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"
                           )}>
                             {conversation.last_message_preview || "No messages yet"}
                           </p>
- 
-                          <div className="flex items-center gap-1.5 flex-shrink-0">
-                             {conversation.unread_count > 0 && (
-                              <div className="h-[22px] min-w-[22px] rounded-full bg-[#007B85] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
-                                <span className="text-[10px] font-black text-white leading-none">
-                                  {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
-                                </span>
-                              </div>
-                            )}
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-wrap gap-1">
+                              {conversation.tags?.map(tag => (
+                                <div 
+                                  key={tag.id}
+                                  className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter"
+                                  style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+                                >
+                                  {tag.name}
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                               {conversation.unread_count > 0 && (
+                                <div className="h-[22px] min-w-[22px] rounded-full bg-[#007B85] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
+                                  <span className="text-[10px] font-black text-white leading-none">
+                                    {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

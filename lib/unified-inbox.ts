@@ -12,7 +12,9 @@ import type {
   UnifiedMessage,
   ConversationWithAccount,
   ChannelType,
+  Tag,
 } from '@/types/unified-inbox'
+import type { Contact } from '@/types/database'
 
 // ==================== CONNECTED ACCOUNTS ====================
 
@@ -76,7 +78,10 @@ export async function getUnifiedConversations(
     .from('unified_conversations')
     .select(`
       *,
-      connected_account:connected_accounts(id, channel_type, channel_account_name)
+      connected_account:connected_accounts(id, channel_type, channel_account_name),
+      tags:conversation_tags(
+        tag:tags(*)
+      )
     `)
     .in('connected_account_id', accountIds)
     .eq('is_archived', showArchived)
@@ -89,12 +94,18 @@ export async function getUnifiedConversations(
 
   const { data, error } = await query
 
-  let filteredData = (data as ConversationWithAccount[]) || []
+  const rawData = (data as any[]) || []
+  
+  // Transform the nested tags data for cleaner frontend usage
+  let transformedData: ConversationWithAccount[] = rawData.map(conv => ({
+    ...conv,
+    tags: conv.tags?.map((t: any) => t.tag).filter(Boolean) || []
+  }))
 
   // Client-side search (customer name / last message)
   if (search) {
     const q = search.toLowerCase()
-    filteredData = filteredData.filter(
+    transformedData = transformedData.filter(
       (c) =>
         c.customer_name?.toLowerCase().includes(q) ||
         c.customer_id?.toLowerCase().includes(q) ||
@@ -102,7 +113,7 @@ export async function getUnifiedConversations(
     )
   }
 
-  return { data: filteredData, error: error?.message || null }
+  return { data: transformedData, error: error?.message || null }
 }
 
 export async function getUnifiedConversation(id: string): Promise<{
@@ -163,6 +174,239 @@ export async function getUnreadUnifiedCount(): Promise<{
     .eq('is_archived', false)
 
   return { count: count || 0, error: error?.message || null }
+}
+
+// ==================== TAGS ====================
+
+export async function getUnifiedTags(): Promise<{
+  data: Tag[]
+  error: string | null
+}> {
+  const client = getSupabase()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
+  if (ctxErr || !customerId) return { data: [], error: ctxErr || 'Workspace not found' }
+
+  const { data, error } = await client
+    .from('tags')
+    .select('*')
+    .eq('customer_id', customerId)
+    .order('name', { ascending: true })
+
+  return { data: (data as Tag[]) || [], error: error?.message || null }
+}
+
+export async function createUnifiedTag(name: string, color: string): Promise<{
+  data: Tag | null
+  error: string | null
+}> {
+  const client = getSupabase()
+  const { customerId, error: ctxErr } = await getWorkspaceId()
+  if (ctxErr || !customerId) return { data: null, error: ctxErr || 'Workspace not found' }
+
+  const { data, error } = await client
+    .from('tags')
+    .insert({
+      customer_id: customerId,
+      name,
+      color
+    })
+    .select()
+    .single()
+
+  return { data: data as Tag, error: error?.message || null }
+}
+
+export async function deleteUnifiedTag(id: string) {
+  const client = getSupabase()
+  const { error } = await client
+    .from('tags')
+    .delete()
+    .eq('id', id)
+
+  return { error: error?.message || null }
+}
+
+export async function addTagToConversation(conversationId: string, tagId: string) {
+  const client = getSupabase()
+  const { error } = await client
+    .from('conversation_tags')
+    .insert({
+      conversation_id: conversationId,
+      tag_id: tagId
+    })
+
+  if (!error) {
+    // Sync to contact
+    const { data: conv } = await client.from('unified_conversations').select('customer_id').eq('id', conversationId).single()
+    if (conv) {
+      const { data: contact } = await client.from('contacts').select('id').eq('channel_id', conv.customer_id).single()
+      if (contact) {
+        await client.from('contact_tags').insert({ contact_id: contact.id, tag_id: tagId })
+        await syncContactTags(contact.id, tagId, 'add')
+      }
+    }
+  }
+
+  return { error: error?.message || null }
+}
+
+export async function removeTagFromConversation(conversationId: string, tagId: string) {
+  const client = getSupabase()
+  const { error } = await client
+    .from('conversation_tags')
+    .delete()
+    .eq('conversation_id', conversationId)
+    .eq('tag_id', tagId)
+
+  if (!error) {
+    // Sync to contact
+    const { data: conv } = await client.from('unified_conversations').select('customer_id').eq('id', conversationId).single()
+    if (conv) {
+      const { data: contact } = await client.from('contacts').select('id').eq('channel_id', conv.customer_id).single()
+      if (contact) {
+        await client.from('contact_tags').delete().eq('contact_id', contact.id).eq('tag_id', tagId)
+        await syncContactTags(contact.id, tagId, 'remove')
+      }
+    }
+  }
+
+  return { error: error?.message || null }
+}
+
+async function syncContactTags(contactId: string, tagId: string, action: 'add' | 'remove') {
+  const client = getSupabase()
+  
+  // Get all existing tags for the contact from join table
+  const { data: ctData } = await client
+    .from('contact_tags')
+    .select('tag:tags(name)')
+    .eq('contact_id', contactId)
+  
+  const existingTagNames = ctData?.map((item: any) => item.tag.name) || []
+  
+  // Get the name of the tag being modified
+  const { data: tag } = await client.from('tags').select('name').eq('id', tagId).single()
+  if (!tag) return
+
+  let newTags = [...existingTagNames]
+  if (action === 'add') {
+    if (!newTags.includes(tag.name)) newTags.push(tag.name)
+  } else {
+    newTags = newTags.filter(n => n !== tag.name)
+  }
+
+  // Update the contacts array
+  await client.from('contacts').update({ tags: newTags }).eq('id', contactId)
+}
+
+export async function getContactTags(contactId: string): Promise<{ data: Tag[]; error: string | null }> {
+  const client = getSupabase()
+  const { data, error } = await client
+    .from('contact_tags')
+    .select('tag:tags(*)')
+    .eq('contact_id', contactId)
+  
+  return { data: data?.map((item: any) => item.tag) || [], error: error?.message || null }
+}
+
+export async function addTagToContact(contactId: string, tagId: string) {
+  const client = getSupabase()
+  const { error } = await client
+    .from('contact_tags')
+    .insert({ contact_id: contactId, tag_id: tagId })
+  
+  if (!error) {
+    await syncContactTags(contactId, tagId, 'add')
+    
+    // Sync to all open conversations for this contact
+    const { data: contact } = await client.from('contacts').select('channel_id').eq('id', contactId).single()
+    if (contact) {
+      const { data: convs } = await client.from('unified_conversations').select('id').eq('customer_id', contact.channel_id)
+      if (convs) {
+        for (const conv of convs) {
+          await client.from('conversation_tags').upsert({ conversation_id: conv.id, tag_id: tagId })
+        }
+      }
+    }
+  }
+  
+  return { error: error?.message || null }
+}
+
+export async function removeTagFromContact(contactId: string, tagId: string) {
+  const client = getSupabase()
+  const { error } = await client
+    .from('contact_tags')
+    .delete()
+    .eq('contact_id', contactId)
+    .eq('tag_id', tagId)
+
+  if (!error) {
+    await syncContactTags(contactId, tagId, 'remove')
+    
+    // Sync to all open conversations for this contact
+    const { data: contact } = await client.from('contacts').select('channel_id').eq('id', contactId).single()
+    if (contact) {
+      const { data: convs } = await client.from('unified_conversations').select('id').eq('customer_id', contact.channel_id)
+      if (convs) {
+        for (const conv of convs) {
+          await client.from('conversation_tags').delete().eq('conversation_id', conv.id).eq('tag_id', tagId)
+        }
+      }
+    }
+  }
+
+  return { error: error?.message || null }
+}
+
+export async function updateContactWithTags(contactId: string, updates: Partial<Contact>) {
+  const client = getSupabase()
+  
+  // 1. Update basic info first
+  const { error: updateError } = await client
+    .from('contacts')
+    .update({ 
+      name: updates.name, 
+      email: updates.email, 
+      notes: updates.notes,
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', contactId)
+  
+  if (updateError) return { error: updateError.message }
+
+  // 2. If tags are provided, sync them
+  if (updates.tags) {
+    // Get current relational tags to find differences
+    const { data: currentTags } = await client
+      .from('contact_tags')
+      .select('tag:tags(id, name)')
+      .eq('contact_id', contactId)
+    
+    const currentTagIds = (currentTags as any[])?.map(t => t.tag.id) || []
+    const currentTagNames = (currentTags as any[])?.map(t => t.tag.name) || []
+    
+    // Get all available tags to map names to IDs
+    const { data: allTags } = await client.from('tags').select('id, name')
+    if (allTags) {
+      // Find tags to add
+      for (const tagName of updates.tags) {
+        if (!currentTagNames.includes(tagName)) {
+          const tag = allTags.find(t => t.name === tagName)
+          if (tag) await addTagToContact(contactId, tag.id)
+        }
+      }
+      
+      // Find tags to remove
+      for (const tag of currentTags as any[]) {
+        if (!updates.tags.includes(tag.tag.name)) {
+          await removeTagFromContact(contactId, tag.tag.id)
+        }
+      }
+    }
+  }
+
+  return { error: null }
 }
 
 // ==================== UNIFIED MESSAGES ====================

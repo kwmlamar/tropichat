@@ -7,7 +7,7 @@ import {
   DownloadSimple as Download, 
   DotsThreeVertical as MoreVertical, 
   Phone, 
-  Tag,
+  Tag as TagIcon,
   Megaphone,
   Upload
 } from "@phosphor-icons/react"
@@ -20,11 +20,21 @@ import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropd
 import { Skeleton } from "@/components/ui/skeleton"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getContacts, updateContact, getCurrentCustomer } from "@/lib/supabase"
+import { 
+  getUnifiedTags, 
+  addTagToConversation, 
+  removeTagFromConversation,
+  addTagToContact,
+  removeTagFromContact,
+  getContactTags,
+  updateContactWithTags
+} from "@/lib/unified-inbox"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
 import { useDebounce } from "@/lib/hooks"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 import type { Contact, Customer } from "@/types/database"
+import type { Tag } from "@/types/unified-inbox"
 import { PlanGate } from "@/components/billing/PlanGate"
 
 // ─── Channel dot — identity of this page ─────────────────────────────────────
@@ -61,21 +71,29 @@ export default function ContactsPage() {
   const [searchQuery, setSearchQuery]       = useState("")
   const [selectedContacts, setSelected]     = useState<string[]>([])
   const [editingContact, setEditing]        = useState<Contact | null>(null)
+  const [allTags, setAllTags]               = useState<Tag[]>([])
+  const [contactTagsMap, setContactTagsMap] = useState<Record<string, Tag[]>>({})
   const [isModalOpen, setIsModalOpen]       = useState(false)
   const debouncedSearch                     = useDebounce(searchQuery, 300)
 
   useEffect(() => {
     async function fetch() {
       setLoading(true)
-      const [contRes, custRes] = await Promise.all([
+      const [contRes, custRes, tagsRes] = await Promise.all([
         getContacts(debouncedSearch),
-        getCurrentCustomer()
+        getCurrentCustomer(),
+        getUnifiedTags()
       ])
       
       if (contRes.error) toast.error("Failed to load contacts")
-      else setContacts(contRes.data)
+      else {
+        setContacts(contRes.data)
+        // For each contact, we could fetch their relational tags if we want perfectly synced data
+        // But for now, we'll match their string tags to the custom tags to get colors
+      }
       
       if (custRes.data) setCustomer(custRes.data)
+      if (tagsRes.data) setAllTags(tagsRes.data)
       
       setLoading(false)
     }
@@ -124,22 +142,18 @@ export default function ContactsPage() {
           </div>
           
           <div className="flex items-center gap-3">
-            <PlanGate plan={customer?.plan} feature="canWhiteLabel" variant="inline">
-              <button 
-                className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-[#3A9B9F] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-sm">
-                <Upload weight="bold" className="h-3.5 w-3.5" />Import
-              </button>
-            </PlanGate>
+            <button 
+              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-[#3A9B9F] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-sm">
+              <Upload weight="bold" className="h-3.5 w-3.5" />Import
+            </button>
 
             {selectedContacts.length > 0 && (
               <div className="flex items-center gap-3">
-                <PlanGate plan={customer?.plan} feature="canBulkBroadcast" variant="inline">
-                  <button 
-                    onClick={() => {}}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-[#3A9B9F] text-white text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-[#3A9B9F]/20">
-                    <Megaphone weight="fill" className="h-3.5 w-3.5" />Bulk Message
-                  </button>
-                </PlanGate>
+                <button 
+                  onClick={() => {}}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#3A9B9F] text-white text-[13px] font-bold rounded-xl transition-all duration-200 active:scale-95 shadow-lg shadow-[#3A9B9F]/20">
+                  <Megaphone weight="fill" className="h-3.5 w-3.5" />Bulk Message
+                </button>
 
                 <button onClick={handleExport}
                   className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] hover:border-gray-300 dark:hover:border-[#2A2A2A] text-gray-600 dark:text-[#A3A3A3] text-[13px] font-bold rounded-xl transition-colors duration-200 shadow-sm active:scale-95">
@@ -254,10 +268,22 @@ export default function ContactsPage() {
                     </td>
                     <td className="px-4 py-4 hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1">
-                        {contact.tags?.slice(0, 2).map(tag => (
-                          <span key={tag} className="text-[10px] font-medium text-gray-500 dark:text-[#525252] border border-gray-200 dark:border-[#222] px-1.5 py-0.5 rounded">{tag}</span>
-                        ))}
-                        {(contact.tags?.length || 0) > 2 && <span className="text-[10px] text-gray-400 dark:text-[#525252]">+{contact.tags!.length - 2}</span>}
+                        {contact.tags?.map(tagName => {
+                          const tag = allTags.find(t => t.name.toLowerCase() === tagName.toLowerCase())
+                          return (
+                            <div 
+                              key={tagName}
+                              className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter"
+                              style={{ 
+                                backgroundColor: tag ? `${tag.color}15` : 'transparent',
+                                color: tag ? tag.color : 'inherit',
+                                border: tag ? 'none' : '1px solid #eee'
+                              }}
+                            >
+                              {tagName}
+                            </div>
+                          )
+                        })}
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right">
@@ -267,7 +293,7 @@ export default function ContactsPage() {
                         </button>
                       }>
                         <DropdownItem icon={<Phone weight="bold" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
-                        <DropdownItem icon={<Tag weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
+                        <DropdownItem icon={<TagIcon weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
                         <DropdownSeparator />
                         <DropdownItem onClick={() => handleBlock(contact)}>{contact.is_blocked ? "Unblock" : "Block"}</DropdownItem>
                       </Dropdown>
@@ -323,7 +349,7 @@ export default function ContactsPage() {
                   </button>
                 }>
                   <DropdownItem icon={<Phone weight="bold" className="h-4 w-4" />} onClick={() => {}}>View conversation</DropdownItem>
-                  <DropdownItem icon={<Tag weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
+                  <DropdownItem icon={<TagIcon weight="bold" className="h-4 w-4" />} onClick={() => { setEditing(contact); setIsModalOpen(true) }}>Edit contact</DropdownItem>
                   <DropdownSeparator />
                   <DropdownItem onClick={() => handleBlock(contact)}>{contact.is_blocked ? "Unblock" : "Block"}</DropdownItem>
                 </Dropdown>
@@ -346,12 +372,53 @@ export default function ContactsPage() {
           <div className="space-y-4">
             <div><Label>Name</Label><Input value={editingContact.name || ""} onChange={e => setEditing({ ...editingContact, name: e.target.value })} className="mt-1" /></div>
             <div><Label>Email</Label><Input type="email" value={editingContact.email || ""} onChange={e => setEditing({ ...editingContact, email: e.target.value })} className="mt-1" /></div>
+            
+            <div className="pt-2">
+              <Label className="block mb-2 text-[11px] font-black uppercase tracking-widest text-gray-400">Assigned Tags</Label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {allTags.map(tag => {
+                  const isAssigned = editingContact.tags?.some(t => t.toLowerCase() === tag.name.toLowerCase())
+                  return (
+                    <button
+                      key={tag.id}
+                      onClick={() => {
+                        const newTags = isAssigned 
+                          ? (editingContact.tags || []).filter(t => t.toLowerCase() !== tag.name.toLowerCase())
+                          : [...(editingContact.tags || []), tag.name]
+                        setEditing({ ...editingContact, tags: newTags })
+                      }}
+                      className={cn(
+                        "px-3 py-1.5 rounded-xl text-xs font-bold transition-all border",
+                        isAssigned 
+                          ? "bg-white dark:bg-black border-gray-200" 
+                          : "bg-gray-50 dark:bg-white/[0.02] border-transparent opacity-50 hover:opacity-100"
+                      )}
+                      style={{ 
+                        color: isAssigned ? tag.color : 'inherit',
+                        borderColor: isAssigned ? tag.color : 'transparent'
+                      }}
+                    >
+                      {tag.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
             <ModalFooter>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
               <Button className="bg-[#3A9B9F] hover:bg-[#2F8488] text-white" onClick={async () => {
-                const { error } = await updateContact(editingContact.id, { name: editingContact.name, email: editingContact.email })
+                const { error } = await updateContactWithTags(editingContact.id, { 
+                  name: editingContact.name, 
+                  email: editingContact.email,
+                  tags: editingContact.tags
+                })
                 if (error) toast.error("Failed to update contact")
-                else { setContacts(p => p.map(c => c.id === editingContact.id ? editingContact : c)); toast.success("Contact updated"); setIsModalOpen(false) }
+                else { 
+                  setContacts(p => p.map(c => c.id === editingContact.id ? editingContact : c)); 
+                  toast.success("Contact updated"); 
+                  setIsModalOpen(false) 
+                }
               }}>Save Changes</Button>
             </ModalFooter>
           </div>
