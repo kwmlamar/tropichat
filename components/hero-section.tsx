@@ -1,10 +1,12 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import {
   Sparkle as Sparkles,
+
   WhatsappLogo as Whatsapp,
   InstagramLogo as Instagram,
   MessengerLogo as Messenger,
@@ -54,9 +56,10 @@ function FloatingBubble({
 // ─── Main Hero Section (Full-Bleed Version) ──────────────────────────────────
 
 export function HeroSection() {
-  const scrollToWaitlist = () => {
-    const waitlistSection = document.getElementById("pricing")
-    waitlistSection?.scrollIntoView({ behavior: "smooth" })
+  const router = useRouter()
+
+  const goToSignup = () => {
+    router.push("/signup")
   }
 
   return (
@@ -72,8 +75,9 @@ export function HeroSection() {
           priority
           quality={100}
         />
+
         {/* Dark Immersion Overlay (to ensure text contrast) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/50 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10" />
       </div>
@@ -89,26 +93,27 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-8"
             >
               <Sparkles weight="fill" className="h-4 w-4 text-amber-400" />
-              Caribbean's #1 Social Sales Hub
+              Caribbean's #1 Sales App
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-5xl md:text-8xl lg:text-9xl font-black text-white leading-[0.95] md:leading-[0.85] tracking-tighter mb-8 max-w-[14ch]"
+              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[10ch]"
             >
-              Make the <br className="hidden sm:block" /> most out of <br className="hidden sm:block" />
-              <span className="text-[#007B85] drop-shadow-2xl">every chat.</span>
+              Sell more <br className="hidden sm:block" /> 
+              on <span className="text-[#007B85] drop-shadow-2xl">WhatsApp.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-lg md:text-2xl text-gray-300 font-bold max-w-xl mb-12 leading-tight uppercase tracking-wide opacity-90"
+              className="text-xl md:text-3xl text-gray-300 font-bold max-w-xl mb-12 leading-tight uppercase tracking-tight opacity-90"
             >
-              Sell more, engage better, and grow your Caribbean audience with powerful automations for Instagram, WhatsApp, and Messenger.
+              One place for all your chats. <br />
+              Reply faster. Make more money.
             </motion.p>
 
             <motion.div
@@ -118,10 +123,10 @@ export function HeroSection() {
               className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto"
             >
               <Button
-                onClick={scrollToWaitlist}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-lg font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95"
+                onClick={goToSignup}
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95"
               >
-                GET STARTED FREE
+                START FOR FREE
               </Button>
             </motion.div>
 
@@ -130,27 +135,27 @@ export function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="mt-16 md:mt-20 flex flex-wrap items-center justify-center sm:justify-start gap-8 md:gap-10 opacity-60 text-white"
+              className="mt-16 md:mt-24 flex flex-wrap items-center justify-center sm:justify-start gap-10 md:gap-14 opacity-60 text-white"
             >
                <div className="flex items-center gap-2">
-                  <Whatsapp size={28} weight="fill" className="text-green-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">WhatsApp</span>
+                  <Whatsapp size={32} weight="fill" className="text-green-500" />
+                  <span className="text-[11px] font-black tracking-widest uppercase whitespace-nowrap">WhatsApp</span>
                </div>
                <div className="flex items-center gap-2">
-                  <Instagram size={28} weight="fill" className="text-pink-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">Instagram</span>
+                  <Instagram size={32} weight="fill" className="text-pink-500" />
+                  <span className="text-[11px] font-black tracking-widest uppercase whitespace-nowrap">Instagram</span>
                </div>
                <div className="flex items-center gap-2">
-                  <Messenger size={28} weight="fill" className="text-blue-500" />
-                  <span className="text-[10px] font-black tracking-widest uppercase whitespace-nowrap">Messenger</span>
+                  <Messenger size={32} weight="fill" className="text-blue-500" />
+                  <span className="text-[11px] font-black tracking-widest uppercase whitespace-nowrap">Messenger</span>
                </div>
             </motion.div>
           </div>
 
-          <div className="relative lg:col-span-4 h-full min-h-[400px] md:min-h-[600px] hidden md:block">
-             {/* Animated Chat Bubbles (Strategically placed over the entrepreneur) */}
+          <div className="relative lg:col-span-4 h-full min-h-[400px] md:min-h-[600px] hidden lg:block">
+             {/* Animated Chat Bubbles */}
              <FloatingBubble 
-                position={{ top: "35%", right: "8%" }} 
+                position={{ top: "30%", right: "0%" }} 
                 delay={0.2}
                 className="bg-white text-black"
              >
@@ -158,13 +163,13 @@ export function HeroSection() {
                    <Whatsapp weight="fill" size={20} />
                 </div>
                 <div>
-                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Inquiry Received</p>
-                   <p className="text-xs font-black whitespace-nowrap">"Do you deliver?"</p>
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</p>
+                   <p className="text-sm font-black whitespace-nowrap">"How much is this?"</p>
                 </div>
              </FloatingBubble>
 
              <FloatingBubble 
-                position={{ top: "60%", left: "-5%" }} 
+                position={{ top: "50%", left: "-10%" }} 
                 delay={1.2}
                 className="bg-[#007B85] text-white border-none shadow-[0_20px_50px_rgba(0,123,133,0.3)]"
              >
@@ -172,22 +177,22 @@ export function HeroSection() {
                    <Robot size={20} weight="fill" />
                 </div>
                 <div>
-                   <p className="text-[9px] font-black opacity-60 uppercase tracking-widest">AI Agent Reply</p>
-                   <p className="text-xs font-black whitespace-nowrap">"Yes! 🚚 Select your island."</p>
+                   <p className="text-[10px] font-black opacity-60 uppercase tracking-widest">Tropi AI</p>
+                   <p className="text-sm font-black whitespace-nowrap">"Price sent! Check your DM."</p>
                 </div>
              </FloatingBubble>
 
              <FloatingBubble 
-                position={{ bottom: "10%", right: "2%" }} 
+                position={{ bottom: "15%", right: "10%" }} 
                 delay={2.2}
                 className="bg-white text-black shadow-2xl"
              >
-                <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-[#007B85] shrink-0">
-                   <TrendUp weight="bold" size={16} />
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                   <Sparkles weight="bold" size={20} />
                 </div>
                 <div>
-                   <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Revenue Hub</p>
-                   <p className="text-xs font-black whitespace-nowrap">Sale Tracked: $145.00</p>
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sale Made</p>
+                   <p className="text-sm font-black whitespace-nowrap">+$150.00 Received</p>
                 </div>
              </FloatingBubble>
           </div>
@@ -199,3 +204,4 @@ export function HeroSection() {
     </section>
   )
 }
+

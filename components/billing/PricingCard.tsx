@@ -43,7 +43,7 @@ const TIER_CONFIG: Record<
   },
   medium: {
     name: "MEDIUM",
-    price: { monthly: 35, annual: 336 },
+    price: { monthly: 35, annual: 28 * 12 },
     features: [
       { label: "Up to 2,500 contacts", included: true },
       { label: "Bulk WhatsApp Broadcasts", included: true },
@@ -54,7 +54,7 @@ const TIER_CONFIG: Record<
   },
   pro: {
     name: "PRO",
-    price: { monthly: 75, annual: 720 },
+    price: { monthly: 75, annual: 60 * 12 },
     features: [
       { label: "Up to 10,000 contacts", included: true },
       { label: "Unlimited Team Members", included: true },
@@ -66,15 +66,15 @@ const TIER_CONFIG: Record<
     badgeLabel: "RECOMMENDED",
   },
   elite: {
-    name: "ELITE",
-    price: { monthly: 150, annual: 1440 },
+    name: "ELITE (MANAGED)",
+    price: { monthly: 399, annual: 349 * 12 },
     features: [
-      { label: "Unlimited Contacts", included: true },
-      { label: "White-label Dashboard", included: true },
-      { label: "Custom API Integrations", included: true },
-      { label: "Dedicated Account Manager", included: true },
-      { label: "24/7 VIP Support", included: true },
-      { label: "Custom Bot Development", included: true },
+      { label: "Full Done-For-You Setup", included: true },
+      { label: "Managed WhatsApp & IG Sales", included: true },
+      { label: "Custom AI Strategy & Training", included: true },
+      { label: "Weekly Revenue Reporting", included: true },
+      { label: "24/7 Priority Sales Support", included: true },
+      { label: "Unlimited Contacts & Growth", included: true },
     ],
   },
 }

@@ -72,22 +72,24 @@ const tiers = [
     color: "main"
   },
   {
-    name: "Elite",
-    monthlyPrice: 150,
-    annualPrice: 120,
-    description: "World-class automation for top enterprises.",
+    name: "Elite (Managed)",
+    monthlyPrice: 399,
+    annualPrice: 349,
+    description: "Your dedicated Caribbean Sales Partner. We do the work, you get the sales.",
     features: [
-      "Unlimited Contacts",
-      "White-label Dashboard",
-      "Custom API Integrations",
-      "Dedicated Account Manager",
-      "24/7 VIP Multi-channel Support",
-      "Custom Bot Development"
+      "Full Done-For-You Setup",
+      "Managed WhatsApp & IG Sales",
+      "Custom AI Strategy & Training",
+      "Weekly Revenue Reporting",
+      "24/7 Priority Sales Support",
+      "Unlimited Contacts & Growth"
     ],
-    cta: "Request Demo",
+    cta: "Partner With Us",
     popular: false,
     color: "dark"
   }
+
+
 ]
 
 export function PricingSection() {

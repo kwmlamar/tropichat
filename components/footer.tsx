@@ -10,23 +10,10 @@ import {
   ChatCircleDots as MessageCircle 
 } from "@phosphor-icons/react"
 
-const navLinks = [
-  { label: "Features", href: "/#features" },
-  { label: "How It Works", href: "/#how-it-works" },
-  { label: "Pricing", href: "/#pricing" },
-  { label: "Testimonials", href: "/#testimonials" },
-]
-
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
   { label: "Data Deletion", href: "/data-deletion" },
-]
-
-const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
 ]
 
 export function Footer() {
@@ -38,7 +25,7 @@ export function Footer() {
       <div className="container relative mx-auto px-4 py-16">
         <div className="grid gap-10 md:grid-cols-4 lg:gap-16">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <div className="mb-5 flex items-center">
               <Image
                 src="/tropichat-logo.png"
@@ -49,8 +36,8 @@ export function Footer() {
                 className="h-16 w-16 object-contain"
               />
             </div>
-            <p className="mb-4 text-sm leading-relaxed text-gray-400 max-w-xs">
-              Helping Caribbean small businesses turn messaging chaos into organized success — across WhatsApp, Instagram &amp; Facebook Messenger.
+            <p className="mb-4 text-lg font-bold leading-relaxed text-gray-300 max-w-md">
+              The easiest way for Caribbean businesses to sell on WhatsApp and Instagram.
             </p>
             <a
               href="mailto:lamar@tropitech.org"
@@ -59,41 +46,6 @@ export function Footer() {
               <Mail className="h-4 w-4" />
               lamar@tropitech.org
             </a>
-            {/* Social icons */}
-            <div className="mt-5 flex gap-2">
-              {socialLinks.map((s) => {
-                const Icon = s.icon
-                return (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    aria-label={s.label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 dark:bg-[#111111] text-gray-400 transition-all duration-200 hover:bg-[#007B85]/20 hover:text-[#007B85]"
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Product Links */}
-          <div className="font-sans">
-            <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-white/60">
-              Product
-            </h3>
-            <ul className="space-y-3">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm transition-colors duration-200 hover:text-[#007B85]"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Legal Links */}
@@ -128,3 +80,4 @@ export function Footer() {
     </footer>
   )
 }
+

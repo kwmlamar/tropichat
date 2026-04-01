@@ -8,13 +8,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { List as Menu, X } from "@phosphor-icons/react"
 
-const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Testimonials", href: "#testimonials" },
-]
-
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -69,20 +62,28 @@ export function SiteHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => scrollToSection(link.href)}
-                className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
-              >
-                {link.label}
-                <motion.span 
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  layoutId="nav-dot"
-                />
-              </button>
-            ))}
+            <button
+              onClick={() => scrollToSection("#how-it-works")}
+              className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
+            >
+              How It Works
+              <motion.span 
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                layoutId="nav-dot"
+              />
+            </button>
+            <button
+              onClick={() => scrollToSection("#pricing")}
+              className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
+            >
+              Pricing
+              <motion.span 
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                layoutId="nav-dot"
+              />
+            </button>
           </nav>
+
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-6">
@@ -96,7 +97,7 @@ export function SiteHeader() {
               asChild
               className="bg-[#007B85] text-white hover:bg-[#2F8488] text-[10px] font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-xl shadow-teal-500/20 hover:scale-105 transition-all"
             >
-              <Link href="/signup">Free Trial</Link>
+              <Link href="/signup">Sign Up</Link>
             </Button>
           </div>
 
@@ -120,19 +121,23 @@ export function SiteHeader() {
             className="fixed inset-0 z-40 md:hidden bg-white dark:bg-black p-6 pt-32"
           >
             <div className="flex flex-col gap-8 text-center">
-              {navLinks.map((link) => (
-                <button
-                  key={link.href}
-                  onClick={() => scrollToSection(link.href)}
-                  className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
-                >
-                  {link.label}
-                </button>
-              ))}
-              <hr className="border-gray-100 dark:border-white/5" />
+              <button
+                onClick={() => scrollToSection("#how-it-works")}
+                className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
+              >
+                How It Works
+              </button>
+              <button
+                onClick={() => scrollToSection("#pricing")}
+                className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
+              >
+                Pricing
+              </button>
+
               <Link
                 href="/login"
-                className="text-xl font-black text-slate-400"
+                className="text-3xl font-black text-slate-400"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 Log In
               </Link>
@@ -141,7 +146,7 @@ export function SiteHeader() {
                 className="bg-[#007B85] py-8 text-lg font-black uppercase tracking-widest rounded-full"
               >
                 <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  Start Free Trial
+                  Sign Up
                 </Link>
               </Button>
             </div>
@@ -151,3 +156,5 @@ export function SiteHeader() {
     </>
   )
 }
+
+

@@ -731,7 +731,7 @@ function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: ()
     currentPlan === "starter" ? `Starter — ${customer?.plan === 'free' ? 'Free Trial' : '$15/mo'}`
     : currentPlan === "medium" ? `Medium — $${billingInterval === "annual" ? "28/mo" : "35/mo"}`
     : currentPlan === "pro" ? `Pro — $${billingInterval === "annual" ? "60/mo" : "75/mo"}`
-    : `Elite — $${billingInterval === "annual" ? "120/mo" : "150/mo"}`
+    : `Elite (Managed) — $${billingInterval === "annual" ? "349/mo" : "399/mo"}`
 
 
   return (
