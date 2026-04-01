@@ -145,9 +145,9 @@ export function PricingSection() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               className={cn(
-                "relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-300 group overflow-hidden",
+                "relative flex flex-col p-8 rounded-[2.5rem] transition-all duration-300 group",
                 tier.popular 
-                  ? "bg-[#007B85] text-white scale-105 shadow-2xl z-10" 
+                  ? "bg-[#007B85] text-white scale-105 shadow-2xl z-20" 
                   : "bg-white border border-gray-100 hover:border-[#007B85]/30 hover:shadow-xl text-[#213138]"
               )}
             >
