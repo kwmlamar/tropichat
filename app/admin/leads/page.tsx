@@ -57,9 +57,9 @@ export default function LeadsPage() {
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem("leads_visible_columns")
-      return saved ? JSON.parse(saved) : ['business', 'type', 'intelligence', 'origin', 'link', 'status', 'plan']
+      return saved ? JSON.parse(saved) : ['business', 'type', 'notes', 'intelligence', 'status', 'plan']
     }
-    return ['business', 'type', 'intelligence', 'origin', 'link', 'status', 'plan']
+    return ['business', 'type', 'notes', 'intelligence', 'status', 'plan']
   })
 
   const [activeSourceFilter, setActiveSourceFilter] = useState('all')
@@ -313,6 +313,7 @@ export default function LeadsPage() {
                     {[
                       { id: 'business', label: 'Business' },
                       { id: 'type', label: 'Mission / Type' },
+                      { id: 'notes', label: 'Research Notes' },
                       { id: 'intelligence', label: 'Contact Intelligence' },
                       { id: 'origin', label: 'Origin' },
                       { id: 'link', label: 'Mission Link' },
@@ -407,13 +408,14 @@ export default function LeadsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-100 dark:border-[#1C1C1C] bg-gray-50/50 dark:bg-[#080808]">
-                    {visibleColumns.includes('business') && <th scope="col" className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Business</th>}
-                    {visibleColumns.includes('type') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission / Type</th>}
-                    {visibleColumns.includes('intelligence') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Contact Intelligence</th>}
-                    {visibleColumns.includes('origin') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Origin</th>}
-                    {visibleColumns.includes('link') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission Link</th>}
-                    {visibleColumns.includes('status') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Pipeline Status</th>}
-                    {visibleColumns.includes('plan') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Action Plan</th>}
+                    { visibleColumns.includes('business') && <th scope="col" className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Business</th>}
+                    { visibleColumns.includes('type') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission / Type</th>}
+                    { visibleColumns.includes('notes') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Research Notes</th>}
+                    { visibleColumns.includes('intelligence') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Contact Intelligence</th>}
+                    { visibleColumns.includes('origin') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Origin</th>}
+                    { visibleColumns.includes('link') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission Link</th>}
+                    { visibleColumns.includes('status') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Pipeline Status</th>}
+                    { visibleColumns.includes('plan') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Action Plan</th>}
                   </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-[#1C1C1C]">
@@ -439,7 +441,9 @@ export default function LeadsPage() {
                     {visibleColumns.includes('business') && (
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-2 group/name">
-                          <div className="font-black text-[#213138] dark:text-white uppercase tracking-tight text-base">{lead.business_name}</div>
+                          <Link href={`/admin/leads/${lead.id}`} className="hover:underline decoration-[#007B85] decoration-2 underline-offset-4">
+                            <div className="font-black text-[#213138] dark:text-white uppercase tracking-tight text-base hover:text-[#007B85] transition-colors">{lead.business_name}</div>
+                          </Link>
                           <button 
                             onClick={(e) => {
                               e.stopPropagation();
@@ -467,6 +471,13 @@ export default function LeadsPage() {
                           <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-[#525252] border border-gray-100 dark:border-white/5">
                               {lead.category || "General"}
                           </span>
+                      </td>
+                    )}
+                    {visibleColumns.includes('notes') && (
+                      <td className="px-6 py-6 transition-all min-w-[200px]">
+                        <div className="text-[11px] font-medium text-gray-500 dark:text-gray-400 line-clamp-2 max-w-[250px]" title={lead.notes || ""}>
+                          {lead.notes || <span className="opacity-30 italic font-black text-[9px] tracking-widest uppercase">No Intel Logged</span>}
+                        </div>
                       </td>
                     )}
                     {visibleColumns.includes('intelligence') && (

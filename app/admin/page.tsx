@@ -199,149 +199,150 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Recent Activity & Tools Section */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div className="rounded-3xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] overflow-hidden">
-          <div className="p-6 border-b border-gray-100 dark:border-[#1C1C1C]">
-            <h3 className="text-xl font-bold text-[#213138] dark:text-white flex items-center gap-2 font-poppins">
-              <Database weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
-              Quick Actions
-            </h3>
-          </div>
-          <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252] ml-1">Mission Source</p>
-                  <div className="flex gap-1">
-                    {[
-                      { id: 'google', icon: Globe, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-                      { id: 'facebook', icon: FacebookLogo, color: 'text-[#1877F2]', bg: 'bg-[#1877F2]/10' },
-                      { id: 'instagram', icon: InstagramLogo, color: 'text-[#E4405F]', bg: 'bg-[#E4405F]/10' }
-                    ].map(s => (
-                      <button
-                        key={s.id}
-                        onClick={() => setScrapeSource(s.id)}
-                        className={cn(
-                          "p-2 rounded-lg border transition-all",
-                          scrapeSource === s.id 
-                            ? `border-transparent ${s.bg} ${s.color} shadow-sm`
-                            : "border-transparent text-gray-400 hover:text-white"
-                        )}
-                        title={s.id.toUpperCase()}
-                      >
-                        <s.icon weight="bold" className="h-4 w-4" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252] ml-1">Mission Query</p>
-                    <input 
-                        type="text"
-                        value={scrapeQuery}
-                        onChange={(e) => setScrapeQuery(e.target.value)}
-                        placeholder="e.g. Boutiques Nassau"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-2xl text-sm font-bold text-[#213138] dark:text-white focus:ring-1 focus:ring-[#3A9B9F] outline-none transition-all"
-                    />
-                </div>
-            
-            <button 
-              onClick={runScraper}
-              disabled={isScraping}
-              className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#007B85] transition-all text-left group disabled:opacity-50 shadow-sm"
-            >
+      {/* RECENT ACTIVITY & MISSION CONTROL GRID */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        {/* QUICK ACTIONS COMMAND CENTER */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="rounded-[2.5rem] border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] overflow-hidden shadow-xl shadow-black/5 dark:shadow-none">
+            <div className="p-8 border-b border-gray-100 dark:border-[#1C1C1C] flex items-center justify-between bg-gray-50/50 dark:bg-[#080808]/50">
               <div className="flex items-center gap-4">
-                <div className={cn("p-2.5 rounded-xl text-white transition-all", isScraping ? "bg-amber-500 animate-pulse" : "bg-[#007B85]")}>
-                  <TrendingUp weight="bold" className="h-5 w-5" />
+                <div className="p-3 bg-[#007B85]/10 rounded-2xl">
+                  <Database weight="bold" className="h-6 w-6 text-[#007B85]" />
                 </div>
                 <div>
-                  <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">{isScraping ? "Scanning Satellite..." : "Launch Discovery Mission"}</div>
-                  <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">{isScraping ? "Processing Google Maps Data" : "Find Real Nassau Prospects"}</div>
+                  <h3 className="text-xl font-black text-[#213138] dark:text-white font-poppins tracking-tight uppercase">Quick Actions</h3>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">High-Velocity Mission Control</p>
                 </div>
               </div>
-              <div className="h-8 w-8 rounded-full bg-[#007B85]/10 flex items-center justify-center text-[#007B85] opacity-0 group-hover:opacity-100 transition-all">
-                <TrendingUp weight="bold" className="h-4 w-4" />
+              <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl border border-gray-200 dark:border-white/5">
+                {[
+                  { id: 'google', icon: Globe, color: 'text-blue-500', activeBg: 'bg-white dark:bg-[#1A1A1A]' },
+                  { id: 'facebook', icon: FacebookLogo, color: 'text-[#1877F2]', activeBg: 'bg-white dark:bg-[#1A1A1A]' },
+                  { id: 'instagram', icon: InstagramLogo, color: 'text-[#E4405F]', activeBg: 'bg-white dark:bg-[#1A1A1A]' }
+                ].map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => setScrapeSource(s.id)}
+                    className={cn(
+                      "p-2.5 rounded-lg transition-all flex items-center justify-center gap-2",
+                      scrapeSource === s.id 
+                        ? `${s.activeBg} ${s.color} shadow-sm ring-1 ring-black/5 dark:ring-white/10`
+                        : "text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                    )}
+                  >
+                    <s.icon weight="bold" className="h-5 w-5" />
+                    {scrapeSource === s.id && <span className="text-[9px] font-black uppercase tracking-widest pr-1">{s.id}</span>}
+                  </button>
+                ))}
               </div>
-            </button>
-            <button 
-              onClick={handleBlast}
-              className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#EA580C] transition-all text-left group shadow-sm"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-2.5 rounded-xl bg-gradient-to-tr from-[#EA580C] to-[#F97316] text-white shadow-lg shadow-[#EA580C]/20">
-                  <TrendingUp weight="bold" className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">Cold Outreach Blast</div>
-                  <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">Automated Regional Dispatch</div>
-                </div>
-              </div>
-              <div className="h-8 w-8 rounded-full bg-[#EA580C]/10 flex items-center justify-center text-[#EA580C] opacity-0 group-hover:opacity-100 transition-all">
-                <TrendingUp weight="bold" className="h-4 w-4" />
-              </div>
-            </button>
-          </div>
+            </div>
 
-          {/* Outreach Hub */}
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest pl-1 text-[11px]">Outreach Intelligence</h3>
-            <Link href="/admin/outreach" className="block w-full group">
-              <div className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#FEDA77] transition-all text-left shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#FEDA77] to-[#F58529] text-white">
+            <div className="p-8 space-y-8">
+              {/* Mission Input */}
+              <div className="relative group">
+                <p className="absolute -top-2.5 left-4 px-2 bg-white dark:bg-[#0C0C0C] text-[10px] font-black uppercase tracking-widest text-[#007B85] z-10">Discovery Query</p>
+                <div className="relative flex items-center">
+                  <Terminal weight="bold" className="absolute left-6 text-[#007B85] h-5 w-5 opacity-40 group-focus-within:opacity-100 transition-opacity" />
+                  <input 
+                    type="text"
+                    value={scrapeQuery}
+                    onChange={(e) => setScrapeQuery(e.target.value)}
+                    placeholder="e.g. Boutiques Nassau"
+                    className="w-full pl-16 pr-8 py-6 bg-gray-50/50 dark:bg-[#050505] border-2 border-gray-100 dark:border-white/5 rounded-[1.5rem] text-xl font-black text-[#213138] dark:text-white focus:border-[#007B85] outline-none transition-all shadow-inner placeholder:text-gray-300 dark:placeholder:text-[#1A1A1A]"
+                  />
+                </div>
+              </div>
+
+              {/* Action Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button 
+                  onClick={runScraper}
+                  disabled={isScraping}
+                  className="relative flex flex-col items-center justify-center p-8 rounded-[2rem] bg-[#007B85] hover:bg-[#2F8488] text-white transition-all group disabled:opacity-50 shadow-xl shadow-teal-500/20 active:scale-[0.98] overflow-hidden min-h-[160px]"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Globe weight="bold" className="h-24 w-24 -mr-8 -mt-8" />
+                  </div>
+                  <div className={cn("p-4 rounded-2xl bg-white/20 mb-4 transition-all group-hover:scale-110", isScraping && "animate-pulse")}>
+                    <TrendingUp weight="bold" className="h-8 w-8" />
+                  </div>
+                  <div className="text-center">
+                    <div className="font-black text-[14px] uppercase tracking-wider">{isScraping ? "📡 Scanning..." : "Discovery Mission"}</div>
+                    <div className="text-[10px] font-bold text-white/70 uppercase tracking-widest mt-1">Satellite Lead Extraction</div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={handleBlast}
+                  className="relative flex flex-col items-center justify-center p-8 rounded-[2rem] bg-gradient-to-tr from-[#EA580C] to-[#F97316] hover:brightness-110 text-white transition-all group shadow-xl shadow-orange-500/20 active:scale-[0.98] overflow-hidden min-h-[160px]"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Inbox weight="bold" className="h-24 w-24 -mr-8 -mt-8" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-white/20 mb-4 transition-all group-hover:scale-110">
+                    <Inbox weight="bold" className="h-8 w-8" />
+                  </div>
+                  <div className="text-center">
+                    <div className="font-black text-[14px] uppercase tracking-wider">Outreach Blast</div>
+                    <div className="text-[10px] font-bold text-white/70 uppercase tracking-widest mt-1">Mass Regional Dispatch</div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Utility Hub */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-white/5">
+                <Link href="/admin/outreach" className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#FEDA77] transition-all group">
+                  <div className="p-2 bg-[#FEDA77]/10 text-[#FEDA77] rounded-xl group-hover:bg-[#FEDA77] group-hover:text-white transition-all">
                     <ChatCircleDots weight="bold" className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">Outreach Command</div>
-                    <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">Scripts, Calling & DMs</div>
+                    <div className="text-[11px] font-black uppercase tracking-tight text-[#213138] dark:text-white">Outreach Command</div>
+                    <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scripts & Research</div>
                   </div>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-[#FEDA77]/10 flex items-center justify-center text-[#FEDA77] opacity-0 group-hover:opacity-100 transition-all">
-                  <CaretRight weight="bold" className="h-4 w-4" />
-                </div>
-              </div>
-            </Link>
+                </Link>
 
-            <h3 className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest pl-1 text-[11px] pt-4">Capital Growth</h3>
-            <Link href="/admin/revenue" className="block w-full group">
-              <div className="w-full flex items-center justify-between p-5 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#007B85] transition-all text-left shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white shadow-lg shadow-teal-500/20">
+                <Link href="/admin/revenue" className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-green-500 transition-all group">
+                  <div className="p-2 bg-green-500/10 text-green-500 rounded-xl group-hover:bg-green-500 group-hover:text-white transition-all">
                     <TrendingUp weight="bold" className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-[#213138] dark:text-white text-[13px] uppercase tracking-tight">Revenue Dashboard</div>
-                    <div className="text-[11px] font-bold text-gray-500 dark:text-[#525252] uppercase tracking-widest mt-0.5">Track the $51k Capital Goal</div>
+                    <div className="text-[11px] font-black uppercase tracking-tight text-[#213138] dark:text-white">Revenue Monitor</div>
+                    <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Growth Analytics</div>
                   </div>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-[#007B85]/10 flex items-center justify-center text-[#007B85] opacity-0 group-hover:opacity-100 transition-all">
-                  <CaretRight weight="bold" className="h-4 w-4" />
-                </div>
+                </Link>
               </div>
-            </Link>
+            </div>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] overflow-hidden">
-          <div className="p-6 border-b border-gray-100 dark:border-[#1C1C1C]">
-            <h3 className="text-xl font-bold text-[#213138] dark:text-white flex items-center gap-2 font-poppins">
-              <BarChart3 weight="bold" className="h-5 w-5 text-[#3A9B9F]" />
-              Dev Ops
-            </h3>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="p-4 rounded-2xl border-l-4 border-l-green-500 bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-[#A3A3A3] text-sm font-medium">
-                System status: <span className="font-black uppercase ml-1 text-green-600">Healthy</span>
+        {/* DEV OPS & METRICS */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="rounded-[2rem] border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] overflow-hidden shadow-sm">
+            <div className="p-8 border-b border-gray-100 dark:border-[#1C1C1C]">
+              <h3 className="text-xl font-black text-[#213138] dark:text-white flex items-center gap-3 font-poppins uppercase tracking-tight">
+                <BarChart3 weight="bold" className="h-6 w-6 text-[#3A9B9F]" />
+                Dev Ops
+              </h3>
             </div>
-            <div className="p-4 rounded-2xl border-l-4 border-l-[#3A9B9F] bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-[#A3A3A3] text-sm font-medium">
-                Database: <span className="font-black uppercase ml-1 text-[#3A9B9F]">Online</span>
-            </div>
-            <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-[#525252] text-[11px] font-bold uppercase tracking-widest">
-                Latest Deployment: <span className="font-mono ml-1 text-gray-900 dark:text-white">v0.1.0-alpha-nas</span>
+            <div className="p-8 space-y-4">
+              {[
+                { label: 'System status', value: 'Healthy', color: 'text-green-600', border: 'border-l-green-500' },
+                { label: 'Database', value: 'Online', color: 'text-[#3A9B9F]', border: 'border-l-[#3A9B9F]' },
+                { label: 'Cloud Satellite', value: 'Connected', color: 'text-blue-500', border: 'border-l-blue-500' }
+              ].map(stat => (
+                <div key={stat.label} className={cn("p-5 rounded-2xl border-l-4 bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-[#A3A3A3] text-sm font-medium", stat.border)}>
+                  {stat.label}: <span className={cn("font-black uppercase ml-1", stat.color)}>{stat.value}</span>
+                </div>
+              ))}
+              <div className="pt-4">
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 text-gray-500 dark:text-[#525252] text-[10px] font-black uppercase tracking-[0.2em] text-center">
+                    CORE VERSION: <span className="font-mono ml-1 text-gray-900 dark:text-white">v0.1.0-ELITE</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   )
 }
