@@ -20,6 +20,7 @@ import {
 import { getSupabase } from "@/lib/supabase"
 import { formatDate, formatDistanceToNow, cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { useAuth, useDebounce } from "@/lib/hooks"
 import Link from "next/link"
 import { motion } from "framer-motion"
 
@@ -47,6 +48,23 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [notes, setNotes] = useState("")
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [profile, setProfile] = useState({
+    business_name: "",
+    contact_phone: "",
+    contact_email: "",
+    instagram_handle: "",
+    facebook_page: "",
+    location: "",
+    category: ""
+  })
+  const debouncedNotes = useDebounce(notes, 1500)
+
+  useEffect(() => {
+    if (lead && debouncedNotes !== lead.notes && !loading) {
+      handleSaveNotes()
+    }
+  }, [debouncedNotes])
 
   useEffect(() => {
     fetchLead()
@@ -66,8 +84,37 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
     } else {
       setLead(data)
       setNotes(data.notes || "")
+      setProfile({
+        business_name: data.business_name || "",
+        contact_phone: data.contact_phone || "",
+        contact_email: data.contact_email || "",
+        instagram_handle: data.instagram_handle || "",
+        facebook_page: data.facebook_page || "",
+        location: data.location || "",
+        category: data.category || ""
+      })
     }
     setLoading(false)
+  }
+
+  async function handleSaveProfile() {
+    setSavingProfile(true)
+    const supabase = getSupabase()
+    const { error } = await supabase
+      .from('leads')
+      .update({ 
+        ...profile, 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', id)
+
+    if (error) {
+      toast.error("Failed to update lead profile")
+    } else {
+      toast.success("Profile Intel Synchronized")
+      if (lead) setLead({ ...lead, ...profile })
+    }
+    setSavingProfile(false)
   }
 
   async function handleSaveNotes() {
@@ -147,7 +194,12 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                 Discovered {formatDistanceToNow(lead.created_at)} ago
               </span>
             </div>
-            <h1 className="text-4xl font-black text-[#213138] dark:text-white tracking-tight mt-1">{lead.business_name}</h1>
+            <input 
+              type="text"
+              value={profile.business_name}
+              onChange={(e) => setProfile({ ...profile, business_name: e.target.value })}
+              className="text-4xl font-black text-[#213138] dark:text-white tracking-tight mt-1 bg-transparent border-none outline-none focus:ring-1 focus:ring-[#007B85]/30 rounded-lg w-full"
+            />
           </div>
         </div>
 
@@ -172,32 +224,45 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
         {/* Left Column: Intelligence Grid */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-[2rem] p-8 space-y-8 shadow-sm">
-            <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
-              <CheckCircle weight="fill" className="text-[#007B85]" /> Contact Intel
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <CheckCircle weight="fill" className="text-[#007B85]" /> Contact Intel
+              </h3>
+              <button 
+                onClick={handleSaveProfile}
+                disabled={savingProfile}
+                className="p-2 text-[#007B85] hover:bg-[#007B85]/10 rounded-xl transition-all disabled:opacity-50"
+                title="Save Profile"
+              >
+                {savingProfile ? (
+                  <div className="h-4 w-4 border-2 border-[#007B85]/30 border-t-[#007B85] rounded-full animate-spin" />
+                ) : (
+                  <FloppyDisk weight="bold" className="h-4 w-4" />
+                )}
+              </button>
+            </div>
 
             <div className="space-y-6">
               {[
-                { icon: Phone, label: 'Phone', value: lead.contact_phone, color: 'text-green-500', link: lead.contact_phone ? `tel:${lead.contact_phone}` : null },
-                { icon: InstagramLogo, label: 'Instagram', value: lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : null, color: 'text-pink-500', link: lead.instagram_handle ? `https://instagram.com/${lead.instagram_handle.replace('@', '')}` : null },
-                { icon: EnvelopeSimple, label: 'Email', value: lead.contact_email, color: 'text-[#007B85]', link: lead.contact_email ? `mailto:${lead.contact_email}` : null },
-                { icon: FacebookLogo, label: 'Facebook', value: lead.facebook_page, color: 'text-blue-600', link: lead.facebook_page || null },
-                { icon: Globe, label: 'Origin', value: lead.source, color: 'text-amber-500' },
-                { icon: MapPin, label: 'Location', value: lead.location || 'Caribbean (Unknown)', color: 'text-red-400' }
+                { icon: Phone, label: 'Phone', value: profile.contact_phone, key: 'contact_phone', color: 'text-green-500' },
+                { icon: InstagramLogo, label: 'Instagram', value: profile.instagram_handle, key: 'instagram_handle', color: 'text-pink-500' },
+                { icon: EnvelopeSimple, label: 'Email', value: profile.contact_email, key: 'contact_email', color: 'text-[#007B85]' },
+                { icon: FacebookLogo, label: 'Facebook', value: profile.facebook_page, key: 'facebook_page', color: 'text-blue-600' },
+                { icon: MapPin, label: 'Location', value: profile.location, key: 'location', color: 'text-red-400' }
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4 group">
                   <div className={cn("mt-1 p-2 rounded-xl bg-gray-50 dark:bg-white/5", item.color.replace('text-', 'bg-opacity-10 '))}>
                     <item.icon size={18} className={item.color} weight="bold" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{item.label}</p>
-                    {item.link && item.value ? (
-                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-[15px] font-bold text-[#213138] dark:text-white hover:text-[#007B85] transition-colors flex items-center gap-1.5 underline underline-offset-4 decoration-gray-200 dark:decoration-white/10 group-hover:decoration-[#007B85]">
-                         {item.value} <LinkIcon size={12} className="opacity-40" />
-                      </a>
-                    ) : (
-                      <p className="text-[15px] font-bold text-[#213138] dark:text-white opacity-80">{item.value || 'N/A'}</p>
-                    )}
+                    <input 
+                      type="text"
+                      value={item.value}
+                      placeholder={`Enter ${item.label}...`}
+                      onChange={(e) => setProfile({ ...profile, [item.key]: e.target.value })}
+                      className="w-full bg-transparent text-[15px] font-bold text-[#213138] dark:text-white outline-none border-b border-transparent focus:border-[#007B85]/30 transition-all py-0.5 placeholder:text-gray-300 dark:placeholder:text-[#222]"
+                    />
                   </div>
                 </div>
               ))}
@@ -251,21 +316,22 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mt-0.5">Record every detail for the perfect demo</p>
                 </div>
               </div>
-              <button 
-                onClick={handleSaveNotes}
-                disabled={saving}
-                className={cn(
-                  "flex items-center gap-2 px-6 py-3 rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-[#007B85]/20",
-                  saving ? "bg-gray-100 text-gray-400 border border-gray-200" : "bg-[#007B85] hover:bg-[#2F8488] text-white"
-                )}
-              >
+              <div className={cn(
+                "flex items-center gap-2 px-6 py-3 rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all",
+                saving ? "text-[#007B85] opacity-100" : "text-gray-300 opacity-40"
+              )}>
                 {saving ? (
-                  <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <>
+                    <div className="h-4 w-4 border-2 border-[#007B85]/30 border-t-[#007B85] rounded-full animate-spin" />
+                    <span>Syncing...</span>
+                  </>
                 ) : (
-                  <FloppyDisk weight="bold" className="h-4 w-4" />
+                  <>
+                    <CheckCircle weight="bold" className="h-4 w-4" />
+                    <span>Secured</span>
+                  </>
                 )}
-                {saving ? "Syncing..." : "Save Intel"}
-              </button>
+              </div>
             </div>
             
             <div className="p-10 flex-1 flex flex-col">
