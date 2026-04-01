@@ -87,28 +87,48 @@ export async function POST(req: Request) {
 
     // 🚀 INJECTING: Pushing leads to CRM Intelligence Hub
     let count = 0
+    let enrichedCount = 0
     if (leads.length > 0) {
       for (const lead of leads) {
-        // Check for duplicates
+        // Check for existing lead by business name
         const { data: existing } = await supabase
           .from("leads")
-          .select("id")
+          .select("id, contact_phone")
           .eq("business_name", lead.business_name)
           .maybeSingle()
 
         if (!existing) {
+          // New target identified
           const { error } = await supabase.from("leads").insert(lead)
           if (!error) count++
+        } else if (
+          lead.contact_phone !== "No Phone Protocol" && 
+          (!existing.contact_phone || 
+           existing.contact_phone === "Scan for phone..." || 
+           existing.contact_phone === "No Phone Protocol")
+        ) {
+          // Target exists but phone intel is missing - perform enrichment
+          const { error } = await supabase
+            .from("leads")
+            .update({ 
+               contact_phone: lead.contact_phone,
+               notes: lead.notes + " (Phone protocol enriched via Discovery Mission)",
+               updated_at: new Date().toISOString()
+            })
+            .eq("id", existing.id)
+            
+          if (!error) enrichedCount++
         }
       }
     }
 
-    console.log(`✅ MISSION SUCCESS: Loaded ${count} new leads into pipeline.`)
+    console.log(`✅ MISSION SUCCESS: Loaded ${count} new leads, enriched ${enrichedCount} existing targets.`)
 
     return NextResponse.json({ 
       success: true, 
-      message: `Mission completed: ${count} new leads extracted.`,
-      count 
+      message: `Mission completed: ${count} new targets found, ${enrichedCount} enriched.`,
+      count,
+      enrichedCount
     })
 
   } catch (error) {
