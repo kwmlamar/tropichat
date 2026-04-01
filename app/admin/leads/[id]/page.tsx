@@ -398,7 +398,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   </div>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText("Mornin, mornin! this lamar, i set businesses up with a 24/7 sales agent. you got 2 minutes to check she out?");
+                      navigator.clipboard.writeText("Mornin, mornin! this lamar, i been looking at yall website yall seem busy man. So look, i have an opportunity for yall to save more time AND make more money inside your business? You got 2 minutes to hear me out?");
                       toast.success("Script Copied to Clipboard");
                     }}
                     className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/10"
@@ -409,7 +409,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                 
                 <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8">
                   <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
-                    "Mornin, mornin! this <span className="underline decoration-[#007B85]/30">lamar</span>, you wanna <span className="text-[#007B85]">save more time</span> AND <span className="text-[#007B85]">make more money</span>? I help you handle every message automatically so you don't miss any sales. You got 2 minutes?"
+                    "Mornin, mornin! this <span className="underline decoration-[#007B85]/30">lamar</span>, i been looking at yall website yall seem busy man. So look, i have an opportunity for yall to <span className="text-[#007B85]">save more time</span> AND <span className="text-[#007B85]">make more money</span> inside your business? You got 2 minutes to hear me out?"
                   </p>
                 </div>
                 
