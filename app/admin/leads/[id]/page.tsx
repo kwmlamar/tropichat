@@ -144,7 +144,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                 ID: {lead.id.split('-')[0]}
               </span>
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                Discovered {formatDistanceToNow(new Date(lead.created_at))} ago
+                Discovered {formatDistanceToNow(lead.created_at)} ago
               </span>
             </div>
             <h1 className="text-4xl font-black text-[#213138] dark:text-white tracking-tight mt-1">{lead.business_name}</h1>
@@ -232,7 +232,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   <Clock size={18} weight="bold" />
                   <span className="text-[11px] font-bold uppercase tracking-tight">Last Update</span>
                 </div>
-                <span className="text-[11px] font-black text-[#213138] dark:text-white">{formatDistanceToNow(new Date(lead.updated_at))} ago</span>
+                <span className="text-[11px] font-black text-[#213138] dark:text-white">{formatDistanceToNow(lead.updated_at)} ago</span>
               </div>
             </div>
           </div>
