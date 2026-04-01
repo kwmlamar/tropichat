@@ -289,37 +289,6 @@ export default function AdminDashboard() {
                 </button>
               </div>
 
-              {/* COLD CALL SCRIPT COMMAND */}
-              <div className="bg-[#007B85]/5 dark:bg-[#007B85]/10 border border-[#007B85]/20 rounded-[2.5rem] p-10 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <ChatCircleDots weight="fill" className="h-40 w-40 -mr-10 -mt-10 text-[#007B85]" />
-                </div>
-                
-                <div className="relative z-10 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#007B85]">Lamar Standard Cold Call Script</h4>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Use this to cut through the noise</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText("Mornin, mornin! this lamar, i set businesses up with a 24/7 sales agent. you got 2 minutes to check she out?");
-                        toast.success("Script Copied to HQ Clipboard");
-                      }}
-                      className="p-2.5 bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl text-gray-400 hover:text-[#007B85] transition-all shadow-sm"
-                    >
-                      <Copy weight="bold" className="h-4 w-4" />
-                    </button>
-                  </div>
-                  
-                  <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8">
-                    <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
-                      "Mornin, mornin! this <span className="underline decoration-[#007B85]/30">lamar</span>, you wanna <span className="text-[#007B85]">save more time</span> AND <span className="text-[#007B85]">make more money</span>? I help you handle every message automatically so you don't miss any sales. You got 2 minutes?"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Utility Hub */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100 dark:border-white/5">
                 <Link href="/admin/outreach" className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 hover:border-[#FEDA77] transition-all group">

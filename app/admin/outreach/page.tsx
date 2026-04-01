@@ -327,31 +327,6 @@ export default function OutreachPage() {
 
       {/* Scripts Display */}
       <div className="space-y-6">
-        <div className="bg-[#007B85] rounded-3xl p-10 text-white shadow-xl shadow-teal-500/10 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <PhoneCall size={120} weight="fill" className="-mr-10 -mt-10" />
-          </div>
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-2xl font-black tracking-tight uppercase italic">The "Lamar Standard" Opener</h3>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 mt-1">Kill the corporate friction. Be the neighbor.</p>
-              </div>
-              <div className="bg-white/10 border border-white/10 rounded-[1.5rem] p-8 max-w-2xl">
-                <p className="text-xl md:text-2xl font-medium leading-relaxed italic">
-                  "Mornin, mornin! this <span className="font-black underline italic decoration-white/30">lamar</span>, you wanna <span className="font-black bg-white/20 px-2 rounded">save more time</span> AND <span className="font-black bg-white/20 px-2 rounded">make more money</span>? I help you handle every message automatically so you don't miss any sales. You got 2 minutes?"
-                </p>
-              </div>
-            </div>
-            <button 
-              onClick={() => copyToClipboard("Mornin, mornin! this lamar, i set businesses up with a 24/7 sales agent. you got 2 minutes to check she out?")}
-              className="flex items-center gap-3 px-8 py-4 bg-white text-[#007B85] rounded-2xl font-black uppercase text-[12px] tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95 shrink-0"
-            >
-              <Copy weight="fill" className="h-4 w-4" /> Copy Protocol
-            </button>
-          </div>
-        </div>
-
         <AnimatePresence mode="wait">
           {loading ? (
             <div key="loading" className="text-center py-20">
