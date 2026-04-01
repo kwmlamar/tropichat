@@ -241,7 +241,7 @@ export default function BookingConfirmedPage({ params, searchParams }: Confirmed
           >
             {/* Confirmation code banner */}
             <div className="px-6 py-4 text-center" style={{ backgroundColor: TEAL }}>
-              <p className="text-white/70 text-xs font-black uppercase tracking-widest">
+              <p className="text-white/70 text-[13px] font-black uppercase tracking-widest">
                 Confirmation #
               </p>
               <p className="text-white text-2xl font-black tracking-wider mt-0.5">
@@ -324,7 +324,7 @@ export default function BookingConfirmedPage({ params, searchParams }: Confirmed
             </Link>
           </motion.div>
 
-          <p className="text-center text-xs text-gray-400 pb-6">
+          <p className="text-center text-[13px] text-gray-400 pb-6">
             Powered by <span className="font-bold" style={{ color: TEAL }}>TropiChat</span>
           </p>
         </div>

@@ -286,14 +286,14 @@ function OnboardingContent() {
               </div>
 
               <div className="space-y-2 text-left bg-white dark:bg-[#080808] p-8 rounded-[32px] border border-gray-100 dark:border-white/5 shadow-xl">
-                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Company Name</Label>
+                 <Label className="text-[13px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Company Name</Label>
                  <Input 
                    value={businessName}
                    onChange={e => setBusinessName(e.target.value)}
                    placeholder="e.g. Island Breeze Boutique"
                    className="h-14 rounded-2xl border-gray-100 dark:border-white/10 dark:bg-[#111] text-lg font-bold"
                  />
-                 <p className="text-[11px] text-gray-400 font-medium mt-2">This is how your workspace will be identified.</p>
+                 <p className="text-[13px] text-gray-400 font-medium mt-2">This is how your workspace will be identified.</p>
               </div>
 
               <Button 
@@ -400,18 +400,18 @@ function OnboardingContent() {
 
               <div className="space-y-5 bg-white dark:bg-[#080808] p-8 rounded-[32px] border border-gray-100 dark:border-white/5 shadow-xl">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Business Description</Label>
+                  <Label className="text-[13px] font-black uppercase tracking-[0.2em] text-gray-400">Business Description</Label>
                   <textarea
                     value={businessDescription}
                     onChange={e => setBusinessDescription(e.target.value)}
                     placeholder="What makes your business special?"
-                    className="w-full h-28 resize-none rounded-2xl border border-gray-100 dark:border-white/10 dark:bg-[#111] p-4 text-sm font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#007B85]/40"
+                    className="w-full h-28 resize-none rounded-2xl border border-gray-100 dark:border-white/10 dark:bg-[#111] p-4 text-base font-medium text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#007B85]/40"
                   />
-                  <p className="text-[11px] text-gray-400 font-medium">Shown on your connected business profile.</p>
+                  <p className="text-[13px] text-gray-400 font-medium">Shown on your connected business profile.</p>
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Business Logo</Label>
+                  <Label className="text-[13px] font-black uppercase tracking-[0.2em] text-gray-400">Business Logo</Label>
                   <div className="flex items-center gap-4">
                     <div className="relative group">
                       <input 
@@ -439,7 +439,7 @@ function OnboardingContent() {
                             <div className="h-10 w-10 rounded-2xl bg-[#007B85]/10 flex items-center justify-center">
                                <UploadSimple weight="bold" className="h-5 w-5 text-[#007B85]" />
                             </div>
-                            <span className="text-[10px] font-black uppercase text-gray-400">Upload Logo</span>
+                            <span className="text-[13px] font-black uppercase text-gray-400">Upload Logo</span>
                           </>
                         )}
                       </Button>
@@ -448,7 +448,7 @@ function OnboardingContent() {
                        <p className="text-sm font-black text-gray-800 dark:text-gray-200">
                          {profilePicUrl ? "Logo Selected" : "Add your brand logo"}
                        </p>
-                       <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
+                       <p className="text-[13px] text-gray-400 font-medium leading-relaxed">
                          Upload a square image (PNG, JPG) for your workspace and chat profiles.
                        </p>
                     </div>

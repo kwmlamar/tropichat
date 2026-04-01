@@ -48,15 +48,15 @@ import { PlanGate } from "@/components/billing/PlanGate"
 // Signature: teal = confirmed, coral = pending, muted = cancelled
 function StatusBadge({ status }: { status: string }) {
   if (status === "confirmed") return (
-    <span className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-widest">Confirmed</span>
+    <span className="text-[11px] font-black text-[#3A9B9F] uppercase tracking-widest">Confirmed</span>
   )
   if (status === "pending") return (
-    <span className="text-[10px] font-black text-[#FF7E36] uppercase tracking-widest">Pending</span>
+    <span className="text-[11px] font-black text-[#FF7E36] uppercase tracking-widest">Pending</span>
   )
   if (status === "completed") return (
-    <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Completed</span>
+    <span className="text-[11px] font-black text-indigo-500 uppercase tracking-widest">Completed</span>
   )
-  return <span className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest">{status}</span>
+  return <span className="text-[11px] font-black text-gray-400 dark:text[#525252] uppercase tracking-widest">{status}</span>
 }
 
 // ─── Stat card ─────────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ function StatCard({ title, val, accent }: { title: string; val: number; accent: 
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-[#0C0C0C] border border-gray-200 dark:border-[#1C1C1C] rounded-2xl p-5 hover:border-gray-300 dark:hover:border-[#2A2A2A] transition-colors duration-200 shadow-sm"
       style={{ borderLeftColor: accent, borderLeftWidth: 2 }}>
-      <p className="text-[10px] text-gray-500 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-2">{title}</p>
+      <p className="text-[11px] text-gray-500 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-2">{title}</p>
       <p className="text-2xl font-black text-gray-900 dark:text-white tabular-nums tracking-tighter">{val}</p>
     </motion.div>
   )
@@ -84,7 +84,7 @@ function MonthView({ calendarDays, bookingsForDay, isToday, onBookingClick }: an
     <div className="p-6">
       <div className="grid grid-cols-7 gap-2 mb-2">
         {DAY_NAMES.map(d => (
-          <div key={d} className="text-center text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] py-1">{d}</div>
+          <div key={d} className="text-center text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] py-1">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-2">
@@ -107,12 +107,12 @@ function MonthView({ calendarDays, bookingsForDay, isToday, onBookingClick }: an
                 <div className="space-y-1">
                   {dayBkgs.slice(0, 3).map((b: Booking) => (
                     <button key={b.id} onClick={() => onBookingClick(b)}
-                      className={cn("w-full text-left px-1.5 py-1 rounded text-white text-[9px] font-black truncate uppercase tracking-tight", STATUS_DOT[b.status])}>
+                      className={cn("w-full text-left px-1.5 py-1 rounded text-white text-[11px] font-black truncate uppercase tracking-tight", STATUS_DOT[b.status])}>
                       {b.customer_name.split(" ")[0]}
                     </button>
                   ))}
                   {dayBkgs.length > 3 && (
-                    <p className="text-[8px] font-black text-[#3A9B9F] pl-1 uppercase tracking-widest">+{dayBkgs.length - 3} More</p>
+                    <p className="text-[11px] font-black text-[#3A9B9F] pl-1 uppercase tracking-widest">+{dayBkgs.length - 3} More</p>
                   )}
                 </div>
               </div>
@@ -140,7 +140,7 @@ function ListView({ bookings, onBookingClick }: any) {
     <div className="p-6 space-y-6 max-h-[600px] overflow-y-auto">
       {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([date, dayBookings]) => (
         <div key={date}>
-          <p className="text-[10px] font-black text-[#3A9B9F] uppercase tracking-[0.2em] mb-4">
+          <p className="text-[11px] font-black text-[#3A9B9F] uppercase tracking-[0.2em] mb-4">
             {new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
           <div className="space-y-2">
@@ -289,7 +289,7 @@ export default function BookingsPage() {
           {/* Day calendar grid + nav */}
           <div className="px-1 pt-4 pb-2">
             <div className="flex items-center justify-between mb-3 px-2">
-              <p className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em]">Select Date</p>
+              <p className="text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em]">Select Date</p>
               <div className="flex items-center gap-2.5">
                 <button onClick={prevMonth} className="p-3 rounded-2xl border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] text-gray-600 dark:text-gray-300 hover:text-[#3A9B9F] active:scale-90 transition-all shadow-sm">
                   <CaretLeft weight="bold" className="h-5 w-5" />
@@ -302,7 +302,7 @@ export default function BookingsPage() {
             
             <div className="grid grid-cols-7 gap-1 px-1">
               {DAY_NAMES.map(d => (
-                <div key={d} className="text-center text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
+                <div key={d} className="text-center text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase py-1">{d[0]}</div>
               ))}
               {calendarDays.map((day, idx) => {
                 if (day === null) return <div key={idx} />
@@ -348,7 +348,7 @@ export default function BookingsPage() {
 
         {/* Bookings for selected day */}
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-20">
-          <p className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+          <p className="text-[11px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
             <CalendarBlank weight="bold" className="h-3.5 w-3.5" />
             {selectedDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
           </p>
@@ -399,7 +399,7 @@ export default function BookingsPage() {
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
               className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div>
-                <p className="text-[10px] text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-1.5 flex items-center gap-2">
+                <p className="text-[11px] text-gray-400 dark:text-[#525252] uppercase tracking-[0.2em] font-black mb-1.5 flex items-center gap-2">
                   Calendar
                 </p>
                 <h1 className="text-3xl font-black text-[#213138] dark:text-white tracking-tight uppercase">Bookings</h1>
@@ -419,7 +419,7 @@ export default function BookingsPage() {
                 <div className="flex items-center bg-gray-100 dark:bg-[#111] p-1 rounded-xl border border-gray-200 dark:border-[#1C1C1C] gap-0.5 shadow-inner">
                   {(["month","list"] as const).map(v => (
                     <button key={v} onClick={() => setView(v)}
-                      className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200",
+                      className={cn("px-4 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all duration-200",
                         view === v
                           ? "bg-white dark:bg-[#1C1C1C] text-[#3A9B9F] shadow-sm"
                           : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]")}>
@@ -451,7 +451,7 @@ export default function BookingsPage() {
                 const count = tab.key === 'all' ? bookings.length : bookings.filter(b => b.status === tab.key).length
                 return (
                   <button key={tab.key} onClick={() => setStatusFilter(tab.key)}
-                    className={cn("flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200",
+                    className={cn("flex items-center gap-2 px-4 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all duration-200",
                       statusFilter === tab.key
                         ? "bg-white dark:bg-[#1C1C1C] text-gray-900 dark:text-white shadow-sm"
                         : "text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-[#A3A3A3]"
@@ -459,7 +459,7 @@ export default function BookingsPage() {
                     {tab.dot && <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", tab.dot)} />}
                     {tab.label}
                     {count > 0 && (
-                      <span className={cn("text-[10px] font-black tabular-nums ml-1",
+                      <span className={cn("text-[11px] font-black tabular-nums ml-1",
                         tab.key === 'pending' && count > 0 ? "text-[#FF7E36]" : "text-gray-400 dark:text-[#525252]")}>
                         {count}
                       </span>

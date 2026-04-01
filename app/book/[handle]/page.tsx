@@ -130,14 +130,14 @@ function ServiceCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
             <p className="font-bold text-sm text-gray-900 dark:text-white truncate">{service.name}</p>
-            <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full"
+            <span className="shrink-0 text-[13px] font-bold px-2 py-1 rounded-full"
               style={{ backgroundColor: `${TEAL}22`, color: TEAL }}>
               {service.duration_minutes} min
             </span>
           </div>
 
           {service.description && (
-            <p className="text-xs text-gray-500 line-clamp-2 mb-2">{service.description}</p>
+            <p className="text-[13px] text-gray-500 line-clamp-2 mb-2">{service.description}</p>
           )}
         </div>
       </div>
@@ -152,7 +152,7 @@ function ServiceCard({
         {!disabled && (
           <button
             onClick={(e) => { e.stopPropagation(); onClick() }}
-            className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl transition-all"
+            className="flex items-center gap-1 text-[13px] font-bold px-3 py-2 rounded-xl transition-all"
             style={{ backgroundColor: selected ? CORAL : `${CORAL}18`, color: selected ? "white" : CORAL }}
           >
             Book <CaretRight size={12} weight="bold" />
@@ -197,9 +197,9 @@ function DateChipScroller({
             )}
             style={isSelected ? { backgroundColor: CORAL } : undefined}
           >
-            <span className="text-[10px] uppercase tracking-wide opacity-70">{dayName}</span>
+            <span className="text-[11px] uppercase tracking-wide opacity-70">{dayName}</span>
             <span className="text-base font-black leading-tight">{date}</span>
-            <span className="text-[10px] uppercase tracking-wide opacity-70">{month}</span>
+            <span className="text-[11px] uppercase tracking-wide opacity-70">{month}</span>
           </button>
         )
       })}
@@ -247,7 +247,7 @@ function TimePillGrid({
             key={slot.id}
             onClick={() => onSelect(slot)}
             className={cn(
-              "py-3 rounded-2xl text-sm font-bold border-2 transition-all",
+              "py-3.5 rounded-2xl text-sm font-bold border-2 transition-all",
               isSelected
                 ? "text-white border-transparent"
                 : "border-gray-100 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#007B85]/50"
@@ -638,7 +638,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                 href={whatsappContactUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-bold transition-colors"
                 style={{ backgroundColor: `${WA_GREEN}15`, color: WA_GREEN }}
               >
                 <WaIcon size={13} />
@@ -650,7 +650,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
           {/* ── Service count badge ── */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-black text-gray-800 dark:text-white">Services</h2>
-            <span className="text-xs font-bold px-2 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500">
+            <span className="text-[13px] font-bold px-2 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500">
               {services.length} service{services.length !== 1 ? "s" : ""}
             </span>
           </div>
@@ -673,7 +673,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                       href={whatsappContactUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold rounded-xl px-3 py-1.5 border transition-colors"
+                      className="inline-flex items-center gap-1.5 mt-2 text-[13px] font-bold rounded-xl px-3 py-2 border transition-colors"
                       style={{ borderColor: WA_GREEN, color: WA_GREEN }}
                     >
                       <WaIcon size={13} />
@@ -867,7 +867,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
                         {/* Name */}
                         <div className="space-y-1">
-                          <label className="text-xs font-black uppercase tracking-wider text-gray-400">
+                          <label className="text-[13px] font-black uppercase tracking-wider text-gray-400">
                             Your name *
                           </label>
                           <input
@@ -888,7 +888,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                             )}
                           />
                           {formErrors.name && (
-                            <p className="text-xs text-red-500 flex items-center gap-1">
+                            <p className="text-[13px] text-red-500 flex items-center gap-1">
                               <WarningCircle size={12} /> {formErrors.name}
                             </p>
                           )}
@@ -896,7 +896,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
                         {/* Phone / WhatsApp */}
                         <div className="space-y-1">
-                          <label className="text-xs font-black uppercase tracking-wider text-gray-400">
+                          <label className="text-[13px] font-black uppercase tracking-wider text-gray-400">
                             Phone / WhatsApp *
                           </label>
                           <input
@@ -918,7 +918,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                             )}
                           />
                           {formErrors.phone && (
-                            <p className="text-xs text-red-500 flex items-center gap-1">
+                            <p className="text-[13px] text-red-500 flex items-center gap-1">
                               <WarningCircle size={12} /> {formErrors.phone}
                             </p>
                           )}
@@ -926,7 +926,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
                         {/* Optional message */}
                         <div className="space-y-1">
-                          <label className="text-xs font-black uppercase tracking-wider text-gray-400">
+                          <label className="text-[13px] font-black uppercase tracking-wider text-gray-400">
                             Message for {businessName} (optional)
                           </label>
                           <textarea
@@ -943,15 +943,15 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
 
                         {/* Booking summary */}
                         <div className="rounded-2xl p-4 space-y-1" style={{ backgroundColor: `${TEAL}08`, border: `1px solid ${TEAL}20` }}>
-                          <p className="text-[11px] font-black uppercase tracking-wider" style={{ color: TEAL }}>
+                          <p className="text-[13px] font-black uppercase tracking-wider" style={{ color: TEAL }}>
                             Booking Summary
                           </p>
                           <p className="text-sm font-bold text-gray-900 dark:text-white">{selectedService?.name}</p>
                           {selectedDate && (
-                            <p className="text-xs text-gray-500">{formatFullDate(selectedDate)}</p>
+                            <p className="text-[13px] text-gray-500">{formatFullDate(selectedDate)}</p>
                           )}
                           {selectedSlot && (
-                            <p className="text-xs text-gray-500">{formatTime(selectedSlot.start_time)}</p>
+                            <p className="text-[13px] text-gray-500">{formatTime(selectedSlot.start_time)}</p>
                           )}
                         </div>
 
@@ -987,7 +987,7 @@ export default function PublicBookingPage({ params }: BookingPageProps) {
                           </button>
                         </div>
 
-                        <p className="text-xs text-center text-gray-400">
+                        <p className="text-[13px] text-center text-gray-400">
                           By tapping, you agree to TropiChat&apos;s Terms
                         </p>
                       </motion.div>
