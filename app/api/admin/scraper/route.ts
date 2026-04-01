@@ -1,37 +1,99 @@
 import { NextResponse } from "next/server"
-import { exec } from "child_process"
-import { promisify } from "util"
-import path from "path"
-import fs from "fs"
+import { createClient } from "@supabase/supabase-js"
 
-const execPromise = promisify(exec)
+// Discovery Engine Credentials
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY!
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 export async function POST(req: Request) {
   try {
-    // Determine the path to the python script
-    const scriptPath = path.join(process.cwd(), "scripts", "prospector.py")
-    
-    // Parse the query and source if provided
     const body = await req.json().catch(() => ({}))
     const query = body.query || "Boutiques Nassau"
     const source = body.source || "google"
 
-    // Execute the python script using the project-local venv if it exists, otherwise use system python3
-    const venvPath = path.join(process.cwd(), "venv", "bin", "python3")
-    const pythonPath = fs.existsSync(venvPath) ? venvPath : "python3"
-    
-    const { stdout, stderr } = await execPromise(`"${pythonPath}" "${scriptPath}" --run --query "${query}" --source "${source}"`)
+    console.log(`🛰️  DISCOVERY MISSION: Starting ${source} scan for '${query}'...`)
 
-    if (stderr) {
-      console.error("Scraper Error:", stderr)
-      return NextResponse.json({ success: false, error: stderr }, { status: 500 })
+    let leads: any[] = []
+
+    if (source === 'google') {
+      // 🛰️ G-MAPS SCAN: Searching Google Maps for lead extraction
+      const endpoint = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+      const response = await fetch(`${endpoint}?query=${encodeURIComponent(query + " Bahamas")}&key=${googleMapsKey}`)
+      const data = await response.json()
+
+      if (data.status === "OK") {
+        leads = data.results.map((place: any) => {
+          const bizName = place.name
+          const address = place.formatted_address || "Bahamas"
+          const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bizName)}+${encodeURIComponent(address)}`
+
+          return {
+            business_name: bizName,
+            category: place.types && place.types[0] ? place.types[0].replace('_', ' ').charAt(0).toUpperCase() + place.types[0].replace('_', ' ').slice(1) : "Business",
+            contact_phone: "Scan for phone...",
+            external_link: mapsLink,
+            notes: `Detected in ${address}. Rating: ${place.rating || 'N/A'}⭐`,
+            source: "Google Maps Pro",
+            status: "cold"
+          }
+        })
+      }
+    } else {
+      // 🛰️ SOCIAL PROXY SCAN: (Facebook/Instagram)
+      const platform = source === 'facebook' ? 'Facebook' : 'Instagram'
+      const proxyQuery = `${query} ${platform} Bahamas`
+      const endpoint = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+      const response = await fetch(`${endpoint}?query=${encodeURIComponent(proxyQuery)}&key=${googleMapsKey}`)
+      const data = await response.json()
+
+      if (data.status === "OK") {
+        leads = data.results.map((place: any) => {
+          const bizName = place.name
+          const link = source === 'facebook' 
+            ? `https://www.facebook.com/search/pages/?q=${encodeURIComponent(bizName)}`
+            : `https://www.instagram.com/explore/tags/${bizName.toLowerCase().replace(/\s/g, '')}/`
+
+          return {
+            business_name: bizName,
+            category: `${platform} Lead`,
+            contact_phone: "Scan for phone...",
+            external_link: link,
+            instagram_handle: source === 'instagram' ? bizName.toLowerCase().replace(/\s/g, '') : null,
+            source: `${platform} Discovery`,
+            notes: `Socially detected in ${place.formatted_address || 'Bahamas'}. Potential reach: ${place.rating || 'N/A'}⭐`,
+            status: "cold"
+          }
+        })
+      }
     }
 
-    console.log("Scraper Output:", stdout)
+    // 🚀 INJECTING: Pushing leads to CRM Intelligence Hub
+    let count = 0
+    if (leads.length > 0) {
+      for (const lead of leads) {
+        // Check for duplicates
+        const { data: existing } = await supabase
+          .from("leads")
+          .select("id")
+          .eq("business_name", lead.business_name)
+          .maybeSingle()
+
+        if (!existing) {
+          const { error } = await supabase.from("leads").insert(lead)
+          if (!error) count++
+        }
+      }
+    }
+
+    console.log(`✅ MISSION SUCCESS: Loaded ${count} new leads into pipeline.`)
+
     return NextResponse.json({ 
       success: true, 
-      message: "Lead scraper completed successfully",
-      output: stdout 
+      message: `Mission completed: ${count} new leads extracted.`,
+      count 
     })
 
   } catch (error) {
