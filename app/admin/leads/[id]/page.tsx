@@ -129,7 +129,6 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
     if (error) {
       toast.error("Failed to update lead profile")
     } else {
-      toast.success("Profile Intel Synchronized")
       if (lead) setLead({ ...lead, ...profile })
     }
     setSavingProfile(false)
@@ -146,7 +145,6 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
     if (error) {
       toast.error("Failed to synchronize notes")
     } else {
-      toast.success("Intelligence Log Synchronized")
       if (lead) setLead({ ...lead, notes })
     }
     setSaving(false)

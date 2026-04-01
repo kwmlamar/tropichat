@@ -25,21 +25,36 @@ export async function POST(req: Request) {
       const data = await response.json()
 
       if (data.status === "OK") {
-        leads = data.results.map((place: any) => {
+        const topResults = data.results.slice(0, 10) // Limit for speed/cost
+        
+        for (const place of topResults) {
           const bizName = place.name
           const address = place.formatted_address || "Bahamas"
           const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bizName)}+${encodeURIComponent(address)}`
+          
+          let phoneNumber = "No Phone Protocol"
+          
+          // 🛰️ DEEP SCAN: Fetch Place Details for the phone number
+          if (place.place_id) {
+            const detailEndpoint = "https://maps.googleapis.com/maps/api/place/details/json"
+            const detailRes = await fetch(`${detailEndpoint}?place_id=${place.place_id}&fields=formatted_phone_number,international_phone_number&key=${googleMapsKey}`)
+            const detailData = await detailRes.json()
+            
+            if (detailData.status === "OK" && detailData.result) {
+              phoneNumber = detailData.result.international_phone_number || detailData.result.formatted_phone_number || phoneNumber
+            }
+          }
 
-          return {
+          leads.push({
             business_name: bizName,
-            category: place.types && place.types[0] ? place.types[0].replace('_', ' ').charAt(0).toUpperCase() + place.types[0].replace('_', ' ').slice(1) : "Business",
-            contact_phone: "Scan for phone...",
+            category: place.types && place.types[0] ? place.types[0].replace(/_/g, ' ').charAt(0).toUpperCase() + place.types[0].replace(/_/g, ' ').slice(1) : "Business",
+            contact_phone: phoneNumber,
             external_link: mapsLink,
             notes: `Detected in ${address}. Rating: ${place.rating || 'N/A'}⭐`,
             source: "Google Maps Pro",
             status: "cold"
-          }
-        })
+          })
+        }
       }
     } else {
       // 🛰️ SOCIAL PROXY SCAN: (Facebook/Instagram)
@@ -59,7 +74,7 @@ export async function POST(req: Request) {
           return {
             business_name: bizName,
             category: `${platform} Lead`,
-            contact_phone: "Scan for phone...",
+            contact_phone: "No Phone Protocol",
             external_link: link,
             instagram_handle: source === 'instagram' ? bizName.toLowerCase().replace(/\s/g, '') : null,
             source: `${platform} Discovery`,
