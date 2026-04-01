@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       const data = await response.json()
 
       if (data.status === "OK") {
-        const topResults = data.results.slice(0, 10) // Limit for speed/cost
+        const topResults = data.results.slice(0, 5) // Deep Recon limit for stability
         
         for (const place of topResults) {
           const bizName = place.name
@@ -33,15 +33,47 @@ export async function POST(req: Request) {
           const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(bizName)}+${encodeURIComponent(address)}`
           
           let phoneNumber = "No Phone Protocol"
+          let website = null
+          let email = null
+          let facebook = null
+          let instagram = null
           
-          // 🛰️ DEEP SCAN: Fetch Place Details for the phone number
+          // 🛰️ DEEP SCAN: Fetch Place Details for Phone & Website
           if (place.place_id) {
             const detailEndpoint = "https://maps.googleapis.com/maps/api/place/details/json"
-            const detailRes = await fetch(`${detailEndpoint}?place_id=${place.place_id}&fields=formatted_phone_number,international_phone_number&key=${googleMapsKey}`)
+            const fields = "formatted_phone_number,international_phone_number,website"
+            const detailRes = await fetch(`${detailEndpoint}?place_id=${place.place_id}&fields=${fields}&key=${googleMapsKey}`)
             const detailData = await detailRes.json()
             
             if (detailData.status === "OK" && detailData.result) {
               phoneNumber = detailData.result.international_phone_number || detailData.result.formatted_phone_number || phoneNumber
+              website = detailData.result.website || null
+            }
+          }
+
+          // 🛰️ SOCIAL RECON: If website exists, extract Socials & Email
+          if (website) {
+            try {
+              // Fetch the homepage with a timeout
+              const controller = new AbortController()
+              const timeoutId = setTimeout(() => controller.abort(), 4000) // 4s timeout
+              const siteRes = await fetch(website, { signal: controller.signal })
+              const html = await siteRes.text()
+              clearTimeout(timeoutId)
+
+              // Extract Email
+              const emailMatch = html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)
+              if (emailMatch) email = emailMatch[0]
+
+              // Extract Facebook
+              const fbMatch = html.match(/https?:\/\/(www\.)?facebook\.com\/[a-zA-Z0-9._%-]+/i)
+              if (fbMatch) facebook = fbMatch[0]
+
+              // Extract Instagram
+              const igMatch = html.match(/https?:\/\/(www\.)?instagram\.com\/([a-zA-Z0-9._%+-]+)/i)
+              if (igMatch) instagram = igMatch[2]
+            } catch (reconError) {
+              console.log(`⚠️ RECON FAILED for ${bizName}: ${reconError instanceof Error ? reconError.message : "Timeout"}`)
             }
           }
 
@@ -49,8 +81,11 @@ export async function POST(req: Request) {
             business_name: bizName,
             category: place.types && place.types[0] ? place.types[0].replace(/_/g, ' ').charAt(0).toUpperCase() + place.types[0].replace(/_/g, ' ').slice(1) : "Business",
             contact_phone: phoneNumber,
+            contact_email: email,
+            facebook_page: facebook,
+            instagram_handle: instagram,
             external_link: mapsLink,
-            notes: `Detected in ${address}. Rating: ${place.rating || 'N/A'}⭐`,
+            notes: `Detected in ${address}. Rating: ${place.rating || 'N/A'}⭐${website ? ` \nWebsite: ${website}` : ""}`,
             source: "Google Maps Pro",
             status: "cold"
           })
@@ -93,7 +128,7 @@ export async function POST(req: Request) {
         // Check for existing lead by business name
         const { data: existing } = await supabase
           .from("leads")
-          .select("id, contact_phone")
+          .select("id, contact_phone, contact_email, facebook_page, instagram_handle, notes")
           .eq("business_name", lead.business_name)
           .maybeSingle()
 
@@ -101,23 +136,42 @@ export async function POST(req: Request) {
           // New target identified
           const { error } = await supabase.from("leads").insert(lead)
           if (!error) count++
-        } else if (
-          lead.contact_phone !== "No Phone Protocol" && 
-          (!existing.contact_phone || 
-           existing.contact_phone === "Scan for phone..." || 
-           existing.contact_phone === "No Phone Protocol")
-        ) {
-          // Target exists but phone intel is missing - perform enrichment
-          const { error } = await supabase
-            .from("leads")
-            .update({ 
-               contact_phone: lead.contact_phone,
-               notes: lead.notes + " (Phone protocol enriched via Discovery Mission)",
-               updated_at: new Date().toISOString()
-            })
-            .eq("id", existing.id)
+        } else {
+          // Target exists - check for enrichment opportunities (Social, Email, Phone)
+          const updates: any = {}
+          
+          // Phone Enrichment
+          if (lead.contact_phone !== "No Phone Protocol" && 
+              (!existing.contact_phone || existing.contact_phone === "Scan for phone..." || existing.contact_phone === "No Phone Protocol")) {
+            updates.contact_phone = lead.contact_phone
+          }
+          
+          // Email Enrichment
+          if (lead.contact_email && !existing.contact_email) {
+            updates.contact_email = lead.contact_email
+          }
+          
+          // Facebook Enrichment
+          if (lead.facebook_page && !existing.facebook_page) {
+            updates.facebook_page = lead.facebook_page
+          }
+          
+          // Instagram Enrichment
+          if (lead.instagram_handle && !existing.instagram_handle) {
+            updates.instagram_handle = lead.instagram_handle
+          }
+          
+          if (Object.keys(updates).length > 0) {
+            updates.notes = (existing.notes || "") + `\n(Social intel enriched via Discovery Mission: ${Object.keys(updates).join(', ')})`
+            updates.updated_at = new Date().toISOString()
             
-          if (!error) enrichedCount++
+            const { error } = await supabase
+              .from("leads")
+              .update(updates)
+              .eq("id", existing.id)
+              
+            if (!error) enrichedCount++
+          }
         }
       }
     }
