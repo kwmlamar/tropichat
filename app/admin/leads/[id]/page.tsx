@@ -396,8 +396,9 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   </div>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText("Mornin, mornin! this lamar, i been looking at yall website yall seem busy man. So look, i have an opportunity for yall to save more time AND make more money inside your business? You got 2 minutes to hear me out?");
-                      toast.success("Script Copied to Clipboard");
+                      const script = `“Hey, real quick — I’m testing something I built that helps businesses reply to customers instantly on WhatsApp and Instagram so they don’t lose sales when they’re busy.”\n\nPause.\n\n“I’m only setting it up for a few businesses for free right now. I’ll literally help you set it up and customize it for your business.”\n\nThen:\n\n“If it actually helps you catch more customers, I’d just ask for feedback and a quick review.”\n\n🎯 If they hesitate:\n\n“Worst case, you try it for a couple weeks and don’t use it. No cost.”`;
+                      navigator.clipboard.writeText(script);
+                      toast.success("Strategy Copied to Clipboard");
                     }}
                     className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl transition-all border border-white/10"
                   >
@@ -405,10 +406,31 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   </button>
                 </div>
                 
-                <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8">
+                <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8 space-y-4">
                   <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
-                    "Mornin, mornin! this <span className="underline decoration-[#007B85]/30">lamar</span>, i been looking at yall website yall seem busy man. So look, i have an opportunity for yall to <span className="text-[#007B85]">save more time</span> AND <span className="text-[#007B85]">make more money</span> inside your business? You got 2 minutes to hear me out?"
+                    “Hey, real quick — I’m testing something I built that helps businesses <span className="text-[#007B85]">reply to customers instantly</span> on WhatsApp and Instagram so they don’t lose sales when they’re busy.”
                   </p>
+                  <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest px-3 py-1 bg-gray-50 dark:bg-white/5 rounded-full w-fit">
+                    Pause for response
+                  </div>
+                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
+                    “I’m only setting it up for <span className="underline decoration-[#007B85]/30">a few businesses for free</span> right now. I’ll literally help you set it up and customize it for your business.”
+                  </p>
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic opacity-50 px-3">
+                    Then:
+                  </div>
+                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic border-l-4 border-[#007B85]/20 pl-4">
+                    “If it actually helps you catch more customers, I’d just ask for feedback and a quick review.”
+                  </p>
+                  <div className="pt-4 border-t border-gray-100 dark:border-white/10 mt-4">
+                    <div className="flex items-center gap-2 mb-2">
+                       <span className="text-sm">🎯</span>
+                       <span className="text-[10px] font-black uppercase text-amber-500 tracking-[0.2em]">If they hesitate</span>
+                    </div>
+                    <p className="text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed italic">
+                        “Worst case, you try it for a couple weeks and don’t use it. <span className="text-[#007B85]">No cost.</span>”
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
