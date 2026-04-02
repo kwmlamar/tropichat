@@ -111,7 +111,7 @@ interface SettingsModalProps {
   initialTab?: string
 }
 
-type Tab = 
+export type Tab = 
   | "profile" 
   | "hours"
   | "notifications" 
@@ -306,7 +306,7 @@ export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsMod
   )
 }
 
-function TabContent({ activeTab, customer, personalProfile, metaStatus, onRefresh }: { 
+export function TabContent({ activeTab, customer, personalProfile, metaStatus, onRefresh }: { 
   activeTab: Tab, 
   customer: Customer | null, 
   personalProfile: any, 

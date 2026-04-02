@@ -120,21 +120,26 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="flex flex-col items-start gap-4"
+              className="flex flex-col items-start gap-5 w-full"
             >
               <Button
                 onClick={goToSignup}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl md:text-2xl font-black h-24 px-12 md:px-16 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-widest flex flex-col pt-4"
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white font-black h-auto py-4 sm:h-24 sm:py-0 px-6 sm:px-12 md:px-16 rounded-2xl sm:rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-wider sm:tracking-widest flex flex-col justify-center items-center gap-1 sm:gap-0"
               >
-                WE'LL SET IT UP FOR YOU FOR FREE
-                <span className="text-[10px] font-black opacity-60 tracking-[0.3em] -mt-1">Limited spots available</span>
+                <span className="text-lg sm:text-xl md:text-2xl text-center leading-tight">
+                  <span className="sm:hidden">Get Set Up For Free</span>
+                  <span className="hidden sm:inline">WE'LL SET IT UP FOR YOU FOR FREE</span>
+                </span>
+                <span className="text-[9px] sm:text-[10px] font-black opacity-60 tracking-[0.2em] sm:tracking-[0.3em] sm:-mt-1 text-center">
+                  Limited spots available
+                </span>
               </Button>
-              <div className="flex flex-wrap items-center gap-6 pl-6 text-[#007B85] font-black uppercase tracking-[0.2em] text-[10px]">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-6 sm:pl-6 text-[#007B85] font-black uppercase tracking-[0.2em] text-[10px]">
                  <span className="flex items-center gap-2">
-                    <CheckCircle weight="fill" className="h-4 w-4" /> Ready in minutes
+                    <CheckCircle weight="fill" className="h-4 w-4 shrink-0" /> Ready in minutes
                  </span>
                  <span className="flex items-center gap-2">
-                    <CheckCircle weight="fill" className="h-4 w-4" /> Works with WhatsApp, IG & Facebook
+                    <CheckCircle weight="fill" className="h-4 w-4 shrink-0" /> Works with WhatsApp, IG & Facebook
                  </span>
               </div>
             </motion.div>

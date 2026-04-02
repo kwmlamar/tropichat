@@ -28,9 +28,22 @@ export default function DashboardLayout({
   const access = getAccessStatus(customer)
 
   const handleOpenSettings = (tab?: string) => {
-    setInitialSettingsTab(tab)
-    setIsSettingsOpen(true)
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      router.push(`/dashboard/profile/${tab || 'profile'}`)
+    } else {
+      setInitialSettingsTab(tab)
+      setIsSettingsOpen(true)
+    }
   }
+
+  useEffect(() => {
+    const handleSettingsEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      handleOpenSettings(customEvent.detail?.tab);
+    }
+    window.addEventListener("open-settings", handleSettingsEvent)
+    return () => window.removeEventListener("open-settings", handleSettingsEvent)
+  }, [])
 
   useEffect(() => {
     async function checkAuth() {
