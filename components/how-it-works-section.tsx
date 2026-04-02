@@ -19,7 +19,7 @@ const steps = [
   {
     icon: ChatIcon,
     label: "SEE EVERYONE",
-    sub: "All customer messages in one place — no switching apps",
+    sub: "All messages in one place (WhatsApp, IG & Facebook) — no switching apps",
     color: "bg-[#007B85]",
     shadow: "shadow-teal-500/40"
   },

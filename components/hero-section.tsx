@@ -134,7 +134,7 @@ export function HeroSection() {
                     <CheckCircle weight="fill" className="h-4 w-4" /> Ready in minutes
                  </span>
                  <span className="flex items-center gap-2">
-                    <CheckCircle weight="fill" className="h-4 w-4" /> Works with WhatsApp & IG
+                    <CheckCircle weight="fill" className="h-4 w-4" /> Works with WhatsApp, IG & Facebook
                  </span>
               </div>
             </motion.div>

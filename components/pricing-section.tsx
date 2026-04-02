@@ -27,7 +27,7 @@ const tiers = [
     description: "Stop losing customers while you work. Auto-reply for WhatsApp + IG.",
     features: [
       "Up to 500 contacts",
-      "All messages in one place (WhatsApp + IG)",
+      "All messages in one place (WhatsApp, IG, FB)",
       "Auto-reply to common questions",
       "Replies using your saved answers (e.g. Prices, Hours)",
       "Mobile App Access",
