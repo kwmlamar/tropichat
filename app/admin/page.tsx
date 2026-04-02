@@ -18,16 +18,19 @@ import {
   CaretRight,
   Globe,
   FacebookLogo,
-  InstagramLogo
+  InstagramLogo,
+  Clock,
+  CheckCircle
 } from "@phosphor-icons/react"
 import { toast } from "sonner"
-import { cn } from "@/lib/utils"
+import { cn, formatDate, formatDistanceToNow } from "@/lib/utils"
 
 export default function AdminDashboard() {
   const [waitlistCount, setWaitlistCount] = useState(0)
   const [leadsCount, setLeadsCount] = useState(0)
   const [usersCount, setUsersCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [todos, setTodos] = useState<any[]>([])
   const [revenueMetrics, setRevenueMetrics] = useState({ currentMRR: 0 })
   const [isScraping, setIsScraping] = useState(false)
   const [scrapeSource, setScrapeSource] = useState(() => {
@@ -62,11 +65,84 @@ export default function AdminDashboard() {
       setWaitlistCount(wCount || 0)
       setLeadsCount(lCount || 0)
       setUsersCount(wDealsCount || 0)
+      
+      // 4. Fetch Tactical To-Dos
+      await fetchTodos()
+      
       setLoading(false)
     }
 
     fetchAdminStats()
   }, [])
+
+  const fetchTodos = async () => {
+    const client = getSupabase()
+    const now = new Date().toISOString()
+    
+    // Fetch callbacks due now/past
+    const { data: callbacks } = await client
+      .from('leads')
+      .select('*')
+      .eq('status', 'callback')
+      .lte('callback_at', now)
+      .order('callback_at', { ascending: true })
+
+    // Fetch followups due (2 days for first, 14 days for subsequent)
+    const { data: contacts } = await client
+      .from('leads')
+      .select('*')
+      .eq('status', 'contacted')
+      .order('last_contacted_at', { ascending: true })
+
+    const followupTodos = (contacts || []).filter(lead => {
+      if (!lead.last_contacted_at) return true // Immediate followup if never marked
+      
+      const lastContact = new Date(lead.last_contacted_at).getTime()
+      const daysSince = (new Date().getTime() - lastContact) / (1000 * 60 * 60 * 24)
+      
+      if (lead.followup_count === 0) {
+        return daysSince >= 2 // 2 days for first recall
+      } else {
+        return daysSince >= 14 // 14 days for persistent mission
+      }
+    })
+
+    const allTodos = [
+      ...(callbacks || []).map(c => ({ ...c, type: 'callback' })),
+      ...followupTodos.map(f => ({ ...f, type: 'followup' }))
+    ]
+
+    setTodos(allTodos)
+  }
+
+  const markTodoDone = async (todo: any) => {
+    const client = getSupabase()
+    const isCallback = todo.type === 'callback'
+    
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+      last_contacted_at: new Date().toISOString()
+    }
+
+    if (isCallback) {
+      updateData.status = 'contacted'
+      updateData.callback_at = null
+    } else {
+      updateData.followup_count = (todo.followup_count || 0) + 1
+    }
+
+    const { error } = await client
+      .from('leads')
+      .update(updateData)
+      .eq('id', todo.id)
+
+    if (error) {
+      toast.error("Failed to update mission status")
+    } else {
+      toast.success(isCallback ? "Target contacted! Protocol advanced." : `Recall mission #${updateData.followup_count} logged!`)
+      setTodos(prev => prev.filter(t => t.id !== todo.id))
+    }
+  }
 
   // Persist changes
   useEffect(() => {
@@ -315,30 +391,82 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* DEV OPS & METRICS */}
+        {/* TACTICAL TO-DO LIST */}
         <div className="lg:col-span-4 space-y-6">
           <div className="rounded-[2rem] border border-gray-200 dark:border-[#1C1C1C] bg-white dark:bg-[#0C0C0C] overflow-hidden shadow-sm">
-            <div className="p-8 border-b border-gray-100 dark:border-[#1C1C1C]">
+            <div className="p-8 border-b border-gray-100 dark:border-[#1C1C1C] flex items-center justify-between">
               <h3 className="text-xl font-black text-[#213138] dark:text-white flex items-center gap-3 font-poppins uppercase tracking-tight">
-                <BarChart3 weight="bold" className="h-6 w-6 text-[#3A9B9F]" />
-                Dev Ops
+                <Calendar weight="bold" className="h-6 w-6 text-[#3A9B9F]" />
+                Tactical To-Dos
               </h3>
-            </div>
-            <div className="p-8 space-y-4">
-              {[
-                { label: 'System status', value: 'Healthy', color: 'text-green-600', border: 'border-l-green-500' },
-                { label: 'Database', value: 'Online', color: 'text-[#3A9B9F]', border: 'border-l-[#3A9B9F]' },
-                { label: 'Cloud Satellite', value: 'Connected', color: 'text-blue-500', border: 'border-l-blue-500' }
-              ].map(stat => (
-                <div key={stat.label} className={cn("p-5 rounded-2xl border-l-4 bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-[#A3A3A3] text-sm font-medium", stat.border)}>
-                  {stat.label}: <span className={cn("font-black uppercase ml-1", stat.color)}>{stat.value}</span>
-                </div>
-              ))}
-              <div className="pt-4">
-                <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 text-gray-500 dark:text-[#525252] text-[10px] font-black uppercase tracking-[0.2em] text-center">
-                    CORE VERSION: <span className="font-mono ml-1 text-gray-900 dark:text-white">v0.1.0-ELITE</span>
-                </div>
+              <div className="px-3 py-1 bg-gray-50 dark:bg-white/5 rounded-full text-[9px] font-black uppercase text-[#3A9B9F] tracking-widest border border-gray-100 dark:border-white/5">
+                Outreach Hub
               </div>
+            </div>
+            
+            <div className="p-8 space-y-4">
+              {loading ? (
+                <div className="flex flex-col items-center gap-4 py-8">
+                  <div className="h-4 w-4 border-2 border-[#3A9B9F]/30 border-t-[#3A9B9F] rounded-full animate-spin" />
+                  <div className="text-[10px] font-black uppercase text-gray-300 tracking-widest">Scanning Pipeline...</div>
+                </div>
+              ) : (
+                <>
+                  {todos.length === 0 ? (
+                    <div className="text-center py-12 px-6">
+                      <div className="h-10 w-10 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-100 dark:border-white/5 opacity-50">
+                        <CheckCircle weight="fill" className="text-green-500/30" />
+                      </div>
+                      <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest leading-relaxed">No missions active.<br />Discovery complete.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                      {todos.map((todo) => (
+                        <div key={todo.id} className="group relative p-5 bg-white dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-2xl hover:border-[#3A9B9F]/30 transition-all">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className={cn(
+                                  "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
+                                  todo.type === 'callback' ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                                  todo.followup_count === 0 ? "bg-blue-500/10 border-blue-500/20 text-blue-500" :
+                                  "bg-purple-500/10 border-purple-500/20 text-purple-500"
+                                )}>
+                                  {todo.type === 'callback' ? 'Target Callback' : todo.followup_count === 0 ? 'First Followup' : `R-${todo.followup_count + 1} Outreach`}
+                                </span>
+                              </div>
+                              <Link href={`/admin/leads/${todo.id}`}>
+                                <h4 className="text-sm font-black text-[#213138] dark:text-white mt-1.5 hover:text-[#3A9B9F] transition-colors">{todo.business_name}</h4>
+                              </Link>
+                              <div className="flex items-center gap-4 mt-2 text-[10px] font-bold uppercase tracking-tight text-gray-400">
+                                <div className="flex items-center gap-1.5">
+                                  <Clock className="h-3 w-3" />
+                                  {todo.type === 'callback' ? formatDate(todo.callback_at) : `${formatDistanceToNow(todo.last_contacted_at)} ago`}
+                                </div>
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => markTodoDone(todo)}
+                              className="p-3 bg-gray-50 dark:bg-white/5 rounded-xl text-gray-300 hover:text-green-500 hover:bg-green-500/10 transition-all border border-transparent hover:border-green-500/20 flex-shrink-0"
+                            >
+                              <CheckCircle weight="fill" className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="p-8 pt-0 border-t border-gray-100 dark:border-[#1C1C1C] mt-4 pt-8 opacity-60">
+                <div className="p-4 rounded-2xl border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 space-y-1">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#3A9B9F]">Follow-up Protocol:</div>
+                    <div className="text-[9px] font-bold text-gray-500 dark:text-[#525252] lead-relaxed">
+                       Contacts = 2-day recall mission. <br /> Ongoing = 2-week persistent mission.
+                    </div>
+                </div>
             </div>
           </div>
         </div>

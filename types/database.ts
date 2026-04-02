@@ -46,6 +46,7 @@ export interface Customer {
   id: string
   business_name: string
   has_onboarded: boolean
+  ai_voice_profile?: any
   full_name: string | null
   contact_email: string
   password_hash?: string

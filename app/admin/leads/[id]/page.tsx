@@ -41,6 +41,9 @@ type Lead = {
   notes: string | null
   category: string | null
   location: string | null
+  callback_at: string | null
+  last_contacted_at: string | null
+  followup_count: number
   created_at: string
   updated_at: string
 }
@@ -152,16 +155,47 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
 
   async function updateStatus(newStatus: Lead['status']) {
     const supabase = getSupabase()
+    const updateData: any = { 
+      status: newStatus, 
+      updated_at: new Date().toISOString() 
+    }
+
+    // High-fidelity timestamp logic
+    if (newStatus === 'contacted') {
+      updateData.last_contacted_at = new Date().toISOString()
+    } else if (newStatus !== 'callback') {
+      // Clear callback if moving away from callback status
+      updateData.callback_at = null
+    }
+
     const { error } = await supabase
       .from('leads')
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update(updateData)
       .eq('id', id)
 
     if (error) {
       toast.error("Failed to update status")
     } else {
       toast.success(`Mission Status: ${newStatus.toUpperCase()}`)
-      if (lead) setLead({ ...lead, status: newStatus })
+      if (lead) setLead({ ...lead, ...updateData })
+    }
+  }
+
+  async function updateCallbackAt(dateStr: string) {
+    const supabase = getSupabase()
+    const { error } = await supabase
+      .from('leads')
+      .update({ 
+        callback_at: dateStr,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+
+    if (error) {
+      toast.error("Failed to schedule callback")
+    } else {
+      toast.success("Callback Mission Scheduled! 🛰️")
+      if (lead) setLead({ ...lead, callback_at: dateStr })
     }
   }
 
@@ -219,8 +253,8 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        <div className="flex items-center gap-4 bg-white dark:bg-[#0C0C0C] p-2 rounded-[1.5rem] border border-gray-200 dark:border-[#1C1C1C] shadow-sm">
-          <div className="px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Pipeline Status</div>
+        <div className="flex flex-wrap items-center gap-4 bg-white dark:bg-[#0C0C0C] p-2 rounded-[1.5rem] border border-gray-200 dark:border-[#1C1C1C] shadow-sm">
+          <div className="px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">Pipeline Status</div>
           <select 
             value={lead.status}
             onChange={(e) => updateStatus(e.target.value as Lead['status'])}
@@ -233,6 +267,18 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
             <option value="won">🏆 Won</option>
             <option value="lost">❌ Lost</option>
           </select>
+
+          {lead.status === 'callback' && (
+            <div className="flex items-center gap-2 pl-4 border-l border-gray-100 dark:border-white/5">
+               <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest animate-pulse">Call At:</span>
+               <input 
+                type="datetime-local" 
+                value={lead.callback_at ? lead.callback_at.slice(0, 16) : ""}
+                onChange={(e) => updateCallbackAt(new Date(e.target.value).toISOString())}
+                className="bg-amber-500/5 border border-amber-500/10 rounded-xl text-[10px] font-black text-[#213138] dark:text-white px-3 py-1.5 outline-none focus:ring-1 focus:ring-amber-500"
+               />
+            </div>
+          )}
         </div>
       </div>
 
