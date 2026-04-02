@@ -482,8 +482,24 @@ export default function LeadsPage() {
                     )}
                     {visibleColumns.includes('intelligence') && (
                       <td className="px-6 py-6 transition-all">
-                        <div className="text-sm text-[#213138] dark:text-gray-200 font-black tracking-tight">
-                          {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || 'Scan for phone...')}
+                        <div className="flex items-center gap-2 group/contact">
+                          <div className="text-sm text-[#213138] dark:text-gray-200 font-black tracking-tight">
+                            {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || 'Scan for phone...')}
+                          </div>
+                          {(lead.instagram_handle || (lead.contact_phone && lead.contact_phone !== 'Scan for phone...')) && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const text = lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || '');
+                                navigator.clipboard.writeText(text);
+                                toast.success(`Contact copied: ${text}`);
+                              }}
+                              className="p-1 rounded-lg bg-gray-50 dark:bg-[#111111] text-gray-400 hover:text-[#007B85] transition-all opacity-0 group-hover/contact:opacity-100"
+                              title="Copy contact"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          )}
                         </div>
                         <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 opacity-80">{lead.contact_email || 'No email decoded'}</div>
                       </td>
