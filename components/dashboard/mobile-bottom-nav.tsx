@@ -23,12 +23,13 @@ import { useState, useEffect, useCallback } from "react"
 import { getUnreadConversationCount, subscribeToConversations, signOut } from "@/lib/supabase"
 import { toast } from "sonner"
 import type { Customer } from "@/types/database"
+import { Avatar } from "@/components/ui/avatar"
 
 // Primary tabs displayed in the bottom bar
 const primaryTabs = [
   { href: "/dashboard/analytics", label: "Home", icon: House, exact: false },
   { href: "/dashboard", label: "Inbox", icon: ChatCircleDots, exact: true },
-  { href: "/dashboard/ai", label: "Tropi AI", icon: ShieldCheck, exact: false },
+  { href: "#profile", label: "Profile", icon: User, exact: false },
 ]
 
 
@@ -197,6 +198,36 @@ export function MobileBottomNav({ customer, personalProfile, onOpenSettings }: M
             const Icon = tab.icon
             const active = isActive(tab.href, tab.exact)
             const isInbox = tab.href === "/dashboard" && tab.exact
+            const isProfile = tab.label === "Profile"
+
+            if (isProfile) {
+              return (
+                <Link
+                  key={tab.label}
+                  href="/dashboard/profile"
+                  className={cn(
+                    "flex-1 flex flex-col items-center justify-center gap-1 py-2.5 relative transition-colors duration-200",
+                    pathname.startsWith("/dashboard/profile") ? "text-[#007B85]" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  )}
+                >
+                  <div className="relative flex h-6 w-6 items-center justify-center">
+                    <Avatar
+                      fallback={personalProfile?.full_name || personalProfile?.contact_email || "U"}
+                      className={cn(
+                        "h-6 w-6 text-[10px] ring-2",
+                        pathname.startsWith("/dashboard/profile") ? "ring-[#007B85]" : "ring-transparent dark:ring-transparent"
+                      )}
+                    />
+                  </div>
+                  <span className="text-[10px] font-medium tracking-wide transition-colors duration-200">
+                    Profile
+                  </span>
+                  {pathname.startsWith("/dashboard/profile") && (
+                    <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[#007B85]" />
+                  )}
+                </Link>
+              )
+            }
 
             return (
               <Link
