@@ -12,21 +12,21 @@ const steps = [
   {
     icon: LinkIcon,
     label: "CONNECT",
-    sub: "WhatsApp in one click",
+    sub: "WhatsApp in one click — no tech skills needed",
     color: "bg-blue-500",
     shadow: "shadow-blue-500/40"
   },
   {
     icon: ChatIcon,
-    label: "ALL MESSAGES",
-    sub: "One place - no switching apps",
+    label: "SEE EVERYONE",
+    sub: "All customer messages in one place — no switching apps",
     color: "bg-[#007B85]",
     shadow: "shadow-teal-500/40"
   },
   {
     icon: SellIcon,
-    label: "AUTO-REPLY",
-    sub: "Reply instantly using your saved answers",
+    label: "REPLY INSTANTLY",
+    sub: "Don't lose customers even when you're busy",
     color: "bg-amber-500",
     shadow: "shadow-amber-500/40"
   },

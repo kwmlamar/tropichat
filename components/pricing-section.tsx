@@ -29,7 +29,7 @@ const tiers = [
       "Up to 500 contacts",
       "All messages in one place (WhatsApp + IG)",
       "Auto-reply to common questions",
-      "AI auto-replies using your saved answers",
+      "Replies using your saved answers (e.g. Prices, Hours)",
       "Mobile App Access",
       "Community Support"
     ],
@@ -47,7 +47,7 @@ const tiers = [
       "Broadcast messages to all customers",
       "WhatsApp QR code for your shop",
       "Automatic story mention replies",
-      "Customer history & notes (know who's buying)",
+      "Store customer names and history",
       "Priority Email Support"
     ],
     cta: "Accelerate Growth",
@@ -62,7 +62,7 @@ const tiers = [
     features: [
       "Up to 10,000 contacts",
       "Unlimited Team Members",
-      "AI trained on your business specifically",
+      "Smart replies trained on your business",
       "Direct Booking & Payment links",
       "Follow up with people who didn't book",
       "Direct Founder Support"
@@ -79,7 +79,7 @@ const tiers = [
     features: [
       "Full Setup done by us",
       "We manage your WhatsApp & IG sales",
-      "Custom AI strategy built for you",
+      "Custom sales strategy built for you",
       "Weekly reports on money made",
       "24/7 Priority Sales Support",
       "Unlimited Contacts & Growth"
@@ -106,12 +106,15 @@ export function PricingSection() {
              className="text-4xl md:text-7xl font-black text-[#213138] tracking-tighter leading-none mb-8"
            >
               Scale with your <br />
-              <span className="text-gray-300">Caribbean success</span>
+              <span className="text-gray-300 text-3xl md:text-6xl">Caribbean success</span>
            </motion.h2>
 
            {/* Toggle */}
            <div className="flex flex-col items-center gap-6">
-              <div className="flex items-center justify-center gap-4 bg-white/50 w-fit mx-auto px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+              <div className="bg-[#007B85] text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-4 shadow-xl shadow-teal-500/20">
+                 Free Setup Included for first 10 businesses
+              </div>
+              <div className="flex items-center justify-center gap-4 bg-white mx-auto px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
                  <span className={cn("text-xs font-black uppercase tracking-widest transition-colors", !isAnnual ? 'text-[#007B85]' : 'text-gray-400')}>Monthly</span>
                  <button 
                    onClick={() => setIsAnnual(!isAnnual)}
@@ -128,9 +131,9 @@ export function PricingSection() {
                  </span>
               </div>
               
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-[#007B85]/5 border border-[#007B85]/10 rounded-full">
-                 <CheckCircle weight="fill" className="h-4 w-4 text-[#007B85]" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#007B85]">14-Day Free Trial • Cancel Anytime</span>
+              <div className="flex items-center gap-2 px-6 py-2 bg-white border border-teal-100 rounded-full shadow-sm">
+                 <ShieldCheck weight="fill" className="h-5 w-5 text-[#007B85]" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#213138]">14-Day Free Trial • No Credit Card • Zero Risk</span>
               </div>
            </div>
         </div>

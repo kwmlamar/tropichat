@@ -100,35 +100,21 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[15ch]"
+              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[15ch] uppercase"
             >
               Stop Losing <br className="hidden sm:block" /> 
-              Customers <span className="text-[#007B85] drop-shadow-2xl italic">Immediately.</span>
+              Customers <span className="text-[#007B85] drop-shadow-2xl italic underline decoration-8 underline-offset-[1.5rem]">Today.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-xl md:text-3xl text-gray-300 font-bold max-w-2xl mb-12 leading-tight uppercase tracking-tight opacity-90"
+              className="text-xl md:text-3xl text-gray-300 font-bold max-w-2xl mb-12 leading-tight uppercase tracking-tight opacity-95"
             >
-              TropiChat answers your WhatsApp and IG messages automatically — <br className="hidden md:block" />
-              so you reply to every customer instantly while you're busy.
+              TropiChat answers your WhatsApp and Instagram messages automatically — <br className="hidden md:block" />
+              so you don’t lose money when you’re too busy to reply.
             </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="flex items-center gap-6 mb-12 opacity-60"
-            >
-               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Trusted by:</span>
-               <div className="flex gap-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Tour Operators</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Barbershops</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#007B85]">Boutiques</span>
-               </div>
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -138,13 +124,19 @@ export function HeroSection() {
             >
               <Button
                 onClick={goToSignup}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl font-black h-20 px-12 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-widest"
+                className="bg-[#007B85] hover:bg-[#2F8488] text-white text-xl md:text-2xl font-black h-24 px-12 md:px-16 rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-widest flex flex-col pt-4"
               >
-                START FREE — SET UP IN 60 SECONDS
+                WE'LL SET IT UP FOR YOU FOR FREE
+                <span className="text-[10px] font-black opacity-60 tracking-[0.3em] -mt-1">Limited spots available</span>
               </Button>
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#007B85] opacity-80 pl-4">
-                14-Day Free Trial • No Credit Card Required
-              </p>
+              <div className="flex flex-wrap items-center gap-6 pl-6 text-[#007B85] font-black uppercase tracking-[0.2em] text-[10px]">
+                 <span className="flex items-center gap-2">
+                    <CheckCircle weight="fill" className="h-4 w-4" /> Ready in minutes
+                 </span>
+                 <span className="flex items-center gap-2">
+                    <CheckCircle weight="fill" className="h-4 w-4" /> Works with WhatsApp & IG
+                 </span>
+              </div>
             </motion.div>
 
             {/* Integration Logos */}
