@@ -62,7 +62,6 @@ export default function LeadsPage() {
     return ['business', 'type', 'notes', 'intelligence', 'status', 'plan']
   })
 
-  const [activeSourceFilter, setActiveSourceFilter] = useState('all')
   const [activeStatusFilter, setActiveStatusFilter] = useState('all')
 
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
@@ -208,9 +207,8 @@ export default function LeadsPage() {
 
   // Filter Logic
   const filteredLeads = leads.filter(l => {
-    const matchesSource = activeSourceFilter === 'all' || (l.source && l.source.toLowerCase().includes(activeSourceFilter))
     const matchesStatus = activeStatusFilter === 'all' || l.status === activeStatusFilter
-    return matchesSource && matchesStatus
+    return matchesStatus
   })
 
   const getNextStep = (status: Lead['status']) => {
@@ -315,7 +313,6 @@ export default function LeadsPage() {
                       { id: 'type', label: 'Mission / Type' },
                       { id: 'notes', label: 'Research Notes' },
                       { id: 'intelligence', label: 'Contact Intelligence' },
-                      { id: 'origin', label: 'Origin' },
                       { id: 'link', label: 'Mission Link' },
                       { id: 'status', label: 'Pipeline Status' },
                       { id: 'plan', label: 'Action Plan' }
@@ -337,29 +334,8 @@ export default function LeadsPage() {
                   </div>
                 </div>
               )}
-
               {isFilterMenuOpen && (
                 <div className={cn("space-y-6", isColumnMenuOpen && "mt-6 pt-6 border-t border-gray-100 dark:border-white/5")}>
-                  <div className="space-y-3">
-                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Discovery Origin</div>
-                    <div className="flex flex-wrap gap-2">
-                      {['all', 'google', 'instagram', 'facebook', 'notion', 'manual'].map(src => (
-                        <button
-                          key={src}
-                          onClick={() => setActiveSourceFilter(src)}
-                          className={cn(
-                            "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all",
-                            activeSourceFilter === src 
-                              ? "bg-[#007B85]/10 border-[#007B85]/20 text-[#007B85]"
-                              : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400"
-                          )}
-                        >
-                          {src}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   <div className="space-y-3">
                     <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pipeline Mission Status</div>
                     <div className="flex flex-wrap gap-2">
@@ -412,7 +388,6 @@ export default function LeadsPage() {
                     { visibleColumns.includes('type') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission / Type</th>}
                     { visibleColumns.includes('notes') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Research Notes</th>}
                     { visibleColumns.includes('intelligence') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Contact Intelligence</th>}
-                    { visibleColumns.includes('origin') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Origin</th>}
                     { visibleColumns.includes('link') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Mission Link</th>}
                     { visibleColumns.includes('status') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Pipeline Status</th>}
                     { visibleColumns.includes('plan') && <th scope="col" className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">Action Plan</th>}
@@ -432,7 +407,7 @@ export default function LeadsPage() {
               ) : filteredLeads.length === 0 ? (
                 <tr>
                   <td colSpan={visibleColumns.length} className="px-6 py-12 text-center text-gray-500 dark:text-[#525252] font-medium italic text-xs uppercase tracking-widest font-black">
-                    {activeSourceFilter !== 'all' ? `No ${activeSourceFilter} Leads Detected` : "No Leads Found in Pipeline"}
+                    {activeStatusFilter !== 'all' ? `No ${activeStatusFilter} Leads Detected` : "No Leads Found in Pipeline"}
                   </td>
                 </tr>
               ) : (
@@ -502,13 +477,6 @@ export default function LeadsPage() {
                           )}
                         </div>
                         <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-0.5 opacity-80">{lead.contact_email || 'No email decoded'}</div>
-                      </td>
-                    )}
-                    {visibleColumns.includes('origin') && (
-                      <td className="px-6 py-6 transition-all">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#323232] border border-gray-100 dark:border-white/5">
-                              {lead.source}
-                          </span>
                       </td>
                     )}
                     {visibleColumns.includes('link') && (
