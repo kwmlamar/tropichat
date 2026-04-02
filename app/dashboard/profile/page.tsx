@@ -99,7 +99,7 @@ export default function MobileProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black pb-24 sm:pt-8 md:max-w-2xl md:mx-auto">
       {/* Header Profile Section */}
-      <div className="flex flex-col items-center pt-10 pb-8 px-4">
+      <div className="flex flex-col items-center pb-8 px-4 pt-[calc(env(safe-area-inset-top)+3rem)] sm:pt-10">
         <div className="relative mb-4">
           <Avatar 
             fallback={profile?.full_name || profile?.contact_email || "U"}
