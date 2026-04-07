@@ -1,22 +1,28 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
-import { getSupabase } from "@/lib/supabase"
+import { createServerClient, createServiceClient } from "@/lib/supabase-server"
 
 /**
  * AI Auto-Pilot Toggle
  * POST: toggle ai_autopilot_enabled for the authenticated user
  * GET:  return current autopilot status
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const supabase = getSupabase()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const authHeader = request.headers.get("Authorization")
+    const token = authHeader?.replace("Bearer ", "")
 
-    const serviceClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    if (!token) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    }
+
+    const supabase = createServerClient(token)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
+    }
+
+    const serviceClient = createServiceClient()
     const { data, error } = await serviceClient
       .from("customers")
       .select("ai_autopilot_enabled")
@@ -30,18 +36,25 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const supabase = getSupabase()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const authHeader = request.headers.get("Authorization")
+    const token = authHeader?.replace("Bearer ", "")
 
-    const { enabled } = await req.json()
+    if (!token) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    }
 
-    const serviceClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    const supabase = createServerClient(token)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
+    }
+
+    const { enabled } = await request.json()
+
+    const serviceClient = createServiceClient()
     const { error } = await serviceClient
       .from("customers")
       .update({ ai_autopilot_enabled: enabled })

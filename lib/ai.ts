@@ -8,14 +8,30 @@ import type { BusinessBrief } from "@/lib/ai-schema"
  * Powered by Gemini 2.0 Flash.
  * Processes incoming messages and generates high-fidelity,
  * context-aware responses tailored for the Caribbean business market.
- * 
- * Voice Training System:
- * Each business has an AIVoiceProfile that controls how the AI sounds.
- * One system → two surfaces (demo + production).
  */
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "mock_key")
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+// Initialize Gemini lazily to ensure environment variables are loaded
+let genAI: GoogleGenerativeAI | null = null;
+let model: any = null;
+
+function getModel() {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey || apiKey === "mock_key") {
+    return null;
+  }
+  
+  if (!model) {
+    try {
+      genAI = new GoogleGenerativeAI(apiKey);
+      model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      console.log("[AI Engine] Gemini 2.0 Flash initialized successfully.");
+    } catch (err) {
+      console.error("[AI Engine] Failed to initialize Gemini:", err);
+      return null;
+    }
+  }
+  return model;
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -23,8 +39,7 @@ const adminSupabase = createClient(supabaseUrl, supabaseServiceKey)
 
 import { AIVoiceProfile, DEFAULT_VOICE_PROFILE, extractStyleFromSample } from "./ai-schema"
 
-// Re-export them so other files using them don't completely break,
-// but client files should import directly from ai-schema.
+// Re-export them
 export type { AIVoiceProfile }
 export { DEFAULT_VOICE_PROFILE, extractStyleFromSample }
 
@@ -53,7 +68,6 @@ ${history.map(m => `${m.role === 'user' ? 'Customer' : 'You'}: ${m.content}`).jo
 `
     : ""
 
-  // Inject business brief context if available
   const goalText = brief?.aiGoal === 'book' ? 'Move every conversation toward booking an appointment.'
     : brief?.aiGoal === 'sell' ? 'Move every conversation toward closing a sale.'
     : brief?.aiGoal === 'capture' ? 'Capture lead info and express strong interest to drive action.'
@@ -100,7 +114,6 @@ function getSmartFallback(message: string, businessType: string, services: strin
   const biz = businessType || "our business"
   const svc = services || "our services"
   
-  // Apply voice profile to fallback responses
   const emoji = voice.emojiUsage === "none" ? "" : voice.emojiUsage === "light" ? " 😊" : " 😊🙌"
   const greet = voice.greeting || "Hey there!"
   const close = voice.closer || "Let me know!"
@@ -146,8 +159,9 @@ export async function generateAIDemoReply(params: {
   const voice = params.voiceProfile || DEFAULT_VOICE_PROFILE
 
   try {
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY === "mock_key") {
-      console.log("[AI Demo] No API key. Using smart fallback.")
+    const ai = getModel()
+    if (!ai) {
+      console.log("[AI Demo] No valid API key. Using smart fallback.")
       return getSmartFallback(message, brief?.businessType || businessType, brief?.services || services, voice)
     }
 
@@ -160,20 +174,11 @@ export async function generateAIDemoReply(params: {
       brief
     })
 
-    const result = await model.generateContent(prompt)
+    const result = await ai.generateContent(prompt)
     const response = await result.response
     return response.text().trim().replace(/^"/,  "").replace(/"$/, "")
   } catch (error: any) {
     console.error("[AI Demo] Gemini error:", error?.message?.substring(0, 150))
-    if (history.length > 0) {
-      const lastAIMsg = [...history].reverse().find(m => m.role === 'ai')?.content || ""
-      if (lastAIMsg.toLowerCase().includes("book") || lastAIMsg.toLowerCase().includes("saturday") || lastAIMsg.toLowerCase().includes("date")) {
-        return "What time works best for you?"
-      }
-      if (lastAIMsg.toLowerCase().includes("price") || lastAIMsg.toLowerCase().includes("$") || lastAIMsg.toLowerCase().includes("cost")) {
-        return "Want me to go ahead and hold that spot for you?"
-      }
-    }
     return getSmartFallback(message, brief?.businessType || businessType, brief?.services || services, voice)
   }
 }
@@ -182,7 +187,6 @@ export async function generateAIDemoReply(params: {
 
 export async function generateSmartReplySuggestion(conversationId: string) {
   try {
-    // 1. Fetch conversation context
     const { data: conversation, error: convError } = await adminSupabase
       .from("unified_conversations")
       .select(`
@@ -194,12 +198,8 @@ export async function generateSmartReplySuggestion(conversationId: string) {
       .eq("id", conversationId)
       .single()
 
-    if (convError || !conversation) {
-      console.error("[AI Smart Reply] Context recovery failed:", convError)
-      return null
-    }
+    if (convError || !conversation) return null
 
-    // 2. Fetch voice profile for this business
     let voiceProfile = DEFAULT_VOICE_PROFILE
     try {
       const { data: account } = await adminSupabase
@@ -219,11 +219,8 @@ export async function generateSmartReplySuggestion(conversationId: string) {
           voiceProfile = customer.ai_voice_profile as AIVoiceProfile
         }
       }
-    } catch {
-      // Use default if lookup fails
-    }
+    } catch { }
 
-    // 3. Synthesize history
     const history = (conversation.messages as any[]) || []
     const lastFewMessages = history
       .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
@@ -233,7 +230,6 @@ export async function generateSmartReplySuggestion(conversationId: string) {
 
     if (lastFewMessages.length === 0) return null
 
-    // 4. Build booking-focused voice-aware prompt
     const v = voiceProfile
     const emojiHint = v.emojiUsage === "none" ? "No emojis." : v.emojiUsage === "light" ? "1-2 emojis max." : "Use emojis freely."
 
@@ -261,11 +257,10 @@ export async function generateSmartReplySuggestion(conversationId: string) {
       Suggest the next reply:
     `
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      return `${v.greeting || "Hi!"} How can I help you today?`
-    }
+    const ai = getModel()
+    if (!ai) return null
 
-    const result = await model.generateContent(systemPrompt)
+    const result = await ai.generateContent(systemPrompt)
     const response = await result.response
     return response.text().trim().replace(/^"/, "").replace(/"$/, "")
   } catch (error) {
@@ -289,7 +284,6 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
 
     if (convError || !conversation) return null
 
-    // Fetch voice profile AND business brief
     let voiceProfile = DEFAULT_VOICE_PROFILE
     let businessBrief: BusinessBrief | null = null
     try {
@@ -313,11 +307,8 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
           businessBrief = customer.business_brief as BusinessBrief
         }
       }
-    } catch {
-      // Use defaults
-    }
+    } catch { }
 
-    // Build conversation history (last 8 messages for context)
     const rawHistory = ((conversation.messages as any[]) || [])
       .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
       .slice(-8)
@@ -332,12 +323,13 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
       brief: businessBrief
     })
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      console.log("[AI Pilot] Mock Mode.")
+    const ai = getModel()
+    if (!ai) {
+      console.log("[AI Pilot] Mock Mode enabled — responding via fallback.")
       return getSmartFallback(incomingMessage, businessBrief?.businessType || "business", businessBrief?.services || "general services", voiceProfile)
     }
 
-    const result = await model.generateContent(prompt)
+    const result = await ai.generateContent(prompt)
     const response = await result.response
     return response.text().trim().replace(/^"/, "").replace(/"$/, "")
   } catch (error) {
@@ -345,9 +337,6 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
     return null
   }
 }
-
-
-// ─── Dispatch AI Response ───────────────────────────────────────
 
 export async function dispatchAIResponse(conversationId: string, aiContent: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"
