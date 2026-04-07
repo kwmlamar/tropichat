@@ -9,6 +9,18 @@ export interface AIVoiceProfile {
   version: number
 }
 
+export interface BusinessBrief {
+  businessType: string        // "Boutique", "Salon", "Tours", "Restaurant", etc.
+  tagline: string             // one-sentence description of what they sell/do
+  services: string            // free-text: "Women's cuts $50, Blowout $35, Braids from $80"
+  paymentMethods: string[]    // ["Cash", "Zelle", "Card", "Wire"]
+  hasDelivery: boolean
+  takesBookings: boolean
+  bookingMethod: string       // "WhatsApp", "Walk-in", "Online link", "Phone"
+  availability: string        // "Usually same week", "Book 24hrs ahead", "Walk-ins welcome"
+  aiGoal: "book" | "sell" | "capture" | "faq"  // what the AI should try to do
+}
+
 export const DEFAULT_VOICE_PROFILE: AIVoiceProfile = {
   tone: "casual",
   responseLength: "short",
@@ -18,6 +30,18 @@ export const DEFAULT_VOICE_PROFILE: AIVoiceProfile = {
   sampleReply: "Hey! Thanks for reaching out 😊 We'd love to help. What are you looking for?",
   trainedAt: new Date().toISOString(),
   version: 1
+}
+
+export const DEFAULT_BUSINESS_BRIEF: BusinessBrief = {
+  businessType: "General Business",
+  tagline: "",
+  services: "",
+  paymentMethods: ["Cash"],
+  hasDelivery: false,
+  takesBookings: false,
+  bookingMethod: "WhatsApp",
+  availability: "Available during business hours",
+  aiGoal: "capture"
 }
 
 /**

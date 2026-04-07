@@ -18,7 +18,8 @@ import {
   ChatCircleDots,
   CalendarBlank,
   WhatsappLogo,
-  MessengerLogo
+  MessengerLogo,
+  MagicWand
 } from "@phosphor-icons/react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -187,6 +188,13 @@ export default function MobileProfilePage() {
             colorClass="bg-[#FF8B66]" 
             label="Notifications" 
             onClick={() => handleOpenSettings("notifications")} 
+          />
+          <div className="h-[1px] bg-gray-100 dark:bg-[#1C1C1C] ml-14" />
+          <Item 
+            icon={MagicWand} 
+            colorClass="bg-[#007B85]" 
+            label="Tropi AI" 
+            onClick={() => handleOpenSettings("ai")} 
           />
         </Section>
 

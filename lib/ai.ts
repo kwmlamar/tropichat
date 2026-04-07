@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { createClient } from "@supabase/supabase-js"
+import type { BusinessBrief } from "@/lib/ai-schema"
 
 /**
  * Sovereign AI Auto-Pilot Engine
@@ -29,50 +30,67 @@ export { DEFAULT_VOICE_PROFILE, extractStyleFromSample }
 
 // ─── Styled Prompt Builder ──────────────────────────────────────
 
+type ConversationTurn = { role: 'user' | 'ai'; content: string }
+
 function buildStyledPrompt(params: {
   voiceProfile: AIVoiceProfile
   businessType: string
   services: string
   customerMessage: string
+  history?: ConversationTurn[]
+  brief?: BusinessBrief | null
 }): string {
-  const { voiceProfile: v, businessType, services, customerMessage } = params
-  
-  const lengthInstruction = 
-    v.responseLength === "short" ? "Keep it under 2 sentences. Be concise." :
-    v.responseLength === "medium" ? "Use 2-4 sentences. Give enough detail." :
-    "Be detailed but still conversational. Don't ramble."
-  
+  const { voiceProfile: v, businessType, services, customerMessage, history = [], brief } = params
+
   const emojiInstruction =
     v.emojiUsage === "none" ? "Do NOT use any emojis." :
     v.emojiUsage === "light" ? "Use 1-2 emojis max, placed naturally." :
     "Use emojis freely and expressively like the sample."
-  
-  return `You are a customer service assistant for a ${businessType} business.
 
-=== HOW TO SOUND ===
-Tone: ${v.tone}
-${lengthInstruction}
-${emojiInstruction}
-${v.greeting ? `Typical greeting style: "${v.greeting}"` : ""}
-${v.closer ? `Typical sign-off: "${v.closer}"` : ""}
+  const conversationHistory = history.length > 0
+    ? `CONVERSATION SO FAR:
+${history.map(m => `${m.role === 'user' ? 'Customer' : 'You'}: ${m.content}`).join('\n')}
+`
+    : ""
 
-Here is an example of how the business owner actually replies:
-"${v.sampleReply}"
+  // Inject business brief context if available
+  const goalText = brief?.aiGoal === 'book' ? 'Move every conversation toward booking an appointment.'
+    : brief?.aiGoal === 'sell' ? 'Move every conversation toward closing a sale.'
+    : brief?.aiGoal === 'capture' ? 'Capture lead info and express strong interest to drive action.'
+    : 'Answer questions helpfully and move toward the next step.'
 
-=== RULES ===
-- Match this communication style exactly. Sound like the business owner, NOT a chatbot.
-- Never say "I'm an AI" or "As an AI assistant" or anything similar.
-- Focus on answering the question AND guiding toward a sale or booking.
-- Write like a WhatsApp message, not an email.
-
-=== BUSINESS CONTEXT ===
+  const briefContext = brief ? `
+Business type: ${brief.businessType}${brief.tagline ? ` — ${brief.tagline}` : ''}
+Services & pricing: ${brief.services || services}
+Payment methods: ${brief.paymentMethods?.join(', ') || 'Cash'}
+${brief.hasDelivery ? 'Delivery/pickup: Available' : ''}
+${brief.takesBookings ? `Bookings: Yes — via ${brief.bookingMethod}` : 'Walk-ins or inquiries welcome'}
+Availability: ${brief.availability}
+Goal: ${goalText}` : `
 Services: ${services}
+Goal: ${goalText}`
 
-=== TASK ===
-A customer just sent this message:
-"${customerMessage}"
+  return `You are replying to customers for a small Caribbean ${brief?.businessType || businessType} business using WhatsApp.
+${briefContext}
 
-Reply as the business owner would. Return ONLY the reply text. No quotes, no labels, no explanations.`
+How the owner writes: ${v.sampleReply ? `"${v.sampleReply}"` : 'Casual and friendly'}
+
+Rules:
+- Keep replies short (1-2 sentences max)
+- Sound natural and human, not robotic
+- NEVER restart the conversation or re-greet the customer
+- Do NOT repeat pricing if you already mentioned it earlier in the conversation
+- Move toward the goal above — ask for a date, time, group size, or next step
+- If they show interest, suggest availability and move toward confirmation
+- ${emojiInstruction}
+- Never say you are an AI
+- Return ONLY the reply text — no quotes, no labels
+
+This is WhatsApp. Be casual.
+
+${conversationHistory}Customer: "${customerMessage}"
+
+You:`
 }
 
 // ─── Smart Fallback (Voice-Aware) ───────────────────────────────
@@ -121,29 +139,42 @@ export async function generateAIDemoReply(params: {
   businessType: string
   services?: string
   voiceProfile?: AIVoiceProfile
+  history?: ConversationTurn[]
+  brief?: BusinessBrief | null
 }) {
-  const { message, businessType, services = "General customer support" } = params
+  const { message, businessType, services = "General customer support", history = [], brief } = params
   const voice = params.voiceProfile || DEFAULT_VOICE_PROFILE
 
   try {
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY === "mock_key") {
       console.log("[AI Demo] No API key. Using smart fallback.")
-      return getSmartFallback(message, businessType, services, voice)
+      return getSmartFallback(message, brief?.businessType || businessType, brief?.services || services, voice)
     }
 
     const prompt = buildStyledPrompt({
       voiceProfile: voice,
-      businessType,
-      services,
-      customerMessage: message
+      businessType: brief?.businessType || businessType,
+      services: brief?.services || services,
+      customerMessage: message,
+      history,
+      brief
     })
 
     const result = await model.generateContent(prompt)
     const response = await result.response
-    return response.text().trim().replace(/^"/, "").replace(/"$/, "")
+    return response.text().trim().replace(/^"/,  "").replace(/"$/, "")
   } catch (error: any) {
-    console.error("[AI Demo] Gemini unavailable, using smart fallback:", error?.message?.substring(0, 100))
-    return getSmartFallback(message, businessType, services, voice)
+    console.error("[AI Demo] Gemini error:", error?.message?.substring(0, 150))
+    if (history.length > 0) {
+      const lastAIMsg = [...history].reverse().find(m => m.role === 'ai')?.content || ""
+      if (lastAIMsg.toLowerCase().includes("book") || lastAIMsg.toLowerCase().includes("saturday") || lastAIMsg.toLowerCase().includes("date")) {
+        return "What time works best for you?"
+      }
+      if (lastAIMsg.toLowerCase().includes("price") || lastAIMsg.toLowerCase().includes("$") || lastAIMsg.toLowerCase().includes("cost")) {
+        return "Want me to go ahead and hold that spot for you?"
+      }
+    }
+    return getSmartFallback(message, brief?.businessType || businessType, brief?.services || services, voice)
   }
 }
 
@@ -202,23 +233,32 @@ export async function generateSmartReplySuggestion(conversationId: string) {
 
     if (lastFewMessages.length === 0) return null
 
-    // 4. Build voice-aware prompt
+    // 4. Build booking-focused voice-aware prompt
     const v = voiceProfile
-    const lengthHint = v.responseLength === "short" ? "1-2 sentences" : v.responseLength === "medium" ? "2-3 sentences" : "3-4 sentences"
     const emojiHint = v.emojiUsage === "none" ? "No emojis." : v.emojiUsage === "light" ? "1-2 emojis max." : "Use emojis freely."
-    
+
     const systemPrompt = `
-      You are suggesting a reply for a business on ${conversation.channel_type}.
-      
-      VOICE: ${v.tone}. ${lengthHint}. ${emojiHint}
-      Example of how they write: "${v.sampleReply}"
-      
+      You are replying to customers for a small Caribbean business on ${conversation.channel_type}.
+      Your goal is to turn this conversation into a booking.
+
+      Voice: ${v.tone}. ${emojiHint}
+      ${v.sampleReply ? `Example of how they write: "${v.sampleReply}"` : ""}
       Customer name: ${conversation.customer_name || "there"}
-      
+
+      Rules:
+      - Keep it to 1-2 sentences max
+      - Sound natural and human, not robotic
+      - Never restart the conversation or re-greet the customer
+      - Do NOT repeat pricing if it was already mentioned in the conversation
+      - Move toward booking: ask for a date, time, or number of people
+      - If they show interest, suggest availability and ask to confirm
+      - This is ${conversation.channel_type}, not email — be casual
+      - Return ONLY the reply text, no labels or quotes
+
       CONVERSATION:
       ${lastFewMessages}
-      
-      Suggest ONE reply (${lengthHint}). Sound like the business owner, not a chatbot. Return ONLY the text.
+
+      Suggest the next reply:
     `
 
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
@@ -249,8 +289,9 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
 
     if (convError || !conversation) return null
 
-    // Fetch voice profile
+    // Fetch voice profile AND business brief
     let voiceProfile = DEFAULT_VOICE_PROFILE
+    let businessBrief: BusinessBrief | null = null
     try {
       const { data: account } = await adminSupabase
         .from("connected_accounts")
@@ -261,56 +302,50 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
       if (account?.user_id) {
         const { data: customer } = await adminSupabase
           .from("customers")
-          .select("ai_voice_profile")
+          .select("ai_voice_profile, business_brief")
           .eq("id", account.user_id)
           .single()
         
         if (customer?.ai_voice_profile) {
           voiceProfile = customer.ai_voice_profile as AIVoiceProfile
         }
+        if (customer?.business_brief) {
+          businessBrief = customer.business_brief as BusinessBrief
+        }
       }
     } catch {
-      // Use default
+      // Use defaults
     }
 
-    const history = (conversation.messages as any[]) || []
-    const lastFewMessages = history
+    // Build conversation history (last 8 messages for context)
+    const rawHistory = ((conversation.messages as any[]) || [])
       .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
-      .slice(-5)
-      .map((m) => `${m.sender_type === "business" ? "Business" : "Customer"}: ${m.content}`)
-      .join("\n")
+      .slice(-8)
+      .map(m => ({ role: m.sender_type === "business" ? "ai" as const : "user" as const, content: m.content }))
 
-    const v = voiceProfile
-    const systemPrompt = `
-      You are responding on behalf of a business on ${conversation.channel_type}.
-      
-      VOICE: ${v.tone}. ${v.responseLength === "short" ? "Max 2 sentences." : v.responseLength === "medium" ? "2-4 sentences." : "Be detailed."}
-      ${v.emojiUsage === "none" ? "No emojis." : v.emojiUsage === "light" ? "1-2 emojis." : "Emojis welcome."}
-      Example of how they write: "${v.sampleReply}"
-      
-      Customer: ${conversation.customer_name || "there"}
-      
-      HISTORY:
-      ${lastFewMessages}
-      
-      NEW MESSAGE: "${incomingMessage}"
-      
-      Reply as the business owner (max 2 sentences). Sound human.
-    `
+    const prompt = buildStyledPrompt({
+      voiceProfile,
+      businessType: businessBrief?.businessType || "general",
+      services: businessBrief?.services || "General services",
+      customerMessage: incomingMessage,
+      history: rawHistory,
+      brief: businessBrief
+    })
 
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       console.log("[AI Pilot] Mock Mode.")
-      return getSmartFallback(incomingMessage, "business", "general services", voiceProfile)
+      return getSmartFallback(incomingMessage, businessBrief?.businessType || "business", businessBrief?.services || "general services", voiceProfile)
     }
 
-    const result = await model.generateContent(systemPrompt)
+    const result = await model.generateContent(prompt)
     const response = await result.response
-    return response.text().trim()
+    return response.text().trim().replace(/^"/, "").replace(/"$/, "")
   } catch (error) {
     console.error("[AI Pilot] Error:", error)
     return null
   }
 }
+
 
 // ─── Dispatch AI Response ───────────────────────────────────────
 

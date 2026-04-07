@@ -124,6 +124,7 @@ export type Tab =
   | "sms"
   | "autoreply"
   | "booking"
+  | "ai"
 
 const timezones = [
   { value: "America/Nassau", label: "Bahamas (Nassau)" },
@@ -182,6 +183,7 @@ export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsMod
     { id: "hours", label: "Business Hours", icon: Clock, section: "Workspace" },
     { id: "autoreply", label: "Auto-Reply", icon: ChatCircleDots, section: "Workspace" },
     { id: "booking", label: "Booking Page", icon: CalendarBlank, section: "Workspace" },
+    { id: "ai", label: "Tropi AI", icon: MagicWand, section: "Workspace" },
     { id: "instagram", label: "Instagram", icon: InstagramLogo, section: "Channels" },
     { id: "whatsapp", label: "WhatsApp", icon: WhatsappLogo, section: "Channels" },
     { id: "messenger", label: "Messenger", icon: MessengerLogo, section: "Channels" },
@@ -326,6 +328,7 @@ export function TabContent({ activeTab, customer, personalProfile, metaStatus, o
     case "email": return <EmailSettings onRefresh={onRefresh} />
     case "sms": return <SMSSettings customer={customer} onRefresh={onRefresh} />
     case "booking": return <BookingPageSettings />
+    case "ai": return <AISettings customer={customer} onRefresh={onRefresh} />
     default: return null
   }
 }
@@ -1738,6 +1741,142 @@ function BookingPageSettings() {
           )}
         </div>
       </section>
+    </div>
+  )
+}
+
+// ─── AI Settings ─────────────────────────────────────────────────
+
+function AISettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
+  const [autoPilotEnabled, setAutoPilotEnabled] = useState(customer?.ai_autopilot_enabled ?? false)
+  const [saving, setSaving] = useState(false)
+
+  const handleToggle = async (enabled: boolean) => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/ai/autopilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setAutoPilotEnabled(enabled)
+        toast.success(enabled ? 'Auto-Pilot is now ON — AI will reply to all channels' : 'Auto-Pilot OFF — AI will suggest replies only')
+        onRefresh()
+      } else {
+        toast.error('Failed to update Auto-Pilot setting')
+      }
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const isConfigured = !!customer?.ai_voice_profile
+
+  return (
+    <div className="space-y-8">
+      {/* Status */}
+      <div className={`p-5 rounded-2xl border flex items-center gap-4 ${
+        autoPilotEnabled 
+          ? 'bg-[#007B85]/5 border-[#007B85]/20' 
+          : 'bg-gray-50 dark:bg-[#080808] border-gray-100 dark:border-[#1C1C1C]'
+      }`}>
+        <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
+          autoPilotEnabled ? 'bg-[#007B85]' : 'bg-gray-200 dark:bg-[#1C1C1C]'
+        }`}>
+          <MagicWand weight="fill" className={`h-5 w-5 ${autoPilotEnabled ? 'text-white' : 'text-gray-400'}`} />
+        </div>
+        <div className="flex-1">
+          <p className="text-[14px] font-bold dark:text-white">Tropi AI Status</p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {autoPilotEnabled 
+              ? 'Auto-Pilot ON — AI replies automatically on all channels'
+              : 'Auto-Pilot OFF — AI suggests replies but does not send'}
+          </p>
+        </div>
+        {autoPilotEnabled && (
+          <span className="text-[10px] font-black text-[#007B85] bg-[#007B85]/10 px-2 py-1 rounded-full uppercase tracking-wider">
+            Live
+          </span>
+        )}
+      </div>
+
+      {/* Auto-Pilot Toggle */}
+      <div className="space-y-4">
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Auto-Pilot Mode</h4>
+        
+        <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <p className="text-[14px] font-bold dark:text-white">Auto-Reply to Customers</p>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                When ON, Tropi AI automatically replies to incoming messages on WhatsApp, Instagram, and Messenger.<br/>
+                When OFF, AI still suggests replies in your inbox — you choose when to send.
+              </p>
+            </div>
+            <Switch 
+              checked={autoPilotEnabled} 
+              onCheckedChange={handleToggle}
+              disabled={saving || !isConfigured}
+              className="shrink-0 mt-0.5"
+            />
+          </div>
+
+          {!isConfigured && (
+            <div className="mt-4 flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
+              <Warning weight="fill" className="h-4 w-4 text-amber-500 shrink-0" />
+              <p className="text-[12px] font-semibold text-amber-700 dark:text-amber-400">
+                Train your AI first before enabling Auto-Pilot. Go to the AI page to set up your business brief.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Mode explanation cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className={`p-4 rounded-xl border transition-all ${
+            autoPilotEnabled 
+              ? 'border-[#007B85]/30 bg-[#007B85]/5' 
+              : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
+          }`}>
+            <div className="flex items-center gap-2 mb-2">
+              <Lightning weight="fill" className={`h-4 w-4 ${autoPilotEnabled ? 'text-[#007B85]' : 'text-gray-400'}`} />
+              <span className="text-[12px] font-bold dark:text-white">Auto-Pilot ON</span>
+            </div>
+            <p className="text-[11px] text-gray-500 leading-relaxed">AI reads every message and replies instantly on all channels. Human cooldown: if you reply manually, AI pauses for 2 minutes.</p>
+          </div>
+          <div className={`p-4 rounded-xl border transition-all ${
+            !autoPilotEnabled 
+              ? 'border-gray-200 dark:border-[#222] bg-white dark:bg-[#111]' 
+              : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
+          }`}>
+            <div className="flex items-center gap-2 mb-2">
+              <ChatCircleText weight="fill" className="h-4 w-4 text-gray-400" />
+              <span className="text-[12px] font-bold dark:text-white">Suggestions Only</span>
+            </div>
+            <p className="text-[11px] text-gray-500 leading-relaxed">AI generates a suggested reply in your inbox. You review it and click Send when you're ready.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Link to full AI page */}
+      <div className="p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C] flex items-center justify-between">
+        <div>
+          <p className="text-[14px] font-bold dark:text-white mb-1">Business Brief &amp; Voice Training</p>
+          <p className="text-xs text-gray-500">Configure what your AI knows about your business — services, pricing, payment, booking method.</p>
+        </div>
+        <Button 
+          variant="outline" 
+          className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:hover:bg-[#111] shrink-0 ml-4"
+          onClick={() => window.location.href = '/dashboard/ai'}
+        >
+          <ArrowRight className="h-4 w-4 mr-2" />
+          Configure
+        </Button>
+      </div>
     </div>
   )
 }

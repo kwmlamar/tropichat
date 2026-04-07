@@ -433,12 +433,100 @@ export async function handleIncomingMessage(
 
     // 7. Process Auto-Reply (Offline Message)
     await processAutoReply(db, account, conversationDbId, event)
+
+    // 8. Process AI Auto-Pilot (all channels: WhatsApp, Instagram, Messenger)
+    await processAIAutoPilot(db, account, conversationDbId, event)
   } else if (isNewMessage && senderType === 'business') {
     console.log(`[Webhook:${event.channel_type}] Recorded echo message (sent via external app)`)
   } else if (!isNewMessage) {
     console.log(`[Webhook:${event.channel_type}] Skipping duplicate notification for ${event.message.id}`)
   }
 }
+
+/**
+ * AI Auto-Pilot: Generates and sends AI replies for all channels.
+ * Only fires when ai_autopilot_enabled = true on the customer record.
+ * Skips if a human agent replied in the last 2 minutes (cooldown guard).
+ */
+async function processAIAutoPilot(
+  db: ServiceClient,
+  account: { id: string; user_id: string; access_token: string; metadata: unknown; channel_account_id?: string },
+  conversationId: string,
+  event: IncomingWebhookEvent
+) {
+  try {
+    // 1. Check if auto-pilot is enabled
+    const { data: customer, error: custError } = await db
+      .from('customers')
+      .select('ai_autopilot_enabled, plan')
+      .eq('id', account.user_id)
+      .single()
+
+    if (custError || !customer?.ai_autopilot_enabled) {
+      if (customer && !customer.ai_autopilot_enabled) {
+        console.log(`[AI Auto-Pilot] Skipped: auto-pilot OFF for user ${account.user_id}`)
+      }
+      return
+    }
+
+    // 2. Cooldown guard: skip if a human replied in the last 2 minutes
+    const twoMinsAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+    const { data: recentHumanReply } = await db
+      .from('unified_messages')
+      .select('id')
+      .eq('conversation_id', conversationId)
+      .eq('sender_type', 'business')
+      .gte('sent_at', twoMinsAgo)
+      .not('metadata->>is_ai_reply', 'eq', 'true')
+      .limit(1)
+      .maybeSingle()
+
+    if (recentHumanReply) {
+      console.log(`[AI Auto-Pilot] Skipped: human replied within last 2 minutes (${conversationId})`)
+      return
+    }
+
+    console.log(`[AI Auto-Pilot] Generating reply for conversation ${conversationId} on ${event.channel_type}`)
+
+    // 3. Dynamically import to avoid circular deps
+    const { processInboundWithAI } = await import('@/lib/ai')
+    const aiReply = await processInboundWithAI(conversationId, event.message.content || '')
+
+    if (!aiReply) {
+      console.log(`[AI Auto-Pilot] No reply generated for ${conversationId}`)
+      return
+    }
+
+    // 4. Send the reply on the correct channel
+    const metaOptions = account.metadata as Record<string, any>
+    await sendMessage({
+      channelType: event.channel_type,
+      accountId: account.channel_account_id || metaOptions?.page_id || '',
+      pageId: metaOptions?.page_id,
+      accessToken: metaOptions?.page_access_token || account.access_token,
+      recipientId: event.customer_id,
+      content: aiReply,
+    })
+
+    // 5. Log AI reply to the messages table
+    await db.from('unified_messages').insert({
+      conversation_id: conversationId,
+      channel_message_id: `ai_${Date.now()}`,
+      sender_type: 'business',
+      content: aiReply,
+      message_type: 'text',
+      sent_at: new Date().toISOString(),
+      status: 'sent',
+      metadata: { is_ai_reply: true, channel: event.channel_type }
+    })
+
+    console.log(`[AI Auto-Pilot] ✓ Replied on ${event.channel_type} to ${event.customer_id}: "${aiReply.substring(0, 80)}"`)
+  } catch (err) {
+    console.error('[AI Auto-Pilot] Failed:', err)
+  }
+}
+
+
 
 /**
  * Executes matching automations for an incoming message.

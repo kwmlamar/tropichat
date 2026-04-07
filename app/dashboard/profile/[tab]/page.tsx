@@ -16,6 +16,7 @@ const titleMap: Record<string, string> = {
   billing: "Billing & Plans",
   instagram: "Instagram & Meta",
   notifications: "Notifications",
+  ai: "Tropi AI",
 }
 
 export default function MobileSettingsPage({ params }: { params: Promise<{ tab: string }> }) {

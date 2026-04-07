@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server"
 import { generateAIDemoReply } from "@/lib/ai"
 import type { AIVoiceProfile } from "@/lib/ai"
+import type { BusinessBrief } from "@/lib/ai-schema"
 
 /**
  * AI Demo API Route
  * Handles "Test My Agent" simulation requests.
- * Now accepts voiceProfile for styled responses.
+ * Accepts full conversation history for multi-turn conversations.
+ * Accepts business_brief for context-grounded responses.
  */
 export async function POST(req: Request) {
   try {
-    const { message, businessType, services, voiceProfile } = await req.json()
+    const { message, businessType, services, voiceProfile, history, brief } = await req.json()
     
     if (!message) {
       return NextResponse.json({ error: "Missing message" }, { status: 400 })
@@ -17,9 +19,11 @@ export async function POST(req: Request) {
 
     const reply = await generateAIDemoReply({ 
       message, 
-      businessType, 
+      businessType: businessType || "general", 
       services, 
-      voiceProfile: voiceProfile as AIVoiceProfile | undefined
+      voiceProfile: voiceProfile as AIVoiceProfile | undefined,
+      history: history || [],
+      brief: brief as BusinessBrief | null | undefined
     })
     
     return NextResponse.json({ success: true, reply })
@@ -27,7 +31,7 @@ export async function POST(req: Request) {
     console.error("[AI Demo API] Error:", error)
     return NextResponse.json({ 
       success: true, 
-      reply: "Hey! Thanks for reaching out. How can I help you today? 😊" 
+      reply: "Let me check on that for you — what date were you thinking?" 
     })
   }
 }
