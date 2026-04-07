@@ -23,8 +23,8 @@ function getModel() {
   if (!model) {
     try {
       genAI = new GoogleGenerativeAI(apiKey);
-      model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      console.log("[AI Engine] Gemini 2.0 Flash initialized successfully.");
+      model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      console.log("[AI Engine] Gemini 2.5 Flash initialized successfully.");
     } catch (err) {
       console.error("[AI Engine] Failed to initialize Gemini:", err);
       return null;
