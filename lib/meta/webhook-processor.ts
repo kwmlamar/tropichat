@@ -390,8 +390,26 @@ export async function handleIncomingMessage(
     event.channel_type === 'whatsapp' ? event.customer_id : undefined
   )
 
-  // 4. Insert message (ignore duplicates to prevent double notifications)
+  // 4. Insert message (ignore echoes we already manually logged)
   const senderType = event.sender_type || 'customer'
+
+  if (senderType === 'business') {
+    const tenSecondsAgo = new Date(Date.now() - 10000).toISOString()
+    const { data: existing } = await db
+      .from('unified_messages')
+      .select('id')
+      .eq('conversation_id', conversationDbId)
+      .eq('sender_type', 'business')
+      .eq('content', event.message.content)
+      .gte('sent_at', tenSecondsAgo)
+      .maybeSingle()
+
+    if (existing) {
+      console.log(`[Webhook:${event.channel_type}] De-duped echo message: already exists in DB`)
+      return
+    }
+  }
+
   const { data: insertedMsg, error: msgError } = await db.from('unified_messages').insert({
     conversation_id: conversationDbId,
     channel_message_id: event.message.id,
