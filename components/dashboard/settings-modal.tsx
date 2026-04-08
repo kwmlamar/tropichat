@@ -49,7 +49,8 @@ import {
   CalendarBlank,
   Copy,
   CheckFat,
-  ArrowSquareOut
+  ArrowSquareOut,
+  Sliders
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -103,6 +104,8 @@ import { PricingToggle } from "@/components/billing/PricingToggle"
 import { UsageBar } from "@/components/billing/UsageBar"
 import { UpgradeModal } from "@/components/billing/UpgradeModal"
 import { PERMISSIONS, normalizePlan } from "@/lib/billing/permissions"
+import { AdminScraperSettings } from "@/components/dashboard/admin-scraper-settings"
+
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -125,6 +128,8 @@ export type Tab =
   | "autoreply"
   | "booking"
   | "ai"
+  | "admin_scraper"
+
 
 const timezones = [
   { value: "America/Nassau", label: "Bahamas (Nassau)" },
@@ -191,7 +196,13 @@ export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsMod
     { id: "sms", label: "SMS", icon: DeviceMobile, section: "Channels" },
   ]
 
-  const sections = ["Account", "Workspace", "Channels"]
+  const isAdmin = personalProfile?.contact_email?.toLowerCase() === "classicalsineus@gmail.com"
+
+  if (isAdmin) {
+    tabs.push({ id: "admin_scraper", label: "Scrape Settings", icon: Sliders, section: "Admin Core" })
+  }
+
+  const sections = ["Account", "Workspace", "Channels", ...(isAdmin ? ["Admin Core"] : [])]
 
   return (
     <AnimatePresence>
@@ -329,6 +340,7 @@ export function TabContent({ activeTab, customer, personalProfile, metaStatus, o
     case "sms": return <SMSSettings customer={customer} onRefresh={onRefresh} />
     case "booking": return <BookingPageSettings />
     case "ai": return <AISettings customer={customer} onRefresh={onRefresh} />
+    case "admin_scraper": return <AdminScraperSettings />
     default: return null
   }
 }
