@@ -15,6 +15,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ChannelIcon, getChannelLabel } from "./channel-icon"
 import { formatDate, formatDistanceToNow, getConversationDisplayName } from "@/lib/utils"
 import type { ConversationWithAccount, UnifiedMessage } from "@/types/unified-inbox"
+import { useState, useEffect } from "react"
+import { AIIntelligencePanel } from "./ai-intelligence-panel"
+import { Brain, Info } from "@phosphor-icons/react"
 
 interface UnifiedContactDetailsProps {
   conversation: ConversationWithAccount | null
@@ -29,6 +32,13 @@ export function UnifiedContactDetails({
   onArchive,
   loading,
 }: UnifiedContactDetailsProps) {
+  const [activeTab, setActiveTab] = useState<"intelligence" | "profile">("intelligence")
+
+  // Reset tab when switching conversations
+  useEffect(() => {
+    setActiveTab("intelligence")
+  }, [conversation?.id])
+
   if (!conversation) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black border-l border-gray-100 dark:border-[#1C1C1C] p-8 text-center">
@@ -87,9 +97,46 @@ export function UnifiedContactDetails({
         </div>
       </div>
 
-      {/* Details */}
-      <div className="p-6 space-y-6">
-        {/* Customer ID */}
+      {/* Tab Switcher */}
+      <div className="px-6 pb-4 border-b border-gray-100 dark:border-[#1C1C1C]">
+        <div className="bg-gray-100/50 dark:bg-[#111] p-1 rounded-xl flex">
+          <button
+            onClick={() => setActiveTab("intelligence")}
+            className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-[11px] font-medium rounded-lg transition-all ${
+              activeTab === "intelligence" 
+                ? "bg-white dark:bg-[#222] text-gray-900 dark:text-white shadow-sm" 
+                : "text-gray-500 hover:text-gray-900 dark:text-[#888] dark:hover:text-white"
+            }`}
+          >
+            <Brain className={activeTab === "intelligence" ? "text-[#007B85]" : ""} /> Intelligence
+          </button>
+          <button
+            onClick={() => setActiveTab("profile")}
+            className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-[11px] font-medium rounded-lg transition-all ${
+              activeTab === "profile" 
+                ? "bg-white dark:bg-[#222] text-gray-900 dark:text-white shadow-sm" 
+                : "text-gray-500 hover:text-gray-900 dark:text-[#888] dark:hover:text-white"
+            }`}
+          >
+            <Info className={activeTab === "profile" ? "text-[#007B85]" : ""} /> Profile
+          </button>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {activeTab === "intelligence" ? (
+          <AIIntelligencePanel 
+            conversation={conversation} 
+            onRefreshCache={() => {
+              // Intentionally left blank, next refetch of conversations will get it.
+              // We rely on the local state in the panel to show the update immediately.
+            }} 
+          />
+        ) : (
+          <div className="p-6 space-y-6">
+            {/* Customer ID */}
+
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-gray-100 dark:bg-[#111] p-2 flex-shrink-0">
             <Hash weight="bold" className="h-4 w-4 text-gray-400 dark:text-[#525252]" />
@@ -179,6 +226,8 @@ export function UnifiedContactDetails({
             </Button>
           )}
         </div>
+      </div>
+        )}
       </div>
     </div>
   )

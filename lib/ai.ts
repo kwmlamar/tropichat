@@ -356,3 +356,53 @@ export async function dispatchAIResponse(conversationId: string, aiContent: stri
 
   return response.json()
 }
+
+// ─── AI Intelligence Panel (Dashboard) ─────────────────────────
+
+export interface AIIntelligenceSummary {
+  headline: string;
+  leadDetails: { label: string; value: string }[];
+  strategicContext: string;
+}
+
+export async function generateConversationIntelligence(history: any[]): Promise<AIIntelligenceSummary | null> {
+  const ai = getModel()
+  if (!ai) return null
+
+  const formattedHistory = history
+    .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
+    .map(m => `${m.sender_type === "business" ? "Agent" : "Customer"}: ${m.content}`)
+    .join("\n")
+
+  if (!formattedHistory) return null
+
+  const prompt = `
+    You are an expert sales analyst for a Caribbean business.
+    Analyze the following conversation and extract key intelligence.
+
+    CONVERSATION:
+    ${formattedHistory}
+
+    Return a JSON object with this exact structure:
+    {
+      "headline": "A punchy 1-sentence summary of the customer's intent (e.g., 'Customer wants to book a sunset cruise for 4 on Saturday.')",
+      "leadDetails": [
+        { "label": "Service Level", "value": "Details" },
+        { "label": "Dates/Time", "value": "Details" },
+        { "label": "Party Size", "value": "Details" },
+        { "label": "Status", "value": "Pending / Ready to Book / Just Browsing" }
+      ],
+      "strategicContext": "2-3 sentences on what happened, any objections, and exactly what the Agent should do next to close the deal."
+    }
+  `
+
+  try {
+    const result = await ai.generateContent(prompt)
+    const responseText = result.response.text().trim().replace(/^```json/, "").replace(/```$/, "")
+    const parsed = JSON.parse(responseText)
+    return parsed as AIIntelligenceSummary
+  } catch (error) {
+    console.error("[AI Intelligence] Failed to generate summary:", error)
+    return null
+  }
+}

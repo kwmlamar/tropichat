@@ -49,6 +49,8 @@ export interface UnifiedConversation {
   unread_count: number
   is_archived: boolean
   metadata: Record<string, unknown>
+  ai_summary: Record<string, unknown> | null
+  ai_summary_updated_at: string | null
   // Human Agent fields (extended 7-day response window)
   human_agent_enabled: boolean
   human_agent_reason: string | null
