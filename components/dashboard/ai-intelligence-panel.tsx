@@ -5,6 +5,7 @@ import { Brain, Lightning, Target, CheckCircle, WarningCircle, CaretRight } from
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
+import { getSupabase } from "@/lib/supabase"
 import type { ConversationWithAccount } from "@/types/unified-inbox"
 
 interface AIIntelligencePanelProps {
@@ -32,9 +33,14 @@ export function AIIntelligencePanel({ conversation, onRefreshCache }: AIIntellig
   const handleGenerate = async () => {
     setLoading(true)
     try {
+      const { data: { session } } = await getSupabase().auth.getSession()
+      
       const res = await fetch("/api/ai/intelligence", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({ conversationId: conversation.id })
       })
       const data = await res.json()

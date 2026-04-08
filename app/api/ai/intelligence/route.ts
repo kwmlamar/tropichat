@@ -1,31 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
+import { createServerClient, createServiceClient } from "@/lib/supabase-server"
 import { generateConversationIntelligence } from "@/lib/ai"
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization")
+    const token = authHeader?.replace("Bearer ", "")
+
+    if (!token) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    }
+
     const { conversationId } = await req.json()
     if (!conversationId) {
       return NextResponse.json({ error: "Missing conversationId" }, { status: 400 })
     }
 
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
-          },
-        },
-      }
-    )
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const supabase = createServerClient(token)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
     }
 
     // 1. Check existing summary to see if we really need to generate a new one
@@ -33,7 +28,8 @@ export async function POST(req: NextRequest) {
     // but we can enforce it here if we want. For now, trusting the client to call when needed)
 
     // 2. Fetch history
-    const { data: messages, error: msgError } = await supabase
+    const serviceClient = createServiceClient()
+    const { data: messages, error: msgError } = await serviceClient
       .from("unified_messages")
       .select("id, content, sender_type, sent_at")
       .eq("conversation_id", conversationId)
@@ -53,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // 4. Cache it in DB
     const now = new Date().toISOString()
-    await supabase
+    await serviceClient
       .from("unified_conversations")
       .update({
         ai_summary: intelligence,
