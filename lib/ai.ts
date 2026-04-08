@@ -406,3 +406,41 @@ export async function generateConversationIntelligence(history: any[]): Promise<
     return null
   }
 }
+
+/**
+ * generateStrategicScrapeQuery
+ * Dynamically picks a novel target industry/niche and location in the Bahamas,
+ * avoiding previous queries.
+ */
+export async function generateStrategicScrapeQuery(history: string[] = []): Promise<string> {
+  const aiModel = getModel()
+  if (!aiModel) return "Plumbers Nassau"
+
+  const prompt = `You are the lead generation engine for TropiChat, an AI WhatsApp automation tool.
+Our target audience is service-based businesses in the Bahamas (Nassau, Freeport, Eleuthera, Exuma, Abaco, etc.).
+
+We need a fresh Google Search query to scrape leads.
+Past queries used:
+${history.length > 0 ? history.map((q) => "- " + q).join("\n") : "None."}
+
+Generate EXACTLY ONE new, highly relevant search query for a different niche or island.
+Return ONLY the raw query string — no quotes, no markdown, no explanation.
+Examples: "Salons Freeport", "Lawyers Nassau", "Electricians Exuma", "Mechanics Abaco".`
+
+  try {
+    const res = await aiModel.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        maxOutputTokens: 20,
+        temperature: 0.7,
+      }
+    })
+    
+    let text = res.response.text() || "Boutiques Nassau"
+    text = text.replace(/["']/g, "").trim()
+    return text
+  } catch (error) {
+    console.error("[generateStrategicScrapeQuery] Error:", error)
+    return "Contractors Nassau"
+  }
+}

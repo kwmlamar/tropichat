@@ -8,11 +8,16 @@ import { cn } from "@/lib/utils"
 export function AdminScraperSettings() {
   const [isSavingSettings, setIsSavingSettings] = useState(false)
   const [isRunningScheduled, setIsRunningScheduled] = useState(false)
-  const [scheduleSettings, setScheduleSettings] = useState({
+  const [scheduleSettings, setScheduleSettings] = useState<{
+    enabled: boolean;
+    days: string[];
+    time: string;
+    query_history: string[];
+  }>({
     enabled: false,
     days: ["tuesday", "wednesday", "thursday"],
     time: "08:30",
-    query: "Boutiques Nassau"
+    query_history: []
   })
 
   useEffect(() => {
@@ -145,14 +150,23 @@ export function AdminScraperSettings() {
               />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Search Query</p>
-              <input
-                type="text"
-                value={scheduleSettings.query || ""}
-                onChange={e => setScheduleSettings(s => ({ ...s, query: e.target.value }))}
-                placeholder="Boutiques Nassau"
-                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl text-sm font-bold text-[#213138] dark:text-white focus:border-[#007B85] outline-none transition-all"
-              />
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">AI Search History</p>
+              {scheduleSettings.query_history?.length > 0 ? (
+                <div className="w-full px-4 py-2 bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl max-h-[140px] overflow-y-auto">
+                  {scheduleSettings.query_history.map((q, idx) => (
+                    <div key={idx} className="flex items-center gap-2 py-1.5 border-b border-gray-100 dark:border-white/5 last:border-0">
+                      <div className="w-4 h-4 rounded-full bg-[#007B85]/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[8px] font-bold text-[#007B85]">{scheduleSettings.query_history.length - idx}</span>
+                      </div>
+                      <span className="text-xs font-bold text-[#213138] dark:text-gray-300">{q}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-xl text-xs font-bold text-gray-400 italic">
+                  No history yet. Tropi AI will determine the first query.
+                </div>
+              )}
             </div>
           </div>
 

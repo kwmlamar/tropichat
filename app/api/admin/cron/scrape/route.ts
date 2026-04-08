@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { generateStrategicScrapeQuery } from "@/lib/ai"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -54,9 +55,23 @@ async function handleRun(req: Request, isManual: boolean) {
     }
   }
 
-  const query = settings.query || "Boutiques Nassau"
+  const history = settings.query_history || []
+  
+  // Use AI to determine the best target query today, ensuring it ignores past ones
+  const query = await generateStrategicScrapeQuery(history)
+  
   // Today's date in YYYY-MM-DD (Central Time)
   const todayDate = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" })
+
+  // Ensure query tracking is updated BEFORE waiting on the scrape itself to prevent sync issues if scraper crashes
+  const newHistory = [query, ...history].slice(0, 100) // keep last 100 max
+  await supabase
+    .from("admin_settings")
+    .upsert({
+      key: "scrape_schedule",
+      value: { ...settings, query_history: newHistory },
+      updated_at: new Date().toISOString()
+    }, { onConflict: "key" })
 
   // Run the scraper and get newly inserted lead IDs
   const newLeads = await runScraper(query)
