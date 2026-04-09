@@ -33,7 +33,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: ctxErr || 'Workspace not found' }, { status: 404 })
     }
 
-    // Find the WhatsApp connected account
+    const { searchParams } = new URL(request.url)
+    const forceSync = searchParams.get('sync') === 'true'
+
+    // 1. Find the WhatsApp connected account
     const { data: account } = await supabase
       .from('connected_accounts')
       .select('id')
@@ -46,17 +49,66 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'WhatsApp not connected' }, { status: 400 })
     }
 
-    // Get business profile
+    // 2. Get business profile from local DB
     const { data: profile } = await supabase
       .from('business_profiles')
       .select('*')
       .eq('connected_account_id', account.id)
-      .single()
+      .maybeSingle()
+
+    // 3. IF profile is missing, name is default, or user requested FORCED sync
+    const isDefault = !profile || !profile.business_name || profile.business_name === 'My Business' || profile.business_name === 'TropiChat Business'
+    if (isDefault || forceSync) {
+      const { data: connection } = await supabase
+        .from('meta_connections')
+        .select('access_token, account_id, metadata')
+        .eq('user_id', customerId)
+        .eq('channel', 'whatsapp')
+        .single()
+
+      if (connection && connection.access_token && !connection.access_token.startsWith('DEMO_')) {
+        const phoneId = connection.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_NUMBER_ID
+        
+        try {
+          // Meta API: GET /{phone_number_id}/whatsapp_business_profile
+          const res = await fetch(
+            `https://graph.facebook.com/v22.0/${phoneId}/whatsapp_business_profile?fields=about,address,description,email,profile_picture_url,websites,vertical&access_token=${connection.access_token}`
+          )
+          const metaData = await res.json()
+
+          if (metaData && !metaData.error && metaData.data?.[0]) {
+            const m = metaData.data[0]
+            const syncData = {
+              connected_account_id: account.id,
+              business_name: m.verified_name || user.user_metadata?.full_name || 'TropiChat Business',
+              business_description: m.description || m.about || '',
+              business_category: m.vertical || '',
+              website_url: m.websites?.[0] || '',
+              business_address: m.address || '',
+              contact_email: m.email || '',
+              profile_picture_url: m.profile_picture_url || '',
+            }
+
+            // Save synced data
+            const service = createServiceClient()
+            const { data: savedProfile } = await service
+              .from('business_profiles')
+              .upsert(syncData, { onConflict: 'connected_account_id' })
+              .select()
+              .single()
+
+            return NextResponse.json({ profile: savedProfile })
+          }
+        } catch (apiErr) {
+          console.error('Meta Profile Sync Error:', apiErr)
+        }
+      }
+    }
 
     return NextResponse.json({
       profile: profile || {
         connected_account_id: account.id,
-        business_name: '',
+        business_name: user.user_metadata?.full_name || 'My Business',
         business_description: '',
         business_category: '',
         website_url: '',

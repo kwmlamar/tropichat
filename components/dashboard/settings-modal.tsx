@@ -1135,15 +1135,28 @@ function WhatsAppSettings({ status, onRefresh }: { status: any, onRefresh: () =>
   const [connecting, setConnecting] = useState(false)
   const [disconnecting, setDisconnecting] = useState(false)
 
+  const fetchProfile = useCallback(async (sync = false) => {
+    setLoading(true)
+    try {
+      const token = await getSupabase().auth.getSession().then(s => s.data.session?.access_token)
+      const res = await fetch(`/api/meta/business-profile${sync ? '?sync=true' : ''}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data.profile) setProfile(data.profile)
+      if (sync) toast.success("Synced with Meta successfully")
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     if (status?.connected) {
-      setLoading(true)
-      fetchBusinessProfile().then(res => {
-        if (res.data) setProfile(res.data)
-        setLoading(false)
-      })
+      fetchProfile()
     }
-  }, [status?.connected])
+  }, [status?.connected, fetchProfile])
 
   const handleConnect = async () => {
     setConnecting(true)
@@ -1221,8 +1234,18 @@ function WhatsAppSettings({ status, onRefresh }: { status: any, onRefresh: () =>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleFetchNumbers} disabled={switching} className="text-[#007B85] font-bold text-xs h-8 px-3 rounded-lg hover:bg-[#007B85]/5">
-              {switching ? <CircleNotch className="animate-spin h-3.5 w-3.5" /> : "Switch Number"}
+            <Button 
+               variant="ghost" 
+               size="sm" 
+               onClick={() => fetchProfile(true)} 
+               disabled={loading || switching} 
+               className="text-[#007B85] font-bold text-xs h-8 px-3 rounded-lg hover:bg-[#007B85]/5"
+            >
+              {loading ? <CircleNotch className="animate-spin h-3.5 w-3.5" /> : <ArrowsClockwise className="h-3.5 w-3.5 mr-1" />}
+              Sync Meta
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleFetchNumbers} disabled={switching} className="text-gray-500 font-bold text-xs h-8 px-3 rounded-lg hover:bg-gray-100">
+              Switch Number
             </Button>
             <div className="px-3 py-1 bg-green-500/10 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest">Active</div>
           </div>
