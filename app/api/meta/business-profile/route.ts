@@ -70,17 +70,23 @@ export async function GET(request: NextRequest) {
         const phoneId = connection.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_NUMBER_ID
         
         try {
-          // Meta API: GET /{phone_number_id}/whatsapp_business_profile
-          const res = await fetch(
+          // 1. Fetch Profile Data (Description, Bio, etc.)
+          const profileRes = await fetch(
             `https://graph.facebook.com/v22.0/${phoneId}/whatsapp_business_profile?fields=about,address,description,email,profile_picture_url,websites,vertical&access_token=${connection.access_token}`
           )
-          const metaData = await res.json()
+          const profileData = await profileRes.json()
 
-          if (metaData && !metaData.error && metaData.data?.[0]) {
-            const m = metaData.data[0]
+          // 2. Fetch Phone Number Data (for the actual VERIFIED NAME)
+          const phoneRes = await fetch(
+            `https://graph.facebook.com/v22.0/${phoneId}?fields=verified_name,display_phone_number&access_token=${connection.access_token}`
+          )
+          const phoneData = await phoneRes.json()
+
+          if (!profileData.error && profileData.data?.[0]) {
+            const m = profileData.data[0]
             const syncData = {
               connected_account_id: account.id,
-              business_name: m.verified_name || user.user_metadata?.full_name || 'TropiChat Business',
+              business_name: phoneData.verified_name || m.verified_name || user.user_metadata?.full_name || 'TropiChat Business',
               business_description: m.description || m.about || '',
               business_category: m.vertical || '',
               website_url: m.websites?.[0] || '',
@@ -177,6 +183,38 @@ export async function PUT(request: NextRequest) {
       .eq('connected_account_id', account.id)
       .single()
 
+    // 2. Synchronize with Meta Graph API
+    const { data: connection } = await supabase
+      .from('meta_connections')
+      .select('access_token, metadata')
+      .eq('user_id', customerId)
+      .eq('channel', 'whatsapp')
+      .single()
+
+    if (connection && connection.access_token && !connection.access_token.startsWith('DEMO_')) {
+      const phoneId = connection.metadata?.phone_number_id || process.env.WHATSAPP_PHONE_NUMBER_ID
+      try {
+        await fetch(`https://graph.facebook.com/v22.0/${phoneId}/whatsapp_business_profile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${connection.access_token}`
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            description: body.business_description || '',
+            address: body.business_address || '',
+            email: body.contact_email || '',
+            websites: body.website_url ? [body.website_url] : [],
+            vertical: body.business_category || 'OTHER'
+          })
+        })
+      } catch (apiErr) {
+        console.error('Meta Profile Update Sync Error:', apiErr)
+      }
+    }
+
+    // 3. Upsert local database
     let result
     if (existing) {
       result = await service
