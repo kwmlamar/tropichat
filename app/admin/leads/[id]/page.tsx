@@ -101,7 +101,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
       .single()
 
     if (error) {
-      toast.error("Failed to load lead intelligence")
+      toast.error("Failed to load conversion intelligence")
     } else {
       setLead(data)
       setNotes(data.notes || "")
@@ -203,7 +203,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="h-10 w-10 border-4 border-[#007B85] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Decrypting Lead Intel...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Decrypting Conversion Intel...</p>
       </div>
     )
   }
@@ -373,8 +373,8 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   <Notebook size={24} className="text-[#007B85]" weight="duotone" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-[#213138] dark:text-white tracking-tight">Research & Call Intel</h2>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mt-0.5">Record every detail for the perfect demo</p>
+                  <h2 className="text-xl font-black text-[#213138] dark:text-white tracking-tight">Conversion Research & Call Intel</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mt-0.5">Record every detail needed to close the booking</p>
                 </div>
               </div>
               <div className={cn(
@@ -442,7 +442,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                   </div>
                   <button 
                     onClick={() => {
-                      const script = `“Hey, real quick — I’m testing something I built that helps businesses reply to customers instantly on WhatsApp and Instagram so they don’t lose sales when they’re busy.”\n\nPause.\n\n“I’m only setting it up for a few businesses for free right now. I’ll literally help you set it up and customize it for your business.”\n\nThen:\n\n“If it actually helps you catch more customers, I’d just ask for feedback and a quick review.”\n\n🎯 If they hesitate:\n\n“Worst case, you try it for a couple weeks and don’t use it. No cost.”`;
+                      const script = `“Quick one — I help tour operators turn messages and inquiries into more bookings.”\n\n(stop talking)\n\n“Most places already get people asking about tours, but a lot of them disappear before booking.”\n\n“You getting most of your bookings through WhatsApp, Instagram, or your website?”\n\n“Yeah, that’s where people usually drop off. They ask a few questions then never come back.”\n\n“What I do is help you reply faster and follow up with people so more of those inquiries actually turn into bookings.”`;
                       navigator.clipboard.writeText(script);
                       toast.success("Strategy Copied to Clipboard");
                     }}
@@ -453,28 +453,41 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                 </div>
                 
                 <div className="bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-[1.5rem] p-8 space-y-4">
-                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
-                    “Hey, real quick — I’m testing something I built that helps businesses <span className="text-[#007B85]">reply to customers instantly</span> on WhatsApp and Instagram so they don’t lose sales when they’re busy.”
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                    <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
+                      “Quick one — I help <span className="text-[#007B85]">tour operators</span> turn messages and inquiries into more bookings.”
+                    </p>
+                  </div>
                   <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest px-3 py-1 bg-gray-50 dark:bg-white/5 rounded-full w-fit">
-                    Pause for response
+                    Stop talking / Listen
                   </div>
-                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic">
-                    “I’m only setting it up for <span className="underline decoration-[#007B85]/30">a few businesses for free</span> right now. I’ll literally help you set it up and customize it for your business.”
-                  </p>
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic opacity-50 px-3">
-                    Then:
-                  </div>
-                  <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic border-l-4 border-[#007B85]/20 pl-4">
-                    “If it actually helps you catch more customers, I’d just ask for feedback and a quick review.”
-                  </p>
-                  <div className="pt-4 border-t border-gray-100 dark:border-white/10 mt-4">
-                    <div className="flex items-center gap-2 mb-2">
-                       <span className="text-sm">🎯</span>
-                       <span className="text-[10px] font-black uppercase text-amber-500 tracking-[0.2em]">If they hesitate</span>
-                    </div>
+                  <div className="flex items-start gap-2">
+                    <span className="h-2 w-2 rounded-full bg-amber-500 mt-2 flex-shrink-0" />
                     <p className="text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed italic">
-                        “Worst case, you try it for a couple weeks and don’t use it. <span className="text-[#007B85]">No cost.</span>”
+                      “Most places already get people asking about tours, but a <span className="underline decoration-amber-500/30">lot of them disappear</span> before booking.”
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                     <span className="h-2 w-2 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                     <p className="text-lg font-bold text-gray-500 dark:text-gray-400 leading-relaxed italic">
+                        “You getting most of your bookings through <span className="text-blue-500">WhatsApp, Instagram, or your website?</span>”
+                     </p>
+                  </div>
+                  <div className="pt-4 border-t border-gray-100 dark:border-white/10 mt-4 space-y-4">
+                    <div className="flex items-center gap-2 text-[#EA580C]">
+                       <span className="text-sm">🔥</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em]">Pain Trigger</span>
+                    </div>
+                    <p className="text-lg font-bold text-gray-400 leading-relaxed italic">
+                        “Yeah, that’s where people usually drop off. They ask a few questions then never come back.”
+                    </p>
+                    <div className="flex items-center gap-2 text-[#007B85]">
+                       <span className="text-sm">💰</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em]">The Pitch</span>
+                    </div>
+                    <p className="text-xl font-black text-[#213138] dark:text-white leading-relaxed italic border-l-4 border-[#007B85]/20 pl-4">
+                        “What I do is help you reply faster and follow up with people so more of those inquiries actually turn into bookings.”
                     </p>
                   </div>
                 </div>
@@ -484,7 +497,7 @@ export default function LeadProfilePage({ params }: { params: Promise<{ id: stri
                     href={`tel:${lead.contact_phone}`}
                     className="flex items-center gap-3 px-8 py-4 bg-white text-[#007B85] rounded-2xl font-black uppercase text-[12px] tracking-widest hover:scale-105 transition-all shadow-lg active:scale-95"
                   >
-                    <Phone weight="fill" className="h-4 w-4" /> Start Mission Call
+                    <Phone weight="fill" className="h-4 w-4" /> Start Conversion Call
                   </a>
                   <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/5 text-[10px] font-bold uppercase tracking-widest text-white/60">
                     Target: {lead.contact_phone || "No Phone Protocol Found"}

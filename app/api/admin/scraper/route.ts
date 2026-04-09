@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey)
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
-    const query = body.query || "Boutiques Nassau"
+    const query = body.query || "Tour Operators Nassau"
     
     console.log(`🛰️  UNIFIED MISSION START: Aggregating all platforms for '${query}'...`)
 
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
 
     // 🔬 Step 2: Deep Recon (Phones, Websites, Emails) for top candidates
     for (const lead of aggregatedLeads) {
-      let phoneNumber = "No Phone Protocol"
+      let phoneNumber = null
       let website = null
       let email = null
 
@@ -148,18 +148,18 @@ export async function POST(req: Request) {
     let count = 0
     let enrichedCount = 0
     for (const lead of finalizedLeads) {
-      const { data: existing } = await supabase
-        .from("leads")
+      const { data: existing } = await (supabase
+        .from("leads") as any)
         .select("id, contact_phone, contact_email, facebook_page, instagram_handle, notes")
         .eq("business_name", lead.business_name)
         .maybeSingle()
 
       if (!existing) {
-        const { error } = await supabase.from("leads").insert(lead)
+        const { error } = await (supabase.from("leads") as any).insert(lead)
         if (!error) count++
       } else {
         const updates: any = {}
-        if (lead.contact_phone !== "No Phone Protocol" && (!existing.contact_phone || existing.contact_phone === "No Phone Protocol")) updates.contact_phone = lead.contact_phone
+        if (lead.contact_phone && (!existing.contact_phone || existing.contact_phone === "No Phone Protocol" || existing.contact_phone === "")) updates.contact_phone = lead.contact_phone
         if (lead.contact_email && !existing.contact_email) updates.contact_email = lead.contact_email
         if (lead.facebook_page && !existing.facebook_page) updates.facebook_page = lead.facebook_page
         if (lead.instagram_handle && !existing.instagram_handle) updates.instagram_handle = lead.instagram_handle
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
         if (Object.keys(updates).length > 0) {
           updates.notes = (existing.notes || "") + `\n(Unified intel enriched: ${Object.keys(updates).join(', ')})`
           updates.updated_at = new Date().toISOString()
-          const { error } = await supabase.from("leads").update(updates).eq("id", existing.id)
+          const { error } = await (supabase.from("leads") as any).update(updates).eq("id", existing.id)
           if (!error) enrichedCount++
         }
       }

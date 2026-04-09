@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { generateStrategicScrapeQuery } from "@/lib/ai"
+import { verifyWhatsAppContact } from "@/lib/meta"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,8 +31,8 @@ async function handleRun(req: Request, isManual: boolean) {
   }
 
   // Load schedule settings
-  const { data: settingsRow } = await supabase
-    .from("admin_settings")
+  const { data: settingsRow } = await (supabase
+    .from("admin_settings") as any)
     .select("value")
     .eq("key", "scrape_schedule")
     .maybeSingle()
@@ -39,7 +40,7 @@ async function handleRun(req: Request, isManual: boolean) {
   const settings = settingsRow?.value || {
     enabled: false,
     days: ["tuesday", "wednesday", "thursday"],
-    query: "Boutiques Nassau"
+    query: "Tour Operators Nassau"
   }
 
   // On automated runs, check if enabled and today is a scheduled day
@@ -55,70 +56,159 @@ async function handleRun(req: Request, isManual: boolean) {
     }
   }
 
-  const history = settings.query_history || []
-  
-  // Use AI to determine the best target query today, ensuring it ignores past ones
-  const query = await generateStrategicScrapeQuery(history)
-  
   // Today's date in YYYY-MM-DD (Central Time)
   const todayDate = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" })
 
-  // Ensure query tracking is updated BEFORE waiting on the scrape itself to prevent sync issues if scraper crashes
-  const newHistory = [query, ...history].slice(0, 100) // keep last 100 max
-  await supabase
-    .from("admin_settings")
-    .upsert({
-      key: "scrape_schedule",
-      value: { ...settings, query_history: newHistory },
-      updated_at: new Date().toISOString()
-    }, { onConflict: "key" })
-
-  // Run the scraper and get newly inserted lead IDs
-  const newLeads = await runScraper(query)
-
-  // Set whatsapp_status and call_today_date for new leads
-  for (const lead of newLeads) {
-    const waStatus = resolveWhatsAppStatus(lead)
-    await supabase
-      .from("leads")
-      .update({
-        whatsapp_status: waStatus,
-        ...(waStatus !== "no_phone" ? { call_today_date: todayDate } : {})
-      } as any)
-      .eq("id", lead.id)
+  // 1. Fetch WA Access Token for the primary phone number
+  const waPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID
+  let waAccessToken: string | null = null
+  
+  if (waPhoneId) {
+    const { data: acc } = await (supabase
+      .from("connected_accounts") as any)
+      .select("access_token")
+      .eq("channel_account_id" as any, waPhoneId)
+      .maybeSingle()
+    waAccessToken = acc?.access_token || null
   }
 
-  // Count how many uncalled leads are already queued for today (including carryover)
-  const { count: uncalledCount } = await supabase
-    .from("leads")
-    .select("*", { count: "exact", head: true })
+  // 1. Instantly purge any unqualified leads from the Call Today queue (safeguard)
+  await (supabase
+    .from("leads") as any)
+    .update({ call_today_date: null } as any)
+    .is("contact_phone" as any, null)
     .lte("call_today_date" as any, todayDate)
     .is("called_at" as any, null)
 
-  // Backfill from existing cold leads to hit 20
-  const needed = Math.max(0, 20 - (uncalledCount || 0))
+  // 2. See how many qualified leads are currently queued
+  const getQueuedCount = async () => {
+    const { count } = await (supabase
+      .from("leads") as any)
+      .select("*", { count: "exact", head: true })
+      .lte("call_today_date" as any, todayDate)
+      .is("called_at" as any, null)
+      .neq("contact_phone" as any, "")
+      .not("contact_phone" as any, "is", null)
+    return count || 0
+  }
+
+  let uncalledCount = await getQueuedCount()
+  let history = settings.query_history || []
+  let totalNewLeads = 0
+  let loops = 0
+  const MAX_LOOPS = 4 // Safe limit to prevent server timeouts
+
+  // 3. Keep generating queries and scraping until we hit 20 actionable leads
+  while (uncalledCount < 20 && loops < MAX_LOOPS) {
+    loops++
+    const query = await generateStrategicScrapeQuery(history)
+    history = [query, ...history].slice(0, 100)
+    
+    // Save history immediately so it doesn't get lost
+    await (supabase
+      .from("admin_settings") as any)
+      .upsert({
+        key: "scrape_schedule",
+        value: { ...settings, query_history: history },
+        updated_at: new Date().toISOString()
+      }, { onConflict: "key" })
+
+    const newLeads = await runScraper(query)
+    totalNewLeads += newLeads.length
+
+    // Assign statuses, but only set call_today_date if they have a VERIFIED WhatsApp number
+    for (const lead of newLeads) {
+      const rawPhone = lead.contact_phone || ""
+      const cleanPhone = rawPhone.replace(/\D/g, "")
+      
+      let finalStatus = "no_phone"
+      let waId = null
+      let isVerified = false
+
+      if (cleanPhone && waAccessToken && waPhoneId) {
+        // Real-time verification via Cloud API
+        const verifiedId = await verifyWhatsAppContact({
+          phoneNumberId: waPhoneId,
+          accessToken: waAccessToken,
+          to: cleanPhone
+        })
+        
+        if (verifiedId) {
+          finalStatus = "verified"
+          waId = verifiedId
+          isVerified = true
+        } else {
+          finalStatus = "likely" // Fallback if API check fails or says no, but we still have a number
+        }
+      } else if (cleanPhone) {
+        finalStatus = "likely"
+      }
+
+      await (supabase
+        .from("leads") as any)
+        .update({
+          whatsapp_status: finalStatus,
+          whatsapp_number: waId,
+          // ONLY add to call today if it was EXPLICITLY verified on WA
+          ...(isVerified ? { call_today_date: todayDate } : { call_today_date: null })
+        } as any)
+        .eq("id" as any, lead.id)
+    }
+    
+    uncalledCount = await getQueuedCount()
+  }
+
+
+
+  // 4. If STILL short after all scrapes, backfill using old cold leads
+  const needed = Math.max(0, 20 - uncalledCount)
   if (needed > 0) {
-    const { data: coldLeads } = await supabase
-      .from("leads")
+    const { data: coldLeads } = await (supabase
+      .from("leads") as any)
       .select("id, contact_phone, whatsapp_number, whatsapp_status")
-      .eq("status", "cold")
+      .eq("status" as any, "cold")
       .is("call_today_date" as any, null)
-      .neq("contact_phone", "No Phone Protocol")
-      .not("contact_phone", "is", null)
+      .neq("contact_phone" as any, "")
+      .not("contact_phone" as any, "is", null)
       .limit(needed)
 
     for (const lead of coldLeads || []) {
-      const waStatus = resolveWhatsAppStatus(lead as any)
-      await supabase
-        .from("leads")
-        .update({ whatsapp_status: waStatus, call_today_date: todayDate } as any)
-        .eq("id", lead.id)
+      const rawPhone = lead.contact_phone || ""
+      const cleanPhone = rawPhone.replace(/\D/g, "")
+      
+      let finalStatus = "likely"
+      let waId = lead.whatsapp_number
+      let isVerified = false
+
+      if (cleanPhone && waAccessToken && waPhoneId) {
+        const verifiedId = await verifyWhatsAppContact({
+          phoneNumberId: waPhoneId,
+          accessToken: waAccessToken,
+          to: cleanPhone
+        })
+        
+        if (verifiedId) {
+          finalStatus = "verified"
+          waId = verifiedId
+          isVerified = true
+        }
+      }
+
+      await (supabase
+        .from("leads") as any)
+        .update({ 
+          whatsapp_status: finalStatus, 
+          whatsapp_number: waId,
+          // Only put on Call Today if it's actually verified
+          ...(isVerified ? { call_today_date: todayDate } : {}) 
+        } as any)
+        .eq("id" as any, lead.id)
     }
   }
 
   return NextResponse.json({
     success: true,
-    newLeads: newLeads.length,
+    newLeads: totalNewLeads,
     todayDate
   })
 }
@@ -129,7 +219,7 @@ async function handleRun(req: Request, isManual: boolean) {
 // (most Bahamian business numbers are on WhatsApp); otherwise no phone.
 function resolveWhatsAppStatus(lead: any): string {
   if (lead.whatsapp_number) return "verified"
-  if (!lead.contact_phone || lead.contact_phone === "No Phone Protocol") return "no_phone"
+  if (!lead.contact_phone || lead.contact_phone === "") return "no_phone"
   return "likely"
 }
 
@@ -188,7 +278,7 @@ async function runScraper(query: string): Promise<any[]> {
     const finalizedLeads: any[] = []
 
     for (const lead of Array.from(leadMap.values())) {
-      let phoneNumber = "No Phone Protocol"
+      let phoneNumber = null
       let website = null
       let email = null
 
@@ -245,8 +335,8 @@ async function runScraper(query: string): Promise<any[]> {
         .maybeSingle()
 
       if (!existing) {
-        const { data: newLead, error } = await supabase
-          .from("leads")
+        const { data: newLead, error } = await (supabase
+          .from("leads") as any)
           .insert(lead)
           .select("id, contact_phone, whatsapp_number")
           .single()

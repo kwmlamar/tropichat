@@ -70,7 +70,7 @@ export default function LeadsPage() {
     contact_phone: "",
     contact_email: "",
     instagram_handle: "",
-    category: "Boutique",
+    category: "Tour Operator",
     status: "cold"
   })
   const [searchQuery, setSearchQuery] = useState("")
@@ -192,7 +192,7 @@ export default function LeadsPage() {
         contact_phone: "",
         contact_email: "",
         instagram_handle: "",
-        category: "Boutique",
+        category: "Tour Operator",
         status: "cold"
       })
       toast.success("Lead added to pipeline!")
@@ -459,9 +459,9 @@ export default function LeadsPage() {
                       <td className="px-6 py-6 transition-all">
                         <div className="flex items-center gap-2 group/contact">
                           <div className="text-sm text-[#213138] dark:text-gray-200 font-black tracking-tight">
-                            {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || 'Scan for phone...')}
+                            {lead.instagram_handle ? `@${lead.instagram_handle.replace('@', '')}` : (lead.contact_phone || '')}
                           </div>
-                          {(lead.instagram_handle || (lead.contact_phone && lead.contact_phone !== 'Scan for phone...')) && (
+                          {(lead.instagram_handle || lead.contact_phone) && (
                             <button 
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -579,7 +579,7 @@ export default function LeadsPage() {
                             value={newLead.category}
                             onChange={(e) => setNewLead({...newLead, category: e.target.value})}
                             className="w-full px-4 py-3 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl text-sm font-bold text-[#213138] dark:text-white outline-none focus:ring-1 focus:ring-[#3A9B9F]"
-                            placeholder="e.g. Boutique"
+                            placeholder="e.g. Tour Operator"
                         />
                     </div>
                      <div className="space-y-2">
@@ -620,7 +620,7 @@ export default function LeadsPage() {
         isOpen={isEditModalOpen} 
         onClose={() => { setIsEditModalOpen(false); setEditingLead(null); }}
         title="Refine Lead Intelligence"
-        description="Update contact details and category for this boutique"
+        description="Update contact details and category for this prospect"
       >
         {editingLead && (
           <form onSubmit={handleUpdateLead} className="space-y-6 pt-4">

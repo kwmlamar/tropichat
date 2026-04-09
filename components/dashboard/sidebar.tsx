@@ -43,8 +43,8 @@ const navItems = [
   { href: "/dashboard/analytics", label: "Home", icon: House },
   { href: "/dashboard", label: "Inbox", icon: ChatCircleDots },
   { href: "/dashboard/contacts", label: "Contacts", icon: Users },
-  { href: "/dashboard/automations", label: "Automation", icon: Lightning },
-  { href: "/dashboard/ai", label: "Tropi AI", icon: ShieldCheck },
+  { href: "/dashboard/automations", label: "Conversion Flows", icon: Lightning },
+  { href: "/dashboard/ai", label: "Booking Assistant", icon: ShieldCheck },
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarBlank },
 
 ]

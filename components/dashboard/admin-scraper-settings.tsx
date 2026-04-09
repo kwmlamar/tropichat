@@ -29,10 +29,15 @@ export function AdminScraperSettings() {
       const res = await fetch("/api/admin/settings")
       if (res.ok) {
         const data = await res.json()
-        setScheduleSettings(data)
+        setScheduleSettings({
+          enabled: data.enabled ?? false,
+          days: data.days || ["tuesday", "wednesday", "thursday"],
+          time: data.time || "08:30",
+          query_history: data.query_history || []
+        })
       }
     } catch {
-      // Use defaults
+      // Use defaults (already set in initial state)
     }
   }
 
@@ -63,7 +68,10 @@ export function AdminScraperSettings() {
       const res = await fetch("/api/admin/cron/scrape", { method: "POST" })
       const data = await res.json()
       if (data.success) {
-        toast.success(`Done! ${data.newLeads} new leads scraped.`, { id })
+        toast.success(`Done! ${data.newLeads} new leads scraped. Reloading queue...`, { id })
+        if (typeof window !== 'undefined') {
+          setTimeout(() => window.location.reload(), 1500)
+        }
       } else {
         toast.error(data.reason || "Scrape failed", { id })
       }

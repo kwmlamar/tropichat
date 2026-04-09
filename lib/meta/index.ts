@@ -18,6 +18,7 @@ export {
   markWhatsAppMessageRead,
   parseWhatsAppWebhook,
   getWhatsAppMediaUrl,
+  verifyWhatsAppContact,
 } from './whatsapp'
 
 export {

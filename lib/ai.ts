@@ -419,13 +419,19 @@ export async function generateStrategicScrapeQuery(history: string[] = []): Prom
   const prompt = `You are the lead generation engine for TropiChat, an AI WhatsApp automation tool.
 Our target audience is service-based businesses in the Bahamas (Nassau, Freeport, Eleuthera, Exuma, Abaco, etc.).
 
+We are currently PRIORITIZING these high-intent industries:
+1. Tour Operators / Boat Tours / Excursions
+2. Car Rentals / Transportation Services
+3. Activity Providers (Scuba, Jet Ski, Island Experiences)
+4. Event Services (Weddings, Party Planners, DJs, Equipment Rental)
+
 We need a fresh Google Search query to scrape leads.
 Past queries used:
 ${history.length > 0 ? history.map((q) => "- " + q).join("\n") : "None."}
 
-Generate EXACTLY ONE new, highly relevant search query for a different niche or island.
+Generate EXACTLY ONE new, highly relevant search query targeting the prioritizing industries above or a similar niche.
 Return ONLY the raw query string — no quotes, no markdown, no explanation.
-Examples: "Salons Freeport", "Lawyers Nassau", "Electricians Exuma", "Mechanics Abaco".`
+Examples: "Jet Ski Rentals Nassau", "Boat Tours Exuma", "Wedding Planners Freeport", "Car Rentals Abaco".`
 
   try {
     const res = await aiModel.generateContent({

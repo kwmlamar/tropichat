@@ -229,9 +229,9 @@ export default function OutreachPage() {
             </button>
           </Link>
           <div>
-            <h1 className="text-3xl font-black text-[#213138] dark:text-white tracking-tight">Outreach Command</h1>
+            <h1 className="text-3xl font-black text-[#213138] dark:text-white tracking-tight">Conversion Command</h1>
             <div className="flex items-center gap-3 mt-1">
-              <p className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest">High-Conversion Intellectual Assets</p>
+              <p className="text-[10px] font-black text-gray-400 dark:text-[#525252] uppercase tracking-widest">Lead Conversion Assets</p>
               <span className="text-[10px] h-1 w-1 rounded-full bg-gray-300 dark:bg-[#1A1A1A]" />
               <p className="text-[10px] font-black text-[#007B85] uppercase tracking-widest">
                 {currentMRR > 0 ? (
@@ -249,7 +249,7 @@ export default function OutreachPage() {
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-tr from-[#EA580C] to-[#F97316] hover:brightness-110 text-white rounded-xl text-[13px] font-bold transition-all shadow-lg shadow-[#EA580C]/20 active:scale-95 group"
           >
             <TrendUp weight="bold" className="h-4 w-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
-            Cold Outreach Blast
+            Booking Acceleration Blast
           </button>
           <button 
             onClick={() => { setIsEditing(false); setFormData({ title: '', industry: 'general', subject: '', status: 'ready', content: '' }); setIsAddModalOpen(true) }}
@@ -302,14 +302,14 @@ export default function OutreachPage() {
         >
           <EnvelopeSimple weight="bold" className="h-8 w-8 mb-4 transition-transform group-hover:scale-110" />
           <div className="font-black text-[13px] uppercase tracking-tight">Cold Email</div>
-          <div className="text-[10px] font-bold uppercase tracking-widest mt-1 opacity-70">Corporate Lead Gen</div>
+          <div className="text-[10px] font-bold uppercase tracking-widest mt-1 opacity-70">Strategic Booking Growth</div>
         </button>
       </div>
 
       {/* Filter Controls */}
       <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
         <Funnel weight="bold" className="text-gray-400 h-4 w-4 shrink-0" />
-        {['all', 'retail', 'food', 'tourism', 'general', 'realestate'].map(ind => (
+        {['all', 'tours', 'car_rentals', 'activities', 'events', 'salons', 'general', 'realestate'].map(ind => (
           <button
             key={ind}
             onClick={() => setActiveIndustry(ind)}
@@ -320,7 +320,7 @@ export default function OutreachPage() {
                 : "bg-white dark:bg-[#111111] border-gray-100 dark:border-white/5 text-gray-400 hover:text-white"
             )}
           >
-            {ind}
+            {ind.replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -485,8 +485,8 @@ export default function OutreachPage() {
                 onChange={e => setFormData({ ...formData, industry: e.target.value })}
                 className="w-full h-11 bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-white/5 rounded-xl px-4 text-sm focus:border-[#007B85] outline-none transition-all appearance-none"
               >
-                {['general', 'retail', 'food', 'tourism', 'realestate'].map(ind => (
-                  <option key={ind} value={ind}>{ind.toUpperCase()}</option>
+                {['general', 'tours', 'car_rentals', 'activities', 'events', 'salons', 'realestate'].map(ind => (
+                  <option key={ind} value={ind}>{ind.toUpperCase().replace('_', ' ')}</option>
                 ))}
               </select>
             </div>

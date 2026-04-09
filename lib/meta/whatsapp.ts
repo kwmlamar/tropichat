@@ -132,6 +132,42 @@ export async function markWhatsAppMessageRead(options: WhatsAppMarkReadOptions):
   })
 }
 
+// ==================== CONTACT VERIFICATION ====================
+
+export interface WhatsAppVerifyOptions {
+  phoneNumberId: string
+  accessToken: string
+  to: string
+}
+
+/** 
+ * Verifies if a phone number is on WhatsApp using the Graph API.
+ * Returns the verified WABA ID if valid, or null.
+ */
+export async function verifyWhatsAppContact(options: WhatsAppVerifyOptions): Promise<string | null> {
+  const { phoneNumberId, accessToken, to } = options
+
+  try {
+    const res = await metaApiRequest<{ contacts: Array<{ status: string; wa_id: string }> }>({
+      method: 'POST',
+      path: `${phoneNumberId}/contacts`,
+      accessToken,
+      body: {
+        blocking: 'no_wait',
+        contacts: [to],
+        force_check: false,
+        messaging_product: 'whatsapp',
+      },
+    })
+
+    const contact = res.contacts?.find(c => c.status === 'valid')
+    return contact?.wa_id || null
+  } catch (error) {
+    console.error('[WhatsApp Verify] Error:', error)
+    return null
+  }
+}
+
 // ==================== WEBHOOK PARSING ====================
 
 /**
