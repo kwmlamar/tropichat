@@ -96,7 +96,7 @@ async function handleRun(req: Request, isManual: boolean) {
   let history = settings.query_history || []
   let totalNewLeads = 0
   let loops = 0
-  const MAX_LOOPS = 4 // Safe limit to prevent server timeouts
+  const MAX_LOOPS = 12 // Increased for broader island-hopping coverage
 
   // 3. Keep generating queries and scraping until we hit 20 actionable leads
   while (uncalledCount < 20 && loops < MAX_LOOPS) {
@@ -137,8 +137,10 @@ async function handleRun(req: Request, isManual: boolean) {
           finalStatus = "verified"
           waId = verifiedId
           isVerified = true
+          console.log(`✅ VERIFIED: ${cleanPhone} is on WhatsApp.`)
         } else {
-          finalStatus = "likely" // Fallback if API check fails or says no, but we still have a number
+          finalStatus = "likely"
+          console.log(`⚠️  NOT VERIFIED: ${cleanPhone} might not be on WhatsApp.`)
         }
       } else if (cleanPhone) {
         finalStatus = "likely"
