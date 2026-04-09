@@ -151,8 +151,8 @@ async function handleRun(req: Request, isManual: boolean) {
         .update({
           whatsapp_status: finalStatus,
           whatsapp_number: waId,
-          // ONLY add to call today if it was EXPLICITLY verified on WA
-          ...(isVerified ? { call_today_date: todayDate } : { call_today_date: null })
+          // Add to call today if they have ANY phone number, verified or not
+          ...(cleanPhone ? { call_today_date: todayDate } : { call_today_date: null })
         } as any)
         .eq("id" as any, lead.id)
     }
@@ -201,8 +201,8 @@ async function handleRun(req: Request, isManual: boolean) {
         .update({ 
           whatsapp_status: finalStatus, 
           whatsapp_number: waId,
-          // Only put on Call Today if it's actually verified
-          ...(isVerified ? { call_today_date: todayDate } : {}) 
+          // Add to Call Today as long as we have a phone number to reach
+          ...(cleanPhone ? { call_today_date: todayDate } : {}) 
         } as any)
         .eq("id" as any, lead.id)
     }
