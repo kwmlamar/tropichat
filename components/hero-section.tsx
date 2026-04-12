@@ -63,15 +63,15 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-black pt-32 md:pt-48 lg:pt-56 pb-20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-black pt-24 md:pt-32 lg:pt-40 pb-20">
       
       {/* 📸 ULTRA-HD FULL-BLEED BACKGROUND IMAGE */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/hero_background_v2.png" 
-          alt="Premium Caribbean Entrepreneur using TropiChat"
+          src="/hero_relieved_operator.png" 
+          alt="Relieved Caribbean Tour Operator using TropiChat"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center lg:object-[65%_center]"
           priority
           quality={100}
         />
@@ -100,19 +100,19 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-6xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.9] tracking-tighter mb-8 max-w-[15ch] uppercase"
+              className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-tight lg:leading-[1.1] tracking-tight mb-8 max-w-2xl uppercase"
             >
               Stop Losing <br className="hidden sm:block" /> 
-              Customers <span className="text-[#007B85] drop-shadow-2xl italic underline decoration-8 underline-offset-[1.5rem]">Today.</span>
+              Customers <span className="text-[#007B85] drop-shadow-2xl italic underline decoration-4 underline-offset-8">Today.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-xl md:text-3xl text-gray-300 font-bold max-w-2xl mb-12 leading-tight uppercase tracking-tight opacity-95"
+              className="text-lg md:text-xl text-white font-medium max-w-lg mb-12 leading-relaxed opacity-90"
             >
-              TropiChat answers your WhatsApp and Instagram messages automatically — <br className="hidden md:block" />
+              TropiChat answers your WhatsApp and Instagram messages automatically — 
               so you don’t lose money when you’re too busy to reply.
             </motion.p>
 
@@ -122,18 +122,23 @@ export function HeroSection() {
               transition={{ delay: 0.4 }}
               className="flex flex-col items-start gap-5 w-full"
             >
-              <Button
-                onClick={goToSignup}
-                className="bg-[#007B85] hover:bg-[#2F8488] text-white font-black h-auto py-4 sm:h-24 sm:py-0 px-6 sm:px-12 md:px-16 rounded-2xl sm:rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-wider sm:tracking-widest flex flex-col justify-center items-center gap-1 sm:gap-0"
+              <a 
+                href={`https://wa.me/13342219466?text=${encodeURIComponent("Hi Lamar! I saw the TropiChat landing page and I'd like to see how it can help my business. Do you have a few minutes to chat?")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
               >
-                <span className="text-lg sm:text-xl md:text-2xl text-center leading-tight">
-                  <span className="sm:hidden">Get Set Up For Free</span>
-                  <span className="hidden sm:inline">WE'LL SET IT UP FOR YOU FOR FREE</span>
-                </span>
-                <span className="text-[9px] sm:text-[10px] font-black opacity-60 tracking-[0.2em] sm:tracking-[0.3em] sm:-mt-1 text-center">
-                  Limited spots available
-                </span>
-              </Button>
+                <Button
+                  className="bg-[#007B85] hover:bg-[#2F8488] text-white font-black h-auto py-4 sm:h-24 sm:py-0 px-6 sm:px-12 md:px-16 rounded-2xl sm:rounded-full shadow-2xl shadow-teal-500/40 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto uppercase tracking-wider sm:tracking-widest flex flex-col justify-center items-center gap-1 sm:gap-0"
+                >
+                  <span className="text-lg sm:text-xl md:text-2xl text-center leading-tight">
+                    GET ACCESS
+                  </span>
+                  <span className="text-[9px] sm:text-[10px] font-black opacity-60 tracking-[0.2em] sm:tracking-[0.3em] sm:-mt-1 text-center italic">
+                    Message Lamar on WhatsApp
+                  </span>
+                </Button>
+              </a>
               <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-6 sm:pl-6 text-[#007B85] font-black uppercase tracking-[0.2em] text-[10px]">
                  <span className="flex items-center gap-2">
                     <CheckCircle weight="fill" className="h-4 w-4 shrink-0" /> Ready in minutes

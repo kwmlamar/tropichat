@@ -59,6 +59,9 @@ interface UnifiedMessageThreadProps {
   onRemoveTag?: (tagId: string) => void
   onCreateTag?: (name: string, color: string) => void
   onDeleteTag?: (tagId: string) => void
+  onMarkAsUnread?: () => void
+  onStatusChange?: (status: import("@/types/unified-inbox").ConversationStatus) => void
+  onOpenContactDrawer?: () => void
 }
 
 
@@ -71,7 +74,6 @@ export function UnifiedMessageThread({
   onLoadMore,
   hasMore,
   onCreateBooking,
-  customerName,
   plan,
   onBack,
   allTags = [],
@@ -79,6 +81,9 @@ export function UnifiedMessageThread({
   onRemoveTag,
   onCreateTag,
   onDeleteTag,
+  onMarkAsUnread,
+  onStatusChange,
+  onOpenContactDrawer,
 }: UnifiedMessageThreadProps) {
   const [messageText, setMessageText] = useState("")
   const [isSending, setIsSending] = useState(false)
@@ -94,6 +99,40 @@ export function UnifiedMessageThread({
   const [newTagName, setNewTagName] = useState("")
   const [selectedColor, setSelectedColor] = useState("#3A9B9F")
   const [isCreatingTag, setIsCreatingTag] = useState(false)
+  const [showCannedResponses, setShowCannedResponses] = useState(false)
+  const [cannedSearch, setCannedSearch] = useState("")
+
+  const CANNED_STORAGE_KEY = "tropichat_canned_responses"
+  const [cannedResponses, setCannedResponses] = useState<{ id: string; title: string; body: string }[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      return JSON.parse(localStorage.getItem(CANNED_STORAGE_KEY) || "[]")
+    } catch { return [] }
+  })
+  const [isAddingCanned, setIsAddingCanned] = useState(false)
+  const [newCannedTitle, setNewCannedTitle] = useState("")
+  const [newCannedBody, setNewCannedBody] = useState("")
+
+  const saveCannedResponses = (updated: typeof cannedResponses) => {
+    setCannedResponses(updated)
+    localStorage.setItem(CANNED_STORAGE_KEY, JSON.stringify(updated))
+  }
+
+  const handleAddCanned = () => {
+    if (!newCannedTitle.trim() || !newCannedBody.trim()) return
+    saveCannedResponses([...cannedResponses, { id: Date.now().toString(), title: newCannedTitle.trim(), body: newCannedBody.trim() }])
+    setNewCannedTitle("")
+    setNewCannedBody("")
+    setIsAddingCanned(false)
+  }
+
+  const handleDeleteCanned = (id: string) => {
+    saveCannedResponses(cannedResponses.filter(r => r.id !== id))
+  }
+
+  const filteredCanned = cannedSearch
+    ? cannedResponses.filter(r => r.title.toLowerCase().includes(cannedSearch.toLowerCase()) || r.body.toLowerCase().includes(cannedSearch.toLowerCase()))
+    : cannedResponses
 
   const tagColors = ['#3A9B9F', '#FF7E36', '#9B59B6', '#E74C3C', '#2ECC71', '#F1C40F', '#007B85', '#E1306C', '#0084FF']
 
@@ -172,11 +211,10 @@ export function UnifiedMessageThread({
     []
   )
 
-  // Modern Welcome Empty state
+  // Welcome empty state
   if (!conversation) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-white dark:bg-black p-8 text-center relative overflow-hidden">
-        {/* Subtle background decoration */}
         <div className="absolute inset-0 bg-dot-pattern opacity-5 dark:opacity-[0.02] pointer-events-none" />
 
         <motion.div
@@ -201,11 +239,51 @@ export function UnifiedMessageThread({
             <h3 className="text-3xl font-bold text-[#213138] dark:text-gray-100 mb-4 tracking-tight" style={{ fontFamily: 'var(--font-lexend)' }}>
               Select a conversation
             </h3>
-            <p className="text-[17px] text-gray-500 dark:text-gray-400 mb-10 leading-relaxed max-w-sm mx-auto">
+            <p className="text-[17px] text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-sm mx-auto">
               Choose a customer from the list to start chatting. Your responses will be sent via their original platform.
             </p>
 
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222] transition-all hover:bg-white dark:hover:bg-[#333333]">
+            {/* Quick action hints */}
+            <div className="grid grid-cols-2 gap-2 mb-6 text-left">
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
+                <div className="p-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85] flex-shrink-0 mt-0.5">
+                  <Inbox className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Browse inbox</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Pick any conversation on the left</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
+                <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 flex-shrink-0 mt-0.5">
+                  <FileText className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Quick replies</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Save templates in the compose bar</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
+                <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 flex-shrink-0 mt-0.5">
+                  <Sparkle className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">AI smart reply</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Tap ✦ to generate a reply</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
+                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 flex-shrink-0 mt-0.5">
+                  <Shield className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Keyboard nav</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">↑ ↓ to browse · Esc to close</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222]">
               <div className="p-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85]">
                 <Inbox className="h-4 w-4" />
               </div>
@@ -245,9 +323,21 @@ export function UnifiedMessageThread({
             </div>
           </div>
           <div className="min-w-0">
-            <h2 className="font-bold text-[#213138] dark:text-gray-100 text-[15px] lg:text-[16px] truncate leading-tight">
-              {getConversationDisplayName(conversation)}
-            </h2>
+            <div className="flex items-center gap-1.5">
+              <h2 className="font-bold text-[#213138] dark:text-gray-100 text-[15px] lg:text-[16px] truncate leading-tight">
+                {getConversationDisplayName(conversation)}
+              </h2>
+              {conversation.status && conversation.status !== 'open' && (
+                <span className={cn(
+                  "flex-shrink-0 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter",
+                  conversation.status === 'pending'
+                    ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                    : "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                )}>
+                  {conversation.status}
+                </span>
+              )}
+            </div>
             <p className="text-[11px] text-[#007B85] font-bold uppercase tracking-wider">
               {getChannelLabel(conversation.channel_type)}
             </p>
@@ -380,6 +470,15 @@ export function UnifiedMessageThread({
           </Dropdown>
 
 
+          {/* Contact details button — visible on md, hidden on lg (panel always shown there) */}
+          <button
+            onClick={onOpenContactDrawer}
+            className="hidden md:flex lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+            title="Contact details"
+          >
+            <Shield className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          </button>
+
           <Dropdown
             align="right"
             trigger={
@@ -388,6 +487,32 @@ export function UnifiedMessageThread({
               </button>
             }
           >
+            {/* Status options */}
+            {onStatusChange && (
+              <>
+                {conversation.status !== 'open' && (
+                  <DropdownItem onClick={() => onStatusChange('open')}>
+                    Reopen conversation
+                  </DropdownItem>
+                )}
+                {conversation.status !== 'pending' && (
+                  <DropdownItem onClick={() => onStatusChange('pending')}>
+                    Mark as pending
+                  </DropdownItem>
+                )}
+                {conversation.status !== 'resolved' && (
+                  <DropdownItem onClick={() => onStatusChange('resolved')}>
+                    Mark as resolved
+                  </DropdownItem>
+                )}
+                <DropdownSeparator />
+              </>
+            )}
+            {onMarkAsUnread && (
+              <DropdownItem onClick={onMarkAsUnread}>
+                Mark as unread
+              </DropdownItem>
+            )}
             {onArchive && (
               <DropdownItem
                 icon={<Archive className="h-4 w-4" />}
@@ -440,40 +565,58 @@ export function UnifiedMessageThread({
                     const isOutbound = message.sender_type === "business"
                     const mediaUrl = message.metadata?.media_url as string | undefined
                     const mediaMime = message.metadata?.media_mime_type as string | undefined
+                    const isImage = mediaMime?.startsWith("image/") || message.message_type === "image"
+                    const cleanContent = message.content?.replace(/^\[image\]$|^\[sticker\]$|^\[video\]$/i, "").trim()
+                    const isImageOnly = isImage && !cleanContent
 
                     return (
                       <div
                         key={message.id}
                         className={cn(
-                          "flex",
+                          "flex mb-1",
                           isOutbound ? "justify-end" : "justify-start"
                         )}
                       >
                         <div
                           className={cn(
-                            "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 transition-all",
-                            isOutbound
-                              ? "bg-[#007B85] text-white rounded-br-sm shadow-sm"
-                              : "bg-slate-100 dark:bg-[#111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#1C1C1C] shadow-sm"
+                            "relative transition-all overflow-hidden",
+                            isImageOnly 
+                              ? "rounded-[18px] group shadow-sm hover:shadow-md border border-gray-100 dark:border-[#1C1C1C]" 
+                              : cn(
+                                  "max-w-[85%] sm:max-w-[75%] rounded-[20px] px-4 py-2 shadow-sm",
+                                  isOutbound
+                                    ? "bg-[#007B85] text-white rounded-br-sm"
+                                    : "bg-slate-100 dark:bg-[#111] text-slate-900 dark:text-white rounded-bl-sm border border-slate-200/50 dark:border-[#1C1C1C]"
+                                )
                           )}
                         >
 
                           {/* Media preview */}
                           {mediaUrl && (
-                            <div className="mb-2">
-                              {mediaMime?.startsWith("image/") ||
-                                message.message_type === "image" ? (
-                                <img
-                                  src={mediaUrl}
-                                  alt="Media"
-                                  className="rounded-lg max-w-full"
-                                />
+                            <div className={cn(isImageOnly ? "" : "mb-2")}>
+                              {isImage ? (
+                                <div className="relative">
+                                  <img
+                                    src={mediaUrl}
+                                    alt="Media"
+                                    className={cn(
+                                      "max-w-full block",
+                                      isImageOnly ? "max-h-[320px] w-full object-cover" : "rounded-lg"
+                                    )}
+                                  />
+                                  {isImageOnly && (
+                                    <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-md text-white/90 text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                                      <span>{formatMessageTime(message.sent_at)}</span>
+                                      {isOutbound && getStatusIcon(message.status)}
+                                    </div>
+                                  )}
+                                </div>
                               ) : (
                                 <a
                                   href={mediaUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-2 text-sm underline"
+                                  className="flex items-center gap-2 text-sm underline py-1"
                                 >
                                   <Paperclip className="h-4 w-4" />
                                   {message.message_type === "video"
@@ -488,29 +631,31 @@ export function UnifiedMessageThread({
 
                           {/* Sticker / location indicators */}
                           {message.message_type === "sticker" && !mediaUrl && (
-                            <div className="mb-1">
+                            <div className="mb-1 py-1 px-4">
                               <ImageIcon className="h-8 w-8 opacity-60" />
                             </div>
                           )}
 
                           {message.message_type === "location" && (
-                            <div className="mb-1 text-sm opacity-80">
+                            <div className="mb-1 text-sm opacity-80 pt-1 px-4">
                               📍 {message.metadata?.location_name || "Location"}
                             </div>
                           )}
 
                           {/* Message content */}
-                          {message.content && (
-                            <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit">
-                              {message.content}
-                            </p>
+                          {cleanContent && (
+                            <div className={cn("pb-1", isImageOnly ? "px-4 pt-1" : "")}>
+                              <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit">
+                                {cleanContent}
+                              </p>
+                            </div>
                           )}
 
                           {/* Failed indicator */}
                           {message.status === "failed" && message.error_message && (
                             <p
                               className={cn(
-                                "text-xs mt-1",
+                                "text-xs mt-1 px-4 pb-2",
                                 isOutbound ? "text-red-200" : "text-red-500"
                               )}
                             >
@@ -518,18 +663,20 @@ export function UnifiedMessageThread({
                             </p>
                           )}
 
-                          {/* Footer: time + status */}
-                          <div
-                            className={cn(
-                              "flex items-center gap-1 mt-1 text-[10px]",
-                              isOutbound
-                                ? "text-white/70 justify-end"
-                                : "text-gray-500"
-                            )}
-                          >
-                            <span>{formatMessageTime(message.sent_at)}</span>
-                            {isOutbound && getStatusIcon(message.status)}
-                          </div>
+                          {/* Footer: time + status (Hidden if image only as it's overlaid) */}
+                          {!isImageOnly && (
+                            <div
+                              className={cn(
+                                "flex items-center gap-1 mt-1 text-[10px]",
+                                isOutbound
+                                  ? "text-white/70 justify-end"
+                                  : "text-gray-500"
+                              )}
+                            >
+                              <span>{formatMessageTime(message.sent_at)}</span>
+                              {isOutbound && getStatusIcon(message.status)}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )
@@ -543,73 +690,163 @@ export function UnifiedMessageThread({
         )}
       </div>
 
-      {/* Message Input Area (Improved for Mobile) */}
+      {/* Message Input Area */}
       <div className="flex-shrink-0 bg-white dark:bg-black border-t border-gray-100 dark:border-[#222222] relative z-20 pb-safe">
         <div className="p-2 lg:p-3 flex items-end gap-2">
-        <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors shrink-0 mb-0.5">
-          <Plus className="w-6 h-6 transition-transform hover:rotate-90" />
-        </button>
-
-        <div className="flex-1 bg-white dark:bg-[#0C0C0C] rounded-3xl border border-gray-300/60 dark:border-[#1C1C1C] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#007B85] focus-within:border-[#007B85]">
-          <Textarea
-            ref={textareaRef}
-            placeholder=""
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1 border-0 focus-visible:ring-0 shadow-none px-3 py-[9px] min-h-[40px] max-h-[120px] resize-none bg-transparent text-[15px] dark:text-white leading-snug overflow-y-auto"
-            rows={1}
-            style={{ height: "40px" }}
-          />
-          <button className="p-2 mb-0.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0" title="Stickers / Attachments">
-            <Paperclip className="w-5 h-5" />
-          </button>
-        </div>
-
-        {messageText.trim() ? (
-          <button
-            onClick={handleSend}
-            disabled={isSending}
-            className="mb-1 p-2.5 bg-[#0084FF] text-white rounded-full shrink-0 flex items-center justify-center transition-all hover:bg-[#0073E6] active:scale-95 shadow-md disabled:bg-gray-300"
-          >
-            <Send className="w-5 h-5 ml-0.5" />
-          </button>
-        ) : (
-          <div className="flex items-center gap-1 shrink-0 mb-0.5">
-            <PlanGate plan={plan} feature="canUseSmartReply" variant="inline">
-              <button 
-                onClick={handleGenerateAISuggestion}
-                disabled={isGeneratingAI}
-                className={cn(
-                  "p-2 text-[#3A9B9F] hover:text-[#2F8488] transition-all relative overflow-hidden group rounded-xl",
-                  isGeneratingAI && "animate-pulse opacity-50"
-                )}
-                title="Generate Smart Reply"
-              >
-                {isGeneratingAI ? (
-                  <div className="flex items-center justify-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                    >
-                      <Sparkle weight="bold" className="w-6 h-6" />
-                    </motion.div>
-                  </div>
-                ) : (
-                  <Sparkle weight="bold" className="w-6 h-6 group-hover:scale-110 group-active:scale-90" />
-                )}
+          {/* Canned Responses Dropdown */}
+          <Dropdown
+            align="left"
+            trigger={
+              <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-[#007B85] transition-colors shrink-0 mb-0.5" title="Quick replies">
+                <FileText className="w-6 h-6" />
               </button>
-            </PlanGate>
-            <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
-              <Camera className="w-6 h-6" />
-            </button>
-            <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors">
-              <Mic className="w-6 h-6" />
+            }
+          >
+            <div className="w-72 p-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-2 mb-2 flex items-center justify-between">
+                <span>Quick Replies</span>
+                <button
+                  onClick={() => setIsAddingCanned(v => !v)}
+                  className="text-[#007B85] hover:underline text-[9px]"
+                >
+                  {isAddingCanned ? "Cancel" : "+ New"}
+                </button>
+              </p>
+
+              {isAddingCanned && (
+                <div className="mb-2 space-y-1.5 p-1">
+                  <input
+                    autoFocus
+                    placeholder="Title (e.g. Tour info)"
+                    value={newCannedTitle}
+                    onChange={e => setNewCannedTitle(e.target.value)}
+                    className="w-full bg-gray-50 dark:bg-white/5 border border-transparent focus:border-[#007B85] rounded-lg px-2 py-1.5 text-xs text-gray-900 dark:text-white outline-none transition-all"
+                  />
+                  <textarea
+                    placeholder="Message body…"
+                    value={newCannedBody}
+                    onChange={e => setNewCannedBody(e.target.value)}
+                    rows={3}
+                    className="w-full bg-gray-50 dark:bg-white/5 border border-transparent focus:border-[#007B85] rounded-lg px-2 py-1.5 text-xs text-gray-900 dark:text-white outline-none transition-all resize-none"
+                  />
+                  <button
+                    onClick={handleAddCanned}
+                    disabled={!newCannedTitle.trim() || !newCannedBody.trim()}
+                    className="w-full py-1.5 bg-[#007B85] text-white text-[11px] font-black uppercase tracking-widest rounded-lg disabled:opacity-40"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+
+              {!isAddingCanned && cannedResponses.length > 3 && (
+                <input
+                  placeholder="Search replies…"
+                  value={cannedSearch}
+                  onChange={e => setCannedSearch(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-white/5 border-transparent rounded-lg px-2 py-1.5 text-xs mb-1.5 outline-none dark:text-white"
+                />
+              )}
+
+              <div className="max-h-52 overflow-y-auto space-y-0.5">
+                {filteredCanned.map(r => (
+                  <div key={r.id} className="group/cr flex items-start gap-1">
+                    <button
+                      onClick={() => {
+                        setMessageText(r.body)
+                        setShowCannedResponses(false)
+                        setTimeout(() => textareaRef.current?.focus(), 50)
+                      }}
+                      className="flex-1 text-left px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                    >
+                      <p className="text-[12px] font-bold text-gray-800 dark:text-gray-200 leading-tight">{r.title}</p>
+                      <p className="text-[11px] text-gray-400 truncate mt-0.5">{r.body}</p>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCanned(r.id)}
+                      className="p-1.5 mt-1 text-gray-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg opacity-0 group-hover/cr:opacity-100 transition-all"
+                    >
+                      <Trash weight="bold" className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {filteredCanned.length === 0 && (
+                  <p className="text-[11px] text-gray-400 text-center py-4 italic">
+                    {cannedSearch ? "No matches" : "No quick replies yet — add one above"}
+                  </p>
+                )}
+              </div>
+            </div>
+          </Dropdown>
+
+          <div className="flex-1 bg-white dark:bg-[#0C0C0C] rounded-3xl border border-gray-300/60 dark:border-[#1C1C1C] flex items-end pl-1 pr-1.5 shadow-sm min-h-[40px] focus-within:ring-1 focus-within:ring-[#007B85] focus-within:border-[#007B85]">
+            <Textarea
+              ref={textareaRef}
+              placeholder=""
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-1 border-0 focus-visible:ring-0 shadow-none px-3 py-[9px] min-h-[40px] max-h-[120px] resize-none bg-transparent text-[15px] dark:text-white leading-snug overflow-y-auto"
+              rows={1}
+              style={{ height: "40px" }}
+            />
+            <button className="p-2 mb-0.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0" title="Attachments">
+              <Paperclip className="w-5 h-5" />
             </button>
           </div>
-        )}
+
+          {messageText.trim() ? (
+            <button
+              onClick={handleSend}
+              disabled={isSending}
+              className="mb-1 p-2.5 bg-[#0084FF] text-white rounded-full shrink-0 flex items-center justify-center transition-all hover:bg-[#0073E6] active:scale-95 shadow-md disabled:bg-gray-300"
+            >
+              <Send className="w-5 h-5 ml-0.5" />
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 shrink-0 mb-0.5">
+              <PlanGate plan={plan} feature="canUseSmartReply" variant="inline">
+                <button
+                  onClick={handleGenerateAISuggestion}
+                  disabled={isGeneratingAI}
+                  className={cn(
+                    "p-2 text-[#3A9B9F] hover:text-[#2F8488] transition-all relative overflow-hidden group rounded-xl",
+                    isGeneratingAI && "animate-pulse opacity-50"
+                  )}
+                  title="Generate Smart Reply"
+                >
+                  {isGeneratingAI ? (
+                    <div className="flex items-center justify-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                      >
+                        <Sparkle weight="bold" className="w-6 h-6" />
+                      </motion.div>
+                    </div>
+                  ) : (
+                    <Sparkle weight="bold" className="w-6 h-6 group-hover:scale-110 group-active:scale-90" />
+                  )}
+                </button>
+              </PlanGate>
+              <button
+                onClick={() => toast.info("Camera coming soon")}
+                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
+                title="Send photo"
+              >
+                <Camera className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => toast.info("Voice messages coming soon")}
+                className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
+                title="Voice message"
+              >
+                <Mic className="w-6 h-6" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
 }

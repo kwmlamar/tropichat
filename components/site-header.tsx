@@ -97,7 +97,7 @@ export function SiteHeader() {
               asChild
               className="bg-[#007B85] text-white hover:bg-[#2F8488] text-[10px] font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-xl shadow-teal-500/20 hover:scale-105 transition-all"
             >
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/signup">Get Access</Link>
             </Button>
           </div>
 
@@ -146,7 +146,7 @@ export function SiteHeader() {
                 className="bg-[#007B85] py-8 text-lg font-black uppercase tracking-widest rounded-full"
               >
                 <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  Sign Up
+                  Get Access
                 </Link>
               </Button>
             </div>

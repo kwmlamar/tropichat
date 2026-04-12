@@ -168,7 +168,7 @@ export default function LoginPage() {
                 variant="outline" 
                 className="rounded-full border-[#007B85] text-[#007B85] hover:bg-[#007B85] hover:text-white px-8 h-12 text-[10px] font-black uppercase tracking-widest"
               >
-                 <Link href="/signup">SIGN UP</Link>
+                 <Link href="/signup">Get Access</Link>
               </Button>
            </div>
         </div>

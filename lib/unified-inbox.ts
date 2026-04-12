@@ -55,7 +55,8 @@ export async function getUnifiedConversations(
   channelFilter?: ChannelType | 'all',
   search?: string,
   limit = 50,
-  showArchived = false
+  showArchived = false,
+  tagId?: string | null
 ): Promise<{ data: ConversationWithAccount[]; error: string | null }> {
   const client = getSupabase()
   const { customerId, error: ctxErr } = await getWorkspaceId()
@@ -90,6 +91,17 @@ export async function getUnifiedConversations(
 
   if (channelFilter && channelFilter !== 'all') {
     query = query.eq('channel_type', channelFilter)
+  }
+
+  // Server-side tag filter: fetch matching conversation IDs first
+  if (tagId) {
+    const { data: taggedRows } = await client
+      .from('conversation_tags')
+      .select('conversation_id')
+      .eq('tag_id', tagId)
+    const taggedIds = (taggedRows || []).map((r: { conversation_id: string }) => r.conversation_id)
+    if (taggedIds.length === 0) return { data: [], error: null }
+    query = query.in('id', taggedIds)
   }
 
   const { data, error } = await query
@@ -135,7 +147,7 @@ export async function getUnifiedConversation(id: string): Promise<{
 
 export async function updateUnifiedConversation(
   id: string,
-  updates: Partial<Pick<UnifiedConversation, 'is_archived' | 'unread_count' | 'customer_name' | 'metadata' | 'human_agent_enabled' | 'human_agent_reason' | 'human_agent_marked_at'>>
+  updates: Partial<Pick<UnifiedConversation, 'is_archived' | 'unread_count' | 'status' | 'customer_name' | 'metadata' | 'human_agent_enabled' | 'human_agent_reason' | 'human_agent_marked_at'>>
 ) {
   const client = getSupabase()
   const { error } = await client

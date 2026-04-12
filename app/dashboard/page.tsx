@@ -24,7 +24,6 @@ import { getCurrentCustomer } from "@/lib/supabase"
 import { useDebounce } from "@/lib/hooks"
 import { generateId, cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { AnimatePresence, motion } from "framer-motion"
 import type {
   ConversationWithAccount,
   UnifiedMessage,
@@ -49,6 +48,7 @@ function InboxContent() {
   const [accountIds, setAccountIds] = useState<string[]>([])
   const [showArchived, setShowArchived] = useState(false)
   const [bookingModalOpen, setBookingModalOpen] = useState(false)
+  const [contactDrawerOpen, setContactDrawerOpen] = useState(false)
 
   const [customerName, setCustomerName] = useState<string | null>(null)
   const [customerHandle, setCustomerHandle] = useState<string | null>(null)
@@ -137,19 +137,14 @@ function InboxContent() {
     if (!mountedRef.current) return
     setLoadingConversations(true)
     try {
-      const { data, error } = await getUnifiedConversations(channelFilter, debouncedSearch, 50, showArchived)
+      const { data, error } = await getUnifiedConversations(channelFilter, debouncedSearch, 50, showArchived, tagFilter)
       if (!mountedRef.current) return
 
       if (error) {
         toast.error("Failed to load conversations")
         console.error(error)
       } else {
-        // Apply tag filter client-side if active
-        let finalData = data
-        if (tagFilter) {
-          finalData = data.filter(c => c.tags?.some(t => t.id === tagFilter))
-        }
-        setConversations(finalData)
+        setConversations(data)
       }
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") return
@@ -511,7 +506,7 @@ function InboxContent() {
       toast.error("Failed to delete tag")
       return
     }
-    
+
     // Update local state
     setAllTags(prev => prev.filter(t => t.id !== tagId))
     setConversations(prev => prev.map(c => ({
@@ -527,6 +522,68 @@ function InboxContent() {
     setTagFilter(prev => prev === tagId ? null : prev)
     toast.success("Tag deleted")
   }
+
+  // Mark as unread handler
+  const handleMarkAsUnread = async () => {
+    if (!selectedConversation) return
+    const { error } = await updateUnifiedConversation(selectedConversation.id, { unread_count: 1 })
+    if (error) {
+      toast.error("Failed to mark as unread")
+    } else {
+      setConversations(prev =>
+        prev.map(c => c.id === selectedConversation.id ? { ...c, unread_count: 1 } : c)
+      )
+      setSelectedConversation(null)
+    }
+  }
+
+  // Conversation status handler
+  const handleStatusChange = async (status: import("@/types/unified-inbox").ConversationStatus) => {
+    if (!selectedConversation) return
+    const { error } = await updateUnifiedConversation(selectedConversation.id, { status })
+    if (error) {
+      toast.error("Failed to update status")
+    } else {
+      setConversations(prev =>
+        prev.map(c => c.id === selectedConversation.id ? { ...c, status } : c)
+      )
+      setSelectedConversation(prev => prev ? { ...prev, status } : null)
+      toast.success(`Conversation marked as ${status}`)
+    }
+  }
+
+  // Keyboard navigation: ↑/↓ to move between conversations, Escape to deselect
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName
+      // Don't intercept when typing in an input/textarea
+      if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable) return
+
+      if (e.key === "Escape") {
+        setSelectedConversation(null)
+        router.replace("/dashboard")
+        return
+      }
+
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault()
+        setConversations(prev => {
+          if (prev.length === 0) return prev
+          const currentIdx = prev.findIndex(c => c.id === selectedConversation?.id)
+          let nextIdx: number
+          if (e.key === "ArrowDown") {
+            nextIdx = currentIdx < prev.length - 1 ? currentIdx + 1 : 0
+          } else {
+            nextIdx = currentIdx > 0 ? currentIdx - 1 : prev.length - 1
+          }
+          setSelectedConversation(prev[nextIdx])
+          return prev
+        })
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [selectedConversation, router])
 
   return (
     <div className="flex h-full">
@@ -549,6 +606,7 @@ function InboxContent() {
           tagFilter={tagFilter}
           onTagFilter={setTagFilter}
           onCreateTag={handleCreateTag}
+          onRefresh={fetchConversations}
         />
       </div>
 
@@ -572,20 +630,23 @@ function InboxContent() {
             onCreateBooking={() => setBookingModalOpen(true)}
             customerName={customerName}
             plan={customerPlan}
-              onBack={() => {
-                setSelectedConversation(null)
-                router.replace('/dashboard')
-              }}
-              allTags={allTags}
-              onAddTag={(tagId) => selectedConversation && handleAddTag(selectedConversation.id, tagId)}
-              onRemoveTag={(tagId) => selectedConversation && handleRemoveTag(selectedConversation.id, tagId)}
-              onCreateTag={handleCreateTag}
-              onDeleteTag={handleDeleteTag}
-            />
+            onBack={() => {
+              setSelectedConversation(null)
+              router.replace("/dashboard")
+            }}
+            allTags={allTags}
+            onAddTag={(tagId) => selectedConversation && handleAddTag(selectedConversation.id, tagId)}
+            onRemoveTag={(tagId) => selectedConversation && handleRemoveTag(selectedConversation.id, tagId)}
+            onCreateTag={handleCreateTag}
+            onDeleteTag={handleDeleteTag}
+            onMarkAsUnread={handleMarkAsUnread}
+            onStatusChange={handleStatusChange}
+            onOpenContactDrawer={() => setContactDrawerOpen(true)}
+          />
         </div>
       </div>
 
-      {/* Contact Details */}
+      {/* Contact Details — always visible on lg, slide-out drawer on md */}
       <div className="hidden lg:block w-80 flex-shrink-0 border-l border-gray-200 dark:border-white/5">
         <UnifiedContactDetails
           conversation={selectedConversation}
@@ -593,6 +654,32 @@ function InboxContent() {
           onArchive={handleArchive}
         />
       </div>
+
+      {/* Contact Details Drawer — md screens only */}
+      {contactDrawerOpen && selectedConversation && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div
+            className="flex-1 bg-black/40 backdrop-blur-sm"
+            onClick={() => setContactDrawerOpen(false)}
+          />
+          <div className="w-80 bg-white dark:bg-black h-full overflow-y-auto shadow-2xl animate-in slide-in-from-right duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-[#1C1C1C]">
+              <span className="font-bold text-sm text-gray-900 dark:text-white">Contact Details</span>
+              <button
+                onClick={() => setContactDrawerOpen(false)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <UnifiedContactDetails
+              conversation={selectedConversation}
+              messageCount={messages.length}
+              onArchive={handleArchive}
+            />
+          </div>
+        </div>
+      )}
 
 
 

@@ -38,6 +38,7 @@ interface UnifiedConversationListProps {
   tagFilter: string | null
   onTagFilter: (tagId: string | null) => void
   onCreateTag: (name: string, color: string) => void
+  onRefresh?: () => void
 }
 
 // Wrapper icons for ExpandableTabs
@@ -71,6 +72,7 @@ export function UnifiedConversationList({
   tagFilter,
   onTagFilter,
   onCreateTag,
+  onRefresh,
 }: UnifiedConversationListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isScrolled, setIsScrolled] = useState(false)
@@ -85,6 +87,8 @@ export function UnifiedConversationList({
   }
 
   const [isSyncing, setIsSyncing] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+
   const handleSyncGmail = async () => {
     if (isSyncing) return
     setIsSyncing(true)
@@ -94,8 +98,7 @@ export function UnifiedConversationList({
       const data = await res.json()
       if (data.syncedCount > 0) {
         toast.success(`Synced ${data.syncedCount} new messages`, { id: toastId })
-        // Refresh the page or wait for real-time update
-        window.location.reload()
+        onRefresh?.()
       } else {
         toast.info("No new messages found", { id: toastId })
       }
@@ -104,6 +107,32 @@ export function UnifiedConversationList({
     } finally {
       setIsSyncing(false)
     }
+  }
+
+  // Group conversations by date for the list
+  const groupConversationsByDate = (convs: ConversationWithAccount[]) => {
+    const now = new Date()
+    const todayStr = now.toDateString()
+    const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayStr = yesterday.toDateString()
+    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7)
+
+    const groups: { label: string; items: ConversationWithAccount[] }[] = []
+    const buckets: Record<string, ConversationWithAccount[]> = { Today: [], Yesterday: [], "This Week": [], Earlier: [] }
+
+    for (const conv of convs) {
+      const d = conv.last_message_at ? new Date(conv.last_message_at) : new Date(conv.created_at)
+      const ds = d.toDateString()
+      if (ds === todayStr) buckets["Today"].push(conv)
+      else if (ds === yesterdayStr) buckets["Yesterday"].push(conv)
+      else if (d >= weekAgo) buckets["This Week"].push(conv)
+      else buckets["Earlier"].push(conv)
+    }
+
+    for (const label of ["Today", "Yesterday", "This Week", "Earlier"]) {
+      if (buckets[label].length > 0) groups.push({ label, items: buckets[label] })
+    }
+    return groups
   }
 
   return (
@@ -116,20 +145,44 @@ export function UnifiedConversationList({
       )}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <button className="h-9 w-9 flex items-center justify-center -ml-2 text-[#213138] dark:text-gray-100">
+            <button
+              onClick={() => setShowMobileMenu(v => !v)}
+              className="h-9 w-9 flex items-center justify-center -ml-2 text-[#213138] dark:text-gray-100"
+            >
               <MoreVertical className="h-6 w-6 rotate-90" />
             </button>
           </div>
-          
+
+          {/* Mobile menu dropdown */}
+          {showMobileMenu && (
+            <div className="absolute top-full left-4 mt-1 w-48 bg-white dark:bg-[#111] border border-gray-100 dark:border-[#1C1C1C] rounded-2xl shadow-xl z-50 overflow-hidden">
+              <button
+                onClick={() => { onToggleArchived(); setShowMobileMenu(false) }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                <Archive className="h-4 w-4 text-gray-400" />
+                {showArchived ? "Back to inbox" : "View archived"}
+              </button>
+              <button
+                onClick={() => { handleSyncGmail(); setShowMobileMenu(false) }}
+                disabled={isSyncing}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+              >
+                <ArrowsClockwise className={cn("h-4 w-4 text-gray-400", isSyncing && "animate-spin")} />
+                Sync Gmail
+              </button>
+            </div>
+          )}
+
           <h2 className={cn(
             "text-[17px] font-bold text-[#213138] dark:text-gray-100 transition-all duration-300 transform absolute left-1/2 -translate-x-1/2",
             isScrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none"
           )}>
             Chats
           </h2>
- 
+
           <div className="flex items-center gap-5">
-            <button 
+            <button
               onClick={handleSyncGmail}
               disabled={isSyncing}
               className={cn("text-[#213138] dark:text-gray-100 transition-colors hover:text-[#007B85]", isSyncing && "opacity-50")}
@@ -137,7 +190,11 @@ export function UnifiedConversationList({
             >
               <ArrowsClockwise className={cn("h-6 w-6", isSyncing && "animate-spin")} />
             </button>
-            <button className="text-[#213138] dark:text-gray-100">
+            <button
+              onClick={() => toast.info("Camera coming soon")}
+              className="text-[#213138] dark:text-gray-100"
+              title="New conversation"
+            >
               <Camera className="h-6 w-6" />
             </button>
             <button className="h-8 w-8 bg-[#007B85] flex items-center justify-center text-white rounded-full">
@@ -321,92 +378,116 @@ export function UnifiedConversationList({
           ) : (
             <div className="p-2 space-y-1">
               <AnimatePresence initial={false} mode="popLayout">
-                {conversations.map((conversation) => (
-                  <motion.div
-                    key={conversation.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.98, y: 5 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: -5 }}
-                    transition={{
-                      opacity: { duration: 0.2 },
-                      layout: { type: "spring", bounce: 0, duration: 0.4 }
-                    }}
-                  >
-                      <button
-                        onClick={() => onSelect(conversation)}
-                        className={cn(
-                          "w-full flex items-center gap-4 py-3.5 px-6 text-left transition-all relative border-b border-gray-100 dark:border-[#1C1C1C]/30 active:bg-gray-100 dark:active:bg-[#1A1A1A]",
-                          selectedId === conversation.id
-                            ? "bg-[#007B85]/5 dark:bg-[#007B85]/10 border-l-2 border-l-[#007B85]"
-                            : "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-[#0C0C0C]"
-                        )}
+                {groupConversationsByDate(conversations).map((group) => (
+                  <div key={group.label}>
+                    {/* Date group header */}
+                    <div className="px-6 py-2 pt-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-[#525252]">
+                        {group.label}
+                      </span>
+                    </div>
+
+                    {group.items.map((conversation) => (
+                      <motion.div
+                        key={conversation.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.98, y: 5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98, y: -5 }}
+                        transition={{
+                          opacity: { duration: 0.2 },
+                          layout: { type: "spring", bounce: 0, duration: 0.4 }
+                        }}
                       >
-                      {/* Avatar with unread indicator dot like WhatsApp image */}
-                      <div className="relative flex-shrink-0">
-                        <Avatar
-                          src={conversation.customer_avatar_url}
-                          fallback={getConversationDisplayName(conversation)}
-                          className="h-[52px] w-[52px] rounded-full border-none"
-                        />
-                         <div className="absolute -bottom-0.5 -right-0.5">
-                           <ChannelIcon channel={conversation.channel_type} size="sm" />
-                         </div>
-                      </div>
- 
-                      {/* Content */}
-                      <div className="flex-1 min-w-0 pr-1">
-                        <div className="flex items-center justify-between mb-0.5">
-                          <span className="font-bold text-[17px] text-[#213138] dark:text-white truncate pr-2">
-                            {getConversationDisplayName(conversation)}
-                          </span>
-                          <span className={cn(
-                            "text-[12px] font-bold whitespace-nowrap",
-                            conversation.unread_count > 0 ? "text-[#007B85]" : "text-gray-400"
-                          )}>
-                            {conversation.last_message_at
-                              ? new Date(conversation.last_message_at).toLocaleDateString() === new Date().toLocaleDateString()
-                                ? new Date(conversation.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                : new Date(conversation.last_message_at).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
-                              : ""}
-                          </span>
-                        </div>
- 
-                        <div className="flex flex-col gap-1.5">
-                          <p className={cn(
-                            "text-[15px] truncate leading-[1.3] pr-4",
-                            conversation.unread_count > 0 ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"
-                          )}>
-                            {conversation.last_message_preview || "No messages yet"}
-                          </p>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-wrap gap-1">
-                              {conversation.tags?.map(tag => (
-                                <div 
-                                  key={tag.id}
-                                  className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter"
-                                  style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
-                                >
-                                  {tag.name}
-                                </div>
-                              ))}
-                            </div>
-
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                               {conversation.unread_count > 0 && (
-                                <div className="h-[22px] min-w-[22px] rounded-full bg-[#007B85] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
-                                  <span className="text-[10px] font-black text-white leading-none">
-                                    {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
-                                  </span>
-                                </div>
-                              )}
+                        <button
+                          onClick={() => onSelect(conversation)}
+                          className={cn(
+                            "w-full flex items-center gap-4 py-3.5 px-6 text-left transition-all relative border-b border-gray-100 dark:border-[#1C1C1C]/30 active:bg-gray-100 dark:active:bg-[#1A1A1A]",
+                            selectedId === conversation.id
+                              ? "bg-[#007B85]/5 dark:bg-[#007B85]/10 border-l-2 border-l-[#007B85]"
+                              : "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-[#0C0C0C]"
+                          )}
+                        >
+                          {/* Avatar */}
+                          <div className="relative flex-shrink-0">
+                            <Avatar
+                              src={conversation.customer_avatar_url}
+                              fallback={getConversationDisplayName(conversation)}
+                              className="h-[52px] w-[52px] rounded-full border-none"
+                            />
+                            <div className="absolute -bottom-0.5 -right-0.5">
+                              <ChannelIcon channel={conversation.channel_type} size="sm" />
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </button>
-                  </motion.div>
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0 pr-1">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-bold text-[17px] text-[#213138] dark:text-white truncate">
+                                  {getConversationDisplayName(conversation)}
+                                </span>
+                                {/* Status badge */}
+                                {conversation.status && conversation.status !== 'open' && (
+                                  <span className={cn(
+                                    "flex-shrink-0 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter",
+                                    conversation.status === 'pending'
+                                      ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                                      : "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                                  )}>
+                                    {conversation.status}
+                                  </span>
+                                )}
+                              </div>
+                              <span className={cn(
+                                "text-[12px] font-bold whitespace-nowrap flex-shrink-0 pl-2",
+                                conversation.unread_count > 0 ? "text-[#007B85]" : "text-gray-400"
+                              )}>
+                                {conversation.last_message_at
+                                  ? new Date(conversation.last_message_at).toLocaleDateString() === new Date().toLocaleDateString()
+                                    ? new Date(conversation.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                    : new Date(conversation.last_message_at).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
+                                  : ""}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                              <p className={cn(
+                                "text-[15px] truncate leading-[1.3] pr-4",
+                                conversation.unread_count > 0 ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"
+                              )}>
+                                {conversation.last_message_preview || "No messages yet"}
+                              </p>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex flex-wrap gap-1">
+                                  {conversation.tags?.map(tag => (
+                                    <div
+                                      key={tag.id}
+                                      className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter"
+                                      style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+                                    >
+                                      {tag.name}
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  {conversation.unread_count > 0 && (
+                                    <div className="h-[22px] min-w-[22px] rounded-full bg-[#007B85] flex items-center justify-center px-1.5 shadow-lg shadow-teal-500/20">
+                                      <span className="text-[10px] font-black text-white leading-none">
+                                        {conversation.unread_count > 99 ? "99+" : conversation.unread_count}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
                 ))}
               </AnimatePresence>
             </div>

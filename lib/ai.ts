@@ -455,3 +455,55 @@ Examples: "Jet Ski Rentals Nassau", "Boat Tours Exuma", "Wedding Planners Freepo
     return "Contractors Nassau"
   }
 }
+
+/**
+ * generateAssistantResponse
+ * The "Notion AI" for TropiChat.
+ * Answers business owner's questions about their data, chats, and strategies.
+ */
+export async function generateAssistantResponse(params: {
+  query: string
+  brief: BusinessBrief | null
+  dataContext?: string
+  history?: ConversationTurn[]
+}) {
+  const { query, brief, dataContext = "", history = [] } = params
+  const ai = getModel()
+  if (!ai) return "I'm having trouble connecting to my brain right now. Please try again in a moment."
+
+  const systemPrompt = `
+    You are the Tropi AI Sales Assistant. You are talking to the OWNER of the business.
+    Your job is to help them manage their business, analyze their customer chats, and grow their sales.
+    
+    BUSINESS CONTEXT:
+    Name: ${brief?.businessType || 'Your Business'}
+    Services: ${brief?.services || 'General Services'}
+    Goal: ${brief?.aiGoal || 'Growth'}
+    
+    REAL-TIME DATA CONTEXT:
+    ${dataContext || 'No specific conversation data provided for this query.'}
+    
+    PREVIOUS ASSISTANT CHAT:
+    ${history.map(m => `${m.role === 'user' ? 'Owner' : 'Assistant'}: ${m.content}`).join('\n')}
+    
+    RULES:
+    1. Be concise, professional, and strategic.
+    2. Use data from the REAL-TIME DATA CONTEXT to answer specifically if available.
+    3. If the owner asks to "summarize", focus on customer intent and outcome.
+    4. If the owner asks to "draft", write a high-fidelity message they can copy-paste.
+    5. Always maintain a "Sales First" mindset.
+    6. Return ONLY the markdown response text.
+    
+    OWNER QUERY: "${query}"
+    
+    ASSISTANT RESPONSE:
+  `
+
+  try {
+    const result = await ai.generateContent(systemPrompt)
+    return result.response.text().trim()
+  } catch (error) {
+    console.error("[AI Assistant] Error:", error)
+    return "I ran into an error while processing that. Could you try rephrasing?"
+  }
+}

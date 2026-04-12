@@ -19,6 +19,8 @@ export type MessageContentType =
 
 export type MessageDeliveryStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 
+export type ConversationStatus = 'open' | 'pending' | 'resolved'
+
 // ==================== TABLE TYPES ====================
 
 export interface ConnectedAccount {
@@ -48,6 +50,7 @@ export interface UnifiedConversation {
   last_message_preview: string | null
   unread_count: number
   is_archived: boolean
+  status: ConversationStatus
   metadata: Record<string, unknown>
   ai_summary: Record<string, unknown> | null
   ai_summary_updated_at: string | null

@@ -212,65 +212,92 @@ export function MessageThread({
                 {/* Messages */}
                 <div className="space-y-4">
                   {group.messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={cn(
-                        "flex",
-                        message.direction === "outbound" ? "justify-end " : "justify-start"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "max-w-[70%] rounded-[24px] px-[18px] py-[10px] transition-all",
-                          message.direction === "outbound"
-                            ? "bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white rounded-br-sm shadow-md shadow-[#007B85]/20"
-                            : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
-                        )}
-                      >
-                        {/* Media */}
-                        {message.media_url && (
-                          <div className="mb-2">
-                            {message.media_type?.startsWith("image/") ? (
-                              <img
-                                src={message.media_url}
-                                alt="Media"
-                                className="rounded-lg max-w-full"
-                              />
-                            ) : (
-                              <a
-                                href={message.media_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-sm underline"
-                              >
-                                <Paperclip weight="bold" className="h-4 w-4" />
-                                View attachment
-                              </a>
-                            )}
-                          </div>
-                        )}
+                      const isOutbound = message.direction === "outbound"
+                      const isImage = message.media_type?.startsWith("image/")
+                      const cleanBody = message.body?.replace(/^\[image\]$|^\[sticker\]$|^\[video\]$/i, "").trim()
+                      const isImageOnly = isImage && !cleanBody
 
-                        {/* Message body */}
-                        {message.body && (
-                          <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit drop-shadow-sm">
-                            {message.body}
-                          </p>
-                        )}
-
-                        {/* Footer */}
+                      return (
                         <div
+                          key={message.id}
                           className={cn(
-                            "flex items-center gap-1 mt-1 text-xs",
-                            message.direction === "outbound"
-                              ? "text-white/70 justify-end"
-                              : "text-gray-500"
+                            "flex mb-1",
+                            isOutbound ? "justify-end " : "justify-start"
                           )}
                         >
-                          <span>{formatMessageTime(message.sent_at)}</span>
-                          {message.direction === "outbound" && getStatusIcon(message.status)}
+                          <div
+                            className={cn(
+                              "relative transition-all overflow-hidden",
+                              isImageOnly 
+                                ? "rounded-[18px] group shadow-sm hover:shadow-md border border-gray-100/50" 
+                                : cn(
+                                    "max-w-[70%] rounded-[24px] px-[18px] py-[10px] shadow-sm",
+                                    isOutbound
+                                      ? "bg-gradient-to-br from-[#007B85] to-[#2F8488] text-white rounded-br-sm shadow shadow-[#007B85]/20"
+                                      : "bg-slate-50 text-slate-900 rounded-bl-sm border border-slate-200/60 shadow-sm"
+                                  )
+                            )}
+                          >
+                            {/* Media */}
+                            {message.media_url && (
+                              <div className={cn(isImageOnly ? "" : "mb-2")}>
+                                {isImage ? (
+                                  <div className="relative">
+                                    <img
+                                      src={message.media_url}
+                                      alt="Media"
+                                      className={cn(
+                                        "max-w-full block",
+                                        isImageOnly ? "max-h-[320px] w-full object-cover" : "rounded-lg"
+                                      )}
+                                    />
+                                    {isImageOnly && (
+                                      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/30 backdrop-blur-md text-white/90 text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                                        <span>{formatMessageTime(message.sent_at)}</span>
+                                        {isOutbound && getStatusIcon(message.status)}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <a
+                                    href={message.media_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 text-sm underline py-1"
+                                  >
+                                    <Paperclip weight="bold" className="h-4 w-4" />
+                                    View attachment
+                                  </a>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Message body */}
+                            {cleanBody && (
+                              <div className={cn("pb-1", isImageOnly ? "px-4" : "")}>
+                                <p className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium text-inherit drop-shadow-sm">
+                                  {cleanBody}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Footer (Hidden if image only as it's overlaid) */}
+                            {!isImageOnly && (
+                              <div
+                                className={cn(
+                                  "flex items-center gap-1 mt-1 text-xs",
+                                  isOutbound
+                                    ? "text-white/70 justify-end"
+                                    : "text-gray-500"
+                                )}
+                              >
+                                <span>{formatMessageTime(message.sent_at)}</span>
+                                {isOutbound && getStatusIcon(message.status)}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      )
                   ))}
                 </div>
               </div>
