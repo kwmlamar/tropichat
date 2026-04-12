@@ -35,10 +35,12 @@ import type { AIVoiceProfile, BusinessBrief } from "@/lib/ai-schema"
 import { toast } from "sonner"
 import { getSupabase } from "@/lib/supabase"
 import { AIAssistantView } from "@/components/ai/AIAssistantView"
+import { AIConfigureView } from "@/components/ai/AIConfigureView"
 
 export default function TropiAIPage() {
   const [customer, setCustomer] = useState<Customer | null>(null)
   const [voiceProfile, setVoiceProfile] = useState<AIVoiceProfile | null>(null)
+  const [businessBrief, setBusinessBrief] = useState<BusinessBrief | null>(null)
   const [loading, setLoading] = useState(true)
   const [isDemoOpen, setIsDemoOpen] = useState(false)
   const [autoPilot, setAutoPilot] = useState(false)
@@ -66,9 +68,10 @@ export default function TropiAIPage() {
       setCustomer(data)
       const profile = data?.ai_voice_profile as AIVoiceProfile || null
       setVoiceProfile(profile)
+      setBusinessBrief((data?.business_brief as BusinessBrief) || null)
       setAutoPilot(data?.ai_autopilot_enabled ?? false)
       setLoading(false)
-      
+
       // If voice profile exists, default to assistant view
       if (profile) {
         setView('assistant')
@@ -77,6 +80,35 @@ export default function TropiAIPage() {
     }
     fetch()
   }, [])
+
+  const handleSaveConfig = async ({ voiceProfile: newVP, businessBrief: newBB }: { voiceProfile?: AIVoiceProfile; businessBrief?: BusinessBrief }) => {
+    const { data: { session } } = await getSupabase().auth.getSession()
+    const body: Record<string, unknown> = {}
+    if (newVP) body.voiceProfile = newVP
+    if (newBB) body.businessBrief = newBB
+    const res = await fetch('/api/ai/voice-profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+      body: JSON.stringify(body)
+    })
+    const data = await res.json()
+    if (!data.success) throw new Error('Save failed')
+    if (newVP) setVoiceProfile(newVP)
+    if (newBB) setBusinessBrief(newBB)
+  }
+
+  const handleResetVoiceProfile = async () => {
+    try {
+      const { data: { user } } = await getSupabase().auth.getUser()
+      if (!user) return
+      await getSupabase().from('customers').update({ ai_voice_profile: null }).eq('id', user.id)
+      setVoiceProfile(null)
+      setView('landing')
+      toast.success('Voice profile reset — run setup to retrain your AI')
+    } catch {
+      toast.error('Failed to reset voice profile')
+    }
+  }
 
   const handleAutoPilotToggle = async (enabled: boolean) => {
     setPilotSaving(true)
@@ -168,10 +200,19 @@ export default function TropiAIPage() {
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {view === 'assistant' && voiceProfile ? (
-            <AIAssistantView 
-              businessName={customer?.business_name || "Your Business"} 
+            <AIAssistantView
+              businessName={customer?.business_name || "Your Business"}
               recentLogs={assistantLogs}
               onRefreshLogs={fetchAssistantLogs}
+            />
+          ) : view === 'landing' && voiceProfile ? (
+            <AIConfigureView
+              voiceProfile={voiceProfile}
+              businessBrief={businessBrief || DEFAULT_BUSINESS_BRIEF}
+              autoPilot={autoPilot}
+              onAutoPilotChange={handleAutoPilotToggle}
+              onSave={handleSaveConfig}
+              onResetVoiceProfile={handleResetVoiceProfile}
             />
           ) : (
             <div className="p-8">

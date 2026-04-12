@@ -211,7 +211,7 @@ export function MessageThread({
 
                 {/* Messages */}
                 <div className="space-y-4">
-                  {group.messages.map((message) => (
+                  {group.messages.map((message) => {
                       const isOutbound = message.direction === "outbound"
                       const isImage = message.media_type?.startsWith("image/")
                       const cleanBody = message.body?.replace(/^\[image\]$|^\[sticker\]$|^\[video\]$/i, "").trim()
@@ -298,7 +298,7 @@ export function MessageThread({
                           </div>
                         </div>
                       )
-                  ))}
+                  })}
                 </div>
               </div>
             ))}
