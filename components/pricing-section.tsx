@@ -143,7 +143,7 @@ export function PricingSection() {
               </div>
 
               <a 
-                href={`https://wa.me/13342219466?text=${encodeURIComponent(`Hi Lamar! I'm interested in the ${tier.name} plan for my business. Can we talk about how it works?`)}`}
+                href={`https://wa.me/13349130982?text=${encodeURIComponent(`Hi Lamar! I'm interested in the ${tier.name} plan for my business. Can we talk about how it works?`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full"

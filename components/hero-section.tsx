@@ -123,7 +123,7 @@ export function HeroSection() {
               className="flex flex-col items-start gap-5 w-full"
             >
               <a 
-                href={`https://wa.me/13342219466?text=${encodeURIComponent("Hi Lamar! I saw the TropiChat landing page and I'd like to see how it can help my business. Do you have a few minutes to chat?")}`}
+                href={`https://wa.me/13349130982?text=${encodeURIComponent("Hi Lamar! I saw the TropiChat landing page and I'd like to see how it can help my business. Do you have a few minutes to chat?")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
