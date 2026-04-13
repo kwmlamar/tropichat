@@ -242,7 +242,7 @@ function OnboardingContent() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] dark:bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-[#FDFDFD] dark:bg-[#050505] flex flex-col items-center justify-center p-6 relative overflow-y-auto overflow-x-hidden">
       {/* Dynamic Background Elements */}
       <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-[#007B85]/5 to-transparent pointer-events-none" />
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#007B85]/10 blur-[120px] rounded-full pointer-events-none" />

@@ -231,7 +231,7 @@ export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsMod
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-5xl h-full lg:h-[85vh] bg-white dark:bg-[#0C0C0C] lg:rounded-[24px] shadow-2xl overflow-hidden flex flex-col lg:flex-row pointer-events-auto border border-gray-200 dark:border-[#1C1C1C]"
+          className="relative w-full max-w-5xl h-full lg:h-[85vh] bg-white dark:bg-[#0C0C0C] lg:rounded-[24px] shadow-2xl overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row pointer-events-auto border border-gray-200 dark:border-[#1C1C1C]"
         >
           {/* Mobile Header */}
           <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-100 dark:border-[#1C1C1C] bg-[#F9FAFB] dark:bg-[#080808]">

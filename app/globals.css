@@ -130,6 +130,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-lexend), system-ui, -apple-system, sans-serif;
+    overscroll-behavior-y: none; /* Prevent the 'pull back' effect on the main body */
   }
 
   /* Headings use Poppins as per skill recommendation */
@@ -468,3 +469,14 @@ body.mobile-chat-open {
     max-height: 100dvh !important;
   }
 }
+
+/* Global scroll area fix for all mobile views to prevent truncation */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure that modals and overlays don't break the base scroll on mobile */
+html, body {
+  height: -webkit-fill-available;
+}
+

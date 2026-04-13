@@ -66,9 +66,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#E1F0F1", // Matches the top of the mobile inbox gradient
+  maximumScale: 5, // Allow zooming for accessibility and to prevent some locking bugs
+  userScalable: true,
+  themeColor: "#E1F0F1",
   viewportFit: "cover",
 };
 
