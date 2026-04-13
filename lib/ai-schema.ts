@@ -1,5 +1,5 @@
 export interface AIVoiceProfile {
-  tone: "casual" | "professional" | "direct" | "expressive"
+  tone: "casual" | "professional" | "friendly" | "direct" | "expressive"
   responseLength: "short" | "medium" | "detailed"
   emojiUsage: "none" | "light" | "heavy"
   greeting: string
@@ -7,6 +7,7 @@ export interface AIVoiceProfile {
   sampleReply: string
   trainedAt: string
   version: number
+  fallback_behavior?: "collect_info" | "send_booking_link" | "hand_off"
 }
 
 export interface BusinessBrief {

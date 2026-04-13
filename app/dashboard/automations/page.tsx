@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Modal, ModalFooter } from "@/components/ui/modal"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { SimpleSelect } from "@/components/ui/dropdown"
 import { Dropdown, DropdownItem, DropdownSeparator } from "@/components/ui/dropdown"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -44,10 +43,10 @@ const triggerOptions = [
 ]
 
 const actionOptions = [
-  { value: "send_message",  label: "Send Message"           },
-  { value: "send_template", label: "Send Template"          },
-  { value: "add_tag",       label: "Add Tag"                },
-  { value: "mark_resolved", label: "Mark as Resolved"       },
+  { value: "send_template",   label: "Send WhatsApp Template" },
+  { value: "add_tag",         label: "Add Tag"                },
+  { value: "mark_resolved",   label: "Mark as Resolved"       },
+  { value: "assign_to_human", label: "Hand Off to Human"      },
 ]
 
 // ─── Trigger icon map ─────────────────────────────────────────────────────────
@@ -75,11 +74,11 @@ function getTriggerLabel(type: TriggerType, value: string | null) {
 
 function getActionLabel(type: ActionType, value: string) {
   switch (type) {
-    case "send_message":  return value.substring(0, 60) + (value.length > 60 ? "…" : "")
-    case "send_template": return `Template: ${value}`
-    case "add_tag":       return `Tag: ${value}`
-    case "mark_resolved": return "Mark resolved"
-    default:              return value
+    case "send_template":   return `Template: ${value}`
+    case "add_tag":         return `Tag: ${value}`
+    case "mark_resolved":   return "Mark resolved"
+    case "assign_to_human": return "Hand off to human agent"
+    default:                return value
   }
 }
 
@@ -260,7 +259,8 @@ export default function AutomationsPage() {
   }
 
   const handleSaveAutomation = async () => {
-    if (!editingAutomation?.name || !editingAutomation?.action_value) {
+    const needsValue = editingAutomation?.action_type !== "mark_resolved" && editingAutomation?.action_type !== "assign_to_human"
+    if (!editingAutomation?.name || (needsValue && !editingAutomation?.action_value)) {
       toast.error("Please fill in all required fields"); return
     }
     setIsSaving(true)
@@ -394,7 +394,7 @@ export default function AutomationsPage() {
                       <div className="w-6 h-6 rounded-md bg-[#3A9B9F] flex items-center justify-center">
                         <span className="text-[8px] font-black text-white tracking-widest uppercase">DO</span>
                       </div>
-                      <span className="text-[13px] font-bold text-gray-400 dark:text-[#525252]">send a welcome message</span>
+                      <span className="text-[13px] font-bold text-gray-400 dark:text-[#525252]">tag as "VIP"</span>
                     </div>
                   </div>
 
@@ -402,7 +402,7 @@ export default function AutomationsPage() {
                     No automations yet
                   </h3>
                   <p className="text-[13px] font-medium text-gray-500 dark:text-[#525252] mb-6 leading-relaxed">
-                    Build rules that respond for you — 24 hours a day.
+                    Set business rules that run alongside your AI — tag leads, hand off to humans, send templates.
                   </p>
                   <button
                     onClick={handleCreateAutomation}
@@ -481,36 +481,38 @@ export default function AutomationsPage() {
               <div>
                 <Label>Action *</Label>
                 <SimpleSelect
-                  value={editingAutomation.action_type || "send_message"}
-                  onValueChange={(v) => setEditingAutomation({ ...editingAutomation, action_type: v as ActionType })}
+                  value={editingAutomation.action_type || "add_tag"}
+                  onValueChange={(v) => setEditingAutomation({ ...editingAutomation, action_type: v as ActionType, action_value: "" })}
                   options={actionOptions}
                   className="mt-1"
                 />
               </div>
 
-              <div>
-                <Label>
-                  {editingAutomation.action_type === "send_message" ? "Message *"
-                    : editingAutomation.action_type === "add_tag" ? "Tag Name *"
-                    : editingAutomation.action_type === "send_template" ? "Template Name *"
-                    : "Value *"}
-                </Label>
-                {editingAutomation.action_type === "send_message" ? (
-                  <Textarea
-                    value={editingAutomation.action_value || ""}
-                    onChange={(e) => setEditingAutomation({ ...editingAutomation, action_value: e.target.value })}
-                    placeholder="Enter your automated message..."
-                    className="mt-1 min-h-[100px]"
-                  />
-                ) : (
+              {/* Value field — hidden for no-value actions */}
+              {editingAutomation.action_type !== "mark_resolved" && editingAutomation.action_type !== "assign_to_human" && (
+                <div>
+                  <Label>
+                    {editingAutomation.action_type === "add_tag" ? "Tag Name *"
+                      : editingAutomation.action_type === "send_template" ? "Template Name *"
+                      : "Value *"}
+                  </Label>
                   <Input
                     value={editingAutomation.action_value || ""}
                     onChange={(e) => setEditingAutomation({ ...editingAutomation, action_value: e.target.value })}
-                    placeholder={editingAutomation.action_type === "add_tag" ? "e.g., VIP" : "Enter value..."}
+                    placeholder={
+                      editingAutomation.action_type === "add_tag" ? "e.g., VIP, hot-lead, follow-up"
+                        : editingAutomation.action_type === "send_template" ? "e.g., follow_up_24h"
+                        : "Enter value..."
+                    }
                     className="mt-1"
                   />
-                )}
-              </div>
+                  {editingAutomation.action_type === "send_template" && (
+                    <p className="text-[11px] text-gray-400 dark:text-[#525252] mt-1.5">
+                      Use the exact template name from your approved Templates page.
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="flex items-center gap-2">
                 <Switch

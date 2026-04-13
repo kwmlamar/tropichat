@@ -43,6 +43,16 @@ import { AIVoiceProfile, DEFAULT_VOICE_PROFILE, extractStyleFromSample } from ".
 export type { AIVoiceProfile }
 export { DEFAULT_VOICE_PROFILE, extractStyleFromSample }
 
+/**
+ * Result returned by processInboundWithAI.
+ * usedFallback is true when the owner set fallback_behavior='hand_off'
+ * and the AI couldn't generate a confident reply (mock mode, error, or empty output).
+ */
+export interface AIProcessResult {
+  reply: string
+  usedFallback: boolean
+}
+
 // ─── Styled Prompt Builder ──────────────────────────────────────
 
 type ConversationTurn = { role: 'user' | 'ai'; content: string }
@@ -271,7 +281,10 @@ export async function generateSmartReplySuggestion(conversationId: string) {
 
 // ─── Automatic Pilot (Production) ───────────────────────────────
 
-export async function processInboundWithAI(conversationId: string, incomingMessage: string) {
+export async function processInboundWithAI(
+  conversationId: string,
+  incomingMessage: string
+): Promise<AIProcessResult | null> {
   try {
     const { data: conversation, error: convError } = await adminSupabase
       .from("unified_conversations")
@@ -292,14 +305,14 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
         .select("user_id")
         .eq("id", conversation.connected_account_id)
         .single()
-      
+
       if (account?.user_id) {
         const { data: customer } = await adminSupabase
           .from("customers")
           .select("ai_voice_profile, business_brief")
           .eq("id", account.user_id)
           .single()
-        
+
         if (customer?.ai_voice_profile) {
           voiceProfile = customer.ai_voice_profile as AIVoiceProfile
         }
@@ -308,6 +321,9 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
         }
       }
     } catch { }
+
+    // Whether the owner wants AI to hand off to a human when it can't answer
+    const isFallbackMode = voiceProfile.fallback_behavior === "hand_off"
 
     const rawHistory = ((conversation.messages as any[]) || [])
       .sort((a, b) => new Date(a.sent_at).getTime() - new Date(b.sent_at).getTime())
@@ -325,13 +341,42 @@ export async function processInboundWithAI(conversationId: string, incomingMessa
 
     const ai = getModel()
     if (!ai) {
-      console.log("[AI Pilot] Mock Mode enabled — responding via fallback.")
-      return getSmartFallback(incomingMessage, businessBrief?.businessType || "business", businessBrief?.services || "general services", voiceProfile)
+      console.log("[AI Pilot] Mock Mode enabled — responding via smart fallback.")
+      const reply = getSmartFallback(
+        incomingMessage,
+        businessBrief?.businessType || "business",
+        businessBrief?.services || "general services",
+        voiceProfile
+      )
+      return { reply, usedFallback: isFallbackMode }
     }
 
-    const result = await ai.generateContent(prompt)
-    const response = await result.response
-    return response.text().trim().replace(/^"/, "").replace(/"$/, "")
+    try {
+      const result = await ai.generateContent(prompt)
+      const text = result.response.text().trim().replace(/^"/, "").replace(/"$/, "")
+
+      if (!text) {
+        console.log("[AI Pilot] Empty response from Gemini — using smart fallback.")
+        const reply = getSmartFallback(
+          incomingMessage,
+          businessBrief?.businessType || "business",
+          businessBrief?.services || "general services",
+          voiceProfile
+        )
+        return { reply, usedFallback: isFallbackMode }
+      }
+
+      return { reply: text, usedFallback: false }
+    } catch (geminiError) {
+      console.error("[AI Pilot] Gemini error — using smart fallback:", geminiError)
+      const reply = getSmartFallback(
+        incomingMessage,
+        businessBrief?.businessType || "business",
+        businessBrief?.services || "general services",
+        voiceProfile
+      )
+      return { reply, usedFallback: isFallbackMode }
+    }
   } catch (error) {
     console.error("[AI Pilot] Error:", error)
     return null
@@ -404,6 +449,81 @@ export async function generateConversationIntelligence(history: any[]): Promise<
   } catch (error) {
     console.error("[AI Intelligence] Failed to generate summary:", error)
     return null
+  }
+}
+
+// ─── WhatsApp Template Re-Engagement Selector ───────────────────
+
+export interface TemplateSelection {
+  templateName: string
+  languageCode: string
+  /** Filled values for {{1}}, {{2}}, etc. in order */
+  variables: string[]
+}
+
+/**
+ * selectTemplateForReEngagement
+ * Called when the 24-hour WhatsApp messaging window has closed.
+ * Given a list of approved templates and the conversation history,
+ * the AI picks the most contextually appropriate template and fills
+ * any dynamic variables ({{1}}, {{2}}, ...) with relevant values.
+ */
+export async function selectTemplateForReEngagement(params: {
+  approvedTemplates: Array<{ name: string; language: string; body: string }>
+  customerName: string | null
+  conversationSummary: string
+  businessType: string
+}): Promise<TemplateSelection | null> {
+  const { approvedTemplates, customerName, conversationSummary, businessType } = params
+
+  if (approvedTemplates.length === 0) return null
+
+  const ai = getModel()
+  if (!ai) {
+    // Fallback: use the first approved template with no variables
+    const t = approvedTemplates[0]
+    return { templateName: t.name, languageCode: t.language, variables: [] }
+  }
+
+  const templateList = approvedTemplates
+    .map((t, i) => `${i + 1}. Name: "${t.name}" | Language: ${t.language}\n   Body: ${t.body}`)
+    .join('\n')
+
+  const prompt = `You are selecting a WhatsApp re-engagement template to send to a customer for a Caribbean ${businessType} business.
+The 24-hour messaging window has closed, so only pre-approved templates can be sent.
+
+Customer name: ${customerName ?? 'Unknown'}
+Conversation context: ${conversationSummary}
+
+APPROVED TEMPLATES:
+${templateList}
+
+Choose the single most contextually appropriate template from the list above.
+Fill in any {{1}}, {{2}}, {{3}} variables with natural, relevant values based on the conversation context and customer name.
+
+Return ONLY a JSON object with this exact shape (no markdown, no extra text):
+{
+  "templateName": "exact_template_name",
+  "languageCode": "en",
+  "variables": ["value for {{1}}", "value for {{2}}"]
+}
+If the template has no variables, return an empty array for variables.`
+
+  try {
+    const result = await ai.generateContent(prompt)
+    const raw = result.response.text().trim().replace(/^```json/, '').replace(/```$/, '')
+    const parsed = JSON.parse(raw) as TemplateSelection
+    // Validate the selected template actually exists
+    const exists = approvedTemplates.some(t => t.name === parsed.templateName)
+    if (!exists) {
+      const fallback = approvedTemplates[0]
+      return { templateName: fallback.name, languageCode: fallback.language, variables: [] }
+    }
+    return parsed
+  } catch (err) {
+    console.error('[AI Template Selector] Failed to parse response:', err)
+    const fallback = approvedTemplates[0]
+    return { templateName: fallback.name, languageCode: fallback.language, variables: [] }
   }
 }
 

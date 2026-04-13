@@ -1,6 +1,7 @@
 // Database types for TropiChat Supabase schema
 
 export type CustomerStatus = 'active' | 'inactive' | 'suspended' | 'trial'
+export type NotificationLevel = 'all' | 'milestones'
 export type CustomerPlan = 'free' | 'starter' | 'medium' | 'pro' | 'elite' | 'tropic' | 'island_pro' | 'professional' | 'enterprise' | 'coconut'
 export type ConversationStatus = 'open' | 'pending' | 'resolved' | 'archived'
 export type ConversationPriority = 'low' | 'normal' | 'high' | 'urgent'
@@ -9,7 +10,7 @@ export type MessageStatus = 'queued' | 'sending' | 'sent' | 'delivered' | 'read'
 export type TemplateCategory = 'marketing' | 'utility' | 'authentication'
 export type TemplateApprovalStatus = 'pending' | 'approved' | 'rejected'
 export type TriggerType = 'keyword' | 'new_conversation' | 'business_hours' | 'after_hours' | 'all_messages'
-export type ActionType = 'send_message' | 'send_template' | 'add_tag' | 'assign_to' | 'mark_resolved'
+export type ActionType = 'send_message' | 'send_template' | 'add_tag' | 'assign_to' | 'assign_to_human' | 'mark_resolved'
 export type NotificationType = 'new_message' | 'mention' | 'assignment' | 'system'
 
 // Business hours type
@@ -48,6 +49,7 @@ export interface Customer {
   has_onboarded: boolean
   ai_voice_profile?: any
   ai_autopilot_enabled: boolean
+  notification_level: NotificationLevel
   business_brief?: any
   full_name: string | null
   contact_email: string

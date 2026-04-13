@@ -50,7 +50,15 @@ import {
   Copy,
   CheckFat,
   ArrowSquareOut,
-  Sliders
+  Sliders,
+  Robot,
+  Notepad,
+  SpeakerHigh,
+  SpeakerSlash,
+  Moon,
+  Sparkle,
+  UserMinus,
+  ListBullets
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -114,20 +122,22 @@ interface SettingsModalProps {
   initialTab?: string
 }
 
-export type Tab = 
-  | "profile" 
+export type Tab =
+  | "profile"
   | "hours"
-  | "notifications" 
-  | "billing" 
-  | "team" 
-  | "instagram" 
-  | "whatsapp" 
-  | "messenger" 
+  | "notifications"
+  | "billing"
+  | "team"
+  | "channels_overview"
+  | "instagram"
+  | "whatsapp"
+  | "messenger"
   | "email"
   | "sms"
   | "conversion"
   | "booking"
   | "ai"
+  | "quick_replies"
   | "admin_scraper"
 
 
@@ -185,10 +195,12 @@ export function SettingsModal({ isOpen, onClose, user, initialTab }: SettingsMod
     { id: "notifications", label: "Notifications", icon: Bell, section: "Account" },
     { id: "billing", label: "Billing & Plans", icon: CreditCard, section: "Account" },
     { id: "team", label: "Team Members", icon: Users, section: "Account" },
-    { id: "hours", label: "Business Hours", icon: Clock, section: "Workspace" },
-    { id: "conversion", label: "Conversion Settings", icon: ChatCircleDots, section: "Workspace" },
+    { id: "hours", label: "Workspace Settings", icon: Clock, section: "Workspace" },
+    { id: "conversion", label: "Lead Capture", icon: ChatCircleDots, section: "Workspace" },
     { id: "booking", label: "Booking Page", icon: CalendarBlank, section: "Workspace" },
-    { id: "ai", label: "Booking Assistant", icon: MagicWand, section: "Workspace" },
+    { id: "ai", label: "Tropi AI", icon: MagicWand, section: "Workspace" },
+    { id: "quick_replies", label: "Quick Replies", icon: Notepad, section: "Workspace" },
+    { id: "channels_overview", label: "Overview", icon: ShareNetwork, section: "Channels" },
     { id: "instagram", label: "Instagram", icon: InstagramLogo, section: "Channels" },
     { id: "whatsapp", label: "WhatsApp", icon: WhatsappLogo, section: "Channels" },
     { id: "messenger", label: "Messenger", icon: MessengerLogo, section: "Channels" },
@@ -328,17 +340,20 @@ export function TabContent({ activeTab, customer, personalProfile, metaStatus, o
 }) {
   switch (activeTab) {
     case "profile": return <ProfileSettings customer={customer} profile={personalProfile} onRefresh={onRefresh} />
-    case "hours": return <BusinessHoursSettings customer={customer} onRefresh={onRefresh} />
-    case "notifications": return <NotificationSettings />
+    case "hours": return <WorkspaceSettings customer={customer} onRefresh={onRefresh} />
+    case "notifications": return <NotificationSettings customer={customer} onRefresh={onRefresh} />
     case "billing": return <BillingSettings customer={customer} onRefresh={onRefresh} />
-    case "team": return <TeamSettings />
+    case "team": return <TeamSettings customer={customer} onRefresh={onRefresh} />
+    case "channels_overview": return <ChannelsOverview metaStatus={metaStatus} customer={customer} />
     case "instagram": return <ChannelDetail channel="instagram" status={metaStatus?.instagram} onRefresh={onRefresh} />
     case "whatsapp": return <WhatsAppSettings status={metaStatus?.whatsapp} onRefresh={onRefresh} />
     case "messenger": return <ChannelDetail channel="messenger" status={metaStatus?.messenger} onRefresh={onRefresh} />
     case "email": return <EmailSettings onRefresh={onRefresh} />
+    case "sms": return <SMSSettings customer={customer} onRefresh={onRefresh} />
     case "conversion": return <LeadConversionSettings customer={customer} onRefresh={onRefresh} />
-    case "booking": return <BookingPageSettings />
-    case "ai": return <BookingAssistantSettings customer={customer} onRefresh={onRefresh} />
+    case "booking": return <BookingPageSettings customer={customer} onRefresh={onRefresh} />
+    case "ai": return <TropiAISettings customer={customer} onRefresh={onRefresh} />
+    case "quick_replies": return <QuickRepliesSettings customer={customer} onRefresh={onRefresh} />
     case "admin_scraper": return <AdminScraperSettings />
     default: return null
   }
@@ -349,14 +364,15 @@ export function TabContent({ activeTab, customer, personalProfile, metaStatus, o
 function ProfileSettings({ customer, profile, onRefresh }: { customer: any, profile: any, onRefresh: () => void }) {
   const [fullName, setFullName] = useState(profile?.full_name || "")
   const [businessName, setBusinessName] = useState(customer?.business_name || "")
-  const [timezone, setTimezone] = useState(customer?.timezone || "America/Nassau")
   const [saving, setSaving] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState("")
+  const [showDeleteZone, setShowDeleteZone] = useState(false)
 
   const handleSave = async () => {
     setSaving(true)
     const [pRes, cRes] = await Promise.all([
       updatePersonalProfile({ full_name: fullName }),
-      updateCustomer({ business_name: businessName, timezone })
+      updateCustomer({ business_name: businessName })
     ])
     if (!pRes.error && !cRes.error) {
       toast.success("Profile updated successfully")
@@ -367,6 +383,16 @@ function ProfileSettings({ customer, profile, onRefresh }: { customer: any, prof
     setSaving(false)
   }
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== profile?.contact_email) {
+      toast.error("Email doesn't match — account not deleted")
+      return
+    }
+    toast.success("Deletion request submitted. Our team will reach out within 24 hours.")
+    setShowDeleteZone(false)
+    setDeleteConfirm("")
+  }
+
   return (
     <div className="space-y-10">
       <section>
@@ -375,7 +401,7 @@ function ProfileSettings({ customer, profile, onRefresh }: { customer: any, prof
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Your Full Name</Label>
-              <Input 
+              <Input
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="John Doe"
@@ -384,7 +410,7 @@ function ProfileSettings({ customer, profile, onRefresh }: { customer: any, prof
             </div>
             <div className="space-y-2">
               <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Business Name</Label>
-              <Input 
+              <Input
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="My Business"
@@ -392,17 +418,8 @@ function ProfileSettings({ customer, profile, onRefresh }: { customer: any, prof
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Default Timezone</Label>
-            <SimpleSelect 
-              value={timezone} 
-              onValueChange={setTimezone} 
-              options={timezones} 
-              className="w-full"
-            />
-          </div>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             disabled={saving}
             className="w-full lg:w-auto bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-10 h-11"
           >
@@ -425,12 +442,63 @@ function ProfileSettings({ customer, profile, onRefresh }: { customer: any, prof
           </Button>
         </div>
       </section>
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      <section>
+        <h4 className="text-[12px] font-bold text-red-400 uppercase tracking-widest mb-4">Danger Zone</h4>
+        {!showDeleteZone ? (
+          <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 flex items-center justify-between">
+            <div>
+              <p className="text-[14px] font-bold text-gray-900 dark:text-white mb-1">Delete Account</p>
+              <p className="text-xs text-gray-500">Permanently delete your workspace and all data. This cannot be undone.</p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteZone(true)}
+              className="rounded-xl border-red-200 dark:border-red-900 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0 ml-4"
+            >
+              <UserMinus weight="bold" className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </div>
+        ) : (
+          <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/50 space-y-4">
+            <div className="flex items-start gap-3">
+              <Warning weight="fill" className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-[14px] font-bold text-red-700 dark:text-red-400 mb-1">This will permanently delete your account</p>
+                <p className="text-xs text-red-600/70 dark:text-red-500/70">All conversations, contacts, bookings, and settings will be erased. Type your email address to confirm.</p>
+              </div>
+            </div>
+            <Input
+              value={deleteConfirm}
+              onChange={e => setDeleteConfirm(e.target.value)}
+              placeholder={profile?.contact_email || "your@email.com"}
+              className="rounded-xl border-red-200 dark:border-red-800 bg-white dark:bg-[#111] text-sm"
+            />
+            <div className="flex gap-2">
+              <Button
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirm !== profile?.contact_email}
+                className="bg-red-500 hover:bg-red-600 text-white rounded-xl px-6 h-10 font-bold disabled:opacity-40"
+              >
+                Confirm Delete
+              </Button>
+              <Button variant="ghost" onClick={() => { setShowDeleteZone(false); setDeleteConfirm("") }} className="rounded-xl h-10">
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   )
 }
 
-function BusinessHoursSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
+function WorkspaceSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
   const [hours, setHours] = useState<BusinessHours>(customer?.business_hours || {} as BusinessHours)
+  const [timezone, setTimezone] = useState(customer?.timezone || "America/Nassau")
   const [saving, setSaving] = useState(false)
 
   const updateDay = (day: string, field: string, value: any) => {
@@ -442,43 +510,59 @@ function BusinessHoursSettings({ customer, onRefresh }: { customer: Customer | n
 
   const handleSave = async () => {
     setSaving(true)
-    const { error } = await updateCustomer({ business_hours: hours })
+    const { error } = await updateCustomer({ business_hours: hours, timezone })
     if (!error) {
-      toast.success("Hours updated")
+      toast.success("Workspace settings updated")
       onRefresh()
     }
     setSaving(false)
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-lg font-bold dark:text-white mb-1">Standard Availability</h3>
-        <p className="text-sm text-gray-500 mb-6">Set your workspace hours. Our AI can use these for automatic replies.</p>
-        
+    <div className="space-y-10">
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Timezone</h4>
+        <div className="space-y-2">
+          <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Default Timezone</Label>
+          <SimpleSelect
+            value={timezone}
+            onValueChange={setTimezone}
+            options={timezones}
+            className="w-full"
+          />
+          <p className="text-[11px] text-gray-400">Used for business hours, scheduling, and AI auto-reply timing.</p>
+        </div>
+      </section>
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Business Hours</h4>
+        <p className="text-sm text-gray-500 mb-6">Set your open hours. Tropi AI uses these to trigger after-hours auto-replies.</p>
+
         <div className="space-y-2 bg-gray-50 dark:bg-[#080808] rounded-2xl p-4 border border-gray-100 dark:border-[#1C1C1C]">
           {days.map(day => (
             <div key={day} className="flex items-center justify-between py-2.5">
               <div className="flex items-center gap-3 w-32">
-                <Switch 
-                  checked={hours[day]?.enabled || false} 
+                <Switch
+                  checked={hours[day]?.enabled || false}
                   onCheckedChange={v => updateDay(day, "enabled", v)}
                 />
                 <span className="text-[14px] font-bold capitalize select-none dark:text-white">{day}</span>
               </div>
-              
+
               {hours[day]?.enabled ? (
                 <div className="flex items-center gap-2">
-                  <Input 
-                    type="time" 
-                    value={hours[day]?.start || "09:00"} 
+                  <Input
+                    type="time"
+                    value={hours[day]?.start || "09:00"}
                     onChange={e => updateDay(day, "start", e.target.value)}
                     className="h-9 w-28 text-center rounded-xl bg-white dark:bg-[#111] dark:border-[#222]"
                   />
                   <span className="text-gray-400 px-1">—</span>
-                  <Input 
-                    type="time" 
-                    value={hours[day]?.end || "17:00"} 
+                  <Input
+                    type="time"
+                    value={hours[day]?.end || "17:00"}
                     onChange={e => updateDay(day, "end", e.target.value)}
                     className="h-9 w-28 text-center rounded-xl bg-white dark:bg-[#111] dark:border-[#222]"
                   />
@@ -489,9 +573,18 @@ function BusinessHoursSettings({ customer, onRefresh }: { customer: Customer | n
             </div>
           ))}
         </div>
+      </section>
+
+      <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 flex items-start gap-3">
+        <Moon weight="fill" className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+        <div>
+          <p className="text-[13px] font-bold text-amber-700 dark:text-amber-400 mb-0.5">After-Hours Auto-Reply</p>
+          <p className="text-xs text-amber-600/80 dark:text-amber-500/70">Configure what message customers receive outside these hours in <span className="font-bold">Lead Capture → Conversion Message</span>.</p>
+        </div>
       </div>
+
       <Button onClick={handleSave} disabled={saving} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8 h-10 w-full lg:w-auto">
-        {saving ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : "Update Business Hours"}
+        {saving ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : "Save Workspace Settings"}
       </Button>
     </div>
   )
@@ -543,17 +636,69 @@ function LeadConversionSettings({ customer, onRefresh }: { customer: Customer | 
   )
 }
 
-function NotificationSettings() {
+const NOTIF_CHANNELS = [
+  { id: "whatsapp", label: "WhatsApp", icon: WhatsappLogo, color: "text-green-500" },
+  { id: "instagram", label: "Instagram", icon: InstagramLogo, color: "text-pink-500" },
+  { id: "messenger", label: "Messenger", icon: MessengerLogo, color: "text-blue-500" },
+  { id: "email", label: "Email", icon: EnvelopeSimple, color: "text-[#007B85]" },
+  { id: "sms", label: "SMS", icon: DeviceMobile, color: "text-purple-500" },
+] as const
+
+function NotificationSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
   const [pushSupported, setPushSupported] = useState(false)
   const [pushEnabled, setPushEnabled] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  // AI notification level — stored in DB
+  const [notifLevel, setNotifLevel] = useState<'all' | 'milestones'>(
+    customer?.notification_level ?? 'all'
+  )
+  const [savingLevel, setSavingLevel] = useState(false)
+
+  const handleLevelChange = async (value: 'all' | 'milestones') => {
+    setNotifLevel(value)
+    setSavingLevel(true)
+    const { error } = await updateCustomer({ notification_level: value })
+    if (error) {
+      toast.error('Failed to save notification preference')
+      setNotifLevel(customer?.notification_level ?? 'all')
+    } else {
+      toast.success('Notification preference saved')
+      onRefresh()
+    }
+    setSavingLevel(false)
+  }
+
+  // Per-channel toggles — stored in localStorage
+  const [channelPrefs, setChannelPrefs] = useState<Record<string, boolean>>(() => {
+    if (typeof window === "undefined") return {}
+    try { return JSON.parse(localStorage.getItem("notif_channels") || "{}") } catch { return {} }
+  })
+
+  // Quiet hours — stored in localStorage
+  const [quietEnabled, setQuietEnabled] = useState(() => {
+    if (typeof window === "undefined") return false
+    return localStorage.getItem("notif_quiet_enabled") === "true"
+  })
+  const [quietStart, setQuietStart] = useState(() =>
+    typeof window !== "undefined" ? (localStorage.getItem("notif_quiet_start") || "22:00") : "22:00"
+  )
+  const [quietEnd, setQuietEnd] = useState(() =>
+    typeof window !== "undefined" ? (localStorage.getItem("notif_quiet_end") || "08:00") : "08:00"
+  )
+
+  // Sound preference
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window === "undefined") return true
+    return localStorage.getItem("notif_sound") !== "false"
+  })
 
   useEffect(() => {
     setPushSupported(isPushSupported())
     setPushEnabled(getNotificationPermission() === 'granted')
   }, [])
 
-  const handleToggle = async (checked: boolean) => {
+  const handlePushToggle = async (checked: boolean) => {
     setLoading(true)
     if (checked) {
       const { success } = await subscribeToPush()
@@ -565,8 +710,28 @@ function NotificationSettings() {
     setLoading(false)
   }
 
+  const toggleChannel = (id: string, val: boolean) => {
+    const next = { ...channelPrefs, [id]: val }
+    setChannelPrefs(next)
+    localStorage.setItem("notif_channels", JSON.stringify(next))
+  }
+
+  const saveQuietHours = () => {
+    localStorage.setItem("notif_quiet_enabled", String(quietEnabled))
+    localStorage.setItem("notif_quiet_start", quietStart)
+    localStorage.setItem("notif_quiet_end", quietEnd)
+    toast.success("Quiet hours saved")
+  }
+
+  const toggleSound = (val: boolean) => {
+    setSoundEnabled(val)
+    localStorage.setItem("notif_sound", String(val))
+  }
+
+  const isChannelOn = (id: string) => channelPrefs[id] !== false // default on
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <section>
         <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Device Notifications</h4>
         <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
@@ -581,7 +746,7 @@ function NotificationSettings() {
               </div>
             </div>
             {pushSupported ? (
-              <Switch checked={pushEnabled} onCheckedChange={handleToggle} disabled={loading} />
+              <Switch checked={pushEnabled} onCheckedChange={handlePushToggle} disabled={loading} />
             ) : (
               <span className="text-[10px] font-bold text-gray-400 uppercase bg-gray-100 dark:bg-[#111] px-2 py-1 rounded">Unsupported</span>
             )}
@@ -592,6 +757,144 @@ function NotificationSettings() {
               <p className="text-[11px] font-bold text-green-600">Notifications are active on this browser.</p>
             </div>
           )}
+        </div>
+      </section>
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Notify Me For</h4>
+        <div className="space-y-2 bg-gray-50 dark:bg-[#080808] rounded-2xl p-4 border border-gray-100 dark:border-[#1C1C1C]">
+          {NOTIF_CHANNELS.map(ch => (
+            <div key={ch.id} className="flex items-center justify-between py-2.5">
+              <div className="flex items-center gap-3">
+                <ch.icon weight="bold" className={cn("h-4 w-4", ch.color)} />
+                <span className="text-[14px] font-bold dark:text-white">{ch.label}</span>
+              </div>
+              <Switch checked={isChannelOn(ch.id)} onCheckedChange={val => toggleChannel(ch.id, val)} />
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-gray-400 mt-2 italic">Changes are saved instantly to this browser.</p>
+      </section>
+
+      {customer?.ai_autopilot_enabled && (
+        <>
+          <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+          <section>
+            <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+              When Tropi AI is Active
+            </h4>
+            <p className="text-xs text-gray-400 mb-5">
+              Tropi AI handles replies automatically. Choose what's worth a notification.
+            </p>
+            <div className="space-y-2">
+              {([
+                {
+                  value: 'all' as const,
+                  label: 'All Messages',
+                  description: 'Get notified for every customer message, even ones Tropi AI has already handled.',
+                  tags: [],
+                },
+                {
+                  value: 'milestones' as const,
+                  label: 'Milestones Only',
+                  description: 'Skip the noise. Only notify for events that need your attention.',
+                  tags: ['New lead', 'AI needs help'],
+                },
+              ]).map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleLevelChange(opt.value)}
+                  disabled={savingLevel}
+                  className={cn(
+                    "w-full flex items-start gap-4 p-4 rounded-2xl border text-left transition-all",
+                    notifLevel === opt.value
+                      ? "border-[#007B85] bg-[#007B85]/5"
+                      : "border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] hover:border-gray-300 dark:hover:border-[#333]"
+                  )}
+                >
+                  <div className={cn(
+                    "h-4 w-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center",
+                    notifLevel === opt.value ? "border-[#007B85]" : "border-gray-300 dark:border-[#555]"
+                  )}>
+                    {notifLevel === opt.value && (
+                      <div className="h-2 w-2 rounded-full bg-[#007B85]" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold dark:text-white">{opt.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{opt.description}</p>
+                    {opt.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {opt.tags.map(tag => (
+                          <span key={tag} className="text-[10px] font-bold text-[#007B85] bg-[#007B85]/10 px-2 py-0.5 rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+            {savingLevel && (
+              <p className="text-[11px] text-gray-400 mt-2 flex items-center gap-1.5">
+                <CircleNotch className="h-3 w-3 animate-spin" /> Saving...
+              </p>
+            )}
+          </section>
+        </>
+      )}
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Quiet Hours</h4>
+        <div className="p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C] space-y-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Moon weight="fill" className="h-5 w-5 text-indigo-400" />
+              <div>
+                <p className="text-[14px] font-bold dark:text-white">Enable Quiet Hours</p>
+                <p className="text-xs text-gray-500">Suppress notifications during a set window.</p>
+              </div>
+            </div>
+            <Switch checked={quietEnabled} onCheckedChange={setQuietEnabled} />
+          </div>
+          <div className={cn("grid grid-cols-2 gap-4 transition-opacity", !quietEnabled && "opacity-40 pointer-events-none")}>
+            <div className="space-y-2">
+              <Label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest">From</Label>
+              <Input type="time" value={quietStart} onChange={e => setQuietStart(e.target.value)} className="rounded-xl h-10 dark:bg-[#111] dark:border-[#222]" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest">Until</Label>
+              <Input type="time" value={quietEnd} onChange={e => setQuietEnd(e.target.value)} className="rounded-xl h-10 dark:bg-[#111] dark:border-[#222]" />
+            </div>
+          </div>
+          <Button onClick={saveQuietHours} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8 h-10 w-full lg:w-auto">
+            Save Quiet Hours
+          </Button>
+        </div>
+      </section>
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Sound</h4>
+        <div className="p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {soundEnabled
+              ? <SpeakerHigh weight="bold" className="h-5 w-5 text-[#007B85]" />
+              : <SpeakerSlash weight="bold" className="h-5 w-5 text-gray-400" />
+            }
+            <div>
+              <p className="text-[14px] font-bold dark:text-white">Notification Sound</p>
+              <p className="text-xs text-gray-500">{soundEnabled ? "Playing a sound for each new message." : "Notifications are silent."}</p>
+            </div>
+          </div>
+          <Switch checked={soundEnabled} onCheckedChange={toggleSound} />
         </div>
       </section>
     </div>
@@ -796,6 +1099,29 @@ function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: ()
         )}
       </div>
 
+      {/* Invoice quick link */}
+      <div className="flex items-center justify-between p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 flex items-center justify-center bg-[#007B85]/10 rounded-xl">
+            <EnvelopeSimple weight="bold" className="h-4 w-4 text-[#007B85]" />
+          </div>
+          <div>
+            <p className="text-[14px] font-bold dark:text-white">Invoices & Receipts</p>
+            <p className="text-xs text-gray-500">View and download your billing history.</p>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleManagePortal}
+          disabled={managingPortal}
+          className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:hover:bg-[#111] font-bold"
+        >
+          {managingPortal ? <CircleNotch className="h-4 w-4 animate-spin" /> : <ArrowSquareOut className="h-4 w-4 mr-2" />}
+          View Invoices
+        </Button>
+      </div>
+
       {/* Pricing Header */}
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -879,47 +1205,134 @@ function BillingSettings({ customer, onRefresh }: { customer: any, onRefresh: ()
   )
 }
 
-function TeamSettings() {
+const TEAM_ROLES = [
+  { value: "admin", label: "Admin" },
+  { value: "agent", label: "Agent" },
+]
+
+function TeamSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
+  const [inviteEmail, setInviteEmail] = useState("")
+  const [inviteRole, setInviteRole] = useState("agent")
+  const [inviting, setInviting] = useState(false)
+  const [showInvite, setShowInvite] = useState(false)
 
-  useEffect(() => {
-    async function fetch() {
-      const { data } = await getTeamMembers()
-      if (data) setMembers(data)
-      setLoading(false)
+  const loadMembers = async () => {
+    const { data } = await getTeamMembers()
+    if (data) setMembers(data)
+    setLoading(false)
+  }
+
+  useEffect(() => { loadMembers() }, [])
+
+  const handleInvite = async () => {
+    if (!inviteEmail.trim()) return
+    setInviting(true)
+    const { error } = await inviteTeamMember(inviteEmail.trim(), "", inviteRole as 'admin' | 'agent')
+    if (!error) {
+      toast.success(`Invite sent to ${inviteEmail.trim()}`)
+      setInviteEmail("")
+      setShowInvite(false)
+      loadMembers()
+    } else {
+      toast.error("Failed to send invite")
     }
-    fetch()
-  }, [])
+    setInviting(false)
+  }
+
+  const handleRemove = async (id: string, name: string) => {
+    if (!confirm(`Remove ${name || "this member"} from the workspace?`)) return
+    const { error } = await removeTeamMember(id)
+    if (!error) {
+      toast.success("Member removed")
+      loadMembers()
+    } else {
+      toast.error("Failed to remove member")
+    }
+  }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between mb-2">
         <div>
           <h3 className="text-lg font-bold dark:text-white">Workspace Team</h3>
-          <p className="text-xs text-gray-500">Add staff to help manage your customers.</p>
+          <p className="text-xs text-gray-500">Invite staff to help manage your customers.</p>
         </div>
-        <Button size="sm" className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl h-9">
+        <Button size="sm" onClick={() => setShowInvite(v => !v)} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl h-9">
           <Plus weight="bold" className="h-4 w-4 mr-2" />
           Invite Member
         </Button>
       </div>
 
+      <AnimatePresence>
+        {showInvite && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            className="p-5 border border-[#007B85]/20 bg-[#007B85]/5 rounded-2xl space-y-4"
+          >
+            <p className="text-[13px] font-bold dark:text-white">Invite a team member</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-gray-600 dark:text-gray-400">Email Address</Label>
+                <Input
+                  value={inviteEmail}
+                  onChange={e => setInviteEmail(e.target.value)}
+                  placeholder="team@yourcompany.com"
+                  className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111]"
+                  onKeyDown={e => e.key === "Enter" && handleInvite()}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-gray-600 dark:text-gray-400">Role</Label>
+                <SimpleSelect value={inviteRole} onValueChange={setInviteRole} options={TEAM_ROLES} className="w-full" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleInvite} disabled={inviting || !inviteEmail.trim()} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl flex-1 h-10">
+                {inviting ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
+                Send Invite
+              </Button>
+              <Button variant="ghost" onClick={() => setShowInvite(false)} className="rounded-xl h-10 flex-1">Cancel</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="space-y-3">
-        {members.map(member => (
+        {loading ? (
+          Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-2xl" />)
+        ) : members.length === 0 ? (
+          <div className="py-12 text-center">
+            <Users weight="duotone" className="h-12 w-12 text-gray-200 mx-auto mb-4" />
+            <p className="text-sm text-gray-500">No team members yet. Invite someone to get started.</p>
+          </div>
+        ) : members.map(member => (
           <div key={member.id} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
             <div className="flex items-center gap-3">
-              <Avatar fallback={(member.name || "U")[0]} size="sm" />
+              <Avatar fallback={(member.name || member.email || "U")[0].toUpperCase()} size="sm" />
               <div>
-                <p className="text-[14px] font-bold dark:text-white">{member.name || "Pending..."}</p>
+                <p className="text-[14px] font-bold dark:text-white">{member.name || "Pending invite..."}</p>
                 <p className="text-[11px] text-gray-500">{member.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20 px-2 py-0.5 rounded-full">
-                {member.role || "Member"}
+            <div className="flex items-center gap-3">
+              <span className={cn(
+                "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+                member.role === "owner"
+                  ? "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400"
+                  : member.role === "admin"
+                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                  : "bg-[#007B85]/10 text-[#007B85] dark:bg-[#007B85]/20"
+              )}>
+                {member.role || "Agent"}
               </span>
-              <button className="text-gray-400 hover:text-red-500 transition-colors">
+              <button
+                onClick={() => handleRemove(member.id, member.name || member.email)}
+                className="text-gray-400 hover:text-red-500 transition-colors"
+              >
                 <Trash className="h-4 w-4" />
               </button>
             </div>
@@ -1529,7 +1942,7 @@ function SMSSettings({ customer, onRefresh }: { customer: Customer | null, onRef
   )
 }
 
-function BookingPageSettings() {
+function BookingPageSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
   const [handle, setHandle] = useState("")
   const [editHandle, setEditHandle] = useState("")
   const [loading, setLoading] = useState(true)
@@ -1538,6 +1951,10 @@ function BookingPageSettings() {
   const [copied, setCopied] = useState(false)
   const [whatsappNumber, setWhatsappNumber] = useState("")
   const [savingWhatsapp, setSavingWhatsapp] = useState(false)
+  const [confirmationMsg, setConfirmationMsg] = useState(
+    (customer?.ai_voice_profile as any)?.booking_confirmation_msg || ""
+  )
+  const [savingConfirmation, setSavingConfirmation] = useState(false)
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tropichat.com"
 
@@ -1775,15 +2192,65 @@ function BookingPageSettings() {
           )}
         </div>
       </section>
+
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Confirmation Message</h4>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+          Sent to customers automatically after a booking is confirmed. Leave blank to use the default.
+        </p>
+        <div className="space-y-3">
+          <Textarea
+            value={confirmationMsg}
+            onChange={e => setConfirmationMsg(e.target.value)}
+            placeholder={`Hi {name}! Your booking for {service} on {date} at {time} is confirmed. We look forward to seeing you!`}
+            className="min-h-[120px] rounded-2xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#080808] text-sm"
+          />
+          <p className="text-[11px] text-gray-400 italic">
+            Variables: <span className="font-mono">{"{name}"}</span>, <span className="font-mono">{"{service}"}</span>, <span className="font-mono">{"{date}"}</span>, <span className="font-mono">{"{time}"}</span>
+          </p>
+          <Button
+            onClick={async () => {
+              setSavingConfirmation(true)
+              const existing = customer?.ai_voice_profile || {}
+              const { error } = await updateCustomer({
+                ai_voice_profile: { ...existing, booking_confirmation_msg: confirmationMsg }
+              })
+              if (!error) { toast.success("Confirmation message saved"); onRefresh() }
+              else toast.error("Failed to save")
+              setSavingConfirmation(false)
+            }}
+            disabled={savingConfirmation}
+            className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-8 h-10 w-full lg:w-auto"
+          >
+            {savingConfirmation ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
+            Save Confirmation Message
+          </Button>
+        </div>
+      </section>
     </div>
   )
 }
 
-// ─── AI Settings ─────────────────────────────────────────────────
+// ─── Tropi AI Settings ───────────────────────────────────────────
 
-function BookingAssistantSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
+const AI_TONES = [
+  { value: "professional", label: "Professional" },
+  { value: "friendly", label: "Friendly" },
+  { value: "casual", label: "Casual" },
+]
+
+const AI_FALLBACKS = [
+  { value: "collect_info", label: "Collect name & phone number" },
+  { value: "send_booking_link", label: "Send booking link" },
+  { value: "hand_off", label: "Hand off to a human agent" },
+]
+
+function TropiAISettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
   const [autoPilotEnabled, setAutoPilotEnabled] = useState(customer?.ai_autopilot_enabled ?? false)
   const [saving, setSaving] = useState(false)
+  const [tone, setTone] = useState((customer?.ai_voice_profile as any)?.tone || "friendly")
+  const [fallback, setFallback] = useState((customer?.ai_voice_profile as any)?.fallback_behavior || "collect_info")
+  const [savingPersonality, setSavingPersonality] = useState(false)
 
   const handleToggle = async (enabled: boolean) => {
     setSaving(true)
@@ -1791,7 +2258,7 @@ function BookingAssistantSettings({ customer, onRefresh }: { customer: Customer 
       const { data: { session } } = await getSupabase().auth.getSession()
       const res = await fetch('/api/ai/autopilot', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token}`
         },
@@ -1800,10 +2267,10 @@ function BookingAssistantSettings({ customer, onRefresh }: { customer: Customer 
       const data = await res.json()
       if (data.success) {
         setAutoPilotEnabled(enabled)
-        toast.success(enabled ? 'Booking Assistant is now LIVE — AI will convert all inquiries' : 'Assistant in Suggestion Mode — AI will suggest conversion replies')
+        toast.success(enabled ? 'Tropi AI is now LIVE — converting all inquiries automatically' : 'Tropi AI in Suggestion Mode')
         onRefresh()
       } else {
-        toast.error('Failed to update Assistant setting')
+        toast.error('Failed to update Tropi AI setting')
       }
     } catch {
       toast.error('Something went wrong')
@@ -1812,108 +2279,429 @@ function BookingAssistantSettings({ customer, onRefresh }: { customer: Customer 
     }
   }
 
+  const handleSavePersonality = async () => {
+    setSavingPersonality(true)
+    const existing = customer?.ai_voice_profile || {}
+    const { error } = await updateCustomer({
+      ai_voice_profile: { ...existing, tone, fallback_behavior: fallback }
+    })
+    if (!error) { toast.success("Tropi AI personality saved"); onRefresh() }
+    else toast.error("Failed to save")
+    setSavingPersonality(false)
+  }
+
   const isConfigured = !!customer?.ai_voice_profile
 
   return (
-    <div className="space-y-8">
-      {/* Status */}
+    <div className="space-y-10">
+      {/* Status banner */}
       <div className={`p-5 rounded-2xl border flex items-center gap-4 ${
-        autoPilotEnabled 
-          ? 'bg-[#007B85]/5 border-[#007B85]/20' 
+        autoPilotEnabled
+          ? 'bg-[#007B85]/5 border-[#007B85]/20'
           : 'bg-gray-50 dark:bg-[#080808] border-gray-100 dark:border-[#1C1C1C]'
       }`}>
         <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${
           autoPilotEnabled ? 'bg-[#007B85]' : 'bg-gray-200 dark:bg-[#1C1C1C]'
         }`}>
-          <MagicWand weight="fill" className={`h-5 w-5 ${autoPilotEnabled ? 'text-white' : 'text-gray-400'}`} />
+          <Robot weight="fill" className={`h-5 w-5 ${autoPilotEnabled ? 'text-white' : 'text-gray-400'}`} />
         </div>
         <div className="flex-1">
-          <p className="text-[14px] font-bold dark:text-white">Booking Assistant Status</p>
+          <p className="text-[14px] font-bold dark:text-white">Tropi AI Status</p>
           <p className="text-xs text-gray-500 mt-0.5">
-            {autoPilotEnabled 
+            {autoPilotEnabled
               ? 'Auto-Pilot ON — Converting inquiries automatically on all channels'
               : 'Suggestion Mode — AI helps you convert inquiries but does not send'}
           </p>
         </div>
         {autoPilotEnabled && (
           <span className="text-[10px] font-black text-[#007B85] bg-[#007B85]/10 px-2 py-1 rounded-full uppercase tracking-wider">
-            Live Conversion
+            Live
           </span>
         )}
       </div>
 
       {/* Auto-Pilot Toggle */}
-      <div className="space-y-4">
-        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Assistant Conversion Mode</h4>
-        
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Conversion Mode</h4>
         <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <p className="text-[14px] font-bold dark:text-white">Convert Inbound Inquiries Automatically</p>
               <p className="text-xs text-gray-500 leading-relaxed">
-                When ON, your Booking Assistant automatically replies and converts inquiries on WhatsApp, Instagram, and Messenger.<br/>
-                When OFF, the assistant still suggests conversion-focused replies in your inbox.
+                When ON, Tropi AI replies and converts inquiries on WhatsApp, Instagram, and Messenger.<br/>
+                When OFF, the AI still suggests conversion replies in your inbox.
               </p>
             </div>
-            <Switch 
-              checked={autoPilotEnabled} 
+            <Switch
+              checked={autoPilotEnabled}
               onCheckedChange={handleToggle}
               disabled={saving || !isConfigured}
               className="shrink-0 mt-0.5"
             />
           </div>
-
           {!isConfigured && (
             <div className="mt-4 flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
               <Warning weight="fill" className="h-4 w-4 text-amber-500 shrink-0" />
               <p className="text-[12px] font-semibold text-amber-700 dark:text-amber-400">
-                Train your Assistant first. Go to the Assistant page to set up your business brief.
+                Train Tropi AI first — set up your business brief on the AI page.
               </p>
             </div>
           )}
         </div>
 
-        {/* Mode explanation cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div className={`p-4 rounded-xl border transition-all ${
-            autoPilotEnabled 
-              ? 'border-[#007B85]/30 bg-[#007B85]/5' 
-              : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
+            autoPilotEnabled ? 'border-[#007B85]/30 bg-[#007B85]/5' : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
           }`}>
             <div className="flex items-center gap-2 mb-2">
               <Lightning weight="fill" className={`h-4 w-4 ${autoPilotEnabled ? 'text-[#007B85]' : 'text-gray-400'}`} />
-              <span className="text-[12px] font-bold dark:text-white">Full Conversion ON</span>
+              <span className="text-[12px] font-bold dark:text-white">Full Auto-Pilot</span>
             </div>
-            <p className="text-[11px] text-gray-500 leading-relaxed">Assistant converts every inquiry instantly. Human cooldown: if you reply manually, Assistant pauses for 2 minutes.</p>
+            <p className="text-[11px] text-gray-500 leading-relaxed">Converts every inquiry instantly. Pauses for 2 min if you reply manually.</p>
           </div>
           <div className={`p-4 rounded-xl border transition-all ${
-            !autoPilotEnabled 
-              ? 'border-gray-200 dark:border-[#222] bg-white dark:bg-[#111]' 
-              : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
+            !autoPilotEnabled ? 'border-gray-200 dark:border-[#222] bg-white dark:bg-[#111]' : 'border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] opacity-60'
           }`}>
             <div className="flex items-center gap-2 mb-2">
               <ChatCircleText weight="fill" className="h-4 w-4 text-gray-400" />
               <span className="text-[12px] font-bold dark:text-white">Suggestions Only</span>
             </div>
-            <p className="text-[11px] text-gray-500 leading-relaxed">Assistant generates a suggested conversion reply. You review it and click Send to close the deal.</p>
+            <p className="text-[11px] text-gray-500 leading-relaxed">AI drafts a reply. You review and click Send to close the deal.</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Link to full AI page */}
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      {/* Personality */}
+      <section>
+        <h4 className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-6">Personality & Behaviour</h4>
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Tone of Voice</Label>
+            <p className="text-xs text-gray-400">How Tropi AI sounds when speaking to your customers.</p>
+            <div className="grid grid-cols-3 gap-3 mt-2">
+              {AI_TONES.map(t => (
+                <button
+                  key={t.value}
+                  onClick={() => setTone(t.value)}
+                  className={cn(
+                    "p-3 rounded-xl border text-[13px] font-bold transition-all",
+                    tone === t.value
+                      ? "border-[#007B85] bg-[#007B85]/10 text-[#007B85]"
+                      : "border-gray-100 dark:border-[#1C1C1C] text-gray-500 hover:border-gray-300 dark:hover:border-[#333]"
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[13px] font-semibold text-gray-700 dark:text-gray-300">Fallback Behaviour</Label>
+            <p className="text-xs text-gray-400">What Tropi AI does when it cannot answer a question.</p>
+            <SimpleSelect value={fallback} onValueChange={setFallback} options={AI_FALLBACKS} className="w-full mt-2" />
+          </div>
+
+          <Button onClick={handleSavePersonality} disabled={savingPersonality} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl px-10 h-10 w-full lg:w-auto">
+            {savingPersonality ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : <Sparkle weight="fill" className="h-4 w-4 mr-2" />}
+            Save Personality
+          </Button>
+        </div>
+      </section>
+
+      <div className="h-px bg-gray-100 dark:bg-[#1C1C1C]" />
+
+      {/* Link to full AI training page */}
       <div className="p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C] flex items-center justify-between">
         <div>
           <p className="text-[14px] font-bold dark:text-white mb-1">Conversion Training & Voice</p>
-          <p className="text-xs text-gray-500">Teach your Assistant exactly how to convert your target customers — services, pricing, and booking methods.</p>
+          <p className="text-xs text-gray-500">Teach Tropi AI your services, pricing, and booking methods.</p>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:hover:bg-[#111] shrink-0 ml-4"
           onClick={() => window.location.href = '/dashboard/ai'}
         >
           <ArrowRight className="h-4 w-4 mr-2" />
-          Train Assistant
+          Train AI
         </Button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Channels Overview ───────────────────────────────────────────
+
+function ChannelsOverview({ metaStatus, customer }: { metaStatus: MetaStatus | null, customer: Customer | null }) {
+  const channels = [
+    {
+      id: "instagram",
+      label: "Instagram",
+      icon: InstagramLogo,
+      iconColor: "text-pink-500",
+      iconBg: "bg-gradient-to-tr from-[#FFB347] via-[#FF3366] to-[#CB1D8D]",
+      connected: metaStatus?.instagram?.connected,
+      detail: metaStatus?.instagram?.account_name,
+      tab: "instagram",
+    },
+    {
+      id: "whatsapp",
+      label: "WhatsApp",
+      icon: WhatsappLogo,
+      iconColor: "text-green-500",
+      iconBg: "bg-gradient-to-br from-[#25D366] to-[#128C7E]",
+      connected: metaStatus?.whatsapp?.connected,
+      detail: metaStatus?.whatsapp?.account_name,
+      tab: "whatsapp",
+    },
+    {
+      id: "messenger",
+      label: "Messenger",
+      icon: MessengerLogo,
+      iconColor: "text-blue-500",
+      iconBg: "bg-gradient-to-b from-[#00C6FF] to-[#0072FF]",
+      connected: metaStatus?.messenger?.connected,
+      detail: metaStatus?.messenger?.account_name,
+      tab: "messenger",
+    },
+    {
+      id: "email",
+      label: "Email",
+      icon: EnvelopeSimple,
+      iconColor: "text-[#007B85]",
+      iconBg: "bg-[#007B85]",
+      connected: false, // fetched separately — this is a quick status hint
+      detail: null,
+      tab: "email",
+    },
+    {
+      id: "sms",
+      label: "SMS",
+      icon: DeviceMobile,
+      iconColor: "text-purple-500",
+      iconBg: "bg-gradient-to-br from-purple-500 to-indigo-600",
+      connected: !!customer?.phone_number,
+      detail: customer?.phone_number || null,
+      tab: "sms",
+    },
+  ]
+
+  const connected = channels.filter(c => c.connected).length
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center gap-4 p-5 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C]">
+        <div className="h-10 w-10 flex items-center justify-center bg-[#007B85]/10 rounded-xl">
+          <ShareNetwork weight="bold" className="h-5 w-5 text-[#007B85]" />
+        </div>
+        <div>
+          <p className="text-[14px] font-bold dark:text-white">
+            {connected} of {channels.length} channels connected
+          </p>
+          <p className="text-xs text-gray-500">Click any channel below to configure it.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3">
+        {channels.map(ch => (
+          <button
+            key={ch.id}
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("open-settings", { detail: { tab: ch.tab } }))
+            }}
+            className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-[#080808] border border-gray-100 dark:border-[#1C1C1C] hover:border-gray-200 dark:hover:border-[#333] transition-all text-left group"
+          >
+            <div className="flex items-center gap-4">
+              <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm", ch.iconBg)}>
+                <ch.icon weight="bold" className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-[14px] font-bold dark:text-white">{ch.label}</p>
+                {ch.detail ? (
+                  <p className="text-[11px] text-gray-500 truncate max-w-[180px]">{ch.detail}</p>
+                ) : (
+                  <p className="text-[11px] text-gray-400">Not configured</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={cn(
+                "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+                ch.connected
+                  ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
+                  : "bg-gray-100 text-gray-400 dark:bg-[#1C1C1C] dark:text-[#555]"
+              )}>
+                {ch.connected ? "Connected" : "Not Connected"}
+              </span>
+              <CaretRight weight="bold" className="h-4 w-4 text-gray-300 dark:text-[#444] group-hover:text-gray-500 transition-colors" />
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Quick Replies ───────────────────────────────────────────────
+
+interface QuickReply { id: string; title: string; body: string }
+
+function QuickRepliesSettings({ customer, onRefresh }: { customer: Customer | null, onRefresh: () => void }) {
+  const existing: QuickReply[] = (customer?.ai_voice_profile as any)?.quick_replies || []
+  const [replies, setReplies] = useState<QuickReply[]>(existing)
+  const [adding, setAdding] = useState(false)
+  const [newTitle, setNewTitle] = useState("")
+  const [newBody, setNewBody] = useState("")
+  const [saving, setSaving] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+
+  const persist = async (next: QuickReply[]) => {
+    setSaving(true)
+    const profile = customer?.ai_voice_profile || {}
+    const { error } = await updateCustomer({
+      ai_voice_profile: { ...profile, quick_replies: next }
+    })
+    if (!error) { setReplies(next); onRefresh() }
+    else toast.error("Failed to save")
+    setSaving(false)
+  }
+
+  const handleAdd = async () => {
+    if (!newTitle.trim() || !newBody.trim()) return
+    const next = [...replies, { id: crypto.randomUUID(), title: newTitle.trim(), body: newBody.trim() }]
+    await persist(next)
+    setNewTitle(""); setNewBody(""); setAdding(false)
+    toast.success("Quick reply added")
+  }
+
+  const handleDelete = async (id: string) => {
+    await persist(replies.filter(r => r.id !== id))
+    toast.success("Quick reply removed")
+  }
+
+  const handleUpdate = async (id: string, title: string, body: string) => {
+    await persist(replies.map(r => r.id === id ? { ...r, title, body } : r))
+    setEditingId(null)
+    toast.success("Quick reply updated")
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h3 className="text-lg font-bold dark:text-white">Quick Replies</h3>
+          <p className="text-xs text-gray-500">Saved canned responses your team can send in one click.</p>
+        </div>
+        <Button size="sm" onClick={() => setAdding(v => !v)} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl h-9">
+          <Plus weight="bold" className="h-4 w-4 mr-2" />
+          Add Reply
+        </Button>
+      </div>
+
+      <AnimatePresence>
+        {adding && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            className="p-5 border border-[#007B85]/20 bg-[#007B85]/5 rounded-2xl space-y-4"
+          >
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-gray-600 dark:text-gray-400">Shortcut Title</Label>
+              <Input
+                value={newTitle}
+                onChange={e => setNewTitle(e.target.value)}
+                placeholder="e.g. Booking Confirmation"
+                className="rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111]"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-gray-600 dark:text-gray-400">Message Body</Label>
+              <Textarea
+                value={newBody}
+                onChange={e => setNewBody(e.target.value)}
+                placeholder="Hi! Your booking is confirmed for..."
+                className="min-h-[100px] rounded-xl border-gray-200 dark:border-[#1C1C1C] dark:bg-[#111] resize-none"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleAdd} disabled={saving || !newTitle.trim() || !newBody.trim()} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl flex-1 h-10">
+                {saving ? <CircleNotch className="h-4 w-4 animate-spin mr-2" /> : null}
+                Save Reply
+              </Button>
+              <Button variant="ghost" onClick={() => setAdding(false)} className="rounded-xl h-10 flex-1">Cancel</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="space-y-3">
+        {replies.length === 0 && !adding ? (
+          <div className="py-12 text-center">
+            <Notepad weight="duotone" className="h-12 w-12 text-gray-200 mx-auto mb-4" />
+            <p className="text-sm text-gray-500">No quick replies yet. Add one above to get started.</p>
+          </div>
+        ) : replies.map(reply => (
+          <div key={reply.id} className="rounded-2xl border border-gray-100 dark:border-[#1C1C1C] bg-gray-50 dark:bg-[#080808] overflow-hidden">
+            {editingId === reply.id ? (
+              <EditReplyInline
+                reply={reply}
+                onSave={(title, body) => handleUpdate(reply.id, title, body)}
+                onCancel={() => setEditingId(null)}
+                saving={saving}
+              />
+            ) : (
+              <div className="flex items-start justify-between p-4 gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                  <ListBullets weight="bold" className="h-4 w-4 text-[#007B85] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-bold dark:text-white truncate">{reply.title}</p>
+                    <p className="text-[12px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">{reply.body}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => setEditingId(reply.id)}
+                    className="h-8 w-8 flex items-center justify-center rounded-xl hover:bg-gray-100 dark:hover:bg-[#111] text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
+                  >
+                    <Sliders className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(reply.id)}
+                    className="h-8 w-8 flex items-center justify-center rounded-xl hover:bg-red-50 dark:hover:bg-red-950/20 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function EditReplyInline({ reply, onSave, onCancel, saving }: {
+  reply: QuickReply
+  onSave: (title: string, body: string) => void
+  onCancel: () => void
+  saving: boolean
+}) {
+  const [title, setTitle] = useState(reply.title)
+  const [body, setBody] = useState(reply.body)
+  return (
+    <div className="p-4 space-y-3">
+      <Input value={title} onChange={e => setTitle(e.target.value)} className="rounded-xl dark:bg-[#111] dark:border-[#222]" />
+      <Textarea value={body} onChange={e => setBody(e.target.value)} className="min-h-[80px] rounded-xl dark:bg-[#111] dark:border-[#222] resize-none" />
+      <div className="flex gap-2">
+        <Button onClick={() => onSave(title, body)} disabled={saving || !title.trim() || !body.trim()} className="bg-[#007B85] hover:bg-[#2F8488] rounded-xl flex-1 h-9 text-sm">
+          {saving ? <CircleNotch className="h-3.5 w-3.5 animate-spin mr-1" /> : null}
+          Save
+        </Button>
+        <Button variant="ghost" onClick={onCancel} className="rounded-xl flex-1 h-9 text-sm">Cancel</Button>
       </div>
     </div>
   )
