@@ -2,14 +2,15 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [copyVisible, setCopyVisible]     = useState(false)
+  const videoRef                            = useRef<HTMLVideoElement>(null)
+  const [copyVisible, setCopyVisible]       = useState(false)
   const [overlayOpacity, setOverlayOpacity] = useState(0)
-  const [needsTap, setNeedsTap]           = useState(false)
+  const [staticFallback, setStaticFallback] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -33,60 +34,50 @@ export function HeroSection() {
 
     video.addEventListener("timeupdate", onTimeUpdate)
 
-    // Programmatically play — catches cases where autoPlay attr is ignored
+    // If autoplay is blocked, show static end-frame instead
     video.play().catch(() => {
-      // Autoplay blocked (common on mobile) — show tap overlay
-      setNeedsTap(true)
+      setStaticFallback(true)
+      setCopyVisible(true)
+      setOverlayOpacity(0.38)
     })
 
     return () => video.removeEventListener("timeupdate", onTimeUpdate)
   }, [])
 
-  const handleTap = () => {
-    const video = videoRef.current
-    if (!video) return
-    video.play().catch(() => {})
-    setNeedsTap(false)
-  }
-
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
 
-      {/* Video */}
+      {/* Static fallback image (shown when autoplay is blocked on mobile) */}
+      {staticFallback && (
+        <Image
+          src="/hero_relieved_operator.png"
+          alt="Caribbean tour operator"
+          fill
+          priority
+          className="object-cover object-[70%_center] md:object-center"
+        />
+      )}
+
+      {/* Video (hidden once fallback kicks in) */}
       <video
         ref={videoRef}
         src="/hero.mp4"
         muted
         playsInline
         preload="auto"
-        className="absolute inset-0 w-full h-full object-cover object-[70%_center] md:object-center"
+        className={`absolute inset-0 w-full h-full object-cover object-[70%_center] md:object-center ${staticFallback ? "invisible" : ""}`}
       />
 
-      {/* Tap-to-play fallback for mobile autoplay block */}
-      {needsTap && (
-        <button
-          onClick={handleTap}
-          className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60"
-        >
-          <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
-          </div>
-          <p className="text-white/70 text-xs font-black uppercase tracking-widest">Tap to play</p>
-        </button>
-      )}
-
-      {/* Darkening overlay */}
+      {/* Darkening overlay — lighter on mobile (max 38% fallback, 58% video) */}
       <div
         className="absolute inset-0 z-10"
-        style={{ background: `rgba(0,0,0,${overlayOpacity})`, transition: "background 0.1s linear" }}
+        style={{ background: `rgba(0,0,0,${overlayOpacity})` }}
       />
 
-      {/* Left gradient */}
+      {/* Left gradient for text readability */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" }}
+        style={{ background: "linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)" }}
       />
 
       {/* Bottom fade */}
