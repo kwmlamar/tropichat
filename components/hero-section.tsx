@@ -68,10 +68,10 @@ export function HeroSection() {
         className={`absolute inset-0 w-full h-full object-cover object-[70%_center] md:object-center ${staticFallback ? "invisible" : ""}`}
       />
 
-      {/* Darkening overlay — lighter on mobile (max 38% fallback, 58% video) */}
+      {/* Darkening overlay — CSS transition smooths out the per-frame jumps */}
       <div
         className="absolute inset-0 z-10"
-        style={{ background: `rgba(0,0,0,${overlayOpacity})` }}
+        style={{ background: `rgba(0,0,0,${overlayOpacity})`, transition: "background 0.6s ease" }}
       />
 
       {/* Left gradient for text readability */}
