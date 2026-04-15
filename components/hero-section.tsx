@@ -11,6 +11,24 @@ export function HeroSection() {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    // iOS Safari won't allow seeking until the video has been played at least once.
+    // Trigger a silent play → pause to unlock currentTime scrubbing.
+    const unlock = () => {
+      video.play().then(() => {
+        video.pause()
+        video.currentTime = 0
+      }).catch(() => {})
+    }
+
+    if (video.readyState >= 1) {
+      unlock()
+    } else {
+      video.addEventListener("loadedmetadata", unlock, { once: true })
+    }
+
     const onScroll = () => {
       const el = containerRef.current
       if (!el) return
@@ -18,9 +36,7 @@ export function HeroSection() {
       const p = Math.min(1, Math.max(0, -top / (height - window.innerHeight)))
       setProgress(p)
 
-      // Scrub video
-      const video = videoRef.current
-      if (video && video.readyState >= 2 && video.duration) {
+      if (video.readyState >= 2 && video.duration) {
         video.currentTime = p * video.duration
       }
     }
