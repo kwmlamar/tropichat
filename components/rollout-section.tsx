@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ShieldCheck, ChatCircleDots, UserCircleCheck, ArrowRight } from "@phosphor-icons/react"
+import { ShieldCheck, MessageCircle as ChatCircleDots, UserCheck as UserCircleCheck, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 
@@ -21,7 +21,7 @@ export function RolloutSection() {
               viewport={{ once: true }}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#007B85]/5 border border-[#007B85]/10 text-[#007B85] text-[10px] font-black uppercase tracking-[0.2em]"
             >
-              <ShieldCheck weight="fill" className="h-4 w-4" />
+              <ShieldCheck className="h-4 w-4" />
               Limited Rollout Phase
             </motion.div>
 
@@ -51,13 +51,13 @@ export function RolloutSection() {
           {/* Right: Trust Cards */}
           <div className="flex-1 w-full max-w-sm space-y-4">
              <TrustCard 
-                icon={<UserCircleCheck weight="duotone" size={32} className="text-[#007B85]" />}
+                icon={<UserCircleCheck size={32} className="text-[#007B85]" />}
                 title="Founder-Led Setup"
                 desc="Lamar will personally ensure your WhatsApp is connected correctly."
                 delay={0.3}
              />
              <TrustCard 
-                icon={<ChatCircleDots weight="duotone" size={32} className="text-[#007B85]" />}
+                icon={<ChatCircleDots size={32} className="text-[#007B85]" />}
                 title="Customized Replies"
                 desc="We'll help you save your hours, prices, and FAQs so the system is ready."
                 delay={0.4}
@@ -74,7 +74,7 @@ export function RolloutSection() {
                    onClick={() => router.push("/signup")}
                    className="w-full h-16 bg-[#213138] hover:bg-[#1a262c] text-white rounded-2xl font-black text-sm uppercase tracking-widest gap-3 shadow-xl group"
                 >
-                   Secure My Spot <ArrowRight weight="bold" className="group-hover:translate-x-1 transition-transform" />
+                   Secure My Spot <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <p className="mt-4 text-[10px] font-black text-center text-gray-400 uppercase tracking-widest">
                    Only 10 spots available this week

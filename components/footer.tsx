@@ -2,13 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { 
-  Envelope as Mail, 
-  TwitterLogo as Twitter, 
-  InstagramLogo as Instagram, 
-  LinkedinLogo as Linkedin, 
-  ChatCircleDots as MessageCircle 
-} from "@phosphor-icons/react"
+import { Mail, MessageCircle } from "lucide-react"
 
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },

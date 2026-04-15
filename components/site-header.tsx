@@ -4,157 +4,143 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { List as Menu, X } from "@phosphor-icons/react"
+import { AnimatePresence, motion } from "framer-motion"
+import { Menu, X } from "lucide-react"
 
 export function SiteHeader() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const router    = useRouter()
+  const pathname  = usePathname()
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    // Dark bg when scrolled past hero entirely (400vh)
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 3.8)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const scrollToSection = (href: string) => {
-    setIsMobileMenuOpen(false)
-    
-    // If we're not on the home page, navigate to home + anchor
-    if (pathname !== "/") {
-      router.push("/" + href)
-      return
-    }
-
-    // If we're already on the home page, smooth scroll
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-    }
+  const scrollTo = (href: string) => {
+    setMenuOpen(false)
+    if (pathname !== "/") { router.push("/" + href); return }
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" })
   }
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 pt-6`}
-      >
-        <div 
-          className={`container mx-auto max-w-7xl h-20 rounded-full transition-all duration-500 flex items-center justify-between px-8 border ${
-            isScrolled 
-            ? "bg-white/90 dark:bg-black/90 backdrop-blur-xl border-gray-100 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)]" 
-            : "bg-black/20 backdrop-blur-md border-white/10 shadow-xl"
-          }`}
-        >
-          {/* Logo */}
-          <Link href="/" className="flex items-center group h-10 w-10 shrink-0">
-            <Image
-              src="/tropichat-logo.png"
-              alt="TropiChat"
-              width={50}
-              height={50}
-              unoptimized
-              className="h-full w-full object-contain transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
-            />
-          </Link>
+      <header className="fixed top-0 left-0 right-0 z-50">
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-2">
-            <button
-              onClick={() => scrollToSection("#how-it-works")}
-              className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
-            >
-              How It Works
-              <motion.span 
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                layoutId="nav-dot"
+        {/* Bar */}
+        <div className={`transition-all duration-700 ${
+          scrolled
+            ? "bg-black/75 backdrop-blur-xl border-b border-white/8 shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
+            : "bg-transparent"
+        }`}>
+          <div className="container mx-auto max-w-7xl px-8 h-24 flex items-center justify-between">
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+              <Image
+                src="/tropichat-logo.png"
+                alt="TropiChat"
+                width={52}
+                height={52}
+                unoptimized
+                className="h-13 w-13 object-contain transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
               />
-            </button>
-            <button
-              onClick={() => scrollToSection("#pricing")}
-              className="px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#007B85] transition-colors relative group"
-            >
-              Pricing
-              <motion.span 
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#007B85] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                layoutId="nav-dot"
-              />
-            </button>
-          </nav>
-
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link 
-              href="/login" 
-              className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#213138] dark:hover:text-white transition-colors"
-            >
-              Log In
+              <span className="hidden sm:block text-sm font-black uppercase tracking-[0.25em] text-white/70 group-hover:text-white transition-colors">
+                TropiChat
+              </span>
             </Link>
-            <Button
-              asChild
-              className="bg-[#007B85] text-white hover:bg-[#2F8488] text-[10px] font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-xl shadow-teal-500/20 hover:scale-105 transition-all"
-            >
-              <Link href="/signup">Get Access</Link>
-            </Button>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-3 bg-gray-50 dark:bg-white/5 rounded-full text-[#213138] dark:text-white"
-          >
-            {isMobileMenuOpen ? <X size={20} weight="bold" /> : <Menu size={20} weight="bold" />}
-          </button>
-        </div>
-      </header>
+            {/* Desktop nav — centered */}
+            <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+              {[
+                { label: "How It Works", href: "#how-it-works" },
+                { label: "Pricing",      href: "#pricing" },
+              ].map(({ label, href }) => (
+                <button
+                  key={href}
+                  onClick={() => scrollTo(href)}
+                  className="text-xs font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-200"
+                >
+                  {label}
+                </button>
+              ))}
+            </nav>
 
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-40 md:hidden bg-white dark:bg-black p-6 pt-32"
-          >
-            <div className="flex flex-col gap-8 text-center">
-              <button
-                onClick={() => scrollToSection("#how-it-works")}
-                className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => scrollToSection("#pricing")}
-                className="text-3xl font-black tracking-tighter text-[#213138] dark:text-white"
-              >
-                Pricing
-              </button>
-
+            {/* Right side */}
+            <div className="hidden md:flex items-center gap-6">
               <Link
                 href="/login"
-                className="text-3xl font-black text-slate-400"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-xs font-black uppercase tracking-widest text-white/35 hover:text-white transition-colors duration-200"
               >
                 Log In
               </Link>
-              <Button
-                asChild
-                className="bg-[#007B85] py-8 text-lg font-black uppercase tracking-widest rounded-full"
+              <Link
+                href="/signup"
+                className="inline-flex items-center text-xs font-black uppercase tracking-widest text-white px-8 h-11 rounded-full transition-all duration-200 hover:scale-105"
+                style={{ background: "#007B85", boxShadow: "0 0 24px rgba(0,123,133,0.35)" }}
               >
-                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                  Get Access
-                </Link>
-              </Button>
+                Get Access
+              </Link>
             </div>
+
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden text-white/60 hover:text-white transition-colors p-1"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 md:hidden bg-black/96 backdrop-blur-xl flex flex-col items-center justify-center gap-10"
+          >
+            <button
+              className="absolute top-5 right-6 text-white/50 hover:text-white transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <X size={20} />
+            </button>
+
+            {[
+              { label: "How It Works", href: "#how-it-works" },
+              { label: "Pricing",      href: "#pricing" },
+            ].map(({ label, href }) => (
+              <button
+                key={href}
+                onClick={() => scrollTo(href)}
+                className="text-4xl font-black uppercase tracking-tighter text-white"
+              >
+                {label}
+              </button>
+            ))}
+
+            <Link href="/login" onClick={() => setMenuOpen(false)}
+              className="text-sm font-black uppercase tracking-widest text-white/30">
+              Log In
+            </Link>
+
+            <Link href="/signup" onClick={() => setMenuOpen(false)}
+              className="text-sm font-black uppercase tracking-widest text-white px-12 h-14 rounded-full flex items-center"
+              style={{ background: "#007B85" }}>
+              Get Access
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   )
 }
-
-

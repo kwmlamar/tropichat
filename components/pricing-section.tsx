@@ -3,19 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { 
-  CheckCircle, 
-  ArrowRight, 
-  Lightning, 
-  Users, 
-  Star, 
-  Crown,
-  WhatsappLogo,
-  ShieldCheck,
-  Robot,
-  ChartBar,
-  CaretRight
-} from "@phosphor-icons/react"
+import { CheckCircle, ArrowRight, Zap as Lightning, Users, Star, Crown, ShieldCheck, Bot as Robot, BarChart2 as ChartBar, ChevronRight as CaretRight, MessageCircle as WhatsappLogo } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -117,7 +105,7 @@ export function PricingSection() {
                   "w-12 h-12 rounded-xl flex items-center justify-center mb-6",
                   tier.popular ? "bg-[#007B85]/10 text-[#007B85]" : "bg-gray-50 text-gray-400"
                 )}>
-                  <tier.icon size={24} weight="fill" />
+                  <tier.icon size={24} />
                 </div>
                 
                 <h3 className="text-2xl font-black text-[#213138] tracking-tight mb-2">
@@ -134,7 +122,7 @@ export function PricingSection() {
               <div className="flex-1 space-y-4 mb-12">
                 {tier.features.map((feature) => (
                   <div key={feature} className="flex items-start gap-3">
-                    <CheckCircle weight="fill" className="h-5 w-5 shrink-0 mt-0.5 text-[#007B85]/20" />
+                    <CheckCircle className="h-5 w-5 shrink-0 mt-0.5 text-[#007B85]/20" />
                     <span className="text-[13px] font-bold leading-snug text-[#213138]">
                       {feature}
                     </span>

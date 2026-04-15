@@ -1,12 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { 
-  LinkSimple as LinkIcon, 
-  ChatCircleDots as ChatIcon, 
-  TrendUp as SellIcon,
-  ArrowRight
-} from "@phosphor-icons/react"
+import { Link2 as LinkIcon, MessageCircle as ChatIcon, TrendingUp as SellIcon, ArrowRight } from "lucide-react"
 
 const steps = [
   {
@@ -63,7 +58,7 @@ export function HowItWorksSection() {
                 className="flex flex-col items-center group"
               >
                 <div className={`w-32 h-32 md:w-56 md:h-56 rounded-[2.5rem] ${step.color} flex items-center justify-center text-white mb-8 ${step.shadow} transition-transform group-hover:scale-110 duration-500 shadow-2xl`}>
-                   <step.icon size={64} weight="bold" className="md:w-32 md:h-32" />
+                   <step.icon size={64} className="md:w-32 md:h-32" />
                 </div>
                 <h3 className="text-3xl md:text-6xl font-black text-white tracking-widest mb-2 uppercase italic">{step.label}</h3>
                 <p className="text-gray-500 font-bold uppercase tracking-widest text-xs md:text-sm">{step.sub}</p>
