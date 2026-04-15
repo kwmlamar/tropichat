@@ -1,75 +1,39 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useEffect, useRef, useState } from "react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
   const videoRef     = useRef<HTMLVideoElement>(null)
-  const overlayRef   = useRef<HTMLDivElement>(null)
-  const headlineRef  = useRef<HTMLDivElement>(null)
-  const subRef       = useRef<HTMLDivElement>(null)
-  const ctaRef       = useRef<HTMLDivElement>(null)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
+    const onScroll = () => {
+      const el = containerRef.current
+      if (!el) return
+      const { top, height } = el.getBoundingClientRect()
+      const p = Math.min(1, Math.max(0, -top / (height - window.innerHeight)))
+      setProgress(p)
 
-    const video = videoRef.current
-    if (!video) return
-
-    const init = () => {
-      const ctx = gsap.context(() => {
-
-        gsap.set(overlayRef.current,  { background: "rgba(0,0,0,0)" })
-        gsap.set(headlineRef.current, { opacity: 0, y: 40 })
-        gsap.set(subRef.current,      { opacity: 0, y: 24 })
-        gsap.set(ctaRef.current,      { opacity: 0, y: 20 })
-
-        // Scrub video with scroll
-        ScrollTrigger.create({
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1,
-          onUpdate: (self) => {
-            if (video.readyState >= 2) {
-              video.currentTime = self.progress * video.duration
-            }
-          },
-        })
-
-        // Copy fades in over the last 45% of scroll
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "55% top",
-            end: "bottom bottom",
-            scrub: 1,
-          },
-          defaults: { ease: "power2.out" },
-        })
-
-        tl.to(overlayRef.current,  { background: "rgba(0,0,0,0.55)", duration: 1 }, 0)
-        tl.to(headlineRef.current, { opacity: 1, y: 0, duration: 1 },               0.2)
-        tl.to(subRef.current,      { opacity: 1, y: 0, duration: 1 },               0.5)
-        tl.to(ctaRef.current,      { opacity: 1, y: 0, duration: 0.8 },             0.8)
-
-      }, containerRef)
-
-      return () => ctx.revert()
+      // Scrub video
+      const video = videoRef.current
+      if (video && video.readyState >= 2 && video.duration) {
+        video.currentTime = p * video.duration
+      }
     }
 
-    if (video.readyState >= 1) {
-      init()
-    } else {
-      video.addEventListener("loadedmetadata", init, { once: true })
-    }
-
-    return () => ScrollTrigger.getAll().forEach(t => t.kill())
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  // Copy fades in once progress passes 55%
+  const copyVisible = progress > 0.55
+  const copyProgress = Math.min(1, (progress - 0.55) / 0.35) // 0→1 over 55%→90%
+
+  const overlayOpacity = copyProgress * 0.58
 
   return (
     <section ref={containerRef} className="relative h-[400vh]">
@@ -86,40 +50,56 @@ export function HeroSection() {
         />
 
         {/* Darkening overlay */}
-        <div ref={overlayRef} className="absolute inset-0 z-10" />
+        <div
+          className="absolute inset-0 z-10 transition-none"
+          style={{ background: `rgba(0,0,0,${overlayOpacity})` }}
+        />
 
-        {/* Bottom fade into next section */}
+        {/* Left gradient — keeps text readable on mobile */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{ background: "linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" }}
+        />
+
+        {/* Bottom fade */}
         <div className="absolute bottom-0 left-0 right-0 h-40 z-20 pointer-events-none"
           style={{ background: "linear-gradient(to top, #080F14, transparent)" }} />
 
         {/* Hero copy */}
         <div className="absolute inset-0 z-30 flex items-end md:items-center">
-          {/* Left gradient so text stays readable on mobile */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: "linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
-
           <div className="relative w-full px-6 sm:px-8 pb-28 sm:pb-36 md:pb-0 md:container md:mx-auto md:max-w-7xl">
             <div className="max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-2xl">
 
-              <div ref={headlineRef}>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-black text-white leading-[0.88] tracking-tighter uppercase mb-4 sm:mb-6">
-                  Stop Losing<br />Customers<br />
-                  <span className="text-transparent bg-clip-text"
-                    style={{ backgroundImage: "linear-gradient(135deg, #FF7E36, #FFB347)" }}>
-                    Today.
-                  </span>
-                </h1>
-              </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 40 }}
+                animate={copyVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-black text-white leading-[0.88] tracking-tighter uppercase mb-4 sm:mb-6"
+              >
+                Stop Losing<br />Customers<br />
+                <span className="text-transparent bg-clip-text"
+                  style={{ backgroundImage: "linear-gradient(135deg, #FF7E36, #FFB347)" }}>
+                  Today.
+                </span>
+              </motion.h1>
 
-              <div ref={subRef}>
-                <p className="text-sm sm:text-base md:text-lg font-medium leading-relaxed mb-6 sm:mb-8 md:mb-10"
-                  style={{ color: "rgba(255,255,255,0.65)" }}>
-                  Tropi AI replies to every message, answers every question,
-                  and closes every sale — automatically, while you're busy running your business.
-                </p>
-              </div>
+              <motion.p
+                initial={{ opacity: 0, y: 24 }}
+                animate={copyVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+                className="text-sm sm:text-base md:text-lg font-medium leading-relaxed mb-6 sm:mb-8 md:mb-10"
+                style={{ color: "rgba(255,255,255,0.65)" }}
+              >
+                Tropi AI replies to every message, answers every question,
+                and closes every sale — automatically, while you're busy running your business.
+              </motion.p>
 
-              <div ref={ctaRef} className="flex flex-col items-start gap-3">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={copyVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+                className="flex flex-col items-start gap-3"
+              >
                 <Link
                   href="/signup"
                   className="group inline-flex items-center gap-3 text-white font-black text-[11px] uppercase tracking-widest px-7 sm:px-8 h-12 sm:h-14 rounded-full transition-all duration-300 hover:scale-105"
@@ -134,7 +114,7 @@ export function HeroSection() {
                   style={{ color: "rgba(255,255,255,0.25)" }}>
                   Free for 14 days · No credit card needed
                 </p>
-              </div>
+              </motion.div>
 
             </div>
           </div>
