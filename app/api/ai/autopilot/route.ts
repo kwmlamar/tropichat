@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createServerClient, createServiceClient } from "@/lib/supabase-server"
+import { createServerClient, createServiceClient, getWorkspaceIdServer } from "@/lib/supabase-server"
 
 /**
  * AI Auto-Pilot Toggle
@@ -22,11 +22,16 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Invalid session" }, { status: 401 })
     }
 
+    const { customerId, error: wsError } = await getWorkspaceIdServer(token)
+    if (wsError || !customerId) {
+        return NextResponse.json({ error: "Workspace not found" }, { status: 404 })
+    }
+
     const serviceClient = createServiceClient()
     const { data, error } = await serviceClient
       .from("customers")
       .select("ai_autopilot_enabled")
-      .eq("id", user.id)
+      .eq("id", customerId)
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -54,11 +59,16 @@ export async function POST(request: Request) {
 
     const { enabled } = await request.json()
 
+    const { customerId, error: wsError } = await getWorkspaceIdServer(token)
+    if (wsError || !customerId) {
+        return NextResponse.json({ error: "Workspace not found" }, { status: 404 })
+    }
+
     const serviceClient = createServiceClient()
     const { error } = await serviceClient
       .from("customers")
       .update({ ai_autopilot_enabled: enabled })
-      .eq("id", user.id)
+      .eq("id", customerId)
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

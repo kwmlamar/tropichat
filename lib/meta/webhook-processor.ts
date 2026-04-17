@@ -517,7 +517,19 @@ async function processAIAutoPilot(
       }
     }
 
-    // 2. Cooldown guard: skip if a human replied in the last 2 minutes
+    // 2. Skip if a human has taken over this conversation
+    const { data: convState } = await db
+      .from('unified_conversations')
+      .select('human_agent_enabled')
+      .eq('id', conversationId)
+      .maybeSingle()
+
+    if (convState?.human_agent_enabled) {
+      console.log(`[AI Auto-Pilot] Skipped: human agent active for conversation ${conversationId}`)
+      return
+    }
+
+    // 3. Cooldown guard: skip if a HUMAN (not automated) replied in the last 2 minutes
     const twoMinsAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
     const { data: recentHumanReply } = await db
       .from('unified_messages')
@@ -526,6 +538,8 @@ async function processAIAutoPilot(
       .eq('sender_type', 'business')
       .gte('sent_at', twoMinsAgo)
       .not('metadata->>is_ai_reply', 'eq', 'true')
+      .not('metadata->>is_auto_reply', 'eq', 'true')
+      .not('metadata->>is_automated', 'eq', 'true')
       .limit(1)
       .maybeSingle()
 

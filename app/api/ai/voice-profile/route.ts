@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase-server"
+import { createServerClient, getWorkspaceIdServer } from "@/lib/supabase-server"
 
 /**
  * Voice Profile + Business Brief API
@@ -23,10 +23,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Invalid session" }, { status: 401 })
     }
 
+    const { customerId, error: wsError } = await getWorkspaceIdServer(token)
+    if (wsError || !customerId) {
+      return NextResponse.json({ error: "Workspace not found" }, { status: 404 })
+    }
+
     const { data: customer } = await supabase
       .from("customers")
       .select("ai_voice_profile, business_brief")
-      .eq("id", user.id)
+      .eq("id", customerId)
       .single()
 
     return NextResponse.json({ 
@@ -78,10 +83,15 @@ export async function POST(request: Request) {
       updatePayload.business_brief = businessBrief
     }
 
+    const { customerId, error: wsError } = await getWorkspaceIdServer(token)
+    if (wsError || !customerId) {
+        return NextResponse.json({ error: "Workspace not found" }, { status: 404 })
+    }
+
     const { error } = await supabase
       .from("customers")
       .update(updatePayload)
-      .eq("id", user.id)
+      .eq("id", customerId)
 
     if (error) {
       console.error("[Voice Profile POST] DB Error:", error)
