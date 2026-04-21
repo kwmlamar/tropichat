@@ -243,45 +243,6 @@ export function UnifiedMessageThread({
               Choose a customer from the list to start chatting. Your responses will be sent via their original platform.
             </p>
 
-            {/* Quick action hints */}
-            <div className="grid grid-cols-2 gap-2 mb-6 text-left">
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
-                <div className="p-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85] flex-shrink-0 mt-0.5">
-                  <Inbox className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Browse inbox</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Pick any conversation on the left</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
-                <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 flex-shrink-0 mt-0.5">
-                  <FileText className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Quick replies</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Save templates in the compose bar</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
-                <div className="p-1.5 rounded-lg bg-purple-500/10 text-purple-500 flex-shrink-0 mt-0.5">
-                  <Sparkle className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">AI smart reply</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Tap ✦ to generate a reply</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-[#222]">
-                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 flex-shrink-0 mt-0.5">
-                  <Shield className="h-3.5 w-3.5" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-gray-700 dark:text-gray-200">Keyboard nav</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">↑ ↓ to browse · Esc to close</p>
-                </div>
-              </div>
-            </div>
 
             <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] border border-gray-100 dark:border-[#222222]">
               <div className="p-1.5 rounded-lg bg-[#007B85]/10 text-[#007B85]">
