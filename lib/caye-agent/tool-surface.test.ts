@@ -78,9 +78,30 @@ describe('production tool surface', () => {
     //                   excludedToolSchemaBytes 114516->115784
     // That single +1 on staff's excluded count IS send_freight_document being
     // hidden from staff. It is the intended authority boundary, not drift.
-    expect(owner).toMatchObject({ exposedToolCount: 91, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
-    expect(founder).toMatchObject({ exposedToolCount: 144, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
-    expect(staff).toMatchObject({ exposedToolCount: 24, excludedByRoleCount: 120, excludedToolSchemaBytes: 115784 })
+    //
+    // Refreshed again 2026-09-05 for reject_pending_action (payment watcher:
+    // the counterpart to confirm_pending_action for the "no" branch — decline
+    // a staged high-risk action instead of confirming it). Deliberately
+    // roles ['owner','founder'], identical to confirm_pending_action's own
+    // roles: if staff cannot confirm a staged high-risk action, staff must
+    // not be able to decline one either — the same authority boundary,
+    // extended consistently rather than left half-covered. So this moves an
+    // excluded number on purpose, the same shape send_freight_document did
+    // above, not the log_receipt shape where nothing excluded moved:
+    //   owner   91->92  (+1 visible), excluded 53 / 34528 unchanged
+    //   founder 144->145 (+1, sees everything), still 0 / 0
+    //   staff   24 unchanged (correctly hidden — reject_pending_action is not
+    //           staff-visible), excludedByRoleCount 120->121 and
+    //           excludedToolSchemaBytes 115784->116452
+    // The staff byte delta (+668) is reject_pending_action's own serialized
+    // {name, description, input_schema} (667 bytes) plus 1 for the joining
+    // array comma — schemaBytes() joins every excluded-by-role/read-only
+    // tool's asAnthropicTool() output into one JSON array before measuring.
+    // That +1 on staff's excluded count IS reject_pending_action being hidden
+    // from staff. It is the intended authority boundary, not drift.
+    expect(owner).toMatchObject({ exposedToolCount: 92, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
+    expect(founder).toMatchObject({ exposedToolCount: 145, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
+    expect(staff).toMatchObject({ exposedToolCount: 24, excludedByRoleCount: 121, excludedToolSchemaBytes: 116452 })
   })
 
   it.each(['owner', 'staff', 'founder', 'driver'] as const)('only exposes schemas executable by %s', (callerRole) => {
