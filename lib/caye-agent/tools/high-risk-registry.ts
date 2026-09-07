@@ -17,6 +17,10 @@ import { logCrewDay } from './write-high/log-crew-day'
 import { logInvoiceSent } from './write-high/log-invoice-sent'
 import { recordPayment } from './write-high/record-payment'
 import { logReceipt } from './write-high/log-receipt'
+import { attributeReceipt } from './write-high/attribute-receipt'
+import { createMaterial } from './write-high/create-material'
+import { recordInstalledItem } from './write-high/record-installed-item'
+import { captureVendorQuote } from './write-high/capture-vendor-quote'
 
 /**
  * The UNGATED high-risk tools, in one place.
@@ -40,6 +44,20 @@ export const HIGH_RISK_TOOLS: AnyTool[] = [
   logInvoiceSent as AnyTool,
   recordPayment as AnyTool,
   logReceipt as AnyTool,
+  // The materials write path (2026-09-07). Each is one reviewable decision:
+  // attaching spend to a house, adding a thing to the catalogue with the
+  // price that justifies it, and recording what was physically installed.
+  attributeReceipt as AnyTool,
+  createMaterial as AnyTool,
+  recordInstalledItem as AnyTool,
+  // Registered 2026-09-07, after TropiTrack PR #34. It was deliberately absent
+  // until then: `materials.unit_cost` had no defined basis, so a captured
+  // FOB/USD quote would have overwritten a landed BSD cost on any of the 219
+  // materials won by a tier 4/5 observation. `unit_cost` is now landed BSD
+  // computed through `landed_cost()`, stamped `unit_cost_basis`, so is_landed
+  // is a distinction the ledger acts on. See that file's history section — if
+  // the column or the function is reverted, this line comes back out.
+  captureVendorQuote as AnyTool,
   sendReply as AnyTool,
   sendPaymentLink as AnyTool,
   confirmBooking as AnyTool,

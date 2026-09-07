@@ -60,6 +60,18 @@ export interface BedrockReadProvider {
   listProjectPurchaseOrders(companyId: string, projectId: string): Promise<BedrockRow[]>
   getPurchaseOrderItems(purchaseOrderId: string): Promise<BedrockRow[]>
   getVendor(companyId: string, id: string): Promise<BedrockRow | null>
+  /**
+   * Company-scoped vendor list. Exists so vendor-name resolution happens in
+   * Caye, company-scoped, rather than through TropiTrack's unscoped
+   * `resolve_vendor_id(text)`.
+   */
+  listVendors(companyId: string, options?: { search?: string; limit?: number }): Promise<BedrockRow[]>
+  /**
+   * Company-scoped catalogue list for line matching. Never returns
+   * `unit_cost` -- that column is a cache with no stated basis, not a price.
+   */
+  listMaterials(companyId: string, options?: { search?: string; limit?: number }): Promise<BedrockRow[]>
+  getReceipt(companyId: string, id: string): Promise<BedrockRow | null>
   listProjectReceipts(companyId: string, projectId: string): Promise<BedrockRow[]>
   getReceiptLineItems(receiptId: string): Promise<BedrockRow[]>
   /**
@@ -307,6 +319,51 @@ export class SupabaseBedrockReadProvider implements BedrockReadProvider {
 
   async getVendor(companyId: string, id: string) {
     return throwOnError(await this.client.from('vendors').select('id,name,status,email,phone,company_id').eq('company_id', companyId).eq('id', id).maybeSingle())
+  }
+
+  /**
+   * Company-scoped vendor list, for resolving a name printed on a receipt or
+   * quote to a real `vendors.id`.
+   *
+   * This exists so Caye can do that resolution itself instead of leaning on
+   * TropiTrack's `resolve_vendor_id(text)`, which matches on a two-directional
+   * prefix LIKE with no company filter and can therefore return another
+   * tenant's vendor. Passing an explicit `vendor_id` also bypasses the
+   * `receipts_resolve_vendor` BEFORE trigger, which only fires when the column
+   * is left null.
+   *
+   * Only the identifying columns -- never `tin`, `account_number` or payment
+   * terms, per the README's Security model section.
+   */
+  async listVendors(companyId: string, options: { search?: string; limit?: number } = {}) {
+    let query = this.client.from('vendors').select('id,name,status').eq('company_id', companyId)
+    if (options.search) query = query.ilike('name', `%${options.search}%`)
+    return throwOnError(await query.order('name', { ascending: true }).limit(Math.min(options.limit ?? 200, 500))) ?? []
+  }
+
+  /**
+   * Company-scoped catalogue list, for matching a line read off a receipt or
+   * quote to an existing `materials.id`.
+   *
+   * Deliberately does NOT return `unit_cost`. That column is a cache
+   * TropiTrack maintains from the winning price observation, and surfacing it
+   * here would invite a caller to treat it as a quotable price with a known
+   * basis -- which, until `materials.unit_cost_basis` lands, it is not. Read
+   * `material_pricing` or `material_current_price` for a price with its
+   * provenance attached.
+   */
+  async listMaterials(companyId: string, options: { search?: string; limit?: number } = {}) {
+    let query = this.client
+      .from('materials')
+      .select('id,name,unit,category,division_code,division_name,origin,duty_category,spec,vendor_id,is_active')
+      .eq('company_id', companyId)
+      .eq('is_active', true)
+    if (options.search) query = query.ilike('name', `%${options.search}%`)
+    return throwOnError(await query.order('name', { ascending: true }).limit(Math.min(options.limit ?? 500, 1000))) ?? []
+  }
+
+  async getReceipt(companyId: string, id: string) {
+    return throwOnError(await this.client.from('receipts').select('*').eq('company_id', companyId).eq('id', id).maybeSingle())
   }
 
   async listProjectReceipts(companyId: string, projectId: string) {

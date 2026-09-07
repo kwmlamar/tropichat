@@ -99,9 +99,35 @@ describe('production tool surface', () => {
     // tool's asAnthropicTool() output into one JSON array before measuring.
     // That +1 on staff's excluded count IS reject_pending_action being hidden
     // from staff. It is the intended authority boundary, not drift.
-    expect(owner).toMatchObject({ exposedToolCount: 92, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
-    expect(founder).toMatchObject({ exposedToolCount: 145, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
-    expect(staff).toMatchObject({ exposedToolCount: 24, excludedByRoleCount: 121, excludedToolSchemaBytes: 116452 })
+    //
+    // Refreshed 2026-09-07 for the ODS materials write path: five tools, and
+    // NOTHING excluded moves — the log_receipt shape above, not the
+    // send_freight_document shape. All five are roles
+    // ['owner','staff','founder'], so each is visible to all three roles and
+    // hidden from none:
+    //   get_receipts_needing_attribution (read)   — which receipts have no job
+    //   attribute_receipt (write-high)            — attach one to a job
+    //   create_material (write-high)              — catalogue row + first price
+    //   record_installed_item (write-high)        — what went into a house
+    //   capture_vendor_quote (write-high)         — quoted prices, for comparison
+    //   owner   92->97  (+5), excluded 53 / 34528 unchanged
+    //   founder 145->150 (+5, sees everything), still 0 / 0
+    //   staff   24->29  (+5), excluded 121 / 116452 unchanged
+    // Both excluded numbers holding still across all five IS the check: any
+    // movement would mean one of them was hidden from somebody, which none of
+    // them is meant to be. These are consequential ledger writes, but they are
+    // consequential for the crew who do the work, so the confirmation gate is
+    // what constrains them, not role visibility.
+    //
+    // capture_vendor_quote is in this count deliberately. It was written
+    // unregistered — see write-high/capture-vendor-quote.ts — because
+    // `materials.unit_cost` had no defined basis and a captured FOB/USD quote
+    // would have overwritten a landed BSD cost. TropiTrack PR #34 fixed that
+    // (unit_cost is now landed BSD via landed_cost(), stamped
+    // unit_cost_basis), verified live before registering it here.
+    expect(owner).toMatchObject({ exposedToolCount: 97, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
+    expect(founder).toMatchObject({ exposedToolCount: 150, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
+    expect(staff).toMatchObject({ exposedToolCount: 29, excludedByRoleCount: 121, excludedToolSchemaBytes: 116452 })
   })
 
   it.each(['owner', 'staff', 'founder', 'driver'] as const)('only exposes schemas executable by %s', (callerRole) => {

@@ -15,6 +15,7 @@ import {
   type BedrockHealth,
   type BedrockInvoice,
   type BedrockListOptions,
+  type BedrockMaterial,
   type BedrockPayPeriod,
   type BedrockPayrollOwed,
   type BedrockPayrollSummary,
@@ -339,5 +340,56 @@ export class BedrockAdapter {
     const { connection, provider } = await this.context(workspaceId)
     if (!await provider.getProject(connection.companyId, projectId)) throw new BedrockNotFoundError('project', projectId)
     return Promise.all((await provider.listProjectReceipts(connection.companyId, projectId)).map(async row => ({ ...this.meta(workspaceId, connection.companyId, 'receipt', row.id), id: row.id, projectId: text(row.project_id), vendorNameSnapshot: text(row.vendor), receiptDate: text(row.receipt_date), totalAmount: number(row.total_amount), status: text(row.status), items: (await provider.getReceiptLineItems(row.id)).map(item => ({ id: item.id, materialId: text(item.material_id), name: text(item.receipt_name), quantity: number(item.qty), unit: text(item.unit), cost: number(item.total_cost) })) })))
+  }
+
+  async listVendors(workspaceId: string, options: BedrockListOptions = {}): Promise<BedrockVendor[]> {
+    const { connection, provider } = await this.context(workspaceId)
+    return (await provider.listVendors(connection.companyId, options)).map(row => ({
+      ...this.meta(workspaceId, connection.companyId, 'vendor', row.id), id: row.id,
+      name: String(row.name ?? ''), status: text(row.status), email: null, phone: null,
+    }))
+  }
+
+  /**
+   * The catalogue, for matching a line read off a receipt or quote.
+   *
+   * Carries no price. `materials.unit_cost` is a cache TropiTrack derives from
+   * the winning observation and, until `materials.unit_cost_basis` lands, has
+   * no stated currency or landed/FOB basis -- so it is not something this
+   * adapter will hand out as a price. Provenance-carrying prices live in the
+   * `material_pricing` / `material_current_price` views.
+   */
+  async listMaterials(workspaceId: string, options: BedrockListOptions = {}): Promise<BedrockMaterial[]> {
+    const { connection, provider } = await this.context(workspaceId)
+    return (await provider.listMaterials(connection.companyId, options)).map(row => ({
+      ...this.meta(workspaceId, connection.companyId, 'material', row.id), id: String(row.id),
+      name: String(row.name ?? ''), unit: text(row.unit), category: text(row.category),
+      divisionCode: text(row.division_code), divisionName: text(row.division_name),
+      origin: text(row.origin), dutyCategory: text(row.duty_category), spec: text(row.spec),
+      vendorId: text(row.vendor_id),
+    }))
+  }
+
+  /**
+   * Receipts with no job on them -- the ones whose spend cannot be costed and
+   * whose prices cannot be tied to a house.
+   *
+   * A bounded full scan filtered in memory, not a query, for the same reason
+   * `BedrockReceiptChangeSource` scans: `listAllReceipts` is the only
+   * company-scoped receipt primitive that does not require a project id, and
+   * asking for receipts without one by project is a contradiction. Honest at
+   * ODS's volume (six receipts); revisit the mechanism, not the limit, before
+   * pointing it at a larger table.
+   */
+  async listUnattributedReceipts(workspaceId: string, limit = 100): Promise<BedrockReceipt[]> {
+    const { connection, provider } = await this.context(workspaceId)
+    const rows = await provider.listAllReceipts(connection.companyId, limit)
+    return rows
+      .filter(row => row.project_id == null)
+      .map(row => ({
+        ...this.meta(workspaceId, connection.companyId, 'receipt', row.id), id: row.id,
+        projectId: null, vendorNameSnapshot: text(row.vendor), receiptDate: text(row.receipt_date),
+        totalAmount: number(row.total_amount), status: text(row.status), items: [],
+      }))
   }
 }
