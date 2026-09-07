@@ -29,6 +29,7 @@ import { previewCrewDay } from './read/preview-crew-day'
 import { getPayrollStatus } from './read/get-payroll-status'
 import { getPayrollOwed } from './read/get-payroll-owed'
 import { getReceivables } from './read/get-receivables'
+import { getReceiptsNeedingAttribution } from './read/get-receipts-needing-attribution'
 import { searchThreads } from './read/search-threads'
 import { queryBusinessKnowledge } from './read/query-business-knowledge'
 import { listStandingRules } from './read/list-standing-rules'
@@ -209,6 +210,7 @@ export const TOOL_REGISTRY: AnyTool[] = [
   getPayrollStatus as AnyTool,
   getPayrollOwed as AnyTool,
   getReceivables as AnyTool,
+  getReceiptsNeedingAttribution as AnyTool,
   searchThreads as AnyTool,
   queryBusinessKnowledge as AnyTool,
   listStandingRules as AnyTool,

@@ -28,6 +28,7 @@ function receiptRow(overrides: Partial<BedrockReceiptInsert> = {}): BedrockRecei
     project_id: null,
     submitted_by: 'profile-lamar',
     vendor: 'Bahamas Hardware',
+    vendor_id: null,
     receipt_date: '2026-09-03',
     total_amount: 418.72,
     notes: null,
@@ -268,7 +269,7 @@ describe('BedrockWriteProvider.insertReceipt', () => {
     })
 
     expect(Object.keys(fake.receiptInsertCalls[0]).sort()).toEqual([
-      'company_id', 'image_url', 'notes', 'project_id', 'receipt_date', 'submitted_by', 'total_amount', 'vendor',
+      'company_id', 'image_url', 'notes', 'project_id', 'receipt_date', 'submitted_by', 'total_amount', 'vendor', 'vendor_id',
     ])
   })
 })

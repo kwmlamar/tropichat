@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import {
   BedrockWriteProvider,
+  BEDROCK_INSTALLED_ITEM_COMPLETABLE_FIELDS,
   type BedrockInvoiceInsert,
   type BedrockPaymentInsert,
   type BedrockTimeEntryInsert,
@@ -530,14 +531,53 @@ describe('BedrockWriteProvider.insertPayment', () => {
 })
 
 describe('BedrockWriteProvider public surface', () => {
-  it('exposes no update or delete method -- insert-only, by design', () => {
+  /**
+   * This test used to assert the class had NO update method at all. That was
+   * true and load-bearing until two facts that arrive after a record does --
+   * which job a receipt was for, and the model number that was illegible in
+   * the first photo -- forced two narrow update paths (see the class comment).
+   *
+   * The invariant it protects is unchanged in spirit: update is an enumerated
+   * exception, not a capability. So the assertion is now an exact allowlist
+   * rather than a blanket ban. A third update method added later fails this
+   * test, which is the point -- the next one has to be argued for, not slipped
+   * in beside these two.
+   */
+  const PERMITTED_UPDATE_METHODS = ['updateReceiptAttribution', 'completeInstalledItem']
+
+  it('exposes exactly two update methods, both narrowly scoped, and never a delete', () => {
     const methodNames = Object.getOwnPropertyNames(BedrockWriteProvider.prototype)
 
-    for (const name of methodNames) {
-      expect(name.toLowerCase()).not.toMatch(/update|delete|upsert/)
-    }
+    const mutators = methodNames.filter(name => /update|complete|delete|upsert|remove/i.test(name))
+    expect(mutators.sort()).toEqual([...PERMITTED_UPDATE_METHODS].sort())
 
-    // And the three insert capabilities this class is scoped to are present.
-    expect(methodNames).toEqual(expect.arrayContaining(['insertTimeEntries', 'insertInvoice', 'insertPayment']))
+    // Delete stays absolute: nothing here removes a row or a storage object.
+    for (const name of methodNames) {
+      expect(name.toLowerCase()).not.toMatch(/delete|remove|upsert/)
+    }
+  })
+
+  it('keeps every money and status column out of reach of the completion path', () => {
+    // The allowlist is the fence. A money column appearing here would let a
+    // second photo of a data plate quietly restate what a thing cost.
+    for (const field of BEDROCK_INSTALLED_ITEM_COMPLETABLE_FIELDS) {
+      expect(field).not.toMatch(/cost|price|amount|total|status/)
+    }
+  })
+
+  it('exposes the insert capabilities this class is scoped to', () => {
+    const methodNames = Object.getOwnPropertyNames(BedrockWriteProvider.prototype)
+    expect(methodNames).toEqual(
+      expect.arrayContaining([
+        'insertTimeEntries',
+        'insertInvoice',
+        'insertPayment',
+        'insertReceipt',
+        'insertReceiptLineItems',
+        'insertMaterial',
+        'insertMaterialPrices',
+        'insertInstalledItem',
+      ])
+    )
   })
 })

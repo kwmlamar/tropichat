@@ -73,6 +73,12 @@ class FixtureBedrockProvider implements BedrockReadProvider {
   readonly projects = new Map<string, BedrockRow>()
   readonly vendors = new Map<string, BedrockRow>()
 
+  // Catalogue/vendor list reads exist on the interface for the materials
+  // write path; this purchase-order fixture has no opinion about them.
+  async listVendors(): Promise<BedrockRow[]> { return [] }
+  async listMaterials(): Promise<BedrockRow[]> { return [] }
+  async getReceipt(): Promise<BedrockRow | null> { return null }
+
   put(row: FixturePurchaseOrder) {
     this.rows.set(row.id, { ...row })
   }

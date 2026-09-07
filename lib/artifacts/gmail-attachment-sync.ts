@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { createServiceClient } from '@/lib/supabase-server'
+import { getGmailContext } from '@/lib/gmail-token'
 import { gmailAttachmentDescriptors, ingestNormalizedEmailAttachment, type GmailAttachmentMessage } from './email-attachments'
 import { reconcileFreightEmailAttachmentEvidence, type FreightEmailMessageContext } from '@/lib/freight/email-attachment-reconciliation'
 
@@ -40,7 +41,27 @@ export async function syncRecentGmailAttachmentEvidence(): Promise<GmailAttachme
 
   for (const account of accounts ?? []) {
     stats.accounts++
-    const token = String(account.access_token || '')
+
+    // Refresh through the shared helper rather than using the stored
+    // access_token as-is. Google's tokens last about an hour, and this pass
+    // only ever worked because gmail-cron happens to run runGmailPoll() first,
+    // which refreshes and persists. Any other caller — a manual run, a future
+    // cron, a test harness — got a stale token and a wall of 401s that read as
+    // "Caye cannot retrieve attachments" rather than "the token expired".
+    //
+    // getGmailContext resolves by workspace, so when a workspace somehow has
+    // more than one active Gmail account it may answer about a different row
+    // than the one being iterated; the id check keeps this honest rather than
+    // silently using the wrong account's token.
+    let token = String(account.access_token || '')
+    try {
+      const context = await getGmailContext(String(account.user_id))
+      if (String(context.accountRow.id) === String(account.id)) token = context.accessToken
+    } catch (err) {
+      stats.errors++
+      console.error('[gmail-attachment-sync] token refresh failed', { accountId: account.id, err })
+      continue
+    }
     if (!token) { stats.errors++; continue }
 
     const { data: conversations } = await db

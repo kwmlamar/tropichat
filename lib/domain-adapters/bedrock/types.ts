@@ -9,6 +9,7 @@ export type BedrockEntityType =
   | 'purchase_order'
   | 'vendor'
   | 'receipt'
+  | 'material'
   | 'payroll_summary'
   | 'project_labor'
   | 'health'
@@ -147,6 +148,29 @@ export interface BedrockVendor extends BedrockDomainEntity {
   status: string | null
   email: string | null
   phone: string | null
+}
+
+/**
+ * One catalogue entry -- what a thing IS. Deliberately carries NO price.
+ *
+ * `materials.unit_cost` is a cache TropiTrack maintains from the winning
+ * price observation via `refresh_material_unit_cost()`, and until
+ * `materials.unit_cost_basis` lands it has no stated currency or landed/FOB
+ * basis. Surfacing it as a field on a domain entity would invite callers to
+ * quote it. Prices with their provenance attached live in the
+ * `material_pricing` / `material_current_price` views.
+ */
+export interface BedrockMaterial extends BedrockDomainEntity {
+  sourceEntityType: 'material'
+  name: string
+  unit: string | null
+  category: string | null
+  divisionCode: string | null
+  divisionName: string | null
+  origin: string | null
+  dutyCategory: string | null
+  spec: string | null
+  vendorId: string | null
 }
 
 export interface BedrockReceipt extends BedrockDomainEntity {

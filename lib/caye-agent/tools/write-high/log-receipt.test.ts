@@ -94,7 +94,7 @@ describe('log_receipt — what reaches the ledger', () => {
 
     expect(res.ok).toBe(true)
     expect(h.inserts[0].total_amount).toBeNull()
-    expect((res.data as Record<string, unknown>).not_recorded).toEqual(['total', 'date', 'job'])
+    expect((res.data as Record<string, unknown>).not_recorded).toEqual(['total', 'date', 'job', 'line items'])
     expect(String((res.data as Record<string, unknown>).note)).toMatch(/Not on the record: total, date, job/)
   })
 })

@@ -114,6 +114,65 @@ async function describePendingAction(
       const notes = typeof args.notes === 'string' && args.notes ? ` — ${args.notes}` : ''
       return `Record a $${amount} payment${notes}. Nothing recorded until you confirm.`
     }
+    // The materials write path (2026-09-07). Each of these changes what a
+    // house is believed to have cost, so the staged summary has to be
+    // reviewable against the paper in the operator's hand — a line list they
+    // cannot see is a line list they cannot check, and "Run log_receipt" is
+    // what the default branch below would have shown.
+    case 'log_receipt': {
+      const lines = Array.isArray(args.lines) ? (args.lines as Record<string, unknown>[]) : []
+      const head = [
+        `Record a receipt${args.vendor ? ` from ${args.vendor}` : ''}`,
+        args.total_amount != null ? `total $${Number(args.total_amount).toFixed(2)}` : 'total not read',
+        args.receipt_date ? String(args.receipt_date) : 'date not read',
+        args.project ? `for "${args.project}"` : 'no job named',
+      ].join(' — ')
+      if (lines.length === 0) return `${head}. No line items, so no prices will be captured from it.`
+      const rendered = lines
+        .slice(0, 25)
+        .map((line) => {
+          const qty = line.qty == null ? '?' : String(line.qty)
+          const unit = line.unit ? ` ${line.unit}` : ''
+          const price = line.unit_cost != null
+            ? `$${Number(line.unit_cost).toFixed(2)} ea`
+            : line.total_cost != null
+              ? `$${Number(line.total_cost).toFixed(2)} total`
+              : 'price not read'
+          return `  • ${qty}${unit} ${line.name ?? '?'} — ${price}`
+        })
+        .join('\n')
+      const overflow = lines.length > 25 ? `\n  …and ${lines.length - 25} more` : ''
+      return `${head}\n\n${lines.length} line${lines.length === 1 ? '' : 's'} read off it:\n${rendered}${overflow}\n\nOnly lines that match something in the catalogue will add a price to the history.`
+    }
+    case 'capture_vendor_quote': {
+      const lines = Array.isArray(args.lines) ? (args.lines as Record<string, unknown>[]) : []
+      const basis = args.origin === 'NASSAU' || args.origin === 'ELEUTHERA'
+        ? 'landed — duty and freight already in these prices'
+        : 'FOB — duty and freight NOT in these prices'
+      const rendered = lines
+        .slice(0, 25)
+        .map((line) => `  • ${line.name ?? '?'} — $${Number(line.unit_price ?? 0).toFixed(2)}${line.unit ? ` per ${line.unit}` : ''}`)
+        .join('\n')
+      const overflow = lines.length > 25 ? `\n  …and ${lines.length - 25} more` : ''
+      return `Record ${lines.length} quoted price${lines.length === 1 ? '' : 's'} from ${args.vendor}, dated ${args.quote_date}, in ${args.currency ?? 'BSD'} from ${args.origin} (${basis}):\n${rendered}${overflow}\n\nOnly lines that match something in the catalogue will be recorded. This becomes part of what ODS believes things cost.`
+    }
+    case 'attribute_receipt':
+      return `Attach receipt ${args.receipt_id} to the job "${args.project}". Its spend will count against that job from then on.`
+    case 'create_material': {
+      const price = args.unit_price != null ? `$${Number(args.unit_price).toFixed(2)}` : '?'
+      return `Add "${args.name}" to the materials catalogue (division ${args.division_code}, ${args.category}, priced per ${args.unit}), with a first price of ${price} ${args.currency ?? 'BSD'} from ${args.source ?? 'an unstated source'}${args.vendor ? ` — ${args.vendor}` : ''}. This becomes part of what ODS believes things cost.`
+    }
+    case 'record_installed_item': {
+      const plate = [
+        args.manufacturer ? `made by ${args.manufacturer}` : null,
+        args.model_no ? `model ${args.model_no}` : null,
+        args.serial_no ? `serial ${args.serial_no}` : null,
+      ].filter(Boolean)
+      const identity = plate.length ? plate.join(', ') : 'no manufacturer, model or serial read off the plate'
+      return args.installed_item_id
+        ? `Fill in installed item ${args.installed_item_id}: ${identity}. Only fields that are still blank will be filled; nothing already recorded is overwritten.`
+        : `Record "${args.description ?? 'an installed item'}" as installed on "${args.project ?? 'an unnamed job'}"${args.location ? ` (${args.location})` : ''} — ${identity}.`
+    }
     case 'send_outreach_batch': {
       const items = Array.isArray(args.items) ? (args.items as Record<string, unknown>[]) : []
       const list = items

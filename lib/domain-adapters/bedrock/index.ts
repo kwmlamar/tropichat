@@ -12,6 +12,17 @@ export type { BedrockStreamOutcome, BedrockOperatorIdentity } from './runtime'
 export { InMemoryDomainSnapshotStore, snapshotKey } from './snapshot-store'
 export type { DomainEntitySnapshot, DomainSnapshotKey, DomainSnapshotStore } from './snapshot-store'
 export { SupabaseDomainSnapshotStore } from './supabase-snapshot-store'
-export { BedrockWriteProvider } from './write-provider'
-export type { BedrockTimeEntryInsert, BedrockWriteResult, BedrockWriteRowFailure } from './write-provider'
+export { BedrockWriteProvider, BEDROCK_INSTALLED_ITEM_COMPLETABLE_FIELDS } from './write-provider'
+export type {
+  BedrockTimeEntryInsert,
+  BedrockReceiptLineInsert,
+  BedrockMaterialInsert,
+  BedrockMaterialPriceInsert,
+  BedrockInstalledItemInsert,
+  BedrockInstalledItemCompletion,
+  BedrockInstalledItemConflict,
+  BedrockWriteResult,
+  BedrockWriteRow,
+  BedrockWriteRowFailure,
+} from './write-provider'
 export * from './types'
