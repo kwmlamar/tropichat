@@ -9,8 +9,10 @@ vi.mock('next/server', () => ({
 const account = {
   id: 'acct-1',
   user_id: 'ws-1',
+  channel_type: 'gmail',
   channel_account_name: 'owner@example.com',
   access_token: 'token-1',
+  refresh_token: 'refresh-1',
   token_expires_at: '2099-01-01T00:00:00.000Z',
   updated_at: '2026-09-02T18:00:00.000Z',
   is_active: true,
@@ -68,6 +70,14 @@ function makeDb() {
     }
 
     async maybeSingle() {
+      // connected_accounts is read two ways on this path: the attachment
+      // sync lists every active Gmail account, and getGmailContext resolves
+      // ONE by workspace to guarantee a fresh access token. Modelling only
+      // the list read let the sync silently skip the account when the token
+      // lookup came back empty.
+      if (this.table === 'connected_accounts') {
+        return { data: this.matches(account) ? account : null, error: null }
+      }
       if (this.table === 'unified_messages') {
         return { data: state.messages.find(row => this.matches(row)) ?? null, error: null }
       }
