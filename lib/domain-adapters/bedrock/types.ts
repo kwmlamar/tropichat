@@ -171,6 +171,34 @@ export interface BedrockMaterial extends BedrockDomainEntity {
   dutyCategory: string | null
   spec: string | null
   vendorId: string | null
+  /**
+   * `materials.is_core` -- the 60 of 236 catalogue items ODS genuinely
+   * repeats, as opposed to the one-off a job needed once. Surfaced because it
+   * is the only non-arbitrary way to break a tie between two catalogue rows
+   * that match a spoken line equally well: the thing they restock is far more
+   * likely to be the thing coming back off a site than its near-namesake.
+   */
+  isCore: boolean
+}
+
+/**
+ * The landed unit cost of one catalogue item, with enough provenance to say
+ * whether it should be trusted.
+ *
+ * `landedUnitCost` is `landed_cost()` applied to the winning observation, so
+ * it already includes Bahamian duty and freight -- it is what putting one of
+ * these back on the shelf is worth, not what a Florida shelf charges. Null
+ * when the material has no price observation at all, which is a real state
+ * and reported rather than defaulted to zero.
+ */
+export interface BedrockMaterialLandedCost {
+  materialId: string
+  landedUnitCost: number | null
+  unit: string | null
+  observedAt: string | null
+  isStale: boolean
+  source: string | null
+  currency: string | null
 }
 
 export interface BedrockReceipt extends BedrockDomainEntity {

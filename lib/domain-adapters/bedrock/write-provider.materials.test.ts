@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { BedrockWriteProvider, type BedrockReceiptLineInsert } from './write-provider'
+import { BedrockWriteProvider, type BedrockReceiptLineInsert, type BedrockStockMovementInsert } from './write-provider'
 import type { BedrockConnection } from './types'
 
 const connection: BedrockConnection = {
@@ -297,5 +297,96 @@ describe('completeInstalledItem', () => {
 
     expect(result.ok).toBe(false)
     expect(fake.updates).toHaveLength(0)
+  })
+})
+
+describe('insertStockMovement', () => {
+  function movement(overrides: Partial<BedrockStockMovementInsert> = {}): BedrockStockMovementInsert {
+    return {
+      material_id: 'S028',
+      description: '3/4" CDX Plywood 4x8',
+      movement_type: 'return_from_job',
+      quantity: 8,
+      unit: 'SHEET',
+      unit_cost_landed: 62.4,
+      project_id: 'project-1',
+      location: 'Yard',
+      occurred_at: '2026-09-08T15:00:00.000Z',
+      recorded_by: 'profile-jay',
+      photo_path: null,
+      note: null,
+      company_id: 'company-1',
+      ...overrides,
+    }
+  }
+
+  it('forces company_id and audits the insert', async () => {
+    // The live column default is a hard-coded ODS uuid due for removal, so a
+    // row that trusted it silently becomes another company's stock the day it
+    // changes.
+    const fake = fakeClient({ rows: OWN_PROJECT })
+    const result = await providerWith(fake).insertStockMovement('company-1', movement({ company_id: 'attacker' }))
+
+    expect(result.ok).toBe(true)
+    expect(fake.inserts.stock_movements[0]).toMatchObject({ company_id: 'company-1', movement_type: 'return_from_job' })
+    expect(fake.audits[0]).toMatchObject({ target_table: 'stock_movements', tool_name: 'insertStockMovement', status: 'ok' })
+  })
+
+  it('writes only the allowlisted columns, never a spread of the caller argument', async () => {
+    const fake = fakeClient({ rows: OWN_PROJECT })
+    await providerWith(fake).insertStockMovement(
+      'company-1',
+      movement({ id: 'chosen-id', created_at: '1999-01-01' } as never),
+    )
+
+    expect(Object.keys(fake.inserts.stock_movements[0]).sort()).toEqual([
+      'company_id', 'description', 'location', 'material_id', 'movement_type', 'note',
+      'occurred_at', 'photo_path', 'project_id', 'quantity', 'recorded_by', 'unit', 'unit_cost_landed',
+    ])
+  })
+
+  it('reports that the shelf did NOT move when there is no material', async () => {
+    // stock_movements_apply returns early on a null material_id. The caller
+    // has to be told, because the database is silent about it.
+    const fake = fakeClient({ rows: OWN_PROJECT })
+    const result = await providerWith(fake).insertStockMovement('company-1', movement({ material_id: null }))
+
+    expect(result.ok).toBe(true)
+    expect(result.materialApplied).toBe(false)
+  })
+
+  it('reports that the shelf moved when there is one', async () => {
+    const fake = fakeClient({ rows: OWN_PROJECT })
+    const result = await providerWith(fake).insertStockMovement('company-1', movement())
+
+    expect(result.materialApplied).toBe(true)
+  })
+
+  it('refuses and audits a movement pointed at another company’s project', async () => {
+    const fake = fakeClient({ rows: { 'projects:project-1': { id: 'project-1', company_id: 'other-company' } } })
+    const result = await providerWith(fake).insertStockMovement('company-1', movement())
+
+    expect(result.ok).toBe(false)
+    expect(result.materialApplied).toBe(false)
+    expect(fake.inserts.stock_movements).toBeUndefined()
+    expect(fake.audits[0]).toMatchObject({ status: 'denied', target_table: 'stock_movements' })
+  })
+
+  it('writes a movement with no project without inventing an ownership check', async () => {
+    // project_id is nullable on this table. There is nothing to check, so
+    // nothing is checked -- but the row still lands.
+    const fake = fakeClient()
+    const result = await providerWith(fake).insertStockMovement('company-1', movement({ project_id: null }))
+
+    expect(result.ok).toBe(true)
+    expect(fake.inserts.stock_movements[0]).toMatchObject({ project_id: null })
+  })
+
+  it('never touches stock_items, which the trigger owns', async () => {
+    const fake = fakeClient({ rows: OWN_PROJECT })
+    await providerWith(fake).insertStockMovement('company-1', movement())
+
+    expect(fake.inserts.stock_items).toBeUndefined()
+    expect(fake.updates.filter((u) => u.table === 'stock_items')).toHaveLength(0)
   })
 })

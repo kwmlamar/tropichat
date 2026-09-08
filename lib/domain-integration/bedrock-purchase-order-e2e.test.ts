@@ -77,6 +77,7 @@ class FixtureBedrockProvider implements BedrockReadProvider {
   // write path; this purchase-order fixture has no opinion about them.
   async listVendors(): Promise<BedrockRow[]> { return [] }
   async listMaterials(): Promise<BedrockRow[]> { return [] }
+  async listMaterialLandedCosts(): Promise<BedrockRow[]> { return [] }
   async getReceipt(): Promise<BedrockRow | null> { return null }
 
   put(row: FixturePurchaseOrder) {

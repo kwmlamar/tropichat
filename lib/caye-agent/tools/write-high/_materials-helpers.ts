@@ -70,14 +70,23 @@ export interface VendorEntry {
 }
 
 /**
- * A catalogue id in the scheme the existing rows use: `R<epoch_ms>_<index>`.
+ * A catalogue id in the scheme the existing rows use:
+ * `<prefix><epoch_ms>_<index>`.
  *
  * `materials.id` is text, NOT NULL, with no default — the caller must
  * generate it or the insert fails. The index disambiguates several materials
  * created from one document in the same millisecond.
+ *
+ * THE PREFIX IS LOAD-BEARING, NOT DECORATION. `R` means the row was created
+ * from a document — a receipt or a quote — so it has a real price behind it.
+ * `Y` means it was created from an unidentified yard return, so it has NO
+ * cost basis and carries `needs_review`. Live queries already select the
+ * document-derived rows with `LIKE 'R%'` (12 of them as of 2026-09-08), and a
+ * yard row appearing in that set would quietly assert a purchase price that
+ * does not exist. Add a prefix rather than reusing one.
  */
-export function generateMaterialId(now: Date, index: number): string {
-  return `R${now.getTime()}_${index}`
+export function generateMaterialId(now: Date, index: number, prefix: 'R' | 'Y' = 'R'): string {
+  return `${prefix}${now.getTime()}_${index}`
 }
 
 /** The real CSI name for a code, or null if the code is not one we know. */

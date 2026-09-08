@@ -125,9 +125,22 @@ describe('production tool surface', () => {
     // would have overwritten a landed BSD cost. TropiTrack PR #34 fixed that
     // (unit_cost is now landed BSD via landed_cost(), stamped
     // unit_cost_basis), verified live before registering it here.
-    expect(owner).toMatchObject({ exposedToolCount: 97, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
-    expect(founder).toMatchObject({ exposedToolCount: 150, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
-    expect(staff).toMatchObject({ exposedToolCount: 29, excludedByRoleCount: 121, excludedToolSchemaBytes: 116452 })
+    //
+    // Refreshed 2026-09-08 for record_yard_return (yard put-away capture: the
+    // only point at which leftover material coming off a job is recorded, so
+    // it stops being re-bought). Exactly the log_receipt shape again — one
+    // tool, roles ['owner','staff','founder'], visible to all three and hidden
+    // from none, so every exposedToolCount moves by one and NOTHING excluded
+    // moves:
+    //   owner   97->98   (+1), excluded 53 / 34528 unchanged
+    //   founder 150->151 (+1, sees everything), still 0 / 0
+    //   staff   29->30   (+1), excluded 121 / 116452 unchanged
+    // Staff visibility is deliberate and is the whole point: the person who
+    // carries the plywood off the truck is the person who reports it. The
+    // confirmation gate is what constrains this write, not role visibility.
+    expect(owner).toMatchObject({ exposedToolCount: 98, excludedByRoleCount: 53, excludedToolSchemaBytes: 34528 })
+    expect(founder).toMatchObject({ exposedToolCount: 151, excludedByRoleCount: 0, excludedToolSchemaBytes: 0 })
+    expect(staff).toMatchObject({ exposedToolCount: 30, excludedByRoleCount: 121, excludedToolSchemaBytes: 116452 })
   })
 
   it.each(['owner', 'staff', 'founder', 'driver'] as const)('only exposes schemas executable by %s', (callerRole) => {
