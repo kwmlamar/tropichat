@@ -19,6 +19,7 @@ export type {
   BedrockMaterialInsert,
   BedrockMaterialPriceInsert,
   BedrockInstalledItemInsert,
+  BedrockStockMovementInsert,
   BedrockInstalledItemCompletion,
   BedrockInstalledItemConflict,
   BedrockWriteResult,

@@ -16,6 +16,7 @@ import {
   type BedrockInvoice,
   type BedrockListOptions,
   type BedrockMaterial,
+  type BedrockMaterialLandedCost,
   type BedrockPayPeriod,
   type BedrockPayrollOwed,
   type BedrockPayrollSummary,
@@ -366,7 +367,28 @@ export class BedrockAdapter {
       name: String(row.name ?? ''), unit: text(row.unit), category: text(row.category),
       divisionCode: text(row.division_code), divisionName: text(row.division_name),
       origin: text(row.origin), dutyCategory: text(row.duty_category), spec: text(row.spec),
-      vendorId: text(row.vendor_id),
+      vendorId: text(row.vendor_id), isCore: row.is_core === true,
+    }))
+  }
+
+  /**
+   * What one of each of these is worth on the shelf, landed.
+   *
+   * Company scoping is transitive, not a filter: `material_pricing` projects
+   * no `company_id`, so the guarantee comes from the caller having obtained
+   * every id from `listMaterials`, which is company-scoped. Do not call this
+   * with an id from anywhere else.
+   */
+  async getMaterialLandedCosts(workspaceId: string, materialIds: string[]): Promise<BedrockMaterialLandedCost[]> {
+    const { provider } = await this.context(workspaceId)
+    return (await provider.listMaterialLandedCosts(materialIds)).map(row => ({
+      materialId: String(row.id),
+      landedUnitCost: row.landed_unit_cost == null ? null : Number(row.landed_unit_cost),
+      unit: text(row.unit),
+      observedAt: text(row.price_observed_at),
+      isStale: row.price_is_stale === true,
+      source: text(row.price_source),
+      currency: text(row.currency),
     }))
   }
 

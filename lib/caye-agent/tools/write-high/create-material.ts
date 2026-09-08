@@ -225,6 +225,10 @@ export function makeCreateMaterial(deps: Partial<CreateMaterialDeps> = {}): Tool
         uom_note: null,
         needs_review: source === 'manual',
         review_note: source === 'manual' ? 'Created from what a person said, not from a document.' : null,
+        // Core status is a judgement about what ODS repeatedly restocks, made
+        // from history. A brand-new catalogue entry has none, so it starts
+        // false and somebody promotes it later.
+        is_core: false,
       })
 
       if (!created.ok) {

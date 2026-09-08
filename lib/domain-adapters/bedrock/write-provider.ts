@@ -15,9 +15,17 @@ import type { BedrockConnection } from './types'
  *
  * Insert capabilities: `insertTimeEntries`, `insertInvoice`, `insertPayment`,
  * `insertReceipt`, `insertReceiptLineItems`, `insertMaterial`,
- * `insertMaterialPrices`, `insertInstalledItem`, and `uploadReceiptImage`.
+ * `insertMaterialPrices`, `insertInstalledItem`, `insertStockMovement`,
+ * `uploadReceiptImage`, and `uploadStockPhoto`.
  * Approving a timesheet (`approved_by` / `approved_at`) is a separate
  * authority and is out of scope for this class.
+ *
+ * `insertStockMovement` writes `stock_movements`, which is append-only by
+ * design: TropiTrack's `stock_movements_apply` trigger derives `stock_items`
+ * from it. `stock_items` is therefore a CACHE and is never written here --
+ * writing it directly would put a quantity on the shelf that no movement
+ * accounts for, which is the same unsourced-number failure `materials
+ * .unit_cost` had. There is no method on this class that touches it.
  *
  * UPDATE IS PERMITTED IN EXACTLY TWO PLACES, AND NOWHERE ELSE
  *
@@ -275,6 +283,15 @@ export interface BedrockMaterialInsert {
   uom_note: string | null
   needs_review: boolean
   review_note: string | null
+  /**
+   * Set explicitly rather than left to the column default (`false`), because
+   * this flag now decides catalogue matching: `matchYardLine` breaks a tie
+   * between two equally-good candidates toward the core one. A row created
+   * from an unidentified yard return must never be core -- it would start
+   * winning ties against real catalogue entries on the strength of a flag
+   * nobody set deliberately.
+   */
+  is_core: boolean
 }
 
 /**
@@ -389,6 +406,44 @@ export interface BedrockInstalledItemConflict {
   proposed: unknown
 }
 
+/**
+ * Insertable shape of a `stock_movements` row -- one physical event in the
+ * yard, recorded once and never revised.
+ *
+ * WHY EVERY FIELD IS SPELLED OUT RATHER THAN LEFT TO A DEFAULT
+ *
+ * `company_id`'s live column default is a hard-coded ODS uuid, due for
+ * removal. A row that relied on it would silently become another company's
+ * stock the day that default changes. `insertStockMovement` always overwrites
+ * this with the resolved `companyId` argument.
+ *
+ * `location` has no column default on this table, but the
+ * `stock_movements_apply` trigger COALESCEs a null to `'Yard'` before it
+ * touches `stock_items` -- whose own default is also `'Yard'`. So the string
+ * that means "the main yard" is exactly `'Yard'`, and a caller writing
+ * `'yard'` or `'Main Yard'` opens a SECOND stock location holding half the
+ * material. Callers must normalise; this class stores what it is given.
+ *
+ * `movement_type` is constrained by a live CHECK to
+ * `return_from_job | issue_to_job | count_adjust | disposal`, and `quantity`
+ * by `quantity >= 0`.
+ */
+export interface BedrockStockMovementInsert {
+  material_id: string | null
+  description: string
+  movement_type: 'return_from_job' | 'issue_to_job' | 'count_adjust' | 'disposal'
+  quantity: number
+  unit: string | null
+  unit_cost_landed: number | null
+  project_id: string | null
+  location: string | null
+  occurred_at: string | null
+  recorded_by: string | null
+  photo_path: string | null
+  note: string | null
+  company_id: string
+}
+
 export type BedrockWriteRow =
   | BedrockTimeEntryInsert
   | BedrockInvoiceInsert
@@ -398,6 +453,7 @@ export type BedrockWriteRow =
   | BedrockMaterialInsert
   | BedrockMaterialPriceInsert
   | BedrockInstalledItemInsert
+  | BedrockStockMovementInsert
   | Record<string, unknown>
 
 export interface BedrockWriteRowFailure {
@@ -682,31 +738,70 @@ export class BedrockWriteProvider {
     companyId: string,
     params: { bytes: Uint8Array; mimeType: string; filename: string }
   ): Promise<{ ok: true; url: string; path: string } | { ok: false; error: string }> {
+    return this.uploadDocument(companyId, 'receipts', 'receipt image', params)
+  }
+
+  /**
+   * The photo of material being put away, stored under a `stock/` prefix.
+   *
+   * Same bucket, same limits, same never-overwrite rule as
+   * `uploadReceiptImage` -- and the same reason to exist rather than reusing
+   * it: a yard photo is not a receipt, and filing it under `receipts/` would
+   * make a put-away look like a purchase to anyone reading the bucket.
+   *
+   * The ONE difference that matters is upstream, not here:
+   * `stock_movements.photo_path` is NULLABLE. A photo is evidence, not a
+   * precondition, so a failed upload must leave the movement recorded without
+   * one rather than losing the count -- the opposite of `insertReceipt`,
+   * whose `image_url` is NOT NULL. See `record_yard_return`.
+   */
+  async uploadStockPhoto(
+    companyId: string,
+    params: { bytes: Uint8Array; mimeType: string; filename: string }
+  ): Promise<{ ok: true; url: string; path: string } | { ok: false; error: string }> {
+    return this.uploadDocument(companyId, 'stock', 'yard photo', params)
+  }
+
+  /**
+   * Add one object to TropiTrack's `documents` bucket under `prefix/`.
+   *
+   * `upsert: false`, so this can only ever ADD. A name collision fails loudly
+   * instead of overwriting somebody's file, and `companyId` is in the path so
+   * one company's objects can never collide with another's even though the
+   * bucket itself is not company-scoped.
+   *
+   * `prefix` is never caller-supplied -- it comes from this class's own two
+   * call sites above.
+   */
+  private async uploadDocument(
+    companyId: string,
+    prefix: 'receipts' | 'stock',
+    label: string,
+    params: { bytes: Uint8Array; mimeType: string; filename: string }
+  ): Promise<{ ok: true; url: string; path: string } | { ok: false; error: string }> {
     if (!BEDROCK_RECEIPT_MIME_TYPES.has(params.mimeType)) {
       return {
         ok: false,
-        error: `refused: ${params.mimeType} is not an accepted receipt image type (${[...BEDROCK_RECEIPT_MIME_TYPES].join(', ')})`,
+        error: `refused: ${params.mimeType} is not an accepted ${label} type (${[...BEDROCK_RECEIPT_MIME_TYPES].join(', ')})`,
       }
     }
     if (params.bytes.byteLength > BEDROCK_RECEIPT_MAX_BYTES) {
       return {
         ok: false,
-        error: `refused: receipt image is ${params.bytes.byteLength} bytes, over the ${BEDROCK_RECEIPT_MAX_BYTES}-byte bucket limit`,
+        error: `refused: ${label} is ${params.bytes.byteLength} bytes, over the ${BEDROCK_RECEIPT_MAX_BYTES}-byte bucket limit`,
       }
     }
 
-    // company_id in the path so one company's receipts can never collide
-    // with another's, even though the bucket itself is not company-scoped.
-    const path = `receipts/${companyId}/${params.filename}`
+    const path = `${prefix}/${companyId}/${params.filename}`
     const { error } = await this.client.storage
       .from(BEDROCK_DOCUMENTS_BUCKET)
       .upload(path, params.bytes, { contentType: params.mimeType, upsert: false })
 
-    if (error) return { ok: false, error: `receipt image upload failed: ${error.message}` }
+    if (error) return { ok: false, error: `${label} upload failed: ${error.message}` }
 
     const { data } = this.client.storage.from(BEDROCK_DOCUMENTS_BUCKET).getPublicUrl(path)
     if (!data?.publicUrl) {
-      return { ok: false, error: 'receipt image uploaded but no public URL could be resolved' }
+      return { ok: false, error: `${label} uploaded but no public URL could be resolved` }
     }
     return { ok: true, url: data.publicUrl, path }
   }
@@ -904,6 +999,7 @@ export class BedrockWriteProvider {
       uom_note: row.uom_note,
       needs_review: row.needs_review,
       review_note: row.review_note,
+      is_core: row.is_core,
       company_id: companyId,
     }
 
@@ -1064,6 +1160,78 @@ export class BedrockWriteProvider {
       toolName: 'insertInstalledItem',
       scopedRow,
     })
+  }
+
+  /**
+   * Insert one `stock_movements` row and record a single `audit_logs` row
+   * describing the attempt.
+   *
+   * WHAT THE DATABASE DOES NEXT, AND WHY THE CALLER HAS TO KNOW
+   *
+   * TropiTrack's `stock_movements_apply` trigger turns this row into the
+   * `stock_items` balance -- but its FIRST statement is
+   * `IF NEW.material_id IS NULL THEN RETURN NEW`. A movement with no
+   * catalogue match is therefore recorded in full and changes NO balance:
+   * real history, invisible on the shelf. That is the honest outcome (a
+   * quantity of something unidentified cannot be added to a quantity of
+   * something identified), but it is silent, so `materialApplied` is
+   * returned here rather than left for a caller to infer.
+   *
+   * `project_id` is the PROVENANCE of returned material -- which house it
+   * came off -- so it is ownership-checked against `companyId` before the
+   * write, exactly like `insertInstalledItem`. Unlike that method it is
+   * nullable on the table; a null project is written without a check because
+   * there is nothing to check.
+   *
+   * The material is deliberately NOT ownership-checked by a second query.
+   * `materials.id` is text and company-scoped, and every caller resolves it
+   * through the company-scoped catalogue read before arriving here; a
+   * cross-tenant id would have had to come from somewhere this class does not
+   * hand out. The FK plus the company scoping on the read is the boundary.
+   */
+  async insertStockMovement(companyId: string, row: BedrockStockMovementInsert): Promise<BedrockWriteResult & { materialApplied: boolean }> {
+    const startedAt = Date.now()
+
+    if (row.project_id != null) {
+      const owned = await this.rowBelongsToCompany('projects', companyId, row.project_id)
+      if (!owned) {
+        const denied = await this.denied({
+          companyId,
+          toolName: 'insertStockMovement',
+          targetTable: 'stock_movements',
+          row,
+          errorMessage: `refused: project ${row.project_id} was not found for company ${companyId} (nonexistent, or belongs to a different company)`,
+          input: { row },
+          startedAt,
+        })
+        return { ...denied, materialApplied: false }
+      }
+    }
+
+    const scopedRow: BedrockStockMovementInsert = {
+      material_id: row.material_id,
+      description: row.description,
+      movement_type: row.movement_type,
+      quantity: row.quantity,
+      unit: row.unit,
+      unit_cost_landed: row.unit_cost_landed,
+      project_id: row.project_id,
+      location: row.location,
+      occurred_at: row.occurred_at,
+      recorded_by: row.recorded_by,
+      photo_path: row.photo_path,
+      note: row.note,
+      company_id: companyId,
+    }
+
+    const result = await this.insertSingleRowAndAudit({
+      companyId,
+      table: 'stock_movements',
+      toolName: 'insertStockMovement',
+      scopedRow,
+    })
+
+    return { ...result, materialApplied: result.ok && scopedRow.material_id != null }
   }
 
   /**
@@ -1403,14 +1571,15 @@ export class BedrockWriteProvider {
 
   private async insertSingleRowAndAudit(params: {
     companyId: string
-    table: 'invoices' | 'payments' | 'receipts' | 'materials' | 'project_installed_items'
-    toolName: 'insertInvoice' | 'insertPayment' | 'insertReceipt' | 'insertMaterial' | 'insertInstalledItem'
+    table: 'invoices' | 'payments' | 'receipts' | 'materials' | 'project_installed_items' | 'stock_movements'
+    toolName: 'insertInvoice' | 'insertPayment' | 'insertReceipt' | 'insertMaterial' | 'insertInstalledItem' | 'insertStockMovement'
     scopedRow:
       | BedrockInvoiceInsert
       | BedrockPaymentInsert
       | BedrockReceiptInsert
       | BedrockMaterialInsert
       | BedrockInstalledItemInsert
+      | BedrockStockMovementInsert
   }): Promise<BedrockWriteResult> {
     const { companyId, table, toolName, scopedRow } = params
     const startedAt = Date.now()

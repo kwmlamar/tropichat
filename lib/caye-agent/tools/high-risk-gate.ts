@@ -3,6 +3,9 @@ import { randomUUID } from 'node:crypto'
 import { createServiceClient } from '@/lib/supabase-server'
 import type { Tool, ToolContext, ToolResult } from './types'
 import { claimConversationExecution, releaseConversationExecution } from '@/lib/conversation-execution'
+import { createBedrockAdapter } from '@/lib/domain-adapters/bedrock'
+import { renderYardReturnReceipt } from './write-high/_yard-helpers'
+import { resolveYardReturn } from './write-high/_yard-resolution'
 import { classifyHighRiskDecision, decisionSubjectKey, requiredAuthorityForDomain, resolveWorkspaceDecisionAuthority, routeBusinessDecision, type DecisionAuthorityResolution, type DecisionDomain } from '@/lib/decision-authority'
 
 const PENDING_TTL_MINUTES = 15
@@ -55,11 +58,20 @@ export function extractTargetKey(args: Record<string, unknown>): string | null {
  * here: the summary previewed only the body, never who it was going to, so
  * even a careful "yes, send" gave the operator no way to notice the resolved
  * conversation_id didn't match who they meant).
+ *
+ * `workspaceId` (2026-09-08, yard put-away) is here for the one case where
+ * the args alone cannot produce a reviewable summary. `record_yard_return`'s
+ * whole point is that the operator sees what the material is WORTH before
+ * agreeing, and that value is looked up from the ledger rather than supplied
+ * by the model — so this function has to resolve it the same way the write
+ * will. It stays best-effort: a failed lookup degrades to an args-only
+ * summary and never blocks staging.
  */
 async function describePendingAction(
   supabase: ReturnType<typeof createServiceClient>,
   toolName: string,
-  args: Record<string, unknown>
+  args: Record<string, unknown>,
+  workspaceId: string
 ): Promise<string> {
   switch (toolName) {
     case 'send_reply': {
@@ -106,10 +118,12 @@ async function describePendingAction(
     case 'remove_team_member':
       return `Remove teammate "${args.phone_or_name}"`
     case 'record_payment': {
-      // Deliberately no live invoice lookup here — describePendingAction has
-      // no workspaceId to scope one with, and record_payment's own notes
-      // field (set by whoever staged it, e.g. the payment watcher) already
-      // carries the human-readable context: sender, confidence, source.
+      // Deliberately no live invoice lookup here. This function DOES now take
+      // a workspaceId (added for record_yard_return below), so the reason is
+      // no longer that one is unavailable — it is that record_payment's own
+      // notes field, set by whoever staged it (e.g. the payment watcher),
+      // already carries the human-readable context: sender, confidence,
+      // source. Adding a lookup would restate what is already there.
       const amount = typeof args.amount === 'number' ? args.amount.toFixed(2) : String(args.amount ?? '?')
       const notes = typeof args.notes === 'string' && args.notes ? ` — ${args.notes}` : ''
       return `Record a $${amount} payment${notes}. Nothing recorded until you confirm.`
@@ -155,6 +169,22 @@ async function describePendingAction(
         .join('\n')
       const overflow = lines.length > 25 ? `\n  …and ${lines.length - 25} more` : ''
       return `Record ${lines.length} quoted price${lines.length === 1 ? '' : 's'} from ${args.vendor}, dated ${args.quote_date}, in ${args.currency ?? 'BSD'} from ${args.origin} (${basis}):\n${rendered}${overflow}\n\nOnly lines that match something in the catalogue will be recorded. This becomes part of what ODS believes things cost.`
+    }
+    // Reads like a receipt because it has to be checkable at arm's length by
+    // somebody who has just carried the material. The value on it is resolved
+    // from the ledger here, not taken from the model: the price is
+    // `landed_cost()` applied to the winning observation, and a summary that
+    // omitted it would be asking the operator to approve a number they cannot
+    // see. Same resolver the write uses, so what is shown is what will run.
+    case 'record_yard_return': {
+      try {
+        const resolved = await resolveYardReturn(createBedrockAdapter(), workspaceId, args as Parameters<typeof resolveYardReturn>[2])
+        return `${renderYardReturnReceipt(resolved.view)}\n\nNothing is in the yard until you say yes.`
+      } catch {
+        const items = Array.isArray(args.items) ? (args.items as Record<string, unknown>[]) : []
+        const rendered = items.map((item) => `  \u2022 ${item.quantity ?? '?'}${item.unit ? ` ${item.unit}` : ''} ${item.description ?? '?'}`).join('\n')
+        return `Put away off ${args.project ?? 'an unnamed job'}:\n${rendered}\n\nThe ledger could not be read, so no value is shown. Nothing is in the yard until you say yes.`
+      }
     }
     case 'attribute_receipt':
       return `Attach receipt ${args.receipt_id} to the job "${args.project}". Its spend will count against that job from then on.`
@@ -276,7 +306,7 @@ export function gateHighRisk<T>(tool: Tool<T>, ttlMinutes: number = PENDING_TTL_
         .limit(1)
         .maybeSingle()
 
-      const summary = await describePendingAction(supabase, tool.name, args as Record<string, unknown>)
+      const summary = await describePendingAction(supabase, tool.name, args as Record<string, unknown>, ctx.workspaceId)
       const decisionDomain: DecisionDomain | null = classifyHighRiskDecision(tool.name)
       let decisionAuthority: DecisionAuthorityResolution | null = null
       let approvalOperatorId = ctx.operatorId ?? null

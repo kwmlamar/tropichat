@@ -71,6 +71,12 @@ export interface BedrockReadProvider {
    * `unit_cost` -- that column is a cache with no stated basis, not a price.
    */
   listMaterials(companyId: string, options?: { search?: string; limit?: number }): Promise<BedrockRow[]>
+  /**
+   * Landed unit cost per catalogue id, from the `material_pricing` view.
+   * Scoped transitively through ids obtained from `listMaterials` -- the
+   * view projects no `company_id` to filter on. See the implementation.
+   */
+  listMaterialLandedCosts(materialIds: string[]): Promise<BedrockRow[]>
   getReceipt(companyId: string, id: string): Promise<BedrockRow | null>
   listProjectReceipts(companyId: string, projectId: string): Promise<BedrockRow[]>
   getReceiptLineItems(receiptId: string): Promise<BedrockRow[]>
@@ -355,11 +361,39 @@ export class SupabaseBedrockReadProvider implements BedrockReadProvider {
   async listMaterials(companyId: string, options: { search?: string; limit?: number } = {}) {
     let query = this.client
       .from('materials')
-      .select('id,name,unit,category,division_code,division_name,origin,duty_category,spec,vendor_id,is_active')
+      .select('id,name,unit,category,division_code,division_name,origin,duty_category,spec,vendor_id,is_active,is_core')
       .eq('company_id', companyId)
       .eq('is_active', true)
     if (options.search) query = query.ilike('name', `%${options.search}%`)
     return throwOnError(await query.order('name', { ascending: true }).limit(Math.min(options.limit ?? 500, 1000))) ?? []
+  }
+
+  /**
+   * Landed unit costs for a set of catalogue ids, from the `material_pricing`
+   * view.
+   *
+   * This is the ONE place a price is read for a yard put-away, and it is read
+   * rather than asked for: `landed_unit_cost` is `landed_cost()` applied to
+   * the winning price observation, so it already carries duty, freight and a
+   * date. Asking a man in a yard what a sheet of plywood cost would get an
+   * answer, and it would be a guess overwriting a computed number.
+   *
+   * NO `company_id` FILTER, BECAUSE THE VIEW EXPOSES NONE.
+   * `material_pricing` selects from `materials` without projecting its
+   * `company_id`, so it cannot be filtered here. Scoping is transitive
+   * instead: every id passed in came from `listMaterials`, which IS
+   * company-scoped, so this can only ever read back rows for materials the
+   * caller was already entitled to see. If the view ever gains `company_id`,
+   * filter on it here and delete this paragraph.
+   */
+  async listMaterialLandedCosts(materialIds: string[]) {
+    if (materialIds.length === 0) return []
+    return throwOnError(
+      await this.client
+        .from('material_pricing')
+        .select('id,landed_unit_cost,unit,price_observed_at,price_is_stale,price_source,currency')
+        .in('id', materialIds.slice(0, 200)),
+    ) ?? []
   }
 
   async getReceipt(companyId: string, id: string) {

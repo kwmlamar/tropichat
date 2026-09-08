@@ -21,6 +21,7 @@ import { attributeReceipt } from './write-high/attribute-receipt'
 import { createMaterial } from './write-high/create-material'
 import { recordInstalledItem } from './write-high/record-installed-item'
 import { captureVendorQuote } from './write-high/capture-vendor-quote'
+import { recordYardReturn } from './write-high/record-yard-return'
 
 /**
  * The UNGATED high-risk tools, in one place.
@@ -58,6 +59,15 @@ export const HIGH_RISK_TOOLS: AnyTool[] = [
   // is a distinction the ledger acts on. See that file's history section — if
   // the column or the function is reverted, this line comes back out.
   captureVendorQuote as AnyTool,
+  // Yard put-away (2026-09-08). The only capture point ODS's yard ledger has:
+  // material coming off a site and being put down is a physical event, and it
+  // cannot be derived from takeoffs minus receipts because nobody tracks
+  // consumption that finely. Staged like every other ledger write, but the
+  // staged summary is a receipt with a value on it (see describePendingAction)
+  // rather than an echo of the arguments -- a put-away is agreed to by someone
+  // standing next to the material, and a form they cannot check is a form they
+  // will stop answering.
+  recordYardReturn as AnyTool,
   sendReply as AnyTool,
   sendPaymentLink as AnyTool,
   confirmBooking as AnyTool,

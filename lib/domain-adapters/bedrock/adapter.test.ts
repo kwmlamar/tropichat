@@ -28,6 +28,7 @@ function fakeProvider(overrides: Partial<BedrockReadProvider> = {}): BedrockRead
     listAllReceipts: async () => [],
     listVendors: async () => [],
     listMaterials: async () => [],
+    listMaterialLandedCosts: async () => [],
     getReceipt: async () => null,
     getPurchaseOrder: async (companyId, id) => companyId === 'company-1' && id === 'po-1' ? { id, company_id: companyId, project_id: 'project-1', vendor_id: 'vendor-1', po_number: 'PO-1', total_amount: 50 } : null,
     listProjectPurchaseOrders: async () => [{ id: 'po-1', project_id: 'project-1', vendor_id: 'vendor-1', po_number: 'PO-1', total_amount: 50 }],

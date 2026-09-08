@@ -30,6 +30,7 @@ function providerWith(overrides: Partial<BedrockReadProvider>): BedrockReadProvi
     getPurchaseOrder: async () => null,
     listVendors: async () => [],
     listMaterials: async () => [],
+    listMaterialLandedCosts: async () => [],
     getReceipt: async () => null,
     listPurchaseOrdersChangedSince: async () => [],
     listProjectsChangedSince: async () => [],
